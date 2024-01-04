@@ -1,0 +1,15 @@
+D:\SharpProjects\SqlDBManager\SqlDBManager\bin\Debug\SqlDBManager.exe.config
+D:\SharpProjects\SqlDBManager\SqlDBManager\bin\Debug\SqlDBManager.exe
+D:\SharpProjects\SqlDBManager\SqlDBManager\bin\Debug\SqlDBManager.pdb
+D:\SharpProjects\SqlDBManager\SqlDBManager\obj\Debug\SqlDBManager.csproj.AssemblyReference.cache
+D:\SharpProjects\SqlDBManager\SqlDBManager\obj\Debug\SqlDBManager.csproj.SuggestedBindingRedirects.cache
+D:\SharpProjects\SqlDBManager\SqlDBManager\obj\Debug\SqlDBManager.Form1.resources
+D:\SharpProjects\SqlDBManager\SqlDBManager\obj\Debug\SqlDBManager.Properties.Resources.resources
+D:\SharpProjects\SqlDBManager\SqlDBManager\obj\Debug\SqlDBManager.csproj.GenerateResource.cache
+D:\SharpProjects\SqlDBManager\SqlDBManager\obj\Debug\SqlDBManager.csproj.CoreCompileInputs.cache
+D:\SharpProjects\SqlDBManager\SqlDBManager\obj\Debug\SqlDBManager.exe
+D:\SharpProjects\SqlDBManager\SqlDBManager\obj\Debug\SqlDBManager.pdb
+D:\SharpProjects\SqlDBManager\SqlDBManager\bin\Debug\SqlDBManager.exe.manifest
+D:\SharpProjects\SqlDBManager\SqlDBManager\bin\Debug\SqlDBManager.application
+D:\SharpProjects\SqlDBManager\SqlDBManager\obj\Debug\SqlDBManager.exe.manifest
+D:\SharpProjects\SqlDBManager\SqlDBManager\obj\Debug\SqlDBManager.application
