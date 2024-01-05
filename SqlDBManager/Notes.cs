@@ -21,6 +21,39 @@ namespace NotesNamespace
         }
     }
 
+
+    public class CatalogInfo
+    {
+        protected List<string> logTables;
+        protected List<string> defaultTables;
+        protected List<string> linksTables;
+
+        public CatalogInfo()
+        {
+            logTables = SelectLogTables();
+            defaultTables = SelectDefaultTables();
+            linksTables = SelectLinksTables();
+        }
+
+        public List<string> SelectLogTables()
+        {
+            List<string> logTables = new List<string>();
+            return new List<string>();
+        }
+
+        public List<string> SelectDefaultTables()
+        {
+            List<string> list = new List<string>();
+            return new List<string>();
+        }
+
+        public List<string> SelectLinksTables()
+        {
+            List<string> list = new List<string>();
+            return new List<string>();
+        }
+    }
+
     public class DBCatalog
     {
         protected string Source;
@@ -28,6 +61,7 @@ namespace NotesNamespace
         protected string Login;
         protected string Password;
         protected string connectionString;
+        protected string countTables;
         protected SqlConnection connection;
 
         public DBCatalog(string source, string catalog, string login, string password)
@@ -48,6 +82,139 @@ namespace NotesNamespace
         public void CloseConnection()
         {
             connection.Close();
+        }
+
+        public int SelectCountTables()
+        {
+            string request = $"SELECT COUNT(TABLE_NAME) FROM {Catalog}.INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'";
+            SqlCommand command = new SqlCommand(request, connection);
+            SqlDataReader reader = command.ExecuteReader();
+
+            reader.Read();
+            int count = Convert.ToInt32(reader.GetValue(0));
+            reader.Close();
+            command.Dispose();
+            return count;
+        }
+
+        public List<string> SelectTablesNames()
+        {
+            string request = $"SELECT TABLE_NAME FROM {Catalog}.INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME";
+            return ReturnListFromDB(request, connection);
+        }
+
+        public List<string> SelectLogTables()
+        {
+            string request = $"SELECT TABLE_NAME FROM {Catalog}.INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' and TABLE_NAME like '%log' ORDER BY TABLE_NAME";
+            return ReturnListFromDB(request, connection);
+        }
+
+        public List<string> SelectDefaultTables()
+        {
+            string request = $"SELECT name AS [Tables] FROM sys.tables WHERE OBJECTPROPERTY(object_id, 'TableHasForeignKey') = 0 and name not like '%log' and name not in ('tblPUBLICATION_CL', 'tblUNIT_FOTO_EX', 'tblUNIT_MOVIE_EX', 'tblUNIT_VIDEO_EX') or name in ('tblFEATURE', 'tblDOC_KIND_CL', 'tblSTATE_CL', 'tblSTORAGE_MEDIUM_CL', 'tblSUBJECT_CL', 'tblCLS', 'tblABSENCE_REASON_CL', 'tblQUESTION') ORDER BY [Tables];";
+            return ReturnListFromDB(request, connection);
+        }
+
+        public List<string> SelectLinksTables()
+        {
+            List<string> linksTables = new List<string>()
+            {
+                "tblORGANIZ_RENAME",
+                "tblARCHIVE",
+                "tblLOCATION",
+                "tblARCHIVE_STORAGE",
+                "tblARCHIVE_PASSPORT",
+                "tblARCHIVE_STATS",
+                "tblFUND",
+                "tblFUND_RENAME",
+                "tblFUND_CHECK",
+                "tblFUND_DOC_TYPE",
+                "tblFUND_INCLUSION",
+                "tblFUND_PAPER_CLS",
+                "tblPUBLICATION_CL",
+                "tblFUND_PUBLICATION",
+                "tblFUND_RECEIPT_REASON",
+                "tblFUND_RECEIPT_SOURCE",
+                "tblFUND_OAF",
+                "tblFUND_OAF_REASON",
+                "tblFUND_COLLECTION_REASONS",
+                "tblFUND_CREATOR",
+                "tblUNDOCUMENTED_PERIOD",
+                "tblDEPOSIT",
+                "tblDEPOSIT_DOC_TYPE",
+                "tblACT",
+                "tblINVENTORY",
+                "tblINVENTORY_CHECK",
+                "tblINVENTORY_DOC_STORAGE",
+                "tblINVENTORY_DOC_TYPE",
+                "tblINVENTORY_CLS_ATTR",
+                "tblINVENTORY_GROUPING_ATTRIBUTE",
+                "tblINVENTORY_PAPER_CLS",
+                "tblINVENTORY_REQUIRED_WORK",
+                "tblINVENTORY_STRUCTURE",
+                "tblDOCUMENT_STATS",
+                "tblREF_ACT",
+                "tblREF_CLS",
+                "tblREF_FEATURE",
+                "tblREF_LANGUAGE",
+                "tblREF_LOCATION",
+                "tblREF_QUESTION",
+                "tblUNIT",
+                "tblUNIT_ELECTRONIC",
+                "tblUNIT_FOTO",
+                "tblUNIT_FOTO_EX",
+                "tblUNIT_MICROFORM",
+                "tblUNIT_MOVIE",
+                "tblUNIT_MOVIE_EX",
+                "tblUNIT_NTD",
+                "tblUNIT_PHONO",
+                "tblUNIT_REQUIRED_WORK",
+                "tblUNIT_STATE",
+                "tblUNIT_VIDEO",
+                "tblUNIT_VIDEO_EX",
+                "tblUNIT_WORK",
+                "tblDOCUMENT"
+            };
+            return linksTables;
+        }
+
+        static List<string> ReturnListFromDB(string request, SqlConnection connection)
+        {
+            SqlCommand command = new SqlCommand(request, connection);
+            SqlDataReader reader = command.ExecuteReader();
+            List<string> listTablesNames = new List<string>();
+
+            while (reader.Read())
+            {
+                listTablesNames.Add(reader.GetString(0));
+            }
+
+            reader.Close();
+            command.Dispose();
+
+            return listTablesNames;
+        }
+
+        public bool ValidateCountTables(int countAnotherCatalogTables)
+        {
+            if (countAnotherCatalogTables == SelectCountTables())
+                return true;
+            return false;
+        }
+
+        public bool ValidateNamesTables(List<string> anotherCatalogNamesTables)
+        {
+            List<string> mainCatalogNamesTables = SelectTablesNames();
+
+            foreach (string anotherTablesName in anotherCatalogNamesTables)
+            {
+                if (mainCatalogNamesTables.Contains(anotherTablesName))
+                {
+                    continue;
+                }
+                return false;
+            }
+            return true;
         }
     }
 

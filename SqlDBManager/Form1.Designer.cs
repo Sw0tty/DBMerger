@@ -60,6 +60,7 @@
             this.button6 = new System.Windows.Forms.Button();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
+            this.listBox2 = new System.Windows.Forms.ListBox();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -91,7 +92,7 @@
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(508, 629);
+            this.tabControl1.Size = new System.Drawing.Size(506, 629);
             this.tabControl1.TabIndex = 3;
             // 
             // tabPage1
@@ -103,7 +104,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(500, 603);
+            this.tabPage1.Size = new System.Drawing.Size(498, 603);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Подключение";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -121,7 +122,7 @@
             // button4
             // 
             this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Location = new System.Drawing.Point(368, 565);
+            this.button4.Location = new System.Drawing.Point(366, 565);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(126, 30);
             this.button4.TabIndex = 13;
@@ -145,7 +146,7 @@
             this.groupBox2.Controls.Add(this.textBox6);
             this.groupBox2.Location = new System.Drawing.Point(9, 205);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(488, 354);
+            this.groupBox2.Size = new System.Drawing.Size(486, 354);
             this.groupBox2.TabIndex = 12;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Дочерняя база данных";
@@ -172,7 +173,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.button3.Location = new System.Drawing.Point(309, 112);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(168, 40);
+            this.button3.Size = new System.Drawing.Size(166, 40);
             this.button3.TabIndex = 6;
             this.button3.Text = "button3";
             this.button3.UseVisualStyleBackColor = true;
@@ -194,7 +195,7 @@
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Location = new System.Drawing.Point(27, 40);
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(411, 21);
+            this.comboBox2.Size = new System.Drawing.Size(409, 21);
             this.comboBox2.TabIndex = 5;
             this.comboBox2.Text = "(local)\\SQLEXPRESS";
             // 
@@ -210,7 +211,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(193, 126);
+            this.label8.Location = new System.Drawing.Point(170, 126);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(35, 13);
             this.label8.TabIndex = 2;
@@ -246,7 +247,7 @@
             this.groupBox1.Controls.Add(this.textBox2);
             this.groupBox1.Location = new System.Drawing.Point(6, 6);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(488, 193);
+            this.groupBox1.Size = new System.Drawing.Size(486, 193);
             this.groupBox1.TabIndex = 10;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Основная база данных";
@@ -272,7 +273,7 @@
             // button2
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(337, 136);
+            this.button2.Location = new System.Drawing.Point(335, 136);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(143, 42);
             this.button2.TabIndex = 6;
@@ -287,7 +288,7 @@
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(20, 40);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(445, 21);
+            this.comboBox1.Size = new System.Drawing.Size(443, 21);
             this.comboBox1.TabIndex = 5;
             this.comboBox1.Text = "(local)\\SQLEXPRESS";
             // 
@@ -316,7 +317,7 @@
             this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.textBox1.Location = new System.Drawing.Point(20, 95);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(445, 22);
+            this.textBox1.Size = new System.Drawing.Size(443, 22);
             this.textBox1.TabIndex = 7;
             // 
             // textBox2
@@ -334,16 +335,17 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(522, 603);
+            this.tabPage2.Size = new System.Drawing.Size(498, 603);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Предварительные настройки";
             this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // button8
             // 
-            this.button8.Location = new System.Drawing.Point(330, 432);
+            this.button8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button8.Location = new System.Drawing.Point(331, 432);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(131, 38);
+            this.button8.Size = new System.Drawing.Size(128, 38);
             this.button8.TabIndex = 1;
             this.button8.Text = "Начать слияние";
             this.button8.UseVisualStyleBackColor = true;
@@ -351,9 +353,10 @@
             // 
             // button5
             // 
-            this.button5.Location = new System.Drawing.Point(165, 432);
+            this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button5.Location = new System.Drawing.Point(166, 432);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(145, 38);
+            this.button5.Size = new System.Drawing.Size(142, 38);
             this.button5.TabIndex = 0;
             this.button5.Text = "Назад";
             this.button5.UseVisualStyleBackColor = true;
@@ -361,18 +364,19 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.listBox1);
             this.tabPage3.Controls.Add(this.button7);
             this.tabPage3.Controls.Add(this.button6);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(522, 603);
+            this.tabPage3.Size = new System.Drawing.Size(498, 603);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Процесс слияния";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(392, 486);
+            this.button7.Location = new System.Drawing.Point(346, 539);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(105, 32);
             this.button7.TabIndex = 1;
@@ -381,7 +385,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(253, 486);
+            this.button6.Location = new System.Drawing.Point(201, 539);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(118, 32);
             this.button6.TabIndex = 0;
@@ -391,10 +395,10 @@
             // tabPage4
             // 
             this.tabPage4.Controls.Add(this.button1);
-            this.tabPage4.Controls.Add(this.listBox1);
+            this.tabPage4.Controls.Add(this.listBox2);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(522, 603);
+            this.tabPage4.Size = new System.Drawing.Size(498, 603);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Tests";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -409,19 +413,27 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // listBox2
+            // 
+            this.listBox2.FormattingEnabled = true;
+            this.listBox2.Location = new System.Drawing.Point(49, 25);
+            this.listBox2.Name = "listBox2";
+            this.listBox2.Size = new System.Drawing.Size(241, 355);
+            this.listBox2.TabIndex = 2;
+            // 
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(49, 25);
+            this.listBox1.Location = new System.Drawing.Point(28, 30);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(241, 355);
+            this.listBox1.Size = new System.Drawing.Size(432, 446);
             this.listBox1.TabIndex = 2;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(508, 629);
+            this.ClientSize = new System.Drawing.Size(506, 629);
             this.Controls.Add(this.tabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "Form1";
@@ -466,7 +478,7 @@
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox listBox2;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button8;
@@ -474,6 +486,7 @@
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.ListBox listBox1;
     }
 }
 
