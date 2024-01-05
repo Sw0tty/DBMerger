@@ -22,7 +22,7 @@ namespace SqlDBManager
         {
             InitializeComponent();
 
-            label1.Text = "База данных:";
+            label1.Text = "Сервер:";
             label2.Text = "Наименование базы данных:";
             label3.Text = "Логин:";
             label4.Text = "Пароль:";
@@ -46,6 +46,7 @@ namespace SqlDBManager
             }
         }
 
+        // Логика первой вкладки формы
         private void button1_Click(object sender, EventArgs e)
         {
             /*
@@ -113,8 +114,6 @@ namespace SqlDBManager
              Проверяет соединения с главной БД
              */
 
-            string newElement = comboBox1.Text;
-
             SqlCommand command;
             SqlDataReader reader;
             String source = HelpFunction.ClearString(comboBox1.Text),
@@ -125,10 +124,10 @@ namespace SqlDBManager
                    request,
                    response = "";
 
-            SQLManager.CheckConnection(HelpFunction.ClearString(comboBox1.Text),
-                                       HelpFunction.ClearString(textBox1.Text),
-                                       HelpFunction.ClearString(textBox2.Text),
-                                       HelpFunction.ClearString(textBox3.Text));
+            SQLManager.CheckConnectionMessage(HelpFunction.ClearString(comboBox1.Text),
+                                              HelpFunction.ClearString(textBox1.Text),
+                                              HelpFunction.ClearString(textBox2.Text),
+                                              HelpFunction.ClearString(textBox3.Text));
             /*connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password};Connect Timeout=30";
 
             SqlConnection cnn = new SqlConnection(connectionString);
@@ -184,12 +183,12 @@ namespace SqlDBManager
             /*
              Проверяет соединения с дочерней БД
              */
-            if (HelpFunction.ClearString(textBox1.Text) != HelpFunction.ClearString(textBox5.Text))
+            if (HelpFunction.ClearString(textBox1.Text) != HelpFunction.ClearString(textBox4.Text))
             {
-                SQLManager.CheckConnection(HelpFunction.ClearString(comboBox1.Text),
-                                           HelpFunction.ClearString(textBox1.Text),
-                                           HelpFunction.ClearString(textBox2.Text),
-                                           HelpFunction.ClearString(textBox3.Text));
+                SQLManager.CheckConnectionMessage(HelpFunction.ClearString(comboBox2.Text),
+                                           HelpFunction.ClearString(textBox4.Text),
+                                           HelpFunction.ClearString(textBox5.Text),
+                                           HelpFunction.ClearString(textBox6.Text));
             }
             else
             {
@@ -202,14 +201,45 @@ namespace SqlDBManager
             /*
              Переход к надстройке слияния. Проверяет соединения с основной и дочерней БД
              */
-            for(int i = 0; i < 2; i++)
+
+/*            if (!SQLManager.CheckConnection(HelpFunction.ClearString(comboBox1.Text),
+                                            HelpFunction.ClearString(textBox1.Text),
+                                            HelpFunction.ClearString(textBox2.Text),
+                                            HelpFunction.ClearString(textBox3.Text)))
             {
-                SQLManager.CheckConnection(HelpFunction.ClearString(comboBox1.Text),
-                                           HelpFunction.ClearString(textBox1.Text),
-                                           HelpFunction.ClearString(textBox2.Text),
-                                           HelpFunction.ClearString(textBox3.Text));
+                MessageBox.Show("Проверьте настройки соединения с главной БД", "Ошибка соединения", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            if (!SQLManager.CheckConnection(HelpFunction.ClearString(comboBox2.Text),
+                                            HelpFunction.ClearString(textBox4.Text),
+                                            HelpFunction.ClearString(textBox5.Text),
+                                            HelpFunction.ClearString(textBox6.Text)))
+            {
+                MessageBox.Show("Проверьте настройки соединения с дочерней БД", "Ошибка соединения", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }*/
+            if (HelpFunction.ClearString(textBox1.Text) == HelpFunction.ClearString(textBox4.Text))
+            {
+                MessageBox.Show("Вабрана одна и тажа база данных", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                // Создаем объекты соединения и идем на следующую форму
+                tabControl1.SelectedIndex++;
             }
         }
+
+
+
+        // Логика второй вкладки формы
+        private void button5_Click(object sender, EventArgs e)
+        {
+            tabControl1.SelectedIndex--;
+        }
+
+        public void button8_Click(object sender, EventArgs e)
+        {
+            tabControl1.SelectedIndex++;
+        }
+
 
     }
 
