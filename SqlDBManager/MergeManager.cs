@@ -12,16 +12,19 @@ namespace SqlDBManager
     {
         public static void ClearLogs(DBCatalog mainCatalog, System.Windows.Forms.ListBox listBox1)
         {
+            listBox1.Items.Add("--- Очистка логов ---");
             foreach(string logTable in mainCatalog.SelectLogTables())
             {
                 listBox1.Items.Add($"Очистка {logTable}: {mainCatalog.ClearTable(logTable)} записей удалено.");
             }
         }
 
-        public static void CheckDefaultTables(DBCatalog mainCatalog)
+        public static void PrintSkipDefaultTables(DBCatalog mainCatalog, System.Windows.Forms.ListBox listBox1)
         {
-            foreach (string logTable in mainCatalog.ReturnLogTables())
+            listBox1.Items.Add("--- Обработка дефолтных таблиц ---");
+            foreach (string logTable in mainCatalog.SelectDefaultSkipTables())
             {
+                listBox1.Items.Add(logTable);
                 mainCatalog.ClearTable(logTable);
             }
         }
