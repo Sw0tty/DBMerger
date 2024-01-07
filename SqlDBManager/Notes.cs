@@ -54,15 +54,13 @@ namespace NotesNamespace
         }
     }
 
-    public class DBCatalog
+    /*public class DBCatalog
     {
         protected string Source;
         protected string Catalog;
         protected string Login;
         protected string Password;
         protected string connectionString;
-        protected string countTables;
-        protected List<string> logsTables;
         protected SqlConnection connection;
 
         public DBCatalog(string source, string catalog, string login, string password)
@@ -73,12 +71,6 @@ namespace NotesNamespace
             Password = password;
             connectionString = $@"Data Source={Source};Initial Catalog={Catalog};User ID={Login};Password={Password};Connect Timeout=30";
             connection = new SqlConnection(connectionString);
-            //logsTables = SelectLogTables();
-        }
-
-        public List<string> ReturnLogTables()
-        {
-            return logsTables;
         }
 
         public void OpenConnection()
@@ -93,7 +85,20 @@ namespace NotesNamespace
 
         public int SelectCountTables()
         {
-            string request = SQLRequests.CountRequest(Catalog);
+            string request = SQLRequests.CountTablesRequest(Catalog);
+            SqlCommand command = new SqlCommand(request, connection);
+            SqlDataReader reader = command.ExecuteReader();
+
+            reader.Read();
+            int count = Convert.ToInt32(reader.GetValue(0));
+            reader.Close();
+            command.Dispose();
+            return count;
+        }
+
+        public int SelectCountRowsTable(string table)
+        {
+            string request = SQLRequests.CountRowsRequest(Catalog, table);
             SqlCommand command = new SqlCommand(request, connection);
             SqlDataReader reader = command.ExecuteReader();
 
@@ -130,11 +135,11 @@ namespace NotesNamespace
             return ReturnListFromDB(request);
         }
 
-/*        public List<string> SelectDefaultTables()
+*//*        public List<string> SelectDefaultTables()
         {
             string request = $"SELECT name FROM sys.tables WHERE OBJECTPROPERTY(object_id, 'TableHasForeignKey') = 0 and name not like '%log' and name not in ('tblPUBLICATION_CL', 'tblUNIT_FOTO_EX', 'tblUNIT_MOVIE_EX', 'tblUNIT_VIDEO_EX') or name in ('tblFEATURE', 'tblDOC_KIND_CL', 'tblSTATE_CL', 'tblSTORAGE_MEDIUM_CL', 'tblSUBJECT_CL', 'tblCLS', 'tblABSENCE_REASON_CL', 'tblQUESTION') ORDER BY name;";
             return ReturnListFromDB(request, connection);
-        }*/
+        }*//*
 
         public List<string> ReturnLinksTables()
         {
@@ -251,7 +256,7 @@ namespace NotesNamespace
             }
             return true;
         }
-    }
+    }*/
 }
 
 

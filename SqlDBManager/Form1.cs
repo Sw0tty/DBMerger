@@ -210,7 +210,8 @@ namespace SqlDBManager
                     MergeManager.ClearLogs(mainCatalog, listBox1);
 
                     //    6. Проходим по дефолтным таблицам
-
+                    MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, listBox1);
+                    
                     //    7. Проходим по таблицам с ключами (провряем на уникальность)
 
 

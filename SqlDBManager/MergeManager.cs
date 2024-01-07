@@ -19,9 +19,38 @@ namespace SqlDBManager
             }
         }
 
-        public static void PrintSkipDefaultTables(DBCatalog mainCatalog, System.Windows.Forms.ListBox listBox1)
+        public static void ProcessDefaultTables(DBCatalog mainCatalog, DBCatalog daughterCatalog, System.Windows.Forms.ListBox listBox1)
         {
             listBox1.Items.Add("--- Обработка дефолтных таблиц ---");
+            foreach (string defaultTable in mainCatalog.SelectDefaultSkipTables())
+            {
+                listBox1.Items.Add($"{defaultTable}: default");
+            }
+
+            CheckDefaultTables(mainCatalog, daughterCatalog, listBox1);
+        }
+
+        static void CheckDefaultTables(DBCatalog mainCatalog, DBCatalog daughterCatalog, System.Windows.Forms.ListBox listBox1)
+        {
+            int mainCount = 0;
+            int daughterCount = 0;
+
+            foreach (string defaultTable in mainCatalog.SelectDefaultProcessingTables())
+            {
+                mainCount = mainCatalog.SelectCountRowsTable(defaultTable);
+                daughterCount = daughterCatalog.SelectCountRowsTable(defaultTable);
+
+                if (mainCount != daughterCount)
+                {
+                    listBox1.Items.Add($"{defaultTable}: {mainCount} <- M -- D -> {daughterCount}");
+                }
+                listBox1.Items.Add($"{defaultTable}: Equal");
+            }
+        }
+
+        public static void ProcessLinksTables(DBCatalog mainCatalog, System.Windows.Forms.ListBox listBox1)
+        {
+            listBox1.Items.Add("--- Обработка таблиц с внешними ключами ---");
             foreach (string logTable in mainCatalog.SelectDefaultSkipTables())
             {
                 listBox1.Items.Add(logTable);

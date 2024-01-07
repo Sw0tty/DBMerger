@@ -22,7 +22,7 @@ namespace SqlDBManager
         }
 
         // Запрос количества таблиц в каталоге
-        public static string CountRequest(string catalog)
+        public static string CountTablesRequest(string catalog)
         {
             return $"SELECT COUNT(TABLE_NAME) FROM {catalog}.INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'";
         }
@@ -37,6 +37,18 @@ namespace SqlDBManager
         public static string LogTablesRequest(string catalog)
         {
             return $"SELECT TABLE_NAME FROM {catalog}.INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' and TABLE_NAME like '%log' ORDER BY TABLE_NAME";
+        }
+
+        // Запрос на полную очистку таблицы
+        public static string ClearTableRequest(string catalog, string table)
+        {
+            return $"DELETE [{catalog}].[dbo].[{table}]";
+        }
+
+        // Запрос количества значений в таблице
+        public static string CountRowsRequest(string catalog, string table)
+        {
+            return $"SELECT COUNT(*) FROM [{catalog}].[dbo].[{table}]";
         }
     }
 }
