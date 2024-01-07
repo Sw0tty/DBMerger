@@ -55,7 +55,7 @@ namespace SqlDBManager
             /*
              Проверяет соединения с основной БД
              */
-
+            
             SqlConnection cnn, cnn2;
             SqlCommand command;
             SqlDataReader reader;
@@ -124,69 +124,10 @@ namespace SqlDBManager
             /*
              Проверяет соединения с главной БД
              */
-
-            SqlCommand command;
-            SqlDataReader reader;
-            String source = HelpFunction.ClearString(comboBox1.Text),
-                   catalog = HelpFunction.ClearString(textBox1.Text),
-                   login = HelpFunction.ClearString(textBox2.Text),
-                   password = HelpFunction.ClearString(textBox3.Text),
-                   connectionString,
-                   request,
-                   response = "";
-
-            SQLManager.CheckConnectionMessage(HelpFunction.ClearString(comboBox1.Text),
-                                              HelpFunction.ClearString(textBox1.Text),
-                                              HelpFunction.ClearString(textBox2.Text),
-                                              HelpFunction.ClearString(textBox3.Text));
-            /*connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password};Connect Timeout=30";
-
-            SqlConnection cnn = new SqlConnection(connectionString);
-
-            
-            try
-            {
-                SqlExtensions.QuickOpen(cnn, 30);
-
-                cnn.Open();
-
-                if (textBox1.Text == "")
-                {
-                    request = "SELECT name FROM sys.databases WHERE name NOT IN ('master', 'tempdb', 'model', 'msdb');";
-
-                    command = new SqlCommand(request, cnn);
-                    reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        response += Convert.ToString(reader.GetValue(0)) + "\n";
-                    }
-
-                    MessageBox.Show(response, "Connected!");
-
-                    reader.Close();
-                    command.Dispose();
-                }
-                
-                cnn.Close();
-            }
-            catch
-            {
-                MessageBox.Show("Something wrong");
-            }*/
-
-            
-
-
-            /*            if (newElement != "")
-                        {
-                            comboBox1.Items.Add(newElement);
-
-                            StringCollection coll = new StringCollection();
-                            coll.AddRange(comboBox1.Items.Cast<string>().ToArray());
-                            Properties.Settings.Default.comboBoxDefault = coll;
-                            Properties.Settings.Default.Save();
-                        }*/
+            ConnectionChecker.CheckConnectionMessage(comboBox1.Text.Trim(' '),
+                                                     textBox1.Text.Trim(' '),
+                                                     textBox2.Text.Trim(' '),
+                                                     textBox3.Text.Trim(' '));
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -194,12 +135,12 @@ namespace SqlDBManager
             /*
              Проверяет соединения с дочерней БД
              */
-            if (HelpFunction.ClearString(textBox1.Text) != HelpFunction.ClearString(textBox4.Text))
+            if (textBox1.Text.Trim(' ') != textBox4.Text.Trim(' '))
             {
-                SQLManager.CheckConnectionMessage(HelpFunction.ClearString(comboBox2.Text),
-                                           HelpFunction.ClearString(textBox4.Text),
-                                           HelpFunction.ClearString(textBox5.Text),
-                                           HelpFunction.ClearString(textBox6.Text));
+                ConnectionChecker.CheckConnectionMessage(comboBox2.Text.Trim(' '),
+                                                         textBox4.Text.Trim(' '),
+                                                         textBox5.Text.Trim(' '),
+                                                         textBox6.Text.Trim(' '));
             }
             else
             {
@@ -213,21 +154,21 @@ namespace SqlDBManager
              Переход к надстройке слияния. Проверяет соединения с основной и дочерней БД
              */
 
-/*            if (!SQLManager.CheckConnection(HelpFunction.ClearString(comboBox1.Text),
-                                            HelpFunction.ClearString(textBox1.Text),
-                                            HelpFunction.ClearString(textBox2.Text),
-                                            HelpFunction.ClearString(textBox3.Text)))
+            if (!ConnectionChecker.CheckConnection(comboBox1.Text.Trim(' '),
+                                                   textBox1.Text.Trim(' '),
+                                                   textBox2.Text.Trim(' '),
+                                                   textBox3.Text.Trim(' ')))
             {
                 MessageBox.Show("Проверьте настройки соединения с главной БД", "Ошибка соединения", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            if (!SQLManager.CheckConnection(HelpFunction.ClearString(comboBox2.Text),
-                                            HelpFunction.ClearString(textBox4.Text),
-                                            HelpFunction.ClearString(textBox5.Text),
-                                            HelpFunction.ClearString(textBox6.Text)))
+            else if (!ConnectionChecker.CheckConnection(comboBox2.Text.Trim(' '),
+                                                        textBox4.Text.Trim(' '),
+                                                        textBox5.Text.Trim(' '),
+                                                        textBox6.Text.Trim(' ')))
             {
                 MessageBox.Show("Проверьте настройки соединения с дочерней БД", "Ошибка соединения", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }*/
-            if (HelpFunction.ClearString(textBox1.Text) == HelpFunction.ClearString(textBox4.Text))
+            }
+            else if (textBox1.Text.Trim(' ') == textBox4.Text.Trim(' '))
             {
                 MessageBox.Show("Вабрана одна и тажа база данных", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
@@ -239,7 +180,6 @@ namespace SqlDBManager
         }
 
 
-
         // Логика второй вкладки формы
         private void button5_Click(object sender, EventArgs e)
         {
@@ -248,14 +188,14 @@ namespace SqlDBManager
 
         public void button8_Click(object sender, EventArgs e)
         {
-            DBCatalog mainCatalog = new DBCatalog(comboBox1.Text, textBox1.Text, textBox2.Text, textBox3.Text);
-            DBCatalog daughterCatalog = new DBCatalog(comboBox2.Text, textBox4.Text, textBox5.Text, textBox6.Text);
+            // 1. Создаем объекты соединения
+            DBCatalog mainCatalog = new DBCatalog(comboBox1.Text.Trim(' '), textBox1.Text.Trim(' '), textBox2.Text.Trim(' '), textBox3.Text.Trim(' '));
+            DBCatalog daughterCatalog = new DBCatalog(comboBox2.Text.Trim(' '), textBox4.Text.Trim(' '), textBox5.Text.Trim(' '), textBox6.Text.Trim(' '));
 
-            tabControl1.SelectedIndex++;
-
+            // 2. Открываем соединения с БД
             mainCatalog.OpenConnection();
             daughterCatalog.OpenConnection();
-
+            tabControl1.SelectedIndex++;
             listBox1.Items.Add("Валидируем каталоги на возможность слияния...");
 
             if (mainCatalog.ValidateCountTables(daughterCatalog.SelectCountTables()))
@@ -263,12 +203,19 @@ namespace SqlDBManager
                 if (mainCatalog.ValidateNamesTables(daughterCatalog.SelectTablesNames()))
                 {
                     listBox1.Items.Add("Валидация прошла успешно!");
-                    /*
-                        4. Выбираем набор таблиц на каждый акт действий (DONE)
-                        5. Очищаем логи
-                        6. Проходим по дефолтным таблицам
-                        7. Проходим по таблицам с ключами (провряем на уникальность)
-                     */
+
+                    //    4. Выбираем набор таблиц на каждый акт действий (DONE)
+
+                    //    5. Очищаем логи
+                    MergeManager.ClearLogs(mainCatalog, listBox1);
+
+                    //    6. Проходим по дефолтным таблицам
+
+                    //    7. Проходим по таблицам с ключами (провряем на уникальность)
+
+
+                    mainCatalog.CloseConnection();
+                    daughterCatalog.CloseConnection();
                 }
                 else
                 {
@@ -285,49 +232,14 @@ namespace SqlDBManager
             }
             
             /*
-            1. Создаем объекты соединения
-            2. Открываем соединение с БД
-            3. Валидируем БД на наименования таблиц. Если не сходится, то закрываемсоединение, выдаем ошибку. Иначе идем дальше
+            // 1. Создаем объекты соединения
+            // 2. Открываем соединения с БД
+            3. Валидируем БД на наименования таблиц. Если не сходится, то закрываем соединение, выдаем ошибку. Иначе идем дальше
             4. Выбираем набор таблиц на каждый акт действий
             5. Очищаем логи
             6. Проходим по дефолтным таблицам
             7. Проходим по таблицам с ключами (провряем на уникальность)
              */
-        }
-    }
-
-    public static class SqlExtensions
-    {
-        public static void QuickOpen(this SqlConnection conn, int timeout)
-        {
-            // We'll use a Stopwatch here for simplicity. A comparison to a stored DateTime.Now value could also be used
-            Stopwatch sw = new Stopwatch();
-            bool connectSuccess = false;
-
-            // Try to open the connection, if anything goes wrong, make sure we set connectSuccess = false
-            Thread t = new Thread(delegate ()
-            {
-                try
-                {
-                    sw.Start();
-                    conn.Open();
-                    connectSuccess = true;
-                }
-                catch { }
-            });
-
-            // Make sure it's marked as a background thread so it'll get cleaned up automatically
-            t.IsBackground = true;
-            t.Start();
-
-            // Keep trying to join the thread until we either succeed or the timeout value has been exceeded
-            while (timeout > sw.ElapsedMilliseconds)
-                if (t.Join(1))
-                    break;
-
-            // If we didn't connect successfully, throw an exception
-            if (!connectSuccess)
-                throw new Exception("Timed out while trying to connect.");
         }
     }
 }

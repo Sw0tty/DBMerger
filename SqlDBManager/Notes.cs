@@ -13,13 +13,13 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace NotesNamespace
 {
-    public static class HelpFunction
+/*    public static class HelpFunction
     {
         public static string ClearString(string str)
         {
             return str.Trim(' ');
         }
-    }
+    }*/
 
 
     public class CatalogInfo
@@ -62,6 +62,7 @@ namespace NotesNamespace
         protected string Password;
         protected string connectionString;
         protected string countTables;
+        protected List<string> logsTables;
         protected SqlConnection connection;
 
         public DBCatalog(string source, string catalog, string login, string password)
@@ -72,6 +73,12 @@ namespace NotesNamespace
             Password = password;
             connectionString = $@"Data Source={Source};Initial Catalog={Catalog};User ID={Login};Password={Password};Connect Timeout=30";
             connection = new SqlConnection(connectionString);
+            //logsTables = SelectLogTables();
+        }
+
+        public List<string> ReturnLogTables()
+        {
+            return logsTables;
         }
 
         public void OpenConnection()
@@ -86,7 +93,7 @@ namespace NotesNamespace
 
         public int SelectCountTables()
         {
-            string request = $"SELECT COUNT(TABLE_NAME) FROM {Catalog}.INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'";
+            string request = SQLRequests.CountRequest(Catalog);
             SqlCommand command = new SqlCommand(request, connection);
             SqlDataReader reader = command.ExecuteReader();
 
@@ -99,23 +106,37 @@ namespace NotesNamespace
 
         public List<string> SelectTablesNames()
         {
-            string request = $"SELECT TABLE_NAME FROM {Catalog}.INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME";
-            return ReturnListFromDB(request, connection);
+            string request = SQLRequests.AllTablesRequest(Catalog);
+            return ReturnListFromDB(request);
         }
 
         public List<string> SelectLogTables()
         {
-            string request = $"SELECT TABLE_NAME FROM {Catalog}.INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' and TABLE_NAME like '%log' ORDER BY TABLE_NAME";
-            return ReturnListFromDB(request, connection);
+            string request = SQLRequests.LogTablesRequest(Catalog);
+            return ReturnListFromDB(request);
         }
 
-        public List<string> SelectDefaultTables()
+        public List<string> SelectDefaultSkipTables()
         {
-            string request = $"SELECT name AS [Tables] FROM sys.tables WHERE OBJECTPROPERTY(object_id, 'TableHasForeignKey') = 0 and name not like '%log' and name not in ('tblPUBLICATION_CL', 'tblUNIT_FOTO_EX', 'tblUNIT_MOVIE_EX', 'tblUNIT_VIDEO_EX') or name in ('tblFEATURE', 'tblDOC_KIND_CL', 'tblSTATE_CL', 'tblSTORAGE_MEDIUM_CL', 'tblSUBJECT_CL', 'tblCLS', 'tblABSENCE_REASON_CL', 'tblQUESTION') ORDER BY [Tables];";
-            return ReturnListFromDB(request, connection);
+            // Дефолтные таблицы на скип
+            string request = SQLRequests.SkipRequest(Catalog);
+            return ReturnListFromDB(request);
         }
 
-        public List<string> SelectLinksTables()
+        public List<string> SelectDefaultProcessingTables()
+        {
+            // Дефолтные таблицы на обработку
+            string request = SQLRequests.ProcessingRequest(Catalog);
+            return ReturnListFromDB(request);
+        }
+
+/*        public List<string> SelectDefaultTables()
+        {
+            string request = $"SELECT name FROM sys.tables WHERE OBJECTPROPERTY(object_id, 'TableHasForeignKey') = 0 and name not like '%log' and name not in ('tblPUBLICATION_CL', 'tblUNIT_FOTO_EX', 'tblUNIT_MOVIE_EX', 'tblUNIT_VIDEO_EX') or name in ('tblFEATURE', 'tblDOC_KIND_CL', 'tblSTATE_CL', 'tblSTORAGE_MEDIUM_CL', 'tblSUBJECT_CL', 'tblCLS', 'tblABSENCE_REASON_CL', 'tblQUESTION') ORDER BY name;";
+            return ReturnListFromDB(request, connection);
+        }*/
+
+        public List<string> ReturnLinksTables()
         {
             List<string> linksTables = new List<string>()
             {
@@ -178,7 +199,22 @@ namespace NotesNamespace
             return linksTables;
         }
 
-        static List<string> ReturnListFromDB(string request, SqlConnection connection)
+        public string ClearTable(string tableName)
+        {
+            SqlDataAdapter adapter = new SqlDataAdapter();
+            string request = $"DELETE [{Catalog}].[dbo].[{tableName}]";
+
+            //SqlCommand command = new SqlCommand(request, connection);
+
+            adapter.DeleteCommand = new SqlCommand(request, connection);
+            string deletedCount = adapter.DeleteCommand.ExecuteNonQuery().ToString();
+
+            adapter.Dispose();
+            //command.Dispose();
+            return deletedCount;
+        }
+
+        public List<string> ReturnListFromDB(string request)
         {
             SqlCommand command = new SqlCommand(request, connection);
             SqlDataReader reader = command.ExecuteReader();
@@ -191,7 +227,6 @@ namespace NotesNamespace
 
             reader.Close();
             command.Dispose();
-
             return listTablesNames;
         }
 
@@ -215,100 +250,6 @@ namespace NotesNamespace
                 return false;
             }
             return true;
-        }
-    }
-
-    public static class SQLManager
-    {
-/*        protected string Catalog;
-
-        public SQLManager(string catalog)
-        {
-            Catalog = catalog;
-        }*/
-
-        public static bool CheckConnection(string source, string catalog, string login, string password)
-        {
-            SqlCommand command;
-            SqlDataReader reader;
-            string request, connectionString, response = "";
-
-            connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password};Connect Timeout=30";
-
-            SqlConnection cnn = new SqlConnection(connectionString);
-
-            try
-            {
-                SqlExtensions.QuickOpen(cnn, 30);
-
-                if (catalog == "")
-                {
-                    request = "SELECT name FROM sys.databases WHERE name NOT IN ('master', 'tempdb', 'model', 'msdb');";
-
-                    command = new SqlCommand(request, cnn);
-                    reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        response += Convert.ToString(reader.GetValue(0)) + " ";
-                    }
-
-                    reader.Close();
-                    command.Dispose();
-                    cnn.Close();
-                    return false;
-                }
-                cnn.Close();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        public static DialogResult CheckConnectionMessage(string source, string catalog, string login, string password)
-        {
-
-            SqlCommand command;
-            SqlDataReader reader;
-            string request, connectionString, response = "";
-
-            connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password};Connect Timeout=30";
-
-            SqlConnection cnn = new SqlConnection(connectionString);
-
-            try
-            {
-                SqlExtensions.QuickOpen(cnn, 30);
-                
-                if (catalog == "")
-                {
-                    request = "SELECT name FROM sys.databases WHERE name NOT IN ('master', 'tempdb', 'model', 'msdb');";
-
-                    command = new SqlCommand(request, cnn);
-                    reader = command.ExecuteReader();
-
-                    while (reader.Read())
-                    {
-                        response += Convert.ToString(reader.GetValue(0)) + " ";
-                    }
-
-                    reader.Close();
-                    command.Dispose();
-                    cnn.Close();
-                    return MessageBox.Show($"Соединение установлено, но не выбран каталог!\nДоступные каталоги: {response}",
-                                            "Предупреждение",
-                                            MessageBoxButtons.OK,
-                                            MessageBoxIcon.Warning);
-                }
-                cnn.Close();
-                return MessageBox.Show("Соединение установлено!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            catch
-            {
-                return MessageBox.Show("Соединение не удалось!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
     }
 }
