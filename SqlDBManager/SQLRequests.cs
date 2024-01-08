@@ -57,10 +57,21 @@ namespace SqlDBManager
             return $"INSERT INTO [{catalog}].[dbo].[{table}](some_columns) VALUES()";
         }
 
+        public static string SelectWhereRequest(string catalog, string table, string result)
+        {
+            return $"SELECT column FROM FROM [{catalog}].[dbo].[{table}] WHERE column_from_table = '{result}'";
+        }
+
         // Запрос на получение опредленных колонок из таблицы
         public static string ColumnsRequest(List<string> columns, string catalog, string table)
         {
             return $"SELECT {string.Join(", ", columns)} FROM [{catalog}].[dbo].[{table}]";
         }
+
+        public static string OneColumnRequest(string column, string catalog, string table)
+        {
+            return $"SELECT {column} FROM [{catalog}].[dbo].[{table}]";
+        }
+        
     }
 }

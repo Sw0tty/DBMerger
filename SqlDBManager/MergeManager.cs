@@ -70,8 +70,50 @@ namespace SqlDBManager
 
         static string ProcessTBLUsers(DBCatalog mainCatalog, DBCatalog daughterCatalog)
         {
+            List<string> mainListUsersLogins = mainCatalog.SelectListColumnsData("Login", "eqUsers");
+            List<string> daughterListUsersLogins = daughterCatalog.SelectListColumnsData("Login", "eqUsers");
             Dictionary<int, List<string>> mainUsersLogins = mainCatalog.SelectColumnsData(new List<string> { "Login" }, "eqUsers");
             Dictionary<int, List<string>> daughterUsersLogins = daughterCatalog.SelectColumnsData(new List<string> { "Login" }, "eqUsers");
+
+
+            /*
+             1. Берем список логинов из главной и проверяем, что все дефолтные пользователи на месте. Добавляем, если не хватает
+             DefaultValuesManager.CheckDefaultUsers(mainListUsersLogins);
+
+             2. Берем список логинов из дочерней и сравниваем с главными. Если есть уникальный, то делаем запрос на получение данных этого пользователя и добавляем его в главную
+             
+             3. Выводим в листбокс количество импортированных пользователей
+
+
+
+
+            // [DisplayName] лишнее значение, так это вычисляемая строка
+              INSERT INTO [test].[dbo].[eqUsers] SELECT [ID]
+                  ,[Login]
+                  ,[Department]
+                  ,[Deleted]
+                  ,[OwnerID]
+                  ,[CreationDateTime]
+                  ,[StatusID]
+                  ,[Email]
+                  ,[patronymic]
+                  ,[Position]
+                  ,[Phone]
+                  ,[Room_Number]
+                  ,[Description]
+                  ,[surname]
+                  ,[AccessGranted]
+                  ,[Supervisor]
+                  ,[FirstName]
+                  ,[BUILD_IN_ACCOUNT]
+
+                  ,[Pass]
+                  ,[Cookie]
+                  ,[UserTheme] FROM [main].[dbo].[eqUsers] WHERE Login = 'reader'
+
+
+             */
+
 
             //DefaultValuesManager.CheckUsers(mainUsersLogins);
 
@@ -94,21 +136,11 @@ namespace SqlDBManager
     {
         static List<string> defaultUsers = new List<string>() { "sa", "anonymous", "admin", "reader", "arch", "tech" };
 
-        public static bool CheckUsers(Dictionary<int, List<string>> users)
+        public static bool CheckDefaultUsers(List<string> usersLogins)
         {
-            List<string> catalogUsers = new List<string>();
-
-            for (int i = 1; i <= users.Count; i++)
-            {
-                foreach (string data in users[1])
-                {
-                    catalogUsers.Add(data);
-                }
-            }
-
             foreach (string userLogin in defaultUsers)
             {
-                if (catalogUsers.Contains(userLogin))
+                if (usersLogins.Contains(userLogin))
                 {
                     continue;
                 }

@@ -89,6 +89,12 @@ namespace SqlDBManager
             return ReturnListFromDB(request);
         }
 
+        public List<string> SelectListColumnsData(string column, string table)
+        {
+            string request = SQLRequests.OneColumnRequest(column, Catalog, table);
+            return ReturnListFromDB(request);
+        }
+
         public Dictionary<int, List<string>> SelectColumnsData(List<string> columns, string table)
         {
             string request = SQLRequests.ColumnsRequest(columns, Catalog, table);
