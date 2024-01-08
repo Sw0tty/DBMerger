@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace SqlDBManager
 {
@@ -88,6 +89,12 @@ namespace SqlDBManager
             return ReturnListFromDB(request);
         }
 
+        public Dictionary<int, List<string>> SelectColumnsData(List<string> columns, string table)
+        {
+            string request = SQLRequests.ColumnsRequest(columns, Catalog, table);
+            return ReturnDictFromDB(request);
+        }
+
         public List<string> ReturnLinksTables()
         {
             List<string> linksTables = new List<string>()
@@ -164,6 +171,29 @@ namespace SqlDBManager
             adapter.Dispose();
             //command.Dispose();
             return deletedCount;
+        }
+
+        public Dictionary<int, List<string>> ReturnDictFromDB(string request)
+        {
+            SqlCommand command = new SqlCommand(request, connection);
+            SqlDataReader reader = command.ExecuteReader();
+            Dictionary<int, List<string>> dictTableData = new Dictionary<int, List<string>>();
+            List<string> tableRowData = new List<string>();
+            int rowNumber = 1;
+
+            while (reader.Read())
+            {
+                for(int i = 0; i < reader.FieldCount; i++)
+                {
+                    tableRowData.Add(reader.GetString(i));
+                }
+                dictTableData.Add(rowNumber, tableRowData);
+                rowNumber++;
+            }
+
+            reader.Close();
+            command.Dispose();
+            return dictTableData;
         }
 
         public List<string> ReturnListFromDB(string request)

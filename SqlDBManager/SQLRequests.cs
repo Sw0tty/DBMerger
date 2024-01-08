@@ -50,5 +50,17 @@ namespace SqlDBManager
         {
             return $"SELECT COUNT(*) FROM [{catalog}].[dbo].[{table}]";
         }
+
+        // Запрос на добавление записи
+        public static string InsertRequest(string catalog, string table)
+        {
+            return $"INSERT INTO [{catalog}].[dbo].[{table}](some_columns) VALUES()";
+        }
+
+        // Запрос на получение опредленных колонок из таблицы
+        public static string ColumnsRequest(List<string> columns, string catalog, string table)
+        {
+            return $"SELECT {string.Join(", ", columns)} FROM [{catalog}].[dbo].[{table}]";
+        }
     }
 }

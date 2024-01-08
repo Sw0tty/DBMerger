@@ -56,12 +56,15 @@
             this.button8 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.listBox1 = new System.Windows.Forms.ListBox();
             this.button7 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.button1 = new System.Windows.Forms.Button();
             this.listBox2 = new System.Windows.Forms.ListBox();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.button10 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -374,6 +377,14 @@
             this.tabPage3.Text = "Процесс слияния";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // listBox1
+            // 
+            this.listBox1.FormattingEnabled = true;
+            this.listBox1.Location = new System.Drawing.Point(28, 30);
+            this.listBox1.Name = "listBox1";
+            this.listBox1.Size = new System.Drawing.Size(432, 446);
+            this.listBox1.TabIndex = 2;
+            // 
             // button7
             // 
             this.button7.Location = new System.Drawing.Point(346, 539);
@@ -394,6 +405,9 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.button10);
+            this.tabPage4.Controls.Add(this.label10);
+            this.tabPage4.Controls.Add(this.label9);
             this.tabPage4.Controls.Add(this.button1);
             this.tabPage4.Controls.Add(this.listBox2);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
@@ -405,7 +419,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(263, 399);
+            this.button1.Location = new System.Drawing.Point(8, 386);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(199, 66);
             this.button1.TabIndex = 0;
@@ -416,18 +430,38 @@
             // listBox2
             // 
             this.listBox2.FormattingEnabled = true;
-            this.listBox2.Location = new System.Drawing.Point(49, 25);
+            this.listBox2.Location = new System.Drawing.Point(8, 25);
             this.listBox2.Name = "listBox2";
-            this.listBox2.Size = new System.Drawing.Size(241, 355);
+            this.listBox2.Size = new System.Drawing.Size(199, 355);
             this.listBox2.TabIndex = 2;
             // 
-            // listBox1
+            // label9
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(28, 30);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(432, 446);
-            this.listBox1.TabIndex = 2;
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(313, 25);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(35, 13);
+            this.label9.TabIndex = 3;
+            this.label9.Text = "label9";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(313, 66);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(41, 13);
+            this.label10.TabIndex = 4;
+            this.label10.Text = "label10";
+            // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(302, 104);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(129, 42);
+            this.button10.TabIndex = 5;
+            this.button10.Text = "button10";
+            this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // Form1
             // 
@@ -448,6 +482,7 @@
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
             this.tabPage4.ResumeLayout(false);
+            this.tabPage4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -487,6 +522,9 @@
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.Button button10;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label label9;
     }
 }
 

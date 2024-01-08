@@ -242,5 +242,40 @@ namespace SqlDBManager
             7. Проходим по таблицам с ключами (провряем на уникальность)
              */
         }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            Dictionary<string, Func< List<string>, string>> trest = new Dictionary<string, Func<List<string>, string>> { { "eqUsers", Some } };
+            // test button
+            string value = "Nothing";
+            Dictionary<int, string> dict = new Dictionary<int, string>() { { 1, "1"}, { 2, "2" }, { 3, "3" } };
+
+            for (int i = 1; i <= dict.Count; i++)
+            {
+                MessageBox.Show(dict[i]);
+            }
+            //string element = dict.TryGetValue("5", out value);
+            string dictStr = "";
+            //dict.Remove(element);
+
+            //label9.Text = element;
+
+            foreach(string item in dict.Values)
+            {
+                if (trest.ContainsKey("eqUsers"))
+                {
+                    MessageBox.Show(trest["eqUsers"](new List<string> { "login" }));
+                }
+                dictStr += item;
+            }
+            label10.Text = dictStr;
+        }
+
+        public string Some(List<string> columns)
+        {
+            string so = "Testtstst";
+            return $"SELECT {string.Join(", ", columns)} FROM ";
+        }
+
     }
 }
