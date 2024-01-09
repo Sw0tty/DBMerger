@@ -253,7 +253,7 @@ namespace SqlDBManager
 
             while (reader.Read())
             {
-                listTablesNames.Add(reader.GetString(0));
+                listTablesNames.Add(reader.GetValue(0).ToString());
             }
 
             reader.Close();

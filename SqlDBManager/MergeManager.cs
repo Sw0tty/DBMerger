@@ -16,6 +16,7 @@ namespace SqlDBManager
     {
         public static Dictionary<string, Func<DBCatalog, DBCatalog, int>> tablesFunctions = new Dictionary<string, Func<DBCatalog, DBCatalog, int>> {
             { "eqUsers", ProcessTBLUsers },
+            { "tblACT_TYPE_CL", ProcessActTypeCL },
         };
 
         public static void ClearLogs(DBCatalog mainCatalog, ListBox listBox1)
@@ -74,11 +75,47 @@ namespace SqlDBManager
             }
         }
 
+        static void ProcessSomeTable() // Template process
+        {
+            // Наименование функции = наименование обрабатываемой таблицы
+            // Принимает оба каталога, инициализирует необходимые объекты для опознования уникальности записи.
+            // Передает все в функцию обработчик ProcessTable, которая найдет уникальные записи и запишит их в главную БД
+            // Возвращается количество импортируемых записей
+        }
+
+        static int ProcessActTypeCL(DBCatalog mainCatalog, DBCatalog daughterCatalog)
+        {
+            string columnName = "ISN_ACT_TYPE";
+            string tableName = "tblACT_TYPE_CL";
+            List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_ACT_TYPE]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]"  };
+            return ProcessTable(mainCatalog, daughterCatalog, forImportColumns, columnName, tableName);
+        }
+
+        static int ProcessTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, List<string> forImportColumns, string columnName, string tableName)
+        {
+            int countImports = 0;
+            List<string> mainListCheckData = mainCatalog.SelectListColumnsData(columnName, tableName);
+            List<string> daughterListCheckData = daughterCatalog.SelectListColumnsData(columnName, tableName);
+            List<string> uniqueValues = ValuesManager.CheckUniqueValue(mainListCheckData, daughterListCheckData);
+            
+            
+            if (uniqueValues.Count > 0)
+            {
+                foreach (string value in uniqueValues)
+                {
+                    ValuesManager.AddUniqueValue(tableName, forImportColumns, columnName, value, mainCatalog, daughterCatalog);
+                }
+                countImports += uniqueValues.Count;
+            }
+
+            return countImports;
+        }
+
         static int ProcessTBLUsers(DBCatalog mainCatalog, DBCatalog daughterCatalog)
         {
             List<string> mainListUsersLogins = mainCatalog.SelectListColumnsData("Login", "eqUsers");
             List<string> daughterListUsersLogins = daughterCatalog.SelectListColumnsData("Login", "eqUsers");
-            List<string> columns = new List<string>() { "[ID]", "[Login]", "[Department]", "[Deleted]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Email]", "[patronymic]", "[Position]", "[Phone]", "[Room_Number]", "[Description]", "[surname]", "[AccessGranted]", "[Supervisor]", "[FirstName]", "[BUILD_IN_ACCOUNT]", "[Pass]", "[Cookie]", "[UserTheme]" };
+            List<string> forImportColumns = new List<string>() { "[ID]", "[Login]", "[Department]", "[Deleted]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Email]", "[patronymic]", "[Position]", "[Phone]", "[Room_Number]", "[Description]", "[surname]", "[AccessGranted]", "[Supervisor]", "[FirstName]", "[BUILD_IN_ACCOUNT]", "[Pass]", "[Cookie]", "[UserTheme]" };
             List<string> uniqueValues = ValuesManager.CheckUniqueValue(mainListUsersLogins, daughterListUsersLogins);
             int countImports = 0;
 
@@ -90,7 +127,7 @@ namespace SqlDBManager
             {
                 foreach (string value in uniqueValues)
                 {
-                    ValuesManager.AddUniqueValue("eqUsers", columns, "Login", value, mainCatalog, daughterCatalog);
+                    ValuesManager.AddUniqueValue("eqUsers", forImportColumns, "Login", value, mainCatalog, daughterCatalog);
                 }
                 countImports += uniqueValues.Count;
             }

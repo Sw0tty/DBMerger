@@ -58,10 +58,10 @@ namespace SqlDBManager
         }
 
         // Запрос на добавление записи
-        public static string InsertRequest(string catalog, string table)
+       /* public static string InsertRequest(string catalog, string table)
         {
             return $"INSERT INTO [{catalog}].[dbo].[{table}](some_columns) VALUES()";
-        }
+        }*/
 
         public static string InsertFromRequest(string inCatalog, string inTable, List<string> columns, string fromCatalog, string fromTable, string filterColumn, string filterValue)
         {
