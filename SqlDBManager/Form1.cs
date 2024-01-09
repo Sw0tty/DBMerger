@@ -60,7 +60,7 @@ namespace SqlDBManager
             SqlCommand command;
             SqlDataReader reader;
             String source,
-                   catalog = "main",
+                   catalog = "test_db",
                    login,
                    password,
                    request,
@@ -75,18 +75,18 @@ namespace SqlDBManager
 
             //connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password}";
 
-            connectionString = @"Data Source=(local)\SQLEXPRESS2022;Initial Catalog=main;User ID=sa;Password=123";
+            connectionString = @"Data Source=(local)\SQLEXPRESS;Initial Catalog=test_db;User ID=sa;Password=123";
 
-            connectionString2 = @"Data Source=(local)\SQLEXPRESS2022;Initial Catalog=test;User ID=sa;Password=123";
+            //connectionString2 = @"Data Source=(local)\SQLEXPRESS;Initial Catalog=test;User ID=sa;Password=123";
 
-            request = $"SELECT TABLE_NAME FROM {catalog}.INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' order by TABLE_NAME";
+            request = $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' order by TABLE_NAME";
 
 
             cnn = new SqlConnection(connectionString);
-            cnn2 = new SqlConnection(connectionString2);
+            //cnn2 = new SqlConnection(connectionString2);
             cnn.Open();
 
-            cnn2.Open();
+            //cnn2.Open();
 
             command = new SqlCommand(request, cnn);
             reader = command.ExecuteReader();
@@ -109,6 +109,7 @@ namespace SqlDBManager
 
                 if (reader.Read())
                 {
+                    //listView1.Items.Add("In " + db_tables[i] + " table: " + Convert.ToString(reader.GetValue(0)) + " values.");
                     listBox2.Items.Add("In " + db_tables[i] + " table: " + Convert.ToString(reader.GetValue(0)) + " values.");
                 }
 
@@ -273,8 +274,10 @@ namespace SqlDBManager
 
         public string Some(List<string> columns)
         {
+            List<string> strings = new List<string>() { "[ID]", "[Login]", "[Department]", "[Deleted]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Email]", "[patronymic]", "[Position]", "[Phone]", "[Room_Number]", "[Description]", "[surname]", "[AccessGranted]", "[Supervisor]", "[FirstName]", "[BUILD_IN_ACCOUNT]", "[Pass]", "[Cookie]", "[UserTheme]" };
+
             string so = "Testtstst";
-            return $"SELECT {string.Join(", ", columns)} FROM ";
+            return $"SELECT {string.Join(", ", strings).Replace('\"', '\'')} FROM ";
         }
 
     }

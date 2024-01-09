@@ -37,6 +37,11 @@ namespace SqlDBManager
             connection.Close();
         }
 
+        public string ReturnCatalog()
+        {
+            return Catalog;
+        }
+
         public int SelectCountTables()
         {
             string request = SQLRequests.CountTablesRequest(Catalog);
@@ -66,42 +71,42 @@ namespace SqlDBManager
         public List<string> SelectTablesNames()
         {
             string request = SQLRequests.AllTablesRequest(Catalog);
-            return ReturnListFromDB(request);
+            return ReturnListFromDB(request, connection);
         }
 
         public List<string> SelectLogTables()
         {
             string request = SQLRequests.LogTablesRequest(Catalog);
-            return ReturnListFromDB(request);
+            return ReturnListFromDB(request, connection);
         }
 
         public List<string> SelectDefaultSkipTables()
         {
             // Дефолтные таблицы на скип
             string request = SQLRequests.SkipRequest(Catalog);
-            return ReturnListFromDB(request);
+            return ReturnListFromDB(request, connection);
         }
 
         public List<string> SelectDefaultProcessingTables()
         {
             // Дефолтные таблицы на обработку
             string request = SQLRequests.ProcessingRequest(Catalog);
-            return ReturnListFromDB(request);
+            return ReturnListFromDB(request, connection);
         }
 
         public List<string> SelectListColumnsData(string column, string table)
         {
             string request = SQLRequests.OneColumnRequest(column, Catalog, table);
-            return ReturnListFromDB(request);
+            return ReturnListFromDB(request, connection);
         }
 
         public Dictionary<int, List<string>> SelectColumnsData(List<string> columns, string table)
         {
             string request = SQLRequests.ColumnsRequest(columns, Catalog, table);
-            return ReturnDictFromDB(request);
+            return ReturnDictFromDB(request, connection);
         }
 
-        public List<string> ReturnLinksTables()
+        public List<string> SelectLinksTables()
         {
             List<string> linksTables = new List<string>()
             {
@@ -179,7 +184,45 @@ namespace SqlDBManager
             return deletedCount;
         }
 
-        public Dictionary<int, List<string>> ReturnDictFromDB(string request)
+        public string UpdateID(string table, string column, string value)
+        {
+            string request = SQLRequests.UpdateIDRequest(Catalog, table, column, value);
+            return request;
+        }
+
+/*        public string InsertUniqueValue()
+        {
+            string request = SQLRequests.InsertRequest(Catalog);
+            return request;
+        }*/
+
+        public string InsertFromUniqueValue(string inTable, List<string> columns, string fromCatalog, string fromTable, string filterColumn, string filterValue)
+        {
+            string request = SQLRequests.InsertFromRequest(Catalog, inTable, columns, fromCatalog, fromTable, filterColumn, filterValue);
+            return request;
+        }
+
+        static void InsertAdapter(string request, SqlConnection connection)
+        {
+            SqlDataAdapter adapter = new SqlDataAdapter();
+
+            adapter.InsertCommand = new SqlCommand(request, connection);
+            adapter.InsertCommand.ExecuteNonQuery();
+
+            adapter.Dispose();
+        }
+
+        static void UpdateAdapter(string request, SqlConnection connection)
+        {
+            SqlDataAdapter adapter = new SqlDataAdapter();
+
+            adapter.UpdateCommand = new SqlCommand(request, connection);
+            adapter.UpdateCommand.ExecuteNonQuery();
+
+            adapter.Dispose();
+        }
+
+        static Dictionary<int, List<string>> ReturnDictFromDB(string request, SqlConnection connection)
         {
             SqlCommand command = new SqlCommand(request, connection);
             SqlDataReader reader = command.ExecuteReader();
@@ -202,7 +245,7 @@ namespace SqlDBManager
             return dictTableData;
         }
 
-        public List<string> ReturnListFromDB(string request)
+        static List<string> ReturnListFromDB(string request, SqlConnection connection)
         {
             SqlCommand command = new SqlCommand(request, connection);
             SqlDataReader reader = command.ExecuteReader();

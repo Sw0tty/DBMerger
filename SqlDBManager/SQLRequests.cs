@@ -24,19 +24,19 @@ namespace SqlDBManager
         // Запрос количества таблиц в каталоге
         public static string CountTablesRequest(string catalog)
         {
-            return $"SELECT COUNT(TABLE_NAME) FROM {catalog}.INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'";
+            return $"SELECT COUNT(TABLE_NAME) FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'";
         }
 
         // Запрос наименований всех таблиц
         public static string AllTablesRequest(string catalog)
         {
-            return $"SELECT TABLE_NAME FROM {catalog}.INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME";
+            return $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME";
         }
 
         // Запрос таблицы содержащие логи
         public static string LogTablesRequest(string catalog)
         {
-            return $"SELECT TABLE_NAME FROM {catalog}.INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' and TABLE_NAME like '%log' ORDER BY TABLE_NAME";
+            return $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' and TABLE_NAME like '%log' ORDER BY TABLE_NAME";
         }
 
         // Запрос на полную очистку таблицы
@@ -51,10 +51,21 @@ namespace SqlDBManager
             return $"SELECT COUNT(*) FROM [{catalog}].[dbo].[{table}]";
         }
 
+        // Запрос на обновление ID
+        public static string UpdateIDRequest(string catalog, string table, string filterColumn, string filterValue)
+        {
+            return $"UPDATE [{catalog}].[dbo].[{table}] SET ID = NEWID() WHERE {filterColumn} = '{filterValue}'";
+        }
+
         // Запрос на добавление записи
         public static string InsertRequest(string catalog, string table)
         {
             return $"INSERT INTO [{catalog}].[dbo].[{table}](some_columns) VALUES()";
+        }
+
+        public static string InsertFromRequest(string inCatalog, string inTable, List<string> columns, string fromCatalog, string fromTable, string filterColumn, string filterValue)
+        {
+            return $"INSERT INTO [{inCatalog}].[dbo].[{inTable}] SELECT {string.Join(", ", columns).Replace('\"', '\'')} FROM [{fromCatalog}].[dbo].[{fromTable}] WHERE {filterColumn} = '{filterValue}'";
         }
 
         public static string SelectWhereRequest(string catalog, string table, string result)
