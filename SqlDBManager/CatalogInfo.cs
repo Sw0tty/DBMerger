@@ -102,8 +102,14 @@ namespace SqlDBManager
 
         public Dictionary<int, List<string>> SelectColumnsData(List<string> columns, string table)
         {
-            string request = SQLRequests.ColumnsRequest(columns, Catalog, table);
+            string request = SQLRequests.ColumnsDataRequest(columns, Catalog, table);
             return ReturnDictFromDB(request, connection);
+        }
+
+        public List<string> SelectColumnsNames(string tableName)
+        {
+            string request = SQLRequests.ColumnsNamesRequest(Catalog, tableName);
+            return ReturnListFromDB(request, connection);
         }
 
         public List<string> SelectLinksTables()
@@ -209,7 +215,6 @@ namespace SqlDBManager
 
             adapter.InsertCommand = new SqlCommand(request, connection);
             adapter.InsertCommand.ExecuteNonQuery();
-
             adapter.Dispose();
         }
 
@@ -219,7 +224,6 @@ namespace SqlDBManager
 
             adapter.UpdateCommand = new SqlCommand(request, connection);
             adapter.UpdateCommand.ExecuteNonQuery();
-
             adapter.Dispose();
         }
 

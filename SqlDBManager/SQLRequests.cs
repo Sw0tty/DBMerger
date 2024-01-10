@@ -74,9 +74,15 @@ namespace SqlDBManager
         }
 
         // Запрос на получение опредленных колонок из таблицы
-        public static string ColumnsRequest(List<string> columns, string catalog, string table)
+        public static string ColumnsDataRequest(List<string> columns, string catalog, string tableName)
         {
-            return $"SELECT {string.Join(", ", columns)} FROM [{catalog}].[dbo].[{table}]";
+            return $"SELECT {string.Join(", ", columns)} FROM [{catalog}].[dbo].[{tableName}]";
+        }
+
+        // Получение наименований столбцов переданной таблицы
+        public static string ColumnsNamesRequest(string catalog, string tableName)
+        {
+            return $"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG = '{catalog}' and TABLE_SCHEMA = 'dbo' and TABLE_NAME = '{tableName}'";
         }
 
         public static string OneColumnRequest(string column, string catalog, string table)

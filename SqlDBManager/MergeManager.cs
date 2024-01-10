@@ -41,7 +41,7 @@ namespace SqlDBManager
             // { "tblService", ProcessService },
             { "tblSTATE_CL", ProcessSTATE_CL },
             { "tblSTORAGE_MEDIUM_CL", ProcessSTORAGE_MEDIUM_CL },
-            { "tblSUBJECT_CL", ProcessSUBJECT_CL },
+            { "tblSUBJECT_CL", ProcessSUBJECT_CL },  // Может быть, что ISN_HIGH быть больше, чем основной ISN_SUBJECT (добавить новый обработчик отдельный. Или выбор вызова функции). В данных случаях, необходимо отложить импорт записи, пока не будет импортирована запись с указанным ID. Или найти по данному ID и сразу испортировать
             { "tblTREE_SUPPORT", ProcessTREE_SUPPORT },
             { "tblWORK_CL", ProcessWORK_CL },
             { "rptFUND_PAPER", ProcessFUND_PAPER },
@@ -771,8 +771,16 @@ namespace SqlDBManager
             List<string> mainListCheckData = mainCatalog.SelectListColumnsData(columnName, tableName);
             List<string> daughterListCheckData = daughterCatalog.SelectListColumnsData(columnName, tableName);
             List<string> uniqueValues = ValuesManager.CheckUniqueValue(mainListCheckData, daughterListCheckData);
-            
-            
+
+            // ---
+            /*List<string> forImportColumns = mainCatalog.SelectColumnsNames(tableName);
+
+            for (int i = 0; i < forImportColumns.Count; i++)
+            {
+                forImportColumns[i] = "[" + forImportColumns[i] + "]";
+            }*/
+            // ---
+
             if (uniqueValues.Count > 0)
             {
                 foreach (string value in uniqueValues)
@@ -891,10 +899,12 @@ namespace SqlDBManager
 
         }
 
-        public static void AddUniqueValue(string table, List<string> columns, string filterColumn, string filterValue, DBCatalog maincatalog, DBCatalog daughterCatalog)
+        public static void AddUniqueValue(string tableName, List<string> forImportColumns, string filterColumn, string filterValue, DBCatalog maincatalog, DBCatalog daughterCatalog)
         {
-            daughterCatalog.UpdateID(table, filterColumn, filterValue);
-            maincatalog.InsertFromUniqueValue(table, columns, daughterCatalog.ReturnCatalog(), table, filterColumn, filterValue);
+            
+
+            daughterCatalog.UpdateID(tableName, filterColumn, filterValue);
+            maincatalog.InsertFromUniqueValue(tableName, forImportColumns, daughterCatalog.ReturnCatalog(), tableName, filterColumn, filterValue);
         }
 
     }
