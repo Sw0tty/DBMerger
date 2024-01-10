@@ -212,9 +212,9 @@ namespace SqlDBManager
 
                     //    6. Проходим по дефолтным таблицам
                     MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, listBox1);
-                    
-                    //    7. Проходим по таблицам с ключами (провряем на уникальность)
 
+                    //    7. Проходим по таблицам с ключами (провряем на уникальность)
+                    MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, listBox1);
 
                     mainCatalog.CloseConnection();
                     daughterCatalog.CloseConnection();

@@ -196,10 +196,11 @@ namespace SqlDBManager
             return request;
         }*/
 
-        public string InsertFromUniqueValue(string inTable, List<string> columns, string fromCatalog, string fromTable, string filterColumn, string filterValue)
+        public void InsertFromUniqueValue(string inTable, List<string> columns, string fromCatalog, string fromTable, string filterColumn, string filterValue)
         {
             string request = SQLRequests.InsertFromRequest(Catalog, inTable, columns, fromCatalog, fromTable, filterColumn, filterValue);
-            return request;
+            InsertAdapter(request, connection);
+            //return request;
         }
 
         static void InsertAdapter(string request, SqlConnection connection)

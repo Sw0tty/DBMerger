@@ -27,3 +27,17 @@ E:\SharpProjects\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.exe.manifest
 E:\SharpProjects\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.application
 E:\SharpProjects\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.exe
 E:\SharpProjects\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.pdb
+C:\CharpProj\DBMerger\SqlDBManager\bin\Debug\SqlDBManager.exe.config
+C:\CharpProj\DBMerger\SqlDBManager\bin\Debug\SqlDBManager.exe.manifest
+C:\CharpProj\DBMerger\SqlDBManager\bin\Debug\SqlDBManager.application
+C:\CharpProj\DBMerger\SqlDBManager\bin\Debug\SqlDBManager.exe
+C:\CharpProj\DBMerger\SqlDBManager\bin\Debug\SqlDBManager.pdb
+C:\CharpProj\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.csproj.AssemblyReference.cache
+C:\CharpProj\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.Form1.resources
+C:\CharpProj\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.Properties.Resources.resources
+C:\CharpProj\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.csproj.GenerateResource.cache
+C:\CharpProj\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.csproj.CoreCompileInputs.cache
+C:\CharpProj\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.exe.manifest
+C:\CharpProj\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.application
+C:\CharpProj\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.exe
+C:\CharpProj\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.pdb

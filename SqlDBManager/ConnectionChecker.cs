@@ -48,7 +48,7 @@ namespace SqlDBManager
 
             try
             {
-                SqlExtensions.QuickOpen(cnn, 30);
+                SqlExtensions.QuickOpen(cnn, 40);
 
                 if (catalog == "")
                 {
