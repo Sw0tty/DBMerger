@@ -18,9 +18,12 @@ namespace SqlDBManager
             string connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password};Connect Timeout=30";
             SqlConnection cnn = new SqlConnection(connectionString);
 
+            //Thread.Sleep(1000);
+
             try
             {
-                SqlExtensions.QuickOpen(cnn, 30);
+                //SqlExtensions.QuickOpen(cnn, 60);
+                cnn.Open();
 
                 if (catalog == "")
                 {
@@ -48,7 +51,8 @@ namespace SqlDBManager
 
             try
             {
-                SqlExtensions.QuickOpen(cnn, 40);
+                cnn.Open();
+                //SqlExtensions.QuickOpen(cnn, 60);
 
                 if (catalog == "")
                 {

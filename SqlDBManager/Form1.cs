@@ -197,40 +197,45 @@ namespace SqlDBManager
             mainCatalog.OpenConnection();
             daughterCatalog.OpenConnection();
             tabControl1.SelectedIndex++;
-            listBox1.Items.Add("Валидируем каталоги на возможность слияния...");
+            //Thread.Sleep(1000);
+            //listBox1.Items.Add("Валидируем каталоги на возможность слияния...");
+            textBoxStatus.AppendText("Валидируем каталоги на возможность слияния..." + "\r\n");
 
             if (mainCatalog.ValidateCountTables(daughterCatalog.SelectCountTables()))
             {
                 if (mainCatalog.ValidateNamesTables(daughterCatalog.SelectTablesNames()))
                 {
-                    listBox1.Items.Add("Валидация прошла успешно!");
+                    //listBox1.Items.Add("Валидация прошла успешно!");
+                    textBoxStatus.AppendText("Валидация прошла успешно!" + "\r\n");
 
                     //    4. Выбираем набор таблиц на каждый акт действий (DONE)
 
                     //    5. Очищаем логи
-                    MergeManager.ClearLogs(mainCatalog, listBox1);
+                    MergeManager.ClearLogs(mainCatalog, textBoxStatus);
 
                     //    6. Проходим по дефолтным таблицам
-                    MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, listBox1);
+                    MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, textBoxStatus);
 
                     //    7. Проходим по таблицам с ключами (провряем на уникальность)
-                    MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, listBox1);
+                    MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, textBoxStatus);
 
                     mainCatalog.CloseConnection();
                     daughterCatalog.CloseConnection();
                 }
                 else
                 {
-                    MessageBox.Show("Ошибка валидации!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    listBox1.Items.Add("Наименования таблиц не совпадает!"); // В функции предусмотреть возвращение ошибочной таблицы
+                    //listBox1.Items.Add("Наименования таблиц не совпадает!"); // В функции предусмотреть возвращение ошибочной таблицы
+                    textBoxStatus.AppendText("Наименования таблиц не совпадает!" + "\r\n");
                     // Передать в listBox, что какая-то из таблиц не найдена, отменить слияние
+                    MessageBox.Show("Ошибка валидации!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
             {
-                MessageBox.Show("Ошибка валидации!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                listBox1.Items.Add("Количество таблиц в заданных каталогах не равно!");
+                //listBox1.Items.Add("Количество таблиц в заданных каталогах не равно!");
+                textBoxStatus.AppendText("Количество таблиц в заданных каталогах не равно!" + "\r\n");
                 // Передать в listBox, что количество таблиц не равно, отменить слияние
+                MessageBox.Show("Ошибка валидации!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             
             /*

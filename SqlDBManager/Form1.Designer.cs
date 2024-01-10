@@ -60,12 +60,13 @@
             this.button7 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.listView1 = new System.Windows.Forms.ListView();
             this.button10 = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.listBox2 = new System.Windows.Forms.ListBox();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -368,6 +369,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.textBoxStatus);
             this.tabPage3.Controls.Add(this.listBox1);
             this.tabPage3.Controls.Add(this.button7);
             this.tabPage3.Controls.Add(this.button6);
@@ -381,9 +383,9 @@
             // listBox1
             // 
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(28, 30);
+            this.listBox1.Location = new System.Drawing.Point(9, 490);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(432, 446);
+            this.listBox1.Size = new System.Drawing.Size(452, 43);
             this.listBox1.TabIndex = 2;
             // 
             // button7
@@ -418,6 +420,16 @@
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Tests";
             this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // listView1
+            // 
+            this.listView1.HideSelection = false;
+            this.listView1.Location = new System.Drawing.Point(229, 163);
+            this.listView1.Name = "listView1";
+            this.listView1.Size = new System.Drawing.Size(193, 289);
+            this.listView1.TabIndex = 6;
+            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listView1.View = System.Windows.Forms.View.List;
             // 
             // button10
             // 
@@ -465,15 +477,13 @@
             this.listBox2.Size = new System.Drawing.Size(199, 355);
             this.listBox2.TabIndex = 2;
             // 
-            // listView1
+            // textBoxStatus
             // 
-            this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(229, 163);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(193, 289);
-            this.listView1.TabIndex = 6;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.List;
+            this.textBoxStatus.Location = new System.Drawing.Point(19, 18);
+            this.textBoxStatus.Multiline = true;
+            this.textBoxStatus.Name = "textBoxStatus";
+            this.textBoxStatus.Size = new System.Drawing.Size(452, 466);
+            this.textBoxStatus.TabIndex = 3;
             // 
             // Form1
             // 
@@ -493,6 +503,7 @@
             this.groupBox1.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage3.ResumeLayout(false);
+            this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
             this.ResumeLayout(false);
@@ -538,6 +549,7 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.TextBox textBoxStatus;
     }
 }
 
