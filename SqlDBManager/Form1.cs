@@ -16,11 +16,18 @@ using NotesNamespace;
 
 namespace SqlDBManager
 {
+    public static class WorkerConsts
+    {
+        public const int MIDDLE_STATUS_CODE = 999;
+    }
+
     public partial class Form1 : Form
     {
         public Form1()
         {
             InitializeComponent();
+            backgroundWorker1.WorkerReportsProgress = true;
+            backgroundWorker1.WorkerSupportsCancellation = true;
 
             label1.Text = "Сервер:";
             label2.Text = "Наименование базы данных:";
@@ -46,6 +53,11 @@ namespace SqlDBManager
             }
         }
 
+        /*public static class WorkerConsts
+        {
+            public const int MIDDLE_STATUS_CODE = 999;
+        }*/
+
         // Логика первой вкладки формы
         private void button1_Click(object sender, EventArgs e)
         {
@@ -55,7 +67,7 @@ namespace SqlDBManager
             /*
              Проверяет соединения с основной БД
              */
-            
+
             SqlConnection cnn, cnn2;
             SqlCommand command;
             SqlDataReader reader;
@@ -189,55 +201,14 @@ namespace SqlDBManager
 
         public void button8_Click(object sender, EventArgs e)
         {
-            // 1. Создаем объекты соединения
-            DBCatalog mainCatalog = new DBCatalog(comboBox1.Text.Trim(' '), textBox1.Text.Trim(' '), textBox2.Text.Trim(' '), textBox3.Text.Trim(' '));
-            DBCatalog daughterCatalog = new DBCatalog(comboBox2.Text.Trim(' '), textBox4.Text.Trim(' '), textBox5.Text.Trim(' '), textBox6.Text.Trim(' '));
-
-            // 2. Открываем соединения с БД
-            mainCatalog.OpenConnection();
-            daughterCatalog.OpenConnection();
-            tabControl1.SelectedIndex++;
-            //Thread.Sleep(1000);
-            //listBox1.Items.Add("Валидируем каталоги на возможность слияния...");
-            textBoxStatus.AppendText("Валидируем каталоги на возможность слияния..." + "\r\n");
-
-            if (mainCatalog.ValidateCountTables(daughterCatalog.SelectCountTables()))
+            // Вызов backGroundWorker
+            if (!backgroundWorker1.IsBusy)
             {
-                if (mainCatalog.ValidateNamesTables(daughterCatalog.SelectTablesNames()))
-                {
-                    //listBox1.Items.Add("Валидация прошла успешно!");
-                    textBoxStatus.AppendText("Валидация прошла успешно!" + "\r\n");
-
-                    //    4. Выбираем набор таблиц на каждый акт действий (DONE)
-
-                    //    5. Очищаем логи
-                    MergeManager.ClearLogs(mainCatalog, textBoxStatus);
-
-                    //    6. Проходим по дефолтным таблицам
-                    MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, textBoxStatus);
-
-                    //    7. Проходим по таблицам с ключами (провряем на уникальность)
-                    MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, textBoxStatus);
-
-                    mainCatalog.CloseConnection();
-                    daughterCatalog.CloseConnection();
-                }
-                else
-                {
-                    //listBox1.Items.Add("Наименования таблиц не совпадает!"); // В функции предусмотреть возвращение ошибочной таблицы
-                    textBoxStatus.AppendText("Наименования таблиц не совпадает!" + "\r\n");
-                    // Передать в listBox, что какая-то из таблиц не найдена, отменить слияние
-                    MessageBox.Show("Ошибка валидации!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            else
-            {
-                //listBox1.Items.Add("Количество таблиц в заданных каталогах не равно!");
-                textBoxStatus.AppendText("Количество таблиц в заданных каталогах не равно!" + "\r\n");
-                // Передать в listBox, что количество таблиц не равно, отменить слияние
-                MessageBox.Show("Ошибка валидации!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                // Start the asynchronous operation.
+                backgroundWorker1.RunWorkerAsync();
             }
             
+
             /*
             // 1. Создаем объекты соединения
             // 2. Открываем соединения с БД
@@ -247,6 +218,126 @@ namespace SqlDBManager
             6. Проходим по дефолтным таблицам
             7. Проходим по таблицам с ключами (провряем на уникальность)
              */
+        }
+
+
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = sender as BackgroundWorker;
+
+            string text1 = "";
+            string text2 = "";
+
+            Invoke(new Action(() => text1 = comboBox1.Text.Trim(' ')));
+            Invoke(new Action(() => text2 = comboBox1.Text.Trim(' ')));
+
+            // 1. Создаем объекты соединения
+            DBCatalog mainCatalog = new DBCatalog(text1, textBox1.Text.Trim(' '), textBox2.Text.Trim(' '), textBox3.Text.Trim(' '));
+            DBCatalog daughterCatalog = new DBCatalog(text2, textBox4.Text.Trim(' '), textBox5.Text.Trim(' '), textBox6.Text.Trim(' '));
+
+            // 2. Открываем соединения с БД
+            mainCatalog.OpenConnection();
+            daughterCatalog.OpenConnection();
+            
+
+            Invoke(new Action(() => tabControl1.SelectedIndex++));
+
+            for (int i = 0; i < 5; i++)
+            {
+                Thread.Sleep(1000);
+            }
+            //Thread.Sleep(1000);
+            //listBox1.Items.Add("Валидируем каталоги на возможность слияния...");
+
+            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидируем каталоги на возможность слияния...");
+            
+
+            if (mainCatalog.ValidateCountTables(daughterCatalog.SelectCountTables()))
+            {
+                if (mainCatalog.ValidateNamesTables(daughterCatalog.SelectTablesNames()))
+                {
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидация прошла успешно!");
+
+                    //    4. Выбираем набор таблиц на каждый акт действий (DONE)
+
+                    //    5. Очищаем логи
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Очистка логов ---");
+                    MergeManager.ClearLogs(mainCatalog, worker);
+
+                    //    6. Проходим по дефолтным таблицам
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка дефолтных таблиц ---");
+                    MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, worker);
+
+                    //    7. Проходим по таблицам с ключами (провряем на уникальность)
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка таблиц с внешними ключами ---");
+                    MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, worker);
+
+
+
+                    e.Result = "Слияние успешно завершено!";
+                }
+                else
+                {
+                    //listBox1.Items.Add("Наименования таблиц не совпадает!"); // В функции предусмотреть возвращение ошибочной таблицы
+                    //textBoxStatus.AppendText("Наименования таблиц не совпадает!" + "\r\n");
+                    e.Result = "Наименования таблиц не совпадает!";
+                    // Передать в listBox, что какая-то из таблиц не найдена, отменить слияние
+
+                    MessageBox.Show("Ошибка валидации!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            else
+            {
+                //listBox1.Items.Add("Количество таблиц в заданных каталогах не равно!");
+                //textBoxStatus.AppendText("Количество таблиц в заданных каталогах не равно!" + "\r\n");
+                e.Result = "Количество таблиц в заданных каталогах не равно!";
+                // Передать в listBox, что количество таблиц не равно, отменить слияние
+
+                MessageBox.Show("Ошибка валидации!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            mainCatalog.CloseConnection();
+            daughterCatalog.CloseConnection();
+        }
+
+        static public void CloseConnections(DBCatalog mainCatalog, DBCatalog daughterCatalog)
+        {
+            mainCatalog.CloseConnection();
+            daughterCatalog.CloseConnection();
+        }
+
+        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            if (e.ProgressPercentage == WorkerConsts.MIDDLE_STATUS_CODE)
+            {
+                textBoxStatus.AppendText(e.UserState.ToString() + "\r\n");
+            }
+            
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                MessageBox.Show(e.Error.Message);
+            }
+/*            else if (e.Cancelled)
+            {
+                // Next, handle the case where the user canceled 
+                // the operation.
+                // Note that due to a race condition in 
+                // the DoWork event handler, the Cancelled
+                // flag may not have been set, even though
+                // CancelAsync was called.
+                resultLabel.Text = "Canceled";
+            }*/
+            else
+            {
+                // Finally, handle the case where the operation 
+                // succeeded.
+                textBoxStatus.AppendText(e.Result.ToString() + "\r\n");
+            }
         }
 
         private void button10_Click(object sender, EventArgs e)

@@ -76,9 +76,7 @@
   <ItemGroup>
     <Compile Include="CatalogInfo.cs" />
     <Compile Include="ConnectionChecker.cs" />
-    <Compile Include="Form1.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Form1.cs" />
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>

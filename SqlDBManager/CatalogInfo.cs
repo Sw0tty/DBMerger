@@ -109,7 +109,7 @@ namespace SqlDBManager
         public List<string> SelectColumnsNames(string tableName)
         {
             string request = SQLRequests.ColumnsNamesRequest(Catalog, tableName);
-            return ReturnListFromDB(request, connection);
+            return ReturnListFromDB(request, connection, true);
         }
 
         public List<string> SelectLinksTables()
@@ -190,10 +190,11 @@ namespace SqlDBManager
             return deletedCount;
         }
 
-        public string UpdateID(string table, string column, string value)
+        public void UpdateID(string table, string column, string value)
         {
             string request = SQLRequests.UpdateIDRequest(Catalog, table, column, value);
-            return request;
+            UpdateAdapter(request, connection);
+            //return request;
         }
 
 /*        public string InsertUniqueValue()
@@ -250,16 +251,27 @@ namespace SqlDBManager
             return dictTableData;
         }
 
-        static List<string> ReturnListFromDB(string request, SqlConnection connection)
+        static List<string> ReturnListFromDB(string request, SqlConnection connection, bool forSelect = false)
         {
             SqlCommand command = new SqlCommand(request, connection);
             SqlDataReader reader = command.ExecuteReader();
             List<string> listTablesNames = new List<string>();
 
-            while (reader.Read())
+            if (forSelect)
             {
-                listTablesNames.Add(reader.GetValue(0).ToString());
+                while (reader.Read())
+                {
+                    listTablesNames.Add("[" + reader.GetValue(0).ToString() + "]");
+                }
             }
+            else
+            {
+                while (reader.Read())
+                {
+                    listTablesNames.Add(reader.GetValue(0).ToString());
+                }
+            }
+            
 
             reader.Close();
             command.Dispose();
