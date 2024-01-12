@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
 namespace SqlDBManager
 {
     public class DBCatalog
@@ -55,6 +56,9 @@ namespace SqlDBManager
             return count;
         }
 
+        /// <summary>
+        /// Возвращает количество записей в переданной таблице
+        /// </summary>
         public int SelectCountRowsTable(string table)
         {
             string request = SQLRequests.CountRowsRequest(Catalog, table);
@@ -94,10 +98,22 @@ namespace SqlDBManager
             return ReturnListFromDB(request, connection);
         }
 
-        public List<string> SelectListColumnsData(string column, string table)
+        /// <summary>
+        /// Возвращает список значений по одной колонке
+        /// </summary>
+        public List<string> SelectListColumnsData(string column, string tableName)
         {
-            string request = SQLRequests.OneColumnRequest(column, Catalog, table);
+            string request = SQLRequests.OneColumnRequest(column, Catalog, tableName);
             return ReturnListFromDB(request, connection);
+        }
+
+        /// <summary>
+        /// Возвращает список полученных значений по фильтру
+        /// </summary>
+        public List<string> SelectRecordsWhere(List<string> columns, string tableName, string filterColumn, string filterData)
+        {
+            string request = SQLRequests.SelectWhereRequest(columns, Catalog, tableName, filterColumn, filterData);
+            return ReturnListFromDB(request, connection, itsRow: true);
         }
 
         public Dictionary<int, List<string>> SelectColumnsData(List<string> columns, string table)
@@ -106,10 +122,13 @@ namespace SqlDBManager
             return ReturnDictFromDB(request, connection);
         }
 
+        /// <summary>
+        /// Возвращает список наименований столбцов переданной таблицы
+        /// </summary>
         public List<string> SelectColumnsNames(string tableName)
         {
             string request = SQLRequests.ColumnsNamesRequest(Catalog, tableName);
-            return ReturnListFromDB(request, connection, true);
+            return ReturnListFromDB(request, connection, forSelect: true);
         }
 
         public List<string> SelectLinksTables()
@@ -197,11 +216,22 @@ namespace SqlDBManager
             //return request;
         }
 
-/*        public string InsertUniqueValue()
+        /*        public string InsertUniqueValue()
+                {
+                    string request = SQLRequests.InsertRequest(Catalog);
+                    return request;
+                }*/
+
+        /// <summary>
+        /// Вставляет переданные данные в указанную таблицу (ID формируется средствами SQL)
+        /// </summary>
+        public void InsertValue(string tableName, Dictionary<string, string> data)
         {
-            string request = SQLRequests.InsertRequest(Catalog);
-            return request;
-        }*/
+            string request = SQLRequests.InsertDictValueRequst(Catalog, tableName, data);
+            MessageBox.Show(request);
+
+            InsertAdapter(request, connection);
+        }
 
         public void InsertFromUniqueValue(string inTable, List<string> columns, string fromCatalog, string fromTable, string filterColumn, string filterValue)
         {
@@ -228,13 +258,16 @@ namespace SqlDBManager
             adapter.Dispose();
         }
 
+        /// <summary>
+        /// Возвращает словарь значений таблицы
+        /// </summary>
         static Dictionary<int, List<string>> ReturnDictFromDB(string request, SqlConnection connection)
         {
             SqlCommand command = new SqlCommand(request, connection);
             SqlDataReader reader = command.ExecuteReader();
             Dictionary<int, List<string>> dictTableData = new Dictionary<int, List<string>>();
             List<string> tableRowData = new List<string>();
-            int rowNumber = 1;
+            int rowNumber = 0;
 
             while (reader.Read())
             {
@@ -251,7 +284,7 @@ namespace SqlDBManager
             return dictTableData;
         }
 
-        static List<string> ReturnListFromDB(string request, SqlConnection connection, bool forSelect = false)
+        static List<string> ReturnListFromDB(string request, SqlConnection connection, bool forSelect = false, bool itsRow = false)
         {
             SqlCommand command = new SqlCommand(request, connection);
             SqlDataReader reader = command.ExecuteReader();
@@ -261,7 +294,15 @@ namespace SqlDBManager
             {
                 while (reader.Read())
                 {
-                    listTablesNames.Add("[" + reader.GetValue(0).ToString() + "]");
+                    listTablesNames.Add(reader.GetValue(0).ToString());
+                }
+            }
+            else if (itsRow)
+            {
+                while (reader.Read())
+                {
+                    for (int i = 0; i < reader.FieldCount; i++)
+                        listTablesNames.Add("'" + reader.GetValue(i).ToString() + "'");
                 }
             }
             else
@@ -272,7 +313,6 @@ namespace SqlDBManager
                 }
             }
             
-
             reader.Close();
             command.Dispose();
             return listTablesNames;

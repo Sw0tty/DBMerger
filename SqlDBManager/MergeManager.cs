@@ -18,6 +18,9 @@ namespace SqlDBManager
     {
         // Словарь дефолтных (без внешних ключей) таблиц и функций для их обработки
         public static Dictionary<string, Func<DBCatalog, DBCatalog, string, int>> defaultTablesFunctions = new Dictionary<string, Func<DBCatalog, DBCatalog, string, int>> {
+            
+            // Добавить в ProcessFunc две переменные. Первая отвечает за поиск уникальных записей (например, по имени). Вторая отвечает за вторичный ключ 
+            
             { "eqUsers", ProcessTBLUsers },
             { "tblACT_TYPE_CL", ProcessActTypeCL },
             { "tblAuthorizedDep", ProcessAuthorizedDep },
@@ -109,15 +112,26 @@ namespace SqlDBManager
         };
 
         public static void ClearLogs(DBCatalog mainCatalog, BackgroundWorker worker)
-        {          
+        {   
             foreach (string logTable in mainCatalog.SelectLogTables())
             {
-                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Очистка {logTable}: {mainCatalog.ClearTable(logTable)} записей удалено.");
+                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Очистка {logTable}:");
+
+                if (mainCatalog.SelectCountRowsTable(logTable) == 0)
+                {
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"\tПустая таблица.");
+                }
+                else
+                {
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"\tЗаписей удалено {mainCatalog.ClearTable(logTable)}");
+                }
             }
         }
 
         public static void ProcessDefaultTables(DBCatalog mainCatalog, DBCatalog daughterCatalog, BackgroundWorker worker)
         {
+            //ReturnProcessStatus(worker, mainCatalog);
+
             foreach (string defaultTable in mainCatalog.SelectDefaultSkipTables())
             {
                 worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {defaultTable}: default table");
@@ -128,45 +142,87 @@ namespace SqlDBManager
 
         static void CheckDefaultTables(DBCatalog mainCatalog, DBCatalog daughterCatalog, BackgroundWorker worker)
         {
+            //ReturnProcessStatus(worker, mainCatalog, defaultTablesFunctions, daughterCatalog);
+
+
             foreach (string tableName in mainCatalog.SelectDefaultProcessingTables())
             {
                 int mainCount = mainCatalog.SelectCountRowsTable(tableName);
                 int daughterCount = daughterCatalog.SelectCountRowsTable(tableName);
 
-                if (defaultTablesFunctions.ContainsKey(tableName))
-                {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {tableName}: Импортировано значений {defaultTablesFunctions[tableName](mainCatalog, daughterCatalog, tableName)}");
-                }
 
-                else if (mainCount != daughterCount)
+                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {tableName}:");
+
+                if (daughterCatalog.SelectCountRowsTable(tableName) == 0)
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"{tableName}: {mainCount} <- M -- D -> {daughterCount}");
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"\tПустая таблица.");
+                }
+                else if (defaultTablesFunctions.ContainsKey(tableName))
+                {
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"\tИмпортировано значений {defaultTablesFunctions[tableName](mainCatalog, daughterCatalog, tableName)}");
                 }
                 else
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {tableName}: Equal");
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"\tНе попадает под обработку.");
                 }
             }
         }
 
         public static void ProcessLinksTables(DBCatalog mainCatalog, DBCatalog daughterCatalog, BackgroundWorker worker)
         {
+            //ReturnProcessStatus(worker, mainCatalog, linksTablesFunctions, daughterCatalog);
+
+
             foreach (string tableName in mainCatalog.SelectLinksTables())
             {
                 int mainCount = mainCatalog.SelectCountRowsTable(tableName);
                 int daughterCount = daughterCatalog.SelectCountRowsTable(tableName);
 
-                if (linksTablesFunctions.ContainsKey(tableName))
+
+                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {tableName}:");
+
+                if (daughterCatalog.SelectCountRowsTable(tableName) == 0)
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {tableName}: Импортировано значений {linksTablesFunctions[tableName](mainCatalog, daughterCatalog, tableName)}");
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\t" + "Пустая таблица.");
                 }
-                else if (mainCount != daughterCount)
+                else if (linksTablesFunctions.ContainsKey(tableName))
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"{tableName}: {mainCount} <- M -- D -> {daughterCount}");
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\t" + $"Импортировано значений {linksTablesFunctions[tableName](mainCatalog, daughterCatalog, tableName)}");
                 }
                 else
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"{tableName}: Equal");
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\t" + "Обработчик отсутствует.");
+                }
+            }
+        }
+
+        static void ReturnProcessStatus(BackgroundWorker worker, DBCatalog mainCatalog, Dictionary<string, Func<DBCatalog, DBCatalog, string, int>> functionsDict = null, DBCatalog daughterCatalog = null)
+        {
+            foreach (string tableName in mainCatalog.SelectLinksTables())
+            {
+                int checkEmpty;
+                if (daughterCatalog != null)
+                {
+                    checkEmpty = daughterCatalog.SelectCountRowsTable(tableName);
+                }
+                else
+                {
+                    checkEmpty = mainCatalog.SelectCountRowsTable(tableName);
+                }
+
+                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {tableName}:");
+
+                if (checkEmpty == 0)
+                {
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\t" + "Пустая таблица.");
+                }
+                else if (functionsDict.ContainsKey(tableName))
+                {
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\t" + $"Импортировано значений {functionsDict[tableName](mainCatalog, daughterCatalog, tableName)}");
+                }
+                else
+                {
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\t" + "Обработчик отсутствует.");
                 }
             }
         }
@@ -182,9 +238,9 @@ namespace SqlDBManager
         // --- Process Functions for DafaultTables ---
         static int ProcessActTypeCL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
-            string columnName = "ISN_ACT_TYPE";
+            string uniqueColumnName = "ISN_ACT_TYPE";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_ACT_TYPE]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]"  };
-            return ProcessTable(mainCatalog, daughterCatalog, columnName, tableName);
+            return ProcessTable(mainCatalog, daughterCatalog, uniqueColumnName, tableName);
         }
 
         static int ProcessAuthorizedDep(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
@@ -328,7 +384,7 @@ namespace SqlDBManager
 
         static int ProcessSUBJECT_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
-            string uniqueColumnName = "NAME";
+            string uniqueColumnName = "ISN_SUBJECT";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_SUBJECT]", "[ISN_HIGH_SUBJECT]", "[CODE]", "[NAME]", "[NOTE]", "[FOREST_ELEM]", "[PROTECTED]", "[WEIGHT]" };
             return ProcessTable(mainCatalog, daughterCatalog, uniqueColumnName, tableName);
         }
@@ -780,30 +836,54 @@ namespace SqlDBManager
         // --- Master merge process table ---
         static int ProcessTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string columnName, string tableName)
         {
-            int countImports = 0;
-            List<string> mainListCheckData = mainCatalog.SelectListColumnsData(columnName, tableName);
-            List<string> daughterListCheckData = daughterCatalog.SelectListColumnsData(columnName, tableName);
-            List<string> uniqueValues = ValuesManager.CheckUniqueValue(mainListCheckData, daughterListCheckData);
+            // В данной функции собрать и сформировать все данные для импорта, чтобы передать на непосредственный импорт
 
+            //List<string> mainListCheckData = mainCatalog.SelectListColumnsData(columnName, tableName);
+            //List<string> daughterListCheckData = daughterCatalog.SelectListColumnsData(columnName, tableName);
 
-            // ---
+            int countImports = 0; // Переменная для подсчета импортированных записей
+            
+            // Список уникальных значений, по которым можно найти необходимые записи в дочерней БД
+            List<string> uniqueValues = ValuesManager.CheckUniqueValue(
+                mainCatalog.SelectListColumnsData(columnName, tableName),
+                daughterCatalog.SelectListColumnsData(columnName, tableName)
+            );
+
+            // Список колонок для формирования запроса на добавление уникальной записи
             List<string> forImportColumns = mainCatalog.SelectColumnsNames(tableName);
-            /*for (int i = 0; i < forImportColumns.Count; i++)
-            {
-                forImportColumns[i] = "[" + forImportColumns[i] + "]";
-            }*/
-            // ---
 
-            if (tableName == "eqUsers")
+            
+
+/*            if (tableName == "eqUsers")
             {
-                forImportColumns.Remove("[DisplayName]");
-            }
+                forImportColumns.Remove("DisplayName");
+            }*/
 
             if (uniqueValues.Count > 0)
             {
-                foreach (string value in uniqueValues)
+                // Цикл импортирования уникальных значений
+                foreach (string filterValue in uniqueValues)
                 {
-                    ValuesManager.AddUniqueValue(tableName, forImportColumns, columnName, value, mainCatalog, daughterCatalog);
+                    // Формирование списка, который содержит в себе набор данных для импорта одного значения
+                    List<string> forImportData = daughterCatalog.SelectRecordsWhere(forImportColumns, tableName, columnName, filterValue);
+
+                    // ---
+
+                    // Где-то в данном блоке необходимо сделать запрос внешних ключей.
+                    // После проверки, если такие имеются, то создать запись в reserveDict "таблица, в которой используется" -> "oldKey", "newKey". А в middle заменить его на новый, который равняется: (количество всех записей (запрос имеется в каталоге, а также используется перед входом в данный обработчик) в главной + 1) 
+                    Dictionary<string, string> middleRecordDict = new Dictionary<string, string>();
+
+                    for (int i = 0; i < forImportColumns.Count; i++)
+                    {
+                        middleRecordDict[forImportColumns[i]] = forImportData[i];
+                    }
+
+                    middleRecordDict.Remove("ID");
+                    //middleRecordDict["unique_column_name"] = $"'{reserveDict[tableName][0][oldKey]}'";
+
+                    // ---
+
+                    ValuesManager.AddUniqueValue(tableName, forImportColumns, columnName, filterValue, mainCatalog, daughterCatalog);
                 }
                 countImports += uniqueValues.Count;
             }
@@ -884,7 +964,10 @@ namespace SqlDBManager
     public static class ValuesManager
     {
         static List<string> defaultUsers = new List<string>() { "sa", "anonymous", "admin", "reader", "arch", "tech" };
-
+        static Dictionary<string, List<Dictionary<string, string>>> reserveDict = new Dictionary<string, List<Dictionary<string, string>>>();
+        // "tblINVENTORY": [{"old_key": "new_key"}, {"old_key": "new_key"}, {"old_key": "new_key"}]
+        // 1. Ищем в словаре по таблице. Если нету, то делаем поиск по уникальности. В итоге след пункт
+        // 2. Берем
         public static int CheckDefaultUsers(List<string> usersLogins, int countImports)
         {
             foreach (string userLogin in defaultUsers)
@@ -898,6 +981,9 @@ namespace SqlDBManager
             return countImports;
         }
 
+        /// <summary>
+        /// Возвращает список разницы между двумя списками
+        /// </summary>
         public static List<string> CheckUniqueValue(List<string> mainList, List<string> daughterList)
         {
             List<string> uniqueValues = new List<string>();
@@ -917,12 +1003,39 @@ namespace SqlDBManager
 
         }
 
+        static string ReturnNewKey(string lastKey)
+        {
+            return $"{Convert.ToInt32(lastKey) + 1}";
+        }
+
         public static void AddUniqueValue(string tableName, List<string> forImportColumns, string filterColumn, string filterValue, DBCatalog maincatalog, DBCatalog daughterCatalog)
         {
-            
+            if (reserveDict.ContainsKey(tableName))
+            {
+                foreach (string oldKey in reserveDict[tableName][0].Keys)
+                {
+                    Dictionary<string, string> middleRecordDict = new Dictionary<string, string>();
+                    List<string> tableColumns = daughterCatalog.SelectColumnsNames(tableName);
+                    List<string> tableValues = daughterCatalog.SelectRecordsWhere(tableColumns, tableName, "ISN_CITIZEN", oldKey);
 
-            daughterCatalog.UpdateID(tableName, filterColumn, filterValue);
-            maincatalog.InsertFromUniqueValue(tableName, forImportColumns, daughterCatalog.ReturnCatalog(), tableName, filterColumn, filterValue);
+                    for (int i = 0; i < tableColumns.Count; i++)
+                    {
+                        middleRecordDict[tableColumns[i]] = tableValues[i];
+                    }
+
+                    middleRecordDict.Remove("ID");
+                    middleRecordDict["unique_column_name"] = $"'{reserveDict[tableName][0][oldKey]}'";
+
+                    maincatalog.InsertValue(tableName, middleRecordDict);
+                    reserveDict[tableName][0].Remove(oldKey);
+                }
+            }
+            else
+            {
+                daughterCatalog.UpdateID(tableName, filterColumn, filterValue);
+                maincatalog.InsertFromUniqueValue(tableName, forImportColumns, daughterCatalog.ReturnCatalog(), tableName, filterColumn, filterValue);
+
+            }
         }
 
     }

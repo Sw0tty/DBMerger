@@ -1,6 +1,7 @@
 ﻿using NotesNamespace;
 using System;
 using System.Collections.Generic;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,7 +46,17 @@ namespace SqlDBManager
             return $"DELETE [{catalog}].[dbo].[{table}]";
         }
 
-        // Запрос количества значений в таблице
+        /// <summary>
+        /// Возвращает значение последней записи в переданной таблице
+        /// </summary>
+        public static string LastInsertRecordRequest(string columnName, string catalog, string tableName)
+        {
+            return $"SELECT TOP 1 {columnName} FROM [{catalog}].[dbo].[{tableName}] ORDER BY {columnName} DESC";
+        }
+
+        /// <summary>
+        /// Возвращает количество значений в переданной таблице
+        /// </summary>
         public static string CountRowsRequest(string catalog, string table)
         {
             return $"SELECT COUNT(*) FROM [{catalog}].[dbo].[{table}]";
@@ -65,12 +76,28 @@ namespace SqlDBManager
 
         public static string InsertFromRequest(string inCatalog, string inTable, List<string> columns, string fromCatalog, string fromTable, string filterColumn, string filterValue)
         {
-            return $"INSERT INTO [{inCatalog}].[dbo].[{inTable}] SELECT {string.Join(", ", columns).Replace('\"', '\'')} FROM [{fromCatalog}].[dbo].[{fromTable}] WHERE {filterColumn} = '{filterValue}'";
+            return $"INSERT INTO [{inCatalog}].[dbo].[{inTable}] SELECT {string.Join(", ", columns)} FROM [{fromCatalog}].[dbo].[{fromTable}] WHERE {filterColumn} = '{filterValue}'";
         }
 
-        public static string SelectWhereRequest(string catalog, string table, string result)
+        /// <summary>
+        /// Запрос на вставку записи в таблицу
+        /// </summary>
+        public static string InsertValueRequest(string catalog, string tableName, List<string> tableColumns, List<string> values)
         {
-            return $"SELECT column FROM FROM [{catalog}].[dbo].[{table}] WHERE column_from_table = '{result}'";
+            return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", tableColumns).Replace('\"', '\'')}) VALUES ({string.Join(", ", values).Replace('\"', '\'')})";
+        }
+
+        public static string InsertDictValueRequst(string catalog, string tableName, Dictionary<string, string> data)
+        {
+            return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values)})";
+        }
+
+        /// <summary>
+        /// Запрос получения записей по переданному фильтру
+        /// </summary>
+        public static string SelectWhereRequest(List<string> columns, string catalog, string tableName, string filterColumn, string filterValue)
+        {
+            return $"SELECT {string.Join(", ", columns).Replace('\"', ' ')} FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = '{filterValue}'";
         }
 
         // Запрос на получение опредленных колонок из таблицы
@@ -85,9 +112,12 @@ namespace SqlDBManager
             return $"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG = '{catalog}' and TABLE_SCHEMA = 'dbo' and TABLE_NAME = '{tableName}'";
         }
 
-        public static string OneColumnRequest(string column, string catalog, string table)
+        /// <summary>
+        /// Запрос получения списока значений по одной колонке
+        /// </summary>
+        public static string OneColumnRequest(string column, string catalog, string tableName)
         {
-            return $"SELECT {column} FROM [{catalog}].[dbo].[{table}]";
+            return $"SELECT {column} FROM [{catalog}].[dbo].[{tableName}]";
         }
         
     }

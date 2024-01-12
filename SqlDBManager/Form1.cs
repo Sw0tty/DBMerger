@@ -16,11 +16,6 @@ using NotesNamespace;
 
 namespace SqlDBManager
 {
-    public static class WorkerConsts
-    {
-        public const int MIDDLE_STATUS_CODE = 999;
-    }
-
     public partial class Form1 : Form
     {
         public Form1()
@@ -83,7 +78,65 @@ namespace SqlDBManager
                    output = "";
             List<string> db_tables = new List<string>();
 
+            /*Dictionary<string, string> reserveRocords = new Dictionary<string, string>();
+            List<string> keys = new List<string>() { "1", "2", "3" };
+            List<string> values = new List<string>() { "app", "store", "some" };
+
+            for (int i = 0; i < keys.Count; i++)
+            {
+                reserveRocords[keys[i]] = values[i];
+                MessageBox.Show(keys[i] + "  " + values[i]);
+            }
+
+            foreach (string key in reserveRocords.Values)
+            {
+                MessageBox.Show(key);
+            }*/
+
             
+            
+            Dictionary<string, string> inDict = new Dictionary<string, string>() { { "h", "fd"} };
+
+            List<Dictionary<string, string>> lst = new List<Dictionary<string, string>>();
+
+            lst.Add(inDict);
+
+            Dictionary<string, List<Dictionary<string, string>>> testReserveDict = new Dictionary<string, List<Dictionary<string, string>>>();
+
+            string someTestkey = "testTable";
+            Dictionary<string, string> newDict = new Dictionary<string, string>() { { "oldKey", "newKey()" } };
+
+            if (!testReserveDict.ContainsKey(someTestkey))
+            {
+                testReserveDict[someTestkey] = new List<Dictionary<string, string>>();
+            }
+            // Добавление нового значения
+            testReserveDict[someTestkey].Add(new Dictionary<string, string>() { { "oldKey", "newKey()" } });
+
+            // Получение нового значения
+            MessageBox.Show(testReserveDict[someTestkey][0]["oldKey"]);
+            DBCatalog testCatalog = new DBCatalog(comboBox1.Text.Trim(' '), "test_db", "sa", "123");
+            testCatalog.OpenConnection();
+
+
+            // ----------------------
+            Dictionary<string, string> reserveRocords = new Dictionary<string, string>();
+            List<string> keys = testCatalog.SelectColumnsNames("tblCITIZEN_CL");
+            List<string> values = testCatalog.SelectRecordsWhere(keys, "tblCITIZEN_CL", "ISN_CITIZEN", "1");
+
+            for (int i = 0; i < keys.Count; i++)
+            {
+                reserveRocords[keys[i]] = values[i];
+            }
+
+            reserveRocords["ISN_CITIZEN"] = "'3'";
+            reserveRocords.Remove("ID"); // Обязательно удаляем ID. Он формируется новый в запросе
+
+            testCatalog.InsertValue("tblCITIZEN_CL", reserveRocords);
+
+
+            MessageBox.Show("BreakPoint test!");
+            // ----------------------
 
             //connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password}";
 
@@ -376,5 +429,10 @@ namespace SqlDBManager
             return $"SELECT {string.Join(", ", strings).Replace('\"', '\'')} FROM ";
         }
 
+    }
+
+    public static class WorkerConsts
+    {
+        public const int MIDDLE_STATUS_CODE = 999;
     }
 }
