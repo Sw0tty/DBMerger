@@ -43,6 +43,20 @@ namespace SqlDBManager
             return Catalog;
         }
 
+        /// <summary>
+        /// Возвращает путь расположения каталога
+        /// </summary>
+        public List<string> SelectCatalogPath()
+        {
+            string request = SQLRequests.CatalogPathRequest(Catalog);
+            return ReturnListFromDB(request, connection);
+        }
+
+        public SqlConnection ReturnConnection()
+        {
+            return connection;
+        }
+
         public int SelectCountTables()
         {
             string request = SQLRequests.CountTablesRequest(Catalog);
@@ -116,9 +130,19 @@ namespace SqlDBManager
             return ReturnListFromDB(request, connection, itsRow: true);
         }
 
-        public Dictionary<int, List<string>> SelectColumnsData(List<string> columns, string table)
+/*        public Dictionary<int, List<string>> SelectColumnsData(List<string> columns, string table)
         {
             string request = SQLRequests.ColumnsDataRequest(columns, Catalog, table);
+            return ReturnDictFromDB(request, connection);
+        }*/
+
+        /// <summary>
+        /// Возвращает словарь значений где ключ - таблица в которой используются значения из переданной таблицы.
+        /// Значение - наименование столбца через который осуществляется связь
+        /// </summary>
+        public Dictionary<string, string> SelectTablesAndForeignKeyUsage(string tableName)
+        {
+            string request = SQLRequests.RecordsUsingAsForeignKeyRequest(Catalog, tableName);
             return ReturnDictFromDB(request, connection);
         }
 
@@ -194,7 +218,11 @@ namespace SqlDBManager
             return linksTables;
         }
 
-        public string ClearTable(string tableName)
+        /// <summary>
+        /// Очищает переданную таблицу
+        /// </summary>
+        /// <returns>Количество удаленных записей</returns>
+        public int ClearTable(string tableName)
         {
             SqlDataAdapter adapter = new SqlDataAdapter();
             string request = SQLRequests.ClearTableRequest(Catalog, tableName);
@@ -202,7 +230,7 @@ namespace SqlDBManager
             //SqlCommand command = new SqlCommand(request, connection);
 
             adapter.DeleteCommand = new SqlCommand(request, connection);
-            string deletedCount = adapter.DeleteCommand.ExecuteNonQuery().ToString();
+            int deletedCount = adapter.DeleteCommand.ExecuteNonQuery();
 
             adapter.Dispose();
             //command.Dispose();
@@ -261,22 +289,15 @@ namespace SqlDBManager
         /// <summary>
         /// Возвращает словарь значений таблицы
         /// </summary>
-        static Dictionary<int, List<string>> ReturnDictFromDB(string request, SqlConnection connection)
+        static Dictionary<string, string> ReturnDictFromDB(string request, SqlConnection connection)
         {
             SqlCommand command = new SqlCommand(request, connection);
             SqlDataReader reader = command.ExecuteReader();
-            Dictionary<int, List<string>> dictTableData = new Dictionary<int, List<string>>();
-            List<string> tableRowData = new List<string>();
-            int rowNumber = 0;
+            Dictionary<string, string> dictTableData = new Dictionary<string, string>();
 
             while (reader.Read())
             {
-                for(int i = 0; i < reader.FieldCount; i++)
-                {
-                    tableRowData.Add(reader.GetString(i));
-                }
-                dictTableData.Add(rowNumber, tableRowData);
-                rowNumber++;
+                dictTableData.Add(reader.GetString(0), reader.GetString(1));
             }
 
             reader.Close();

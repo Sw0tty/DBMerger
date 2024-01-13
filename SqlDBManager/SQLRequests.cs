@@ -68,25 +68,20 @@ namespace SqlDBManager
             return $"UPDATE [{catalog}].[dbo].[{table}] SET ID = NEWID() WHERE {filterColumn} = '{filterValue}'";
         }
 
-        // Запрос на добавление записи
-       /* public static string InsertRequest(string catalog, string table)
-        {
-            return $"INSERT INTO [{catalog}].[dbo].[{table}](some_columns) VALUES()";
-        }*/
-
         public static string InsertFromRequest(string inCatalog, string inTable, List<string> columns, string fromCatalog, string fromTable, string filterColumn, string filterValue)
         {
             return $"INSERT INTO [{inCatalog}].[dbo].[{inTable}] SELECT {string.Join(", ", columns)} FROM [{fromCatalog}].[dbo].[{fromTable}] WHERE {filterColumn} = '{filterValue}'";
         }
 
+        
+/*        public static string InsertValueRequest(string catalog, string tableName, List<string> tableColumns, List<string> values)
+        {
+            return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", tableColumns).Replace('\"', '\'')}) VALUES ({string.Join(", ", values).Replace('\"', '\'')})";
+        }*/
+
         /// <summary>
         /// Запрос на вставку записи в таблицу
         /// </summary>
-        public static string InsertValueRequest(string catalog, string tableName, List<string> tableColumns, List<string> values)
-        {
-            return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", tableColumns).Replace('\"', '\'')}) VALUES ({string.Join(", ", values).Replace('\"', '\'')})";
-        }
-
         public static string InsertDictValueRequst(string catalog, string tableName, Dictionary<string, string> data)
         {
             return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values)})";
@@ -119,6 +114,41 @@ namespace SqlDBManager
         {
             return $"SELECT {column} FROM [{catalog}].[dbo].[{tableName}]";
         }
+
+        /// <summary>
+        /// Запрос расположения каталога
+        /// </summary>
+        public static string CatalogPathRequest(string catalog)
+        {
+            return $"SELECT TOP 1 physical_name FROM [{catalog}].sys.database_files";
+        }
         
+        public static string CreateBackupRequest(string catalog, string path)
+        {
+            return $"BACKUP DATABASE [{catalog}] TO DISK = '{path}' ";
+        }
+
+        public static string DeleteBackupRequest(string path)
+        {
+            return $"EXECUTE master.dbo.xp_delete_file 0, N'{path}'";
+        }
+
+        public static string RestoreBackupRequest(string catalog, string path)
+        {
+            return $"ALTER DATABASE [{catalog}] SET single_user WITH rollback immediate; DROP DATABASE [{catalog}] RESTORE DATABASE [{catalog}] FROM DISK = '{path}'";
+        }
+
+        /// <summary>
+        /// Запрос таблиц в которых используется ссылка на переданную таблицу
+        /// </summary>
+        public static string RecordsUsingAsForeignKeyRequest(string catalog, string tableName)
+        {
+            return "SELECT t.name AS TableWithForeignKey, c.name AS ForeignKeyColumnName" +
+                   $"FROM [{catalog}].sys.foreign_key_columns AS fk" +
+                   $"JOIN [{catalog}].sys.tables AS t ON fk.parent_object_id = t.object_id" +
+                   $"JOIN [{catalog}].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id" +
+                   $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalog}].sys.tables WHERE name = '{tableName}') and c.name != 'ID' and t.name != '{tableName}'";
+            //return "SELECT \r\nt.name AS TableWithForeignKey,\r\nc.name AS ForeignKeyColumnName \r\nFROM sys.foreign_key_columns AS fk\r\nJOIN sys.tables AS t ON fk.parent_object_id = t.object_id\r\nJOIN sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id\r\nWHERE fk.referenced_object_id = (SELECT object_id FROM sys.tables WHERE name = 'tblFUND_RENAME') and c.name != 'ID' and t.name != 'tblFUND'";
+        }
     }
 }

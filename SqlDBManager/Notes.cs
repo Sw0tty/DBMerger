@@ -13,13 +13,23 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace NotesNamespace
 {
-/*    public static class HelpFunction
+    public static class HelpFunction
     {
-        public static string ClearString(string str)
+        public static string CreateSpace(int spaceSize)
         {
-            return str.Trim(' ');
+            string space = "";
+            for (int i = 1; i <= spaceSize; i++)
+            {
+                space += " ";
+            }
+            return space;
         }
-    }*/
+    }
+
+    public static class VisualConsts
+    {
+        public const int SPACE_SIZE = 4;
+    }
 
 
     public class CatalogInfo

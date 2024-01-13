@@ -36,7 +36,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.button3 = new System.Windows.Forms.Button();
+            this.checkConnectionDaughterCatalog = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.comboBox2 = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
@@ -46,7 +46,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
+            this.checkConnectionMainCatalog = new System.Windows.Forms.Button();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -143,7 +143,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.textBox4);
             this.groupBox2.Controls.Add(this.label5);
-            this.groupBox2.Controls.Add(this.button3);
+            this.groupBox2.Controls.Add(this.checkConnectionDaughterCatalog);
             this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.comboBox2);
             this.groupBox2.Controls.Add(this.label7);
@@ -173,17 +173,17 @@
             this.label5.TabIndex = 10;
             this.label5.Text = "label5";
             // 
-            // button3
+            // checkConnectionDaughterCatalog
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.checkConnectionDaughterCatalog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(309, 112);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(166, 40);
-            this.button3.TabIndex = 6;
-            this.button3.Text = "button3";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.checkConnectionDaughterCatalog.Location = new System.Drawing.Point(309, 112);
+            this.checkConnectionDaughterCatalog.Name = "checkConnectionDaughterCatalog";
+            this.checkConnectionDaughterCatalog.Size = new System.Drawing.Size(166, 40);
+            this.checkConnectionDaughterCatalog.TabIndex = 6;
+            this.checkConnectionDaughterCatalog.Text = "button3";
+            this.checkConnectionDaughterCatalog.UseVisualStyleBackColor = true;
+            this.checkConnectionDaughterCatalog.Click += new System.EventHandler(this.checkConnectionDaughterCatalog_Click);
             // 
             // label6
             // 
@@ -244,7 +244,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.textBox3);
             this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.button2);
+            this.groupBox1.Controls.Add(this.checkConnectionMainCatalog);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.comboBox1);
             this.groupBox1.Controls.Add(this.label3);
@@ -276,16 +276,18 @@
             this.label4.TabIndex = 10;
             this.label4.Text = "Пароль:";
             // 
-            // button2
+            // checkConnectionMainCatalog
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(335, 136);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(143, 42);
-            this.button2.TabIndex = 6;
-            this.button2.Text = "Проверить соединение";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.checkConnectionMainCatalog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkConnectionMainCatalog.Location = new System.Drawing.Point(335, 136);
+            this.checkConnectionMainCatalog.Name = "checkConnectionMainCatalog";
+            this.checkConnectionMainCatalog.Size = new System.Drawing.Size(143, 42);
+            this.checkConnectionMainCatalog.TabIndex = 6;
+            this.checkConnectionMainCatalog.Text = "Проверить соединение";
+            this.checkConnectionMainCatalog.UseVisualStyleBackColor = true;
+            this.checkConnectionMainCatalog.Click += new System.EventHandler(this.checkConnectionMainCatalog_Click);
+            this.checkConnectionMainCatalog.MouseEnter += new System.EventHandler(this.checkConnectionMainCatalog_MouseEnter);
+            this.checkConnectionMainCatalog.MouseLeave += new System.EventHandler(this.checkConnectionMainCatalog_MouseLeave);
             // 
             // comboBox1
             // 
@@ -526,7 +528,7 @@
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button checkConnectionMainCatalog;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.TextBox textBox1;
@@ -536,7 +538,7 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TextBox textBox4;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button checkConnectionDaughterCatalog;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ComboBox comboBox2;
         private System.Windows.Forms.Label label7;

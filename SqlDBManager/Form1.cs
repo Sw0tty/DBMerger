@@ -33,8 +33,8 @@ namespace SqlDBManager
             label7.Text = label3.Text;
             label8.Text = label4.Text;
 
-            button2.Text = "Проверить соединение";
-            button3.Text = button2.Text;
+            checkConnectionMainCatalog.Text = "Проверить соединение";
+            checkConnectionDaughterCatalog.Text = checkConnectionMainCatalog.Text;
 
             StringCollection coll = Properties.Settings.Default.comboBox1Default;
             
@@ -48,155 +48,26 @@ namespace SqlDBManager
             }
         }
 
-        /*public static class WorkerConsts
-        {
-            public const int MIDDLE_STATUS_CODE = 999;
-        }*/
-
         // Логика первой вкладки формы
-        private void button1_Click(object sender, EventArgs e)
-        {
-            /*
-             На данный момент служит тестовой вкладкой
-             */
-            /*
-             Проверяет соединения с основной БД
-             */
-
-            SqlConnection cnn, cnn2;
-            SqlCommand command;
-            SqlDataReader reader;
-            String source,
-                   catalog = "test_db",
-                   login,
-                   password,
-                   request,
-                   value,
-                   connectionString,
-                   connectionString2,
-                   request2,
-                   output = "";
-            List<string> db_tables = new List<string>();
-
-            /*Dictionary<string, string> reserveRocords = new Dictionary<string, string>();
-            List<string> keys = new List<string>() { "1", "2", "3" };
-            List<string> values = new List<string>() { "app", "store", "some" };
-
-            for (int i = 0; i < keys.Count; i++)
-            {
-                reserveRocords[keys[i]] = values[i];
-                MessageBox.Show(keys[i] + "  " + values[i]);
-            }
-
-            foreach (string key in reserveRocords.Values)
-            {
-                MessageBox.Show(key);
-            }*/
-
-            
-            
-            Dictionary<string, string> inDict = new Dictionary<string, string>() { { "h", "fd"} };
-
-            List<Dictionary<string, string>> lst = new List<Dictionary<string, string>>();
-
-            lst.Add(inDict);
-
-            Dictionary<string, List<Dictionary<string, string>>> testReserveDict = new Dictionary<string, List<Dictionary<string, string>>>();
-
-            string someTestkey = "testTable";
-            Dictionary<string, string> newDict = new Dictionary<string, string>() { { "oldKey", "newKey()" } };
-
-            if (!testReserveDict.ContainsKey(someTestkey))
-            {
-                testReserveDict[someTestkey] = new List<Dictionary<string, string>>();
-            }
-            // Добавление нового значения
-            testReserveDict[someTestkey].Add(new Dictionary<string, string>() { { "oldKey", "newKey()" } });
-
-            // Получение нового значения
-            MessageBox.Show(testReserveDict[someTestkey][0]["oldKey"]);
-            DBCatalog testCatalog = new DBCatalog(comboBox1.Text.Trim(' '), "test_db", "sa", "123");
-            testCatalog.OpenConnection();
-
-
-            // ----------------------
-            Dictionary<string, string> reserveRocords = new Dictionary<string, string>();
-            List<string> keys = testCatalog.SelectColumnsNames("tblCITIZEN_CL");
-            List<string> values = testCatalog.SelectRecordsWhere(keys, "tblCITIZEN_CL", "ISN_CITIZEN", "1");
-
-            for (int i = 0; i < keys.Count; i++)
-            {
-                reserveRocords[keys[i]] = values[i];
-            }
-
-            reserveRocords["ISN_CITIZEN"] = "'3'";
-            reserveRocords.Remove("ID"); // Обязательно удаляем ID. Он формируется новый в запросе
-
-            testCatalog.InsertValue("tblCITIZEN_CL", reserveRocords);
-
-
-            MessageBox.Show("BreakPoint test!");
-            // ----------------------
-
-            //connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password}";
-
-            connectionString = @"Data Source=(local)\SQLEXPRESS;Initial Catalog=test_db;User ID=sa;Password=123";
-
-            //connectionString2 = @"Data Source=(local)\SQLEXPRESS;Initial Catalog=test;User ID=sa;Password=123";
-
-            request = $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' order by TABLE_NAME";
-
-
-            cnn = new SqlConnection(connectionString);
-            //cnn2 = new SqlConnection(connectionString2);
-            cnn.Open();
-
-            //cnn2.Open();
-
-            command = new SqlCommand(request, cnn);
-            reader = command.ExecuteReader();
-
-            while (reader.Read())
-            {   
-                //output += reader.GetValue(0) + " - " + reader.GetValue(1) + "\n";
-                
-                db_tables.Add(reader.GetString(0));
-            }
-
-            reader.Close();
-            command.Dispose();
-
-            for (int i = 0; i < db_tables.Count; i++)
-            {
-                request = $"SELECT COUNT(*) FROM {db_tables[i]}";
-                command = new SqlCommand(request, cnn);
-                reader = command.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    //listView1.Items.Add("In " + db_tables[i] + " table: " + Convert.ToString(reader.GetValue(0)) + " values.");
-                    listBox2.Items.Add("In " + db_tables[i] + " table: " + Convert.ToString(reader.GetValue(0)) + " values.");
-                }
-
-                reader.Close();
-                command.Dispose();
-            }
-            //MessageBox.Show(output);
-            cnn.Close();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
+        private void checkConnectionMainCatalog_Click(object sender, EventArgs e)
         {
             /*
              Проверяет соединения с главной БД
              */
-            ConnectionChecker.CheckConnectionMessage(comboBox1.Text.Trim(' '),
+            if (textBox1.Text.Trim(' ') != textBox4.Text.Trim(' '))
+            {
+                ConnectionChecker.CheckConnectionMessage(comboBox1.Text.Trim(' '),
                                                      textBox1.Text.Trim(' '),
                                                      textBox2.Text.Trim(' '),
                                                      textBox3.Text.Trim(' '));
+            }
+            else
+            {
+                MessageBox.Show("Вабрана одна и тажа база данных", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void checkConnectionDaughterCatalog_Click(object sender, EventArgs e)
         {
             /*
              Проверяет соединения с дочерней БД
@@ -219,7 +90,6 @@ namespace SqlDBManager
             /*
              Переход к надстройке слияния. Проверяет соединения с основной и дочерней БД
              */
-
             if (!ConnectionChecker.CheckConnection(comboBox1.Text.Trim(' '),
                                                    textBox1.Text.Trim(' '),
                                                    textBox2.Text.Trim(' '),
@@ -312,17 +182,37 @@ namespace SqlDBManager
                 {
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидация прошла успешно!");
 
-                    //    4. Выбираем набор таблиц на каждый акт действий (DONE)
+                    // Создаем резервную копию для транзакций
+                    BackupManager backupManager = new BackupManager(mainCatalog.SelectCatalogPath()[0], mainCatalog.ReturnCatalog(), text1, textBox2.Text.Trim(' '), textBox3.Text.Trim(' '));
 
-                    //    5. Очищаем логи
+                    backupManager.OpenConnection();
+                    backupManager.CreateReserveBackup(mainCatalog.ReturnCatalog());
+
+                    MessageBox.Show("Created");
+
+                    mainCatalog.CloseConnection();
+
+                    backupManager.RestoreFromBackup(mainCatalog.ReturnCatalog());
+
+                    MessageBox.Show("restored");
+
+
+                    backupManager.DeleteReserveBackup();
+
+                    MessageBox.Show("Deleted");
+
+                    MessageBox.Show("Break");
+
+                    // Очищаем логи
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Очистка логов ---");
-                    MergeManager.ClearLogs(mainCatalog, worker);
+                    bool successWord = MergeManager.ClearLogs(mainCatalog, worker);
 
-                    //    6. Проходим по дефолтным таблицам
+                    // Проходим по дефолтным таблицам
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка дефолтных таблиц ---");
+                    MergeManager.ProcessSkipTables(mainCatalog, daughterCatalog, worker);
                     MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, worker);
 
-                    //    7. Проходим по таблицам с ключами (провряем на уникальность)
+                    // Проходим по таблицам с ключами (провряем на уникальность)
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка таблиц с внешними ключами ---");
                     MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, worker);
 
@@ -334,7 +224,7 @@ namespace SqlDBManager
                 {
                     //listBox1.Items.Add("Наименования таблиц не совпадает!"); // В функции предусмотреть возвращение ошибочной таблицы
                     //textBoxStatus.AppendText("Наименования таблиц не совпадает!" + "\r\n");
-                    e.Result = "Наименования таблиц не совпадает!";
+                    e.Result = "Наименования таблиц не совпадают!";
                     // Передать в listBox, что какая-то из таблиц не найдена, отменить слияние
 
                     MessageBox.Show("Ошибка валидации!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -354,11 +244,11 @@ namespace SqlDBManager
             daughterCatalog.CloseConnection();
         }
 
-        static public void CloseConnections(DBCatalog mainCatalog, DBCatalog daughterCatalog)
+/*        static public void CloseConnections(DBCatalog mainCatalog, DBCatalog daughterCatalog)
         {
             mainCatalog.CloseConnection();
             daughterCatalog.CloseConnection();
-        }
+        }*/
 
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
@@ -395,6 +285,25 @@ namespace SqlDBManager
 
         private void button10_Click(object sender, EventArgs e)
         {
+            string usageName = "";
+
+            // Пример пришедших данных
+            // "FUND" -> "ISN_FUND"
+            for (int i = 0; i < 10; i++)
+            {
+                usageName = $"{i}";
+            }
+            MessageBox.Show(usageName);
+
+
+
+            string catalog = "ArchiveFund";
+            string sss = $"C:\\Program Files\\Microsoft SQL Server\\MSSQL16.SQLEXPRESS2022\\MSSQL\\DATA\\{catalog}.mdf";
+            sss = sss.Replace($"DATA\\{catalog}.mdf", $"Backup\\{catalog}_reserv.bak");
+
+            MessageBox.Show(sss);
+
+
             Dictionary<string, Func< List<string>, string>> trest = new Dictionary<string, Func<List<string>, string>> { { "eqUsers", Some } };
             // test button
             string value = "Nothing";
@@ -429,6 +338,147 @@ namespace SqlDBManager
             return $"SELECT {string.Join(", ", strings).Replace('\"', '\'')} FROM ";
         }
 
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            /*
+             На данный момент служит тестовой вкладкой
+             */
+            /*
+             Проверяет соединения с основной БД
+             */
+
+            SqlConnection cnn, cnn2;
+            SqlCommand command;
+            SqlDataReader reader;
+            String source,
+                   catalog = "test_db",
+                   login,
+                   password,
+                   request,
+                   value,
+                   connectionString,
+                   connectionString2,
+                   request2,
+                   output = "";
+            List<string> db_tables = new List<string>();
+
+            /*Dictionary<string, string> reserveRocords = new Dictionary<string, string>();
+            List<string> keys = new List<string>() { "1", "2", "3" };
+            List<string> values = new List<string>() { "app", "store", "some" };
+
+            for (int i = 0; i < keys.Count; i++)
+            {
+                reserveRocords[keys[i]] = values[i];
+                MessageBox.Show(keys[i] + "  " + values[i]);
+            }
+
+            foreach (string key in reserveRocords.Values)
+            {
+                MessageBox.Show(key);
+            }*/
+
+
+
+            Dictionary<string, string> inDict = new Dictionary<string, string>() { { "h", "fd" } };
+
+            List<Dictionary<string, string>> lst = new List<Dictionary<string, string>>();
+
+            lst.Add(inDict);
+
+            Dictionary<string, List<Dictionary<string, string>>> testReserveDict = new Dictionary<string, List<Dictionary<string, string>>>();
+
+            string someTestkey = "testTable";
+            Dictionary<string, string> newDict = new Dictionary<string, string>() { { "oldKey", "newKey()" } };
+
+            if (!testReserveDict.ContainsKey(someTestkey))
+            {
+                testReserveDict[someTestkey] = new List<Dictionary<string, string>>();
+            }
+            // Добавление нового значения
+            testReserveDict[someTestkey].Add(new Dictionary<string, string>() { { "oldKey", "newKey()" } });
+
+            // Получение нового значения
+            MessageBox.Show(testReserveDict[someTestkey][0]["oldKey"]);
+            DBCatalog testCatalog = new DBCatalog(comboBox1.Text.Trim(' '), "test_db", "sa", "123");
+            testCatalog.OpenConnection();
+
+
+            // ----------------------
+            Dictionary<string, string> reserveRocords = new Dictionary<string, string>();
+            List<string> keys = testCatalog.SelectColumnsNames("tblCITIZEN_CL");
+            List<string> values = testCatalog.SelectRecordsWhere(keys, "tblCITIZEN_CL", "ISN_CITIZEN", "1");
+
+            for (int i = 0; i < keys.Count; i++)
+            {
+                reserveRocords[keys[i]] = values[i];
+            }
+
+            reserveRocords["ISN_CITIZEN"] = "'3'";
+            reserveRocords.Remove("ID"); // Обязательно удаляем ID. Он формируется новый в запросе
+
+            testCatalog.InsertValue("tblCITIZEN_CL", reserveRocords);
+
+
+            MessageBox.Show("BreakPoint test!");
+            // ----------------------
+
+            //connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password}";
+
+            connectionString = @"Data Source=(local)\SQLEXPRESS;Initial Catalog=test_db;User ID=sa;Password=123";
+
+            //connectionString2 = @"Data Source=(local)\SQLEXPRESS;Initial Catalog=test;User ID=sa;Password=123";
+
+            request = $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' order by TABLE_NAME";
+
+
+            cnn = new SqlConnection(connectionString);
+            //cnn2 = new SqlConnection(connectionString2);
+            cnn.Open();
+
+            //cnn2.Open();
+
+            command = new SqlCommand(request, cnn);
+            reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                //output += reader.GetValue(0) + " - " + reader.GetValue(1) + "\n";
+
+                db_tables.Add(reader.GetString(0));
+            }
+
+            reader.Close();
+            command.Dispose();
+
+            for (int i = 0; i < db_tables.Count; i++)
+            {
+                request = $"SELECT COUNT(*) FROM {db_tables[i]}";
+                command = new SqlCommand(request, cnn);
+                reader = command.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    //listView1.Items.Add("In " + db_tables[i] + " table: " + Convert.ToString(reader.GetValue(0)) + " values.");
+                    listBox2.Items.Add("In " + db_tables[i] + " table: " + Convert.ToString(reader.GetValue(0)) + " values.");
+                }
+
+                reader.Close();
+                command.Dispose();
+            }
+            //MessageBox.Show(output);
+            cnn.Close();
+        }
+
+        private void checkConnectionMainCatalog_MouseEnter(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void checkConnectionMainCatalog_MouseLeave(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Default;
+        }
     }
 
     public static class WorkerConsts
