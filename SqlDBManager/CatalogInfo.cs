@@ -86,6 +86,15 @@ namespace SqlDBManager
             return count;
         }
 
+        /// <summary>
+        /// Возвращает список найденых записей в виде словаря (колонка - значение)
+        /// </summary>
+        public List<Dictionary<string, string>> SelectAllFrom(string tableName)
+        {
+            string request = SQLRequests.AllRecordsRequest(Catalog, tableName);
+            return ReturnListDictsFromDB(request, SelectColumnsNames(tableName), connection);
+        }
+
         public List<string> SelectTablesNames()
         {
             string request = SQLRequests.AllTablesRequest(Catalog);
@@ -284,6 +293,31 @@ namespace SqlDBManager
             adapter.UpdateCommand = new SqlCommand(request, connection);
             adapter.UpdateCommand.ExecuteNonQuery();
             adapter.Dispose();
+        }
+
+        /// <summary>
+        /// Возвращает список словарей значений таблицы
+        /// </summary>
+        static List<Dictionary<string, string>> ReturnListDictsFromDB(string request, List<string> columnsNames, SqlConnection connection)
+        {
+            SqlCommand command = new SqlCommand(request, connection);
+            SqlDataReader reader = command.ExecuteReader();
+            
+            List<Dictionary<string, string>> tableData = new List<Dictionary<string, string>>();
+
+            while (reader.Read())
+            {
+                Dictionary<string, string> rowData = new Dictionary<string, string>();
+                for (int i = 0; i < reader.FieldCount; i++)
+                {
+                    rowData[columnsNames[i]] = reader[i].ToString();
+                }
+                tableData.Add(new Dictionary<string, string>(rowData));
+            }
+
+            reader.Close();
+            command.Dispose();
+            return tableData;
         }
 
         /// <summary>

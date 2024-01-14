@@ -95,10 +95,12 @@ namespace SqlDBManager
             return $"SELECT {string.Join(", ", columns).Replace('\"', ' ')} FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = '{filterValue}'";
         }
 
-        // Запрос на получение опредленных колонок из таблицы
-        public static string ColumnsDataRequest(List<string> columns, string catalog, string tableName)
+        /// <summary>
+        /// Запрос на получение всех записей переданной таблицы
+        /// </summary>
+        public static string AllRecordsRequest(string catalog, string tableName)
         {
-            return $"SELECT {string.Join(", ", columns)} FROM [{catalog}].[dbo].[{tableName}]";
+            return $"SELECT * FROM [{catalog}].[dbo].[{tableName}]";
         }
 
         // Получение наименований столбцов переданной таблицы
@@ -143,10 +145,10 @@ namespace SqlDBManager
         /// </summary>
         public static string RecordsUsingAsForeignKeyRequest(string catalog, string tableName)
         {
-            return "SELECT t.name AS TableWithForeignKey, c.name AS ForeignKeyColumnName" +
-                   $"FROM [{catalog}].sys.foreign_key_columns AS fk" +
-                   $"JOIN [{catalog}].sys.tables AS t ON fk.parent_object_id = t.object_id" +
-                   $"JOIN [{catalog}].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id" +
+            return "SELECT t.name AS TableWithForeignKey, c.name AS ForeignKeyColumnName " +
+                   $"FROM [{catalog}].sys.foreign_key_columns AS fk " +
+                   $"JOIN [{catalog}].sys.tables AS t ON fk.parent_object_id = t.object_id " +
+                   $"JOIN [{catalog}].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id " +
                    $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalog}].sys.tables WHERE name = '{tableName}') and c.name != 'ID' and t.name != '{tableName}'";
             //return "SELECT \r\nt.name AS TableWithForeignKey,\r\nc.name AS ForeignKeyColumnName \r\nFROM sys.foreign_key_columns AS fk\r\nJOIN sys.tables AS t ON fk.parent_object_id = t.object_id\r\nJOIN sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id\r\nWHERE fk.referenced_object_id = (SELECT object_id FROM sys.tables WHERE name = 'tblFUND_RENAME') and c.name != 'ID' and t.name != 'tblFUND'";
         }

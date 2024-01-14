@@ -182,8 +182,9 @@ namespace SqlDBManager
                 {
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидация прошла успешно!");
 
+                    // --------------
                     // Создаем резервную копию для транзакций
-                    BackupManager backupManager = new BackupManager(mainCatalog.SelectCatalogPath()[0], mainCatalog.ReturnCatalog(), text1, textBox2.Text.Trim(' '), textBox3.Text.Trim(' '));
+/*                    BackupManager backupManager = new BackupManager(mainCatalog.SelectCatalogPath()[0], mainCatalog.ReturnCatalog(), text1, textBox2.Text.Trim(' '), textBox3.Text.Trim(' '));
 
                     backupManager.OpenConnection();
                     backupManager.CreateReserveBackup(mainCatalog.ReturnCatalog());
@@ -201,11 +202,12 @@ namespace SqlDBManager
 
                     MessageBox.Show("Deleted");
 
-                    MessageBox.Show("Break");
+                    MessageBox.Show("Break");*/
+                    // --------------
 
                     // Очищаем логи
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Очистка логов ---");
-                    bool successWord = MergeManager.ClearLogs(mainCatalog, worker);
+                    bool successOperation = MergeManager.ClearLogs(mainCatalog, worker);
 
                     // Проходим по дефолтным таблицам
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка дефолтных таблиц ---");
@@ -285,6 +287,38 @@ namespace SqlDBManager
 
         private void button10_Click(object sender, EventArgs e)
         {
+            /*List<Dictionary<string, string>> lst = new List<Dictionary<string, string>>();
+
+            for (int k = 0; k < 5; k++)
+            {
+                Dictionary<string, string> dictTableData = new Dictionary<string, string>();
+                for (int i = 0; i < 5; i++)
+                {
+                    dictTableData[i.ToString()] = i.ToString();
+                }
+                lst.Add(new Dictionary<string, string>(dictTableData));
+            }
+
+            for (int i = 0; i < lst.Count; i++)
+            {
+                MessageBox.Show(lst[i]["1"]);
+            }*/
+
+            Dictionary<string, string> f = new Dictionary<string, string>();
+
+            f["1"] = "Apple";
+
+            Dictionary<string, string> ddd = new Dictionary<string, string>(f);
+
+            ddd["1"] = "Melone";
+            f["1"] = "dsf";
+
+
+            MessageBox.Show(f["1"]);
+            MessageBox.Show(ddd["1"]);
+
+
+
             string usageName = "";
 
             // Пример пришедших данных

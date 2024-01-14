@@ -64,6 +64,8 @@ namespace NotesNamespace
         }
     }
 
+    // System.Data.SqlClient.SqlException
+
     /*public class DBCatalog
     {
         protected string Source;
