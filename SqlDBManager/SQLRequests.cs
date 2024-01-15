@@ -49,9 +49,9 @@ namespace SqlDBManager
         /// <summary>
         /// Возвращает значение последней записи в переданной таблице
         /// </summary>
-        public static string LastInsertRecordRequest(string columnName, string catalog, string tableName)
+        public static string LastInsertRecordRequest(string catalog, string columns, string tableName, string orderByColumn)
         {
-            return $"SELECT TOP 1 {columnName} FROM [{catalog}].[dbo].[{tableName}] ORDER BY {columnName} DESC";
+            return $"SELECT TOP 1 {columns} FROM [{catalog}].[dbo].[{tableName}] ORDER BY {orderByColumn} DESC";
         }
 
         /// <summary>
@@ -98,8 +98,12 @@ namespace SqlDBManager
         /// <summary>
         /// Запрос на получение всех записей переданной таблицы
         /// </summary>
-        public static string AllRecordsRequest(string catalog, string tableName)
+        public static string AllRecordsRequest(string catalog, string tableName, Dictionary<string, List<string>> filter = null)
         {
+            if (filter != null)
+            {
+                return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} in ({string.Join(", ", filter[string.Join("", filter.Keys)])})";
+            }
             return $"SELECT * FROM [{catalog}].[dbo].[{tableName}]";
         }
 

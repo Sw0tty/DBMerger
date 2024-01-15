@@ -70,6 +70,12 @@ namespace SqlDBManager
             return count;
         }
 
+        public List<string> SelectLastRecord(string columns, string tableName, string orderByColumn)
+        {
+            string request = SQLRequests.LastInsertRecordRequest(Catalog, columns, tableName, orderByColumn);
+            return ReturnListFromDB(request, connection, itsRow: true);
+        }
+
         /// <summary>
         /// Возвращает количество записей в переданной таблице
         /// </summary>
@@ -89,9 +95,9 @@ namespace SqlDBManager
         /// <summary>
         /// Возвращает список найденых записей в виде словаря (колонка - значение)
         /// </summary>
-        public List<Dictionary<string, string>> SelectAllFrom(string tableName)
+        public List<Dictionary<string, string>> SelectAllFrom(string tableName, Dictionary<string, List<string>> filter = null)
         {
-            string request = SQLRequests.AllRecordsRequest(Catalog, tableName);
+            string request = SQLRequests.AllRecordsRequest(Catalog, tableName, filter);
             return ReturnListDictsFromDB(request, SelectColumnsNames(tableName), connection);
         }
 
@@ -265,7 +271,7 @@ namespace SqlDBManager
         public void InsertValue(string tableName, Dictionary<string, string> data)
         {
             string request = SQLRequests.InsertDictValueRequst(Catalog, tableName, data);
-            MessageBox.Show(request);
+            //MessageBox.Show(request);
 
             InsertAdapter(request, connection);
         }
@@ -310,7 +316,7 @@ namespace SqlDBManager
                 Dictionary<string, string> rowData = new Dictionary<string, string>();
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
-                    rowData[columnsNames[i]] = reader[i].ToString();
+                    rowData[columnsNames[i]] = "'" + reader[i].ToString() + "'";
                 }
                 tableData.Add(new Dictionary<string, string>(rowData));
             }

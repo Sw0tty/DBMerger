@@ -287,6 +287,27 @@ namespace SqlDBManager
 
         private void button10_Click(object sender, EventArgs e)
         {
+            string baseNum = "10000315523";
+
+            long baseToInt = Convert.ToInt64(baseNum);
+
+
+            Dictionary<string, List<string>> filter = new Dictionary<string, List<string>>() { { "1", new List<string>() { "1", "2", "3", "4", "5", "6" } } };
+
+
+
+            string req = $"SELECT * FROM [].[dbo].[] WHERE {string.Join("", filter.Keys)} in ({string.Join(", ", filter[string.Join("", filter.Keys)])})";
+
+
+
+
+
+
+
+            //Dictionary<string, string> filter = new Dictionary<string, string>() { { "some_key", "some_value" } };
+
+            MessageBox.Show(req);
+
             /*List<Dictionary<string, string>> lst = new List<Dictionary<string, string>>();
 
             for (int k = 0; k < 5; k++)
@@ -303,6 +324,9 @@ namespace SqlDBManager
             {
                 MessageBox.Show(lst[i]["1"]);
             }*/
+            Tuple<string, string> s = new Tuple<string, string>("dffdg", "sdfsd");
+
+            MessageBox.Show(s.Item1 + "---" + s.Item2);
 
             Dictionary<string, string> f = new Dictionary<string, string>();
 

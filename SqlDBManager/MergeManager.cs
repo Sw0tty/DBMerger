@@ -73,7 +73,7 @@ namespace SqlDBManager
             { "tblFUND_OAF", ProcessFUND_OAF },
             { "tblFUND_OAF_REASON", ProcessFUND_OAF_REASON },
             { "tblFUND_COLLECTION_REASONS", ProcessFUND_COLLECTION_REASONS },
-            { "tblFUND_CREATOR", ProcessFUND_CREATOR },
+            //{ "tblFUND_CREATOR", ProcessFUND_CREATOR }, хз пока как фильтровать
             { "tblUNDOCUMENTED_PERIOD", ProcessUNDOCUMENTED_PERIOD },
             { "tblDEPOSIT", ProcessDEPOSIT },
             { "tblDEPOSIT_DOC_TYPE", ProcessDEPOSIT_DOC_TYPE },
@@ -476,530 +476,531 @@ namespace SqlDBManager
 // --- Process Functions for LinksTables ---
         static int ProcessORGANIZ_RENAME(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_ORGANIZ_RENAME";
             string uniqueValueColumnName = "ISN_ORGANIZ_RENAME";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_ORGANIZ_RENAME]", "[ISN_ORGANIZ]", "[CODE]", "[CREATE_DATE]", "[CREATE_DATE_INEXACT]", "[DELETE_DATE]", "[DELETE_DATE_INEXACT]", "[NAME]", "[NOTE]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessARCHIVE(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
             // Переделать на проверку замены именования. Таблица содержит в себе всегда один архив
-            string uniqueColumnName = "";
 
+            bool usedFurther = true;
             string idLikeColumnName = "";
             string uniqueValueColumnName = "";
             //List<string> forImportColumns = new List<string>() { };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessLOCATION(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_LOCATION";
             string uniqueValueColumnName = "ISN_LOCATION";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_LOCATION]", "[ISN_HIGH_LOCATION]", "[ISN_ARCHIVE]", "[CODE]", "[NAME]", "[NOTE]", "[FOREST_ELEM]", "[PROTECTED]", "[WEIGHT]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessARCHIVE_STORAGE(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_LOCATION";
             string uniqueValueColumnName = "ISN_LOCATION";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_LOCATION]", "[ROOM_CNT]", "[SPECIAL_ROOM_CNT]", "[ADAPTED_ROOM_CNT]", "[TOTAL_SPACE]", "[SPACE_WITH_ALARM]", "[SPACE_WITHOUT_ALARM]", "[SHELF_LENGTH]", "[METAL_SHELF_LENGTH]", "[FREE_SHELF_LENGTH]", "[STORAGE]", "[FLOOR]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessFUND(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_FUND";
-            string uniqueValueColumnName = "ISN_FUND";
+            string uniqueValueColumnName = "FUND_NAME_SHORT";
             /* List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_FUND]", "[ISN_ARCHIVE]", "[FUND_NUM_1]", "[FUND_NUM_2]", "[FUND_NUM_3]", "[ISN_DOC_TYPE]", "[FUND_CATEGORY]", "[ISN_PERIOD]", "[FUND_KIND]", "[FUND_NAME_SHORT]", "[FUND_NAME_FULL]", "[INVENTORY_COUNT]", "[AUTO_INVENTORY_COUNT]", "[DOC_START_YEAR]", "[DOC_START_YEAR_INEXACT]", "[DOC_END_YEAR]", "[DOC_END_YEAR_INEXACT]", "[DOC_RECEIPT_YEAR]", "[LAST_CHECKED_YEAR]", "[LAST_DOC_CHECK_YEAR]", "[IS_IN_SEARCH]", "[IS_LOST]", "[ANNOTATE]", "[PROPERTY]", "[PRESENCE_FLAG]", "[ABSENCE_REASON]", "[MOVEMENT_NOTE]", "[HAS_MUSEUM_ITEMS]", "[TREASURE_UNITS_COUNT]", "[HAS_UNDOCUMENTED_PERIODS]", "[HAS_INCLUSIONS]", "[WAS_RENAMED]", "[WEIGHT]", "[KEEP_PERIOD]", "[ISN_SECURLEVEL]", "[SECURITY_CHAR]", "[SECURITY_REASON]", "[ISN_OAF]", "[OAF_NOTE]", "[CARD_COUNT]", "[ARCHIVE_DB_COUNT]", "[FUND_DB_COUNT]", "[INNER_DB_COUNT]", "[LIST_COUNT]", "[PERSONAL_UNDESCRIBED_DOC_COUNT]", "[HAS_ELECTRONIC_DOCS]", "[HAS_TRADITIONAL_DOCS]", "[CARRIER_TYPE]", "[UNDESCRIBED_DOC_COUNT]",
  "[UNDECSRIBED_PAGE_COUNT]", "[JOIN_REASON]", "[ADDITIONAL_NSA]", "[KEYWORDS]", "[FUND_HISTORY]", "[NOTE]", "[INVENTORY_STATE]", "[ISN_SECURITY_REASON]", "[ForbidRecalc]" };
     */
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessFUND_RENAME(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_FUND_RENAME";
             string uniqueValueColumnName = "ISN_FUND_RENAME";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_FUND_RENAME]", "[ISN_FUND]", "[CREATE_DATE]", "[CREATE_DATE_INEXACT]", "[DELETE_DATE]", "[DELETE_DATE_INEXACT]", "[FUND_NUM_1]", "[FUND_NUM_2]", "[FUND_NUM_3]", "[FUND_NAME_SHORT]", "[FUND_NAME_FULL]", "[NOTE]", "[NAME_SAVED]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessFUND_CHECK(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
-  
 
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_FUND";
             string uniqueValueColumnName = "ISN_FUND";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_FUND]", "[CARDBOARDED]", "[UNITS_NEED_CARDBOARDED]", "[UNITS_DBR]", "[UNITS_NEED_RESTORATION]", "[UNITS_NEED_BINDING]", "[UNITS_NEED_DISINFECTION]", "[UNITS_NEED_DISINSECTION]", "[FADING_PAGES]", "[UNITS_NEED_ENCIPHERING]", "[UNITS_NEED_COVER_CHANGE]", "[UNITS_INFLAMMABLE]", "[UNITS_NEED_KPO]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessFUND_DOC_TYPE(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
-            string idLikeColumnName = "ID";
-            string uniqueValueColumnName = "ID";
+            bool usedFurther = false;
+            string idLikeColumnName = "ISN_FUND";
+            string uniqueValueColumnName = "";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_FUND]", "[ISN_DOC_TYPE]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessFUND_INCLUSION(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_INCLUSION";
             string uniqueValueColumnName = "ISN_INCLUSION";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_INCLUSION]", "[ISN_FUND]", "[ISN_CITIZEN]", "[ISN_ORGANIZ]", "[DOC_TYPES]", "[START_YEAR]", "[START_YEAR_INEXACT]", "[END_YEAR]", "[END_YEAR_INEXACT]", "[NOTE]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessFUND_PAPER_CLS(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_FUND";
             string uniqueValueColumnName = "ISN_FUND";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_FUND]", "[ISN_PAPER_CLS]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessPUBLICATION_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_PUBLICATION";
             string uniqueValueColumnName = "ISN_PUBLICATION";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_PUBLICATION]", "[ISN_PUBLICATION_TYPE]", "[PUBLICATION_NUM]", "[AUTHORS]", "[PUBLICATION_NAME]", "[PUBLICATION_PLACE]", "[PUBLICATION_YEAR]", "[SHEET_COUNT]", "[PUBLISHER]", "[PROTECTED]", "[NOTE]", "[WEIGHT]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessFUND_PUBLICATION(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_FUND";
             string uniqueValueColumnName = "ISN_FUND";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_FUND]", "[ISN_PUBLICATION]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessFUND_RECEIPT_REASON(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_FUND";
             string uniqueValueColumnName = "ISN_FUND";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_FUND]", "[ISN_RECEIPT_REASON]", "[ORDER_NUM]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessFUND_RECEIPT_SOURCE(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_FUND";
             string uniqueValueColumnName = "ISN_FUND";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_FUND]", "[ISN_RECEIPT_SOURCE]", "[ORDER_NUM]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessFUND_OAF(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_OAF";
             string uniqueValueColumnName = "ISN_OAF";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[Deleted]", "[ISN_OAF]", "[ISN_FUND]", "[ISN_CHILD_FUND]", "[FUND_NUM_1]", "[FUND_NUM_2]", "[FUND_NUM_3]", "[FUND_CATEGORY]", "[FUND_NAME_SHORT]", "[FUND_NAME_FULL]", "[DOC_START_YEAR]", "[DOC_END_YEAR]", "[NOTE]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessFUND_OAF_REASON(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_FUND";
             string uniqueValueColumnName = "ISN_FUND";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_FUND]", "[ISN_OAF_REASON]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessFUND_COLLECTION_REASONS(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_FUND";
             string uniqueValueColumnName = "ISN_FUND";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_FUND]", "[ISN_COLLECTION_REASON]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
 
         static int ProcessFUND_CREATOR(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = false;
             string idLikeColumnName = "ISN_FUND_CREATOR";
             string uniqueValueColumnName = "ISN_FUND_CREATOR";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_FUND_CREATOR]", "[ISN_CITIZEN]", "[ISN_ORGANIZ]", "[ISN_FUND]", "[KIND]", "[IS_PRIMARY]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
         
         static int ProcessUNDOCUMENTED_PERIOD(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_PERIOD";
             string uniqueValueColumnName = "ISN_PERIOD";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_PERIOD]", "[ISN_FUND]", "[PERIOD_START_YEAR]", "[PERIOD_END_YEAR]", "[ISN_ABSENCE_REASON]", "[INFO_PLACE]", "[NOTE]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessDEPOSIT(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_DEPOSIT";
             string uniqueValueColumnName = "ISN_DEPOSIT";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_DEPOSIT]", "[ISN_FUND]", "[DEPOSIT_NUM]", "[DEPOSIT_NAME]", "[CONSISTS]", "[UNIT_COUNT]", "[DOC_COUNT]", "[PERSONAL_DOC_COUNT]", "[PAGE_COUNT]", "[NOTE]", "[PAPER_DOC_COUNT]", "[AV_TRAD_COUNT]", "[ELECTRONIC_DOC_COUNT]", "[PROCESSED]", "[PROCESSED_DOC]", "[PROCESSED_PERSONAL_DOC]", "[PROCESSED_PAGE]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessDEPOSIT_DOC_TYPE(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_DEPOSIT_DOC_TYPE";
             string uniqueValueColumnName = "ISN_DEPOSIT_DOC_TYPE";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_DEPOSIT_DOC_TYPE]", "[ISN_DEPOSIT]", "[ISN_DOC_TYPE]", "[UNIT_COUNT]", "[PROCESSED_COUNT]", "[CARRIER_TYPE]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessACT(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_ACT";
             string uniqueValueColumnName = "ISN_ACT";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_ACT]", "[ISN_ACT_TYPE]", "[ISN_COMMISSION]", "[ISN_ESTIMATE_REASON]", "[ISN_FUND]", "[ACT_NUM]", "[ACT_DATE]", "[ACT_NAME]", "[MOVEMENT_FLAG]", "[ACT_OBJ]", "[ACT_PERSONS]", "[NOTE]", "[ACT_WORK]", "[UNIT_COUNT]", "[PAGE_NUMBERS]", "[DOC_DATES]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessINVENTORY(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_INVENTORY";
             string uniqueValueColumnName = "ISN_INVENTORY";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_INVENTORY]", "[ISN_FUND]", "[ISN_SECURLEVEL]", "[SECURITY_CHAR]", "[SECURITY_REASON]", "[ISN_INVENTORY_TYPE]", "[ISN_RECEIPT_SOURCE]", "[ISN_RECEIPT_REASON]", "[ISN_DOC_KIND]", "[ISN_INVENTORY_STORAGE]", "[ISN_REPRODUCTION_METHOD]", "[ISN_REQUIRED_WORK]", "[INVENTORY_NUM_1]", "[INVENTORY_NUM_2]", "[INVENTORY_NUM_3]", "[INVENTORY_NAME]", "[INVENTORY_KIND]", "[INVENTORY_KEEP_PERIOD]", "[COPY_COUNT]", "[DOC_START_YEAR]", "[DOC_START_YEAR_INEXACT]", "[DOC_END_YEAR]", "[DOC_END_YEAR_INEXACT]", "[CATALOGUING]", "[PRESENCE_FLAG]", "[ABSENCE_REASON]", "[MOVEMENT_NOTE]", "[UNITS_WITH_TREASURES_COUNT]", "[MUSEUM_UNITS_COUNT]", "[ANNOTATE]", "[WEIGHT]", "[INVENTORY_DOC_WORK]", "[NOTE]", "[VOL_NUM]", "[HAS_TRADITIONAL_DOCS]", "[HAS_ELECTRONIC_DOCS]", "[CARRIER_TYPE]", "[ADDITIONAL_NSA]", "[KEYWORDS]", "[ISN_SECURITY_REASON]", "[ForbidRecalc]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessINVENTORY_CHECK(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_INVENTORY";
             string uniqueValueColumnName = "ISN_INVENTORY";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_INVENTORY]", "[CARDBOARDED]", "[UNITS_NEED_CARDBOARDED]", "[UNITS_DBR]", "[UNITS_NEED_RESTORATION]", "[UNITS_NEED_BINDING]", "[UNITS_NEED_DISINFECTION]", "[UNITS_NEED_DISINSECTION]", "[FADING_PAGES]", "[UNITS_NEED_ENCIPHERING]", "[UNITS_NEED_COVER_CHANGE]", "[UNITS_INFLAMMABLE]", "[UNITS_NEED_KPO]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessINVENTORY_DOC_STORAGE(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_INVENTORY";
             string uniqueValueColumnName = "ISN_INVENTORY";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_INVENTORY]", "[ISN_STORAGE_MEDIUM]", "[ORDER_NUM]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessINVENTORY_DOC_TYPE(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_INVENTORY";
             string uniqueValueColumnName = "ISN_INVENTORY";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_INVENTORY]", "[ISN_DOC_TYPE]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessINVENTORY_CLS_ATTR(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_INVENTORY";
             string uniqueValueColumnName = "ISN_INVENTORY";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_INVENTORY]", "[ISN_CLS]", "[ORDER_NUM]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessINVENTORY_GROUPING_ATTRIBUTE(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_INVENTORY";
             string uniqueValueColumnName = "ISN_INVENTORY";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_INVENTORY]", "[ISN_GROUPING_ATTRIBUTE]", "[ORDER_NUM]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessINVENTORY_PAPER_CLS(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_INVENTORY";
             string uniqueValueColumnName = "ISN_INVENTORY";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_INVENTORY]", "[ISN_PAPER_CLS_INV]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessINVENTORY_REQUIRED_WORK(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_INVENTORY";
             string uniqueValueColumnName = "ISN_INVENTORY";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_INVENTORY]", "[ISN_REQUIRED_WORK]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessINVENTORY_STRUCTURE(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_INVENTORY_CLS";
             string uniqueValueColumnName = "ISN_INVENTORY_CLS";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[StatusID]", "[Deleted]", "[ISN_INVENTORY_CLS]", "[ISN_HIGH_INVENTORY_CLS]", "[ISN_ARCHIVE]", "[ISN_FUND]", "[ISN_INVENTORY]", "[CODE]", "[NAME]", "[NOTE]", "[FOREST_ELEM]", "[PROTECTED]", "[WEIGHT]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessDOCUMENT_STATS(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_DOCUMENT_STATS";
             string uniqueValueColumnName = "ISN_DOCUMENT_STATS";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_DOCUMENT_STATS]", "[ISN_FUND]", "[ISN_DOC_TYPE]", "[ISN_INVENTORY]", "[CARRIER_TYPE]", "[UNIT_COUNT]", "[UNIT_INVENTORY]", "[UNIT_REGISTERED]", "[REG_UNIT]", "[REG_UNIT_INVENTORY]", "[REG_UNIT_REGISTERED]", "[UNIT_UNDESCRIBED]", "[REG_UNIT_UNDESCRIBED]", "[REG_UNIT_OC]", "[UNIT_OC_COUNT]", "[REG_UNIT_HAS_SF]", "[UNIT_HAS_SF]", "[REG_UNIT_HAS_FP]", "[UNIT_HAS_FP]", "[REG_UNITS_NOT_FOUND]", "[UNITS_NOT_FOUND]", "[SECRET_REG_UNITS]", "[SECRET_UNITS]", "[REG_UNITS_SEARCH]", "[UNITS_SEARCH]", "[REG_UNITS_UNIQUE]", "[UNITS_UNIQUE]", "[REG_UNITS_CTALOGUE]", "[UNITS_CATALOGUED]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessREF_ACT(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_REF_ACT";
             string uniqueValueColumnName = "ISN_REF_ACT";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_REF_ACT]", "[ISN_ACT]", "[ISN_OBJ]", "[KIND]", "[UNIT_COUNT]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessREF_CLS(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_REF_CLS";
             string uniqueValueColumnName = "ISN_REF_CLS";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_REF_CLS]", "[ISN_CLS]", "[ISN_CLSID]", "[ISN_TREE]", "[ISN_OBJ]", "[ORDER_NUM]", "[KIND]", "[NOTE]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessREF_FEATURE(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_REF_FEATURE";
             string uniqueValueColumnName = "ISN_REF_FEATURE";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_REF_FEATURE]", "[ISN_FEATURE]", "[ISN_OBJ]", "[KIND]", "[ORDER_NUM]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessREF_LANGUAGE(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_REF_LANGUAGE";
             string uniqueValueColumnName = "ISN_REF_LANGUAGE";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_REF_LANGUAGE]", "[ISN_LANGUAGE]", "[ISN_OBJ]", "[KIND]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessREF_LOCATION(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_REF_LOCATION";
             string uniqueValueColumnName = "ISN_REF_LOCATION";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_REF_LOCATION]", "[ISN_LOCATION]", "[ISN_OBJ]", "[UNIT_NUM_FROM]", "[UNIT_NUM_TO]", "[KIND]", "[NOTE]", "[UNIT_NUM_OLD_FROM]", "[UNIT_NUM_OLD_TO]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessREF_QUESTION(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_REF_QUESTION";
             string uniqueValueColumnName = "ISN_REF_QUESTION";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_REF_QUESTION]", "[ISN_QUESTION]", "[ISN_OBJ]", "[KIND]", "[Pages]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessUNIT(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_UNIT";
             string uniqueValueColumnName = "ISN_UNIT";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_UNIT]", "[ISN_HIGH_UNIT]", "[ISN_INVENTORY]", "[ISN_DOC_TYPE]", "[ISN_LOCATION]", "[ISN_SECURLEVEL]", "[SECURITY_CHAR]", "[SECURITY_REASON]", "[ISN_INVENTORY_CLS]", "[ISN_STORAGE_MEDIUM]", "[ISN_DOC_KIND]", "[UNIT_KIND]", "[UNIT_NUM_1]", "[UNIT_NUM_2]", "[VOL_NUM]", "[NAME]", "[ANNOTATE]", "[DELO_INDEX]", "[PRODUCTION_NUM]", "[UNIT_CATEGORY]", "[NOTE]", "[IS_IN_SEARCH]", "[IS_LOST]", "[HAS_SF]", "[HAS_FP]", "[HAS_DEFECTS]", "[ARCHIVE_CODE]", "[CATALOGUED]", "[WEIGHT]", "[UNIT_CNT]", "[START_YEAR]", "[START_YEAR_INEXACT]", "[END_YEAR]", "[END_YEAR_INEXACT]", "[MEDIUM_TYPE]", "[BACKUP_COPY_CNT]", "[HAS_TREASURES]", "[IS_MUSEUM_ITEM]", "[PAGE_COUNT]", "[CARDBOARDED]", "[ADDITIONAL_CLS]", "[ALL_DATE]", "[ISN_SECURITY_REASON]", "[UNIT_NUM_TXT]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessUNIT_ELECTRONIC(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_UNIT";
             string uniqueValueColumnName = "ISN_UNIT";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_UNIT]", "[DATA_FORMAT]", "[SIZE]", "[CARRIER_DESC]", "[ACCOMP_DOC]", "[UNIT_CNT]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessUNIT_FOTO(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_UNIT";
             string uniqueValueColumnName = "ISN_UNIT";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_UNIT]", "[ISN_DOC_KIND]", "[PLACE]", "[AUTHOR]", "[BASE_KIND]", "[COLOR]", "[SIZE]", "[STORAGE_INFO]", "[NEGATIVE_COUNT]", "[POSITIVE_COUNT]", "[PRINT_COUNT]", "[DUP_NEGATIVE_COUNT]", "[SLIDE_COUNT]", "[BACKUP_COUNT]", "[SHOT_COUNT]", "[ORIGINAL]", "[ACCOMP_DOC]", "[FOTO_DATE]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessUNIT_FOTO_EX(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_UNIT";
             string uniqueValueColumnName = "ISN_UNIT";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_UNIT]", "[CODE]", "[RUBRIC]", "[SOURCE]", "[START_YEAR]", "[END_YEAR]", "[COUNT]", "[COMPILER]", "[FOTO_DATE]", "[PUBLICATION]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessUNIT_MICROFORM(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_UNIT";
             string uniqueValueColumnName = "ISN_UNIT";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_UNIT]", "[FRAME_COUNT]", "[BACKUP_COUNT]", "[CARRIER_DESC]", "[ACCOMP_DOC]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessUNIT_MOVIE(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_UNIT";
             string uniqueValueColumnName = "ISN_UNIT";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_UNIT]", "[ISN_DOC_KIND]", "[UNIT_TYPE]", "[BASE]", "[FILM_TYPE]", "[FILM_FORMAT]", "[FOOTAGE]", "[START_DATE]", "[END_DATE]", "[PART_COUNT]", "[PLAYBACK_TIME]", "[SOUND]", "[FORMAT]", "[COLOR]", "[AUTHOR]", "[SHOOTING_PLACE]", "[PRODUCTION_PLACE]", "[NEGATIVE_COUNT]", "[NEGATIVE_LENGTH]", "[DUP_NEGATIVE_COUNT]", "[DUP_NEGATIVE_LENGTH]", "[PHONO_NEGATIVE_COUNT]", "[PHONO_NEGATIVE_LENGTH]", "[PHONO_MAG_COUNT]", "[PHONO_MAG_LENGTH]", "[PHONO_COMBINED_COUNT]", "[PHONO_COMBINED_LENGTH]", "[INTERPOSITIVE_COUNT]", "[INTERPOSITIVE_LENGTH]", "[POSITIVE_COUNT]", "[POSITIVE_LENGTH]", "[DUP_BACKUP_COUNT]", "[DUP_BACKUP_LENGTH]", "[INTERPOSITIVE_BACKUP_COUNT]", "[INTERPOSITIVE_BACKUP_LENGTH]", "[CINEX_COUNT]", "[COLOR_PASS_COUNT]", "[CARRIER_DESC]", "[ACCOMP_DOC]", "[UNIT_CNT]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
         static int ProcessUNIT_MOVIE_EX(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_UNIT";
             string uniqueValueColumnName = "ISN_UNIT";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_UNIT]", "[STORY_NUM]", "[STUDIO]", "[DIRECTOR]", "[OPERATOR]", "[CREATOR]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessUNIT_NTD(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_UNIT";
             string uniqueValueColumnName = "ISN_UNIT";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_UNIT]", "[ISN_NTD_KIND]", "[COMPLEX_NUM_1]", "[COMPLEX_NUM_2]", "[DEV_STAGE]", "[AUTHOR]", "[ORGANIZ]", "[REQUEST_DATE]", "[REQUEST_NUM]", "[PATENT_NUM]", "[COPYRIGHT_NUM]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessUNIT_PHONO(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_UNIT";
             string uniqueValueColumnName = "ISN_UNIT";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_UNIT]", "[ISN_DOC_KIND]", "[BASE]", "[REC_SPEED]", "[REC_DATE]", "[PHONO_TYPE]", "[LENGTH]", "[REC_PLACE]", "[PLAYBACK_TIME]", "[PRODUCTION_PLACE]", "[AUTHOR]", "[PERFORMER]", "[ORIGINAL_COUNT]", "[DISK_COUNT]", "[NEGATIVE_COUNT]", "[COPY_COUNT]", "[BACKUP_COUNT]", "[NEGATIVE_LENGTH]", "[COPY_LENGTH]", "[BACKUP_LENGTH]", "[UNIT_CNT]", "[CARRIER_DESC]", "[ACCOMP_DOC]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessUNIT_REQUIRED_WORK(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_UNIT_REQUIRED_WORK";
             string uniqueValueColumnName = "ISN_UNIT_REQUIRED_WORK";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_UNIT_REQUIRED_WORK]", "[ISN_WORK]", "[ISN_UNIT]", "[ISN_REF_ACT]", "[NOTE]", "[CHECK_DATE]", "[IS_ACTUAL]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessUNIT_STATE(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
 
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_UNIT_STATE";
             string uniqueValueColumnName = "ISN_UNIT_STATE";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_UNIT_STATE]", "[ISN_UNIT]", "[ISN_STATE]", "[ISN_REF_ACT]", "[PAGE_NUMS]", "[PAGE_COUNT]", "[STATE_DATE]", "[NOTE]", "[IS_ACTUAL]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessUNIT_VIDEO(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_UNIT";
             string uniqueValueColumnName = "ISN_UNIT";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_UNIT]", "[ISN_DOC_KIND]", "[REC_DATE]", "[REC_TYPE]", "[REC_FORMAT]", "[BASE]", "[ORIGINAL]", "[START_DATE]", "[END_DATE]", "[PART_COUNT]", "[PLAYBACK_TIME]", "[SOUND]", "[COLOR]", "[AUTHOR]", "[SHOOTING_PLACE]", "[PRODUCTION_PLACE]", "[ORIGINAL_COUNT]", "[COPY_COUNT]", "[BACKUP_COUNT]", "[UNIT_CNT]", "[CARRIER_DESC]", "[ACCOMP_DOC]", "[PERFORMER]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessUNIT_VIDEO_EX(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_UNIT";
             string uniqueValueColumnName = "ISN_UNIT";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_UNIT]", "[STORY_NUM]", "[STUDIO]", "[DIRECTOR]", "[OPERATOR]", "[CREATOR]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessUNIT_WORK(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_UNIT_WORK";
             string uniqueValueColumnName = "ISN_UNIT_WORK";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_UNIT_WORK]", "[ISN_UNIT]", "[ISN_WORK]", "[WORK_DATE]", "[NOTE]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
 
         static int ProcessDOCUMENT(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
-
+            bool usedFurther = true;
             string idLikeColumnName = "ISN_DOCUM";
             string uniqueValueColumnName = "ISN_DOCUM";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_DOCUM]", "[ISN_REPRODUCTION_METHOD]", "[ISN_SECURLEVEL]", "[SECURITY_CHAR]", "[ISN_UNIT]", "[ISN_DOC_KIND]", "[DOC_NUM]", "[WEIGHT]", "[PAGE_FROM]", "[PAGE_TO]", "[PAGE_COUNT]", "[NAME]", "[ANNOTATE]", "[DOCUM_DATE]", "[INEXACT_DOCUM_DATE]", "[EVENT_DATE]", "[INEXACT_EVENT_DATE]", "[EVENT_PLACE]", "[ENCLOSURES]", "[NOTE]", "[IS_ORIGINAL]", "[ADDITIONAL_CLS]", "[KEYWORDS]", "[AUTHORS]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
         }
         // -------------------------------------
 
@@ -1038,7 +1039,7 @@ namespace SqlDBManager
 
         // --- Master merge process table ---
 
-        // Для обработки дефолтных таблиц
+        // Для обработки дефолтных таблиц (дописать логику позже)
         static int ProcessDefaultTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string tableName, string highLevelColumnName = "")
         {
             int countImports = 0;
@@ -1105,102 +1106,147 @@ namespace SqlDBManager
         }
 
         // Для обработки таблиц с внешними ключами
-        static int ProcessLinksTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string idLikeColumnName, string tableName)
+        static int ProcessLinksTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string idLikeColumnName, string tableName, bool usedFurther)
         {
             int countImports = 0; // Переменная для подсчета импортированных записей
 
-            // В данной функции собрать и сформировать все данные для импорта, чтобы передать на непосредственный импорт
+            // остановка на "tblINVENTORY". Значения для импорта ищутся по ISN_INVENTORY, а должны по ISN_FUND. Также данная таблица используется далее, как внешние значения. Переделать логику составления импорта данных. По типу проверить на внешние ключи, потом составить данные для импорта и проверить данные в резерве. После этого сделать импорт из зарезервированных, а после добавить в резервный словарь внешние ключи переданной таблицы. (Логика перерабатывается в блоке когда нет значений на фильтрацию уникальных)
 
-            //List<string> mainListCheckData = mainCatalog.SelectListColumnsData(columnName, tableName);
-            //List<string> daughterListCheckData = daughterCatalog.SelectListColumnsData(columnName, tableName);
-
-            if (idLikeColumnName != "")
+            if (ValuesManager.ReturnReserve().ContainsKey(tableName))
             {
-                // Доюавдение в резерв используемых далее
-                ValuesManager.AddToReserve(mainCatalog, tableName);
-            }
-            
+                // old --- new
+                List<Tuple<string, string>> f = ValuesManager.ReturnReserve()[tableName][0][idLikeColumnName];
 
+                List<Dictionary<string, string>> daughterRecordsFromTable = new List<Dictionary<string, string>>();
 
-            // 1. Список в котором словари со всеми значениями из главного каталога по переданной таблице List<Dictionary<string, string>> list = new List<Dictionary<string, string>>();
-            List<Dictionary<string, string>> mainRecordsFromTable = mainCatalog.SelectAllFrom(tableName);
+                List<string> oldKeys = new List<string>();
 
-            // ----- проверка (не используется в программе)
-/*            foreach (Dictionary<string, string> i in mainRecordsFromTable)
-            {
-                foreach (string j in i.Keys)
+                foreach (Tuple<string, string>  tTuple in f)
                 {
-                    MessageBox.Show(j + " --- " + i[j]);
+                    oldKeys.Add(tTuple.Item1);
+                    // Если таблица была занесена в резерв, то найти значения только оттуда и сделать импорты в главную.
+                    //daughterRecordsFromTable = daughterCatalog.SelectAllFrom(tableName, new Dictionary<string, List<string>>() { { "", "" } });
+
                 }
-            }*/
-            // ---------
 
-
-            // 2. Список в котором словари со всеми значениями из дочернего каталога по переданной таблице
-            List<Dictionary<string, string>> daughterRecordsFromTable = daughterCatalog.SelectAllFrom(tableName);
-
-            // 3. Обработчик, который принимает списки из  пунктов 1 и 2. Проходит по дочернему списку. Если по уникальному не нашел значения в главной, то в резервный словарь записывает нынешний ключ, как старый и новый формирует на основе последнего в главной + 1. После передает обработчику, который сформирует и добавит в очередь на импорт. Если нашел подобное значение. То в словарь записывает нынешний, как старый ключ. А новый, как он есть в главной. После чего переходит к следующей записи. На выходе возвращает готовый словарь записей, которые будут испортированы
-
-            // ЧТОБЫ добавить вторичный ключ нынешней таблицы, нужно проверить idLikeColumnName. Если его передали, то мы добавляем значение в резервный словарь. Если такого нет. Значит данные из таблицы нигде не используются. А значит нужно только сформировать запись на импорт в гланый каталог
-
-            // 4. Импортируем записи из пункта 3.
-
-            // Дальше идет обработчик, который берет все записи из главной и дочерней баз. И проверяет вхождения по уникальному ID, который передается при вызове обработчика
+                daughterRecordsFromTable = daughterCatalog.SelectAllFrom(tableName, new Dictionary<string, List<string>>() { { idLikeColumnName, oldKeys } });
 
 
 
-            // Список уникальных значений, по которым можно найти необходимые записи в дочерней БД
-            List<string> uniqueValues = ValuesManager.CheckUniqueValue(
-                mainCatalog.SelectListColumnsData(uniqueValueColumnName, tableName),
-                daughterCatalog.SelectListColumnsData(uniqueValueColumnName, tableName)
-            );
-
-            // Список колонок для формирования запроса на добавление уникальной записи
-            List<string> forImportColumns = mainCatalog.SelectColumnsNames(tableName);
-
-            
-
-/*            if (tableName == "eqUsers")
-            {
-                forImportColumns.Remove("DisplayName");
-            }*/
-
-            if (uniqueValues.Count > 0)
-            {
-                // Цикл импортирования уникальных значений
-                foreach (string filterValue in uniqueValues)
+                if (daughterRecordsFromTable.Count > 0)
                 {
-                    // Формирование списка, который содержит в себе набор данных для импорта одного значения
-                    List<string> forImportData = daughterCatalog.SelectRecordsWhere(forImportColumns, tableName, uniqueValueColumnName, filterValue);
-
-                    // ---
-                    // Словарь ключ строка, который содержит Список, который содержит Словарь ключ строка со значением пара 
-                    // Если передано уникальное поле, то ищем по нему значения на транзакцию.
-                    // Если поле не передано, то берется поле из словаря резервных записей и также от-туда берется значение, по которому найти записи
-                    // Также в таком раскладе исппользуется другой запрос, нежели если бы было передано изначальное поле для поиска
-                    // В случае не нахождения в словаре поля вернуть 0 импортированных значений.
-                    //
-
-                    // Где-то в данном блоке необходимо сделать запрос внешних ключей.
-                    // После проверки, если такие имеются, то создать запись в reserveDict "таблица, в которой используется" -> "oldKey", "newKey". А в middle заменить его на новый, который равняется: (количество всех записей (запрос имеется в каталоге, а также используется перед входом в данный обработчик) в главной + 1) 
-                    Dictionary<string, string> middleRecordDict = new Dictionary<string, string>();
-
-                    for (int i = 0; i < forImportColumns.Count; i++)
+                    foreach (Dictionary<string, string> insertData in daughterRecordsFromTable)
                     {
-                        middleRecordDict[forImportColumns[i]] = forImportData[i];
+                        Dictionary<string, string> prepareData = new Dictionary<string, string>(insertData);
+
+                        prepareData.Remove("ID");
+
+                        mainCatalog.InsertValue(tableName, prepareData);
                     }
-
-                    middleRecordDict.Remove("ID");
-                    //middleRecordDict["unique_column_name"] = $"'{reserveDict[tableName][0][oldKey]}'";
-
-                    // ---
-
-                    ValuesManager.AddUniqueValue(tableName, forImportColumns, uniqueValueColumnName, filterValue, mainCatalog, daughterCatalog);
+                    countImports += daughterRecordsFromTable.Count;
                 }
-                countImports += uniqueValues.Count;
+                return countImports;
             }
+            else
+            {
+                // Если нет, то ищем по каталогу
+                ValuesManager.AddNewTableToReserve(mainCatalog, tableName);
+                // В данной функции собрать и сформировать все данные для импорта, чтобы передать на непосредственный импорт
 
-            return countImports;
+                //List<string> mainListCheckData = mainCatalog.SelectListColumnsData(columnName, tableName);
+                //List<string> daughterListCheckData = daughterCatalog.SelectListColumnsData(columnName, tableName);
+
+/*                if (idLikeColumnName != "")
+                {
+                    // Доюавдение в резерв используемых далее
+                    ValuesManager.AddNewTableToReserve(mainCatalog, tableName);
+                }*/
+
+
+
+                // 1. Список в котором словари со всеми значениями из главного каталога по переданной таблице List<Dictionary<string, string>> list = new List<Dictionary<string, string>>();
+                List<Dictionary<string, string>> mainRecordsFromTable = mainCatalog.SelectAllFrom(tableName);
+
+                // ----- проверка (не используется в программе)
+                /*            foreach (Dictionary<string, string> i in mainRecordsFromTable)
+                            {
+                                foreach (string j in i.Keys)
+                                {
+                                    MessageBox.Show(j + " --- " + i[j]);
+                                }
+                            }*/
+                // ---------
+
+
+                // 2. Список в котором словари со всеми значениями из дочернего каталога по переданной таблице
+                List<Dictionary<string, string>> daughterRecordsFromTable = daughterCatalog.SelectAllFrom(tableName);
+
+                // 3. Обработчик, который принимает списки из  пунктов 1 и 2. Проходит по дочернему списку. Если по уникальному не нашел значения в главной, то в резервный словарь записывает нынешний ключ, как старый и новый формирует на основе последнего в главной + 1. После передает обработчику, который сформирует и добавит в очередь на импорт. Если нашел подобное значение. То в словарь записывает нынешний, как старый ключ. А новый, как он есть в главной. После чего переходит к следующей записи. На выходе возвращает готовый словарь записей, которые будут испортированы
+                // ЧТОБЫ добавить вторичный ключ нынешней таблицы, нужно проверить idLikeColumnName. Если его передали, то мы добавляем значение в резервный словарь. Если такого нет. Значит данные из таблицы нигде не используются. А значит нужно только сформировать запись на импорт в гланый каталог
+                List<Dictionary<string, string>> onImportData = ValuesManager.SortData(mainCatalog, mainRecordsFromTable, daughterRecordsFromTable, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
+
+
+
+                // 4. Импортируем сформированные записи из пункта 3.
+
+                // Дальше идет обработчик, который берет все записи из главной и дочерней баз. И проверяет вхождения по уникальному ID, который передается при вызове обработчика
+
+
+
+                // Список уникальных значений, по которым можно найти необходимые записи в дочерней БД
+                /*List<string> uniqueValues = ValuesManager.CheckUniqueValue(
+                    mainCatalog.SelectListColumnsData(uniqueValueColumnName, tableName),
+                    daughterCatalog.SelectListColumnsData(uniqueValueColumnName, tableName)
+                );*/
+
+                // Список колонок для формирования запроса на добавление уникальной записи
+                //List<string> forImportColumns = mainCatalog.SelectColumnsNames(tableName);
+
+
+
+                /*            if (tableName == "eqUsers")
+                            {
+                                forImportColumns.Remove("DisplayName");
+                            }*/
+
+                if (onImportData.Count > 0)
+                {
+                    // Цикл импортирования уникальных значений
+                    foreach (Dictionary<string, string> uniqueRowData in onImportData)
+                    {
+                        mainCatalog.InsertValue(tableName, uniqueRowData);
+
+                        // Формирование списка, который содержит в себе набор данных для импорта одного значения
+                        //List<string> forImportData = daughterCatalog.SelectRecordsWhere(forImportColumns, tableName, uniqueValueColumnName, filterValue);
+
+                        // ---
+                        // Словарь ключ строка, который содержит Список, который содержит Словарь ключ строка со значением пара 
+                        // Если передано уникальное поле, то ищем по нему значения на транзакцию.
+                        // Если поле не передано, то берется поле из словаря резервных записей и также от-туда берется значение, по которому найти записи
+                        // Также в таком раскладе исппользуется другой запрос, нежели если бы было передано изначальное поле для поиска
+                        // В случае не нахождения в словаре поля вернуть 0 импортированных значений.
+                        //
+
+                        // Где-то в данном блоке необходимо сделать запрос внешних ключей.
+                        // После проверки, если такие имеются, то создать запись в reserveDict "таблица, в которой используется" -> "oldKey", "newKey". А в middle заменить его на новый, который равняется: (количество всех записей (запрос имеется в каталоге, а также используется перед входом в данный обработчик) в главной + 1) 
+                        /*Dictionary<string, string> middleRecordDict = new Dictionary<string, string>();
+
+                        for (int i = 0; i < forImportColumns.Count; i++)
+                        {
+                            middleRecordDict[forImportColumns[i]] = forImportData[i];
+                        }
+
+                        middleRecordDict.Remove("ID");*/
+                        //middleRecordDict["unique_column_name"] = $"'{reserveDict[tableName][0][oldKey]}'";
+
+                        // ---
+
+                        //ValuesManager.AddUniqueValue(tableName, forImportColumns, uniqueValueColumnName, filterValue, mainCatalog, daughterCatalog);
+                    }
+                    countImports += onImportData.Count;
+                }
+                return countImports;
+            }
         }
         // --------------------------------------
 
@@ -1282,6 +1328,11 @@ namespace SqlDBManager
         // 1. Ищем в словаре по таблице. Если нету, то делаем поиск по уникальности. В итоге след пункт
         // 2. Берем
 
+        public static Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>> ReturnReserve()
+        {
+            return reserveDictNew;
+        }
+
         public static int CheckDefaultUsers(List<string> usersLogins, int countImports)
         {
             foreach (string userLogin in defaultUsers)
@@ -1298,7 +1349,7 @@ namespace SqlDBManager
         /// <summary>
         /// Добавляет в резервный словарь наименование таблицы и наименое столбца на которые используется ссылка переданной таблицы
         /// </summary>
-        public static void AddToReserve(DBCatalog mainCatalog, string tableName)
+        public static void AddNewTableToReserve(DBCatalog mainCatalog, string tableName)
         {
             Dictionary<string, string> inUsage= mainCatalog.SelectTablesAndForeignKeyUsage(tableName);
 
@@ -1317,6 +1368,20 @@ namespace SqlDBManager
         }
 
         /// <summary>
+        /// Добавляет пару ключей к таблице в резервной копии
+        /// </summary>
+        public static void AddPairKeysToReserve(DBCatalog mainCatalog, string tableName, string idLikeColumnName, Tuple<string, string> pairKeys)
+        {
+            Dictionary<string, string> inUsage = mainCatalog.SelectTablesAndForeignKeyUsage(tableName);
+
+            foreach (string inTable in inUsage.Keys)
+            {
+                // Добавляем в список таблицы наименование колонки, которая содержит ключ
+                reserveDictNew[inTable][0][inUsage[inTable]].Add(pairKeys);
+            }
+        }
+
+        /// <summary>
         /// Возвращает список разницы между двумя списками
         /// </summary>
         public static List<string> CheckUniqueValue(List<string> mainList, List<string> daughterList)
@@ -1331,6 +1396,69 @@ namespace SqlDBManager
                 }
             }
             return uniqueValues;
+        }
+
+        /// <summary>
+        /// Сортирует данные из главной таблицы и дочерней
+        /// </summary>
+        /// <param name="mainRecordsFromTable"></param>
+        /// <param name="daughterRecordsFromTable"></param>
+        /// <returns>Записи готовые к импорту в главный каталог</returns>
+        public static List<Dictionary<string, string>> SortData(DBCatalog mainCatalog, List<Dictionary<string, string>> mainRecordsFromTable, List<Dictionary<string, string>> daughterRecordsFromTable, string uniqueValueColumnName, string idLikeColumnName, string tableName, bool usedFurther)
+        {
+            List<Dictionary<string, string>> onImportData = new List<Dictionary<string, string>>();
+            List<string> mainData = new List<string>();
+            List<string> daughterData = new List<string>();
+            List<string> uniqueRecords = new List<string>();
+/*            string ssssssss = ;
+            MessageBox.Show(ssssssss);*/
+            long lastIdLikeInMain = Convert.ToInt64(mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)[0].Replace("\'", ""));
+
+            // Отбираем записи по уникальному переданному полю для дальнейшей сортировки
+            foreach (Dictionary<string, string> rowDataInMain in mainRecordsFromTable)
+            {
+                mainData.Add(rowDataInMain[uniqueValueColumnName]);
+            }
+
+
+            foreach (Dictionary<string, string> rowDataInDaughter in daughterRecordsFromTable)
+            {
+                // Логика, если значение имеется. Мы добавляем в резерм пару ключей как они есть
+                if (mainData.Contains(rowDataInDaughter[uniqueValueColumnName]) && usedFurther)
+                {
+                    AddPairKeysToReserve(mainCatalog, tableName, idLikeColumnName, new Tuple<string, string>(rowDataInDaughter[idLikeColumnName], ReturnValue(mainRecordsFromTable, uniqueValueColumnName, rowDataInDaughter[uniqueValueColumnName], idLikeColumnName)));
+                }
+                else
+                {
+                    // Логика, если значение не найдено. Мы добавляем в резерм пару ключей: старый ключ из дочерней - новый ключ сформированный на основе последнего ключа из главной
+                    Dictionary<string, string> onAdd = new Dictionary<string, string>(rowDataInDaughter);
+
+                    onAdd.Remove("ID");
+                    onAdd[idLikeColumnName] = $"{lastIdLikeInMain + onImportData.Count + 1}";
+                    onImportData.Add(onAdd);
+
+                    if (usedFurther)
+                    {
+                        AddPairKeysToReserve(mainCatalog, tableName, idLikeColumnName, new Tuple<string, string>(rowDataInDaughter[idLikeColumnName], onAdd[idLikeColumnName]));
+                    }
+                }
+            }
+            return onImportData;
+        }
+
+        /// <summary>
+        /// Ищет в словаре значение и возвращает по переданным параметрам
+        /// </summary>
+        public static string ReturnValue(List<Dictionary<string, string>> mainRecordsFromTable, string searchColumn, string searchValue, string returnInColumn)
+        {
+            foreach (Dictionary<string, string> rowData in mainRecordsFromTable)
+            {
+                if (rowData[searchColumn] == searchValue)
+                {
+                    return rowData[returnInColumn];
+                }
+            }
+            return "";
         }
 
         public static void RestoreUser(string userLogin)
