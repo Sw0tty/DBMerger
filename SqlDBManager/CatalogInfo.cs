@@ -316,7 +316,14 @@ namespace SqlDBManager
                 Dictionary<string, string> rowData = new Dictionary<string, string>();
                 for (int i = 0; i < reader.FieldCount; i++)
                 {
-                    rowData[columnsNames[i]] = "'" + reader[i].ToString() + "'";
+                    if (reader[i].ToString() == "")
+                    {
+                        rowData[columnsNames[i]] = "null";
+                    }
+                    else
+                    {
+                        rowData[columnsNames[i]] = "'" + reader[i].ToString() + "'";
+                    }
                 }
                 tableData.Add(new Dictionary<string, string>(rowData));
             }

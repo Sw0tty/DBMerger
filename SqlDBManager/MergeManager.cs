@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data.Common;
 using System.Data.SqlTypes;
 using System.Linq;
 using System.Runtime.Serialization.Formatters;
@@ -532,8 +533,10 @@ namespace SqlDBManager
             bool usedFurther = true;
             string idLikeColumnName = "ISN_FUND_RENAME";
             string uniqueValueColumnName = "ISN_FUND_RENAME";
+
+            string foreignIdColumn = "ISN_FUND";
             //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_FUND_RENAME]", "[ISN_FUND]", "[CREATE_DATE]", "[CREATE_DATE_INEXACT]", "[DELETE_DATE]", "[DELETE_DATE_INEXACT]", "[FUND_NUM_1]", "[FUND_NUM_2]", "[FUND_NUM_3]", "[FUND_NAME_SHORT]", "[FUND_NAME_FULL]", "[NOTE]", "[NAME_SAVED]" };
-            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
+            return ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther, foreignIdColumn);
         }
 
         static int ProcessFUND_CHECK(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
@@ -1106,22 +1109,31 @@ namespace SqlDBManager
         }
 
         // Для обработки таблиц с внешними ключами
-        static int ProcessLinksTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string idLikeColumnName, string tableName, bool usedFurther)
+        static int ProcessLinksTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string idLikeColumnName, string tableName, bool usedFurther, string foreignIdColumn = null)
         {
             int countImports = 0; // Переменная для подсчета импортированных записей
 
             // остановка на "tblINVENTORY". Значения для импорта ищутся по ISN_INVENTORY, а должны по ISN_FUND. Также данная таблица используется далее, как внешние значения. Переделать логику составления импорта данных. По типу проверить на внешние ключи, потом составить данные для импорта и проверить данные в резерве. После этого сделать импорт из зарезервированных, а после добавить в резервный словарь внешние ключи переданной таблицы. (Логика перерабатывается в блоке когда нет значений на фильтрацию уникальных)
 
+            int usageCount = ValuesManager.AddNewTableToReserve(mainCatalog, tableName);
+
+
+            // 1. У нее могут быть ключи на внешние 2. Могут отсутствовть, но может быть, что она в резерве.
+            if (usageCount > 0)
+            {
+
+            }
+
             if (ValuesManager.ReturnReserve().ContainsKey(tableName))
             {
                 // old --- new
-                List<Tuple<string, string>> f = ValuesManager.ReturnReserve()[tableName][0][idLikeColumnName];
+                List<Tuple<string, string>> keysTuples = ValuesManager.ReturnReserve()[tableName][0][foreignIdColumn];
 
                 List<Dictionary<string, string>> daughterRecordsFromTable = new List<Dictionary<string, string>>();
 
                 List<string> oldKeys = new List<string>();
 
-                foreach (Tuple<string, string>  tTuple in f)
+                foreach (Tuple<string, string>  tTuple in keysTuples)
                 {
                     oldKeys.Add(tTuple.Item1);
                     // Если таблица была занесена в резерв, то найти значения только оттуда и сделать импорты в главную.
@@ -1346,25 +1358,31 @@ namespace SqlDBManager
             return countImports;
         }
 
+
         /// <summary>
         /// Добавляет в резервный словарь наименование таблицы и наименое столбца на которые используется ссылка переданной таблицы
         /// </summary>
-        public static void AddNewTableToReserve(DBCatalog mainCatalog, string tableName)
+        /// <returns>Количество найденых таблиц</returns>
+        public static int AddNewTableToReserve(DBCatalog mainCatalog, string tableName)
         {
-            Dictionary<string, string> inUsage= mainCatalog.SelectTablesAndForeignKeyUsage(tableName);
+            Dictionary<string, string> inUsage = mainCatalog.SelectTablesAndForeignKeyUsage(tableName);
 
             // Пример пришедших данных
             // "FUND" -> "ISN_FUND"
-            foreach (string inTable in inUsage.Keys)
+            if (inUsage.Count > 0)
             {
-                // Если еще нет таблицы в словаре
-                if (!reserveDictNew.ContainsKey(inTable))
+                foreach (string inTable in inUsage.Keys)
                 {
-                    reserveDictNew[inTable] = new List<Dictionary<string, List<Tuple<string, string>>>>();
+                    // Если еще нет таблицы в словаре
+                    if (!reserveDictNew.ContainsKey(inTable))
+                    {
+                        reserveDictNew[inTable] = new List<Dictionary<string, List<Tuple<string, string>>>>();
+                    }
+                    // Добавляем в список таблицы наименование колонки, которая содержит ключ
+                    reserveDictNew[inTable].Add(new Dictionary<string, List<Tuple<string, string>>>() { { inUsage[inTable], new List<Tuple<string, string>>() } });
                 }
-                // Добавляем в список таблицы наименование колонки, которая содержит ключ
-                reserveDictNew[inTable].Add(new Dictionary<string, List<Tuple<string, string>>>() { { inUsage[inTable], new List<Tuple<string, string>>() } });
             }
+            return inUsage.Count;
         }
 
         /// <summary>

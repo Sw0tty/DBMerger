@@ -180,6 +180,11 @@ namespace SqlDBManager
             {
                 if (mainCatalog.ValidateNamesTables(daughterCatalog.SelectTablesNames()))
                 {
+                    // Валидация tblSECURITY_REASON и других дефолтных значений
+                    // Сделать завтра же. После этого покопаться в линкованных таблицах. При багах на эти таблицы вернуться.
+                    // При обнаружении ошибок предлогать исправить БД
+                    // Проверить tblFUND ключ tblFUND - tblFUND
+
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидация прошла успешно!");
 
                     // --------------
