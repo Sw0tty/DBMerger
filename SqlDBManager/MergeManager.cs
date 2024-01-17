@@ -1045,6 +1045,8 @@ namespace SqlDBManager
         // Для обработки дефолтных таблиц (дописать логику позже)
         static int ProcessDefaultTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string tableName, string highLevelColumnName = "")
         {
+            // Принцип импорта. По типу Users. Передать необязательнуый список колонок, которые нужно удалить из импорта Например List<string>() { "ID", "DisplayName"}
+
             int countImports = 0;
 
             if (highLevelColumnName != "")

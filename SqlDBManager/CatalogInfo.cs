@@ -412,6 +412,10 @@ namespace SqlDBManager
             return listTablesNames;
         }
 
+        /// <summary>
+        /// Проверяет схождение количества слияемых каталогов
+        /// </summary>
+        /// <returns>Успешность прохождения валидации</returns>
         public bool ValidateCountTables(int countAnotherCatalogTables)
         {
             if (countAnotherCatalogTables == SelectCountTables())
@@ -419,21 +423,26 @@ namespace SqlDBManager
             return false;
         }
 
+        /// <summary>
+        /// Проверяет на соответствие наименований таблиц слияемых каталогов
+        /// </summary>
+        /// <returns>Успешность прохождения валидации</returns>
         public bool ValidateNamesTables(List<string> anotherCatalogNamesTables)
         {
             List<string> mainCatalogNamesTables = SelectTablesNames();
 
             foreach (string anotherTablesName in anotherCatalogNamesTables)
             {
-                if (mainCatalogNamesTables.Contains(anotherTablesName))
-                {
-                    continue;
-                }
-                return false;
+                if (!mainCatalogNamesTables.Contains(anotherTablesName))
+                    return false;
             }
             return true;
         }
 
+        /// <summary>
+        /// Проверяет на валидность данные дефолтных таблиц
+        /// </summary>
+        /// <returns>Успешность прохождения валидации</returns>
         public bool ValidateDefaultTables(BackgroundWorker worker)
         {
             Dictionary<string, Tuple<string, Dictionary<string, List<string>>>> defaultTables = DefaultTablesValues.DefaultTables;
@@ -460,11 +469,10 @@ namespace SqlDBManager
             if (problemTables.Count > 0)
             {
                 Thread.Sleep(2000);
-                if (MessageBox.Show("Исправить дочернюю базу данных?", "Предложение", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageBox.Show("Исправить дочернюю базу данных?", "Системное сообщение", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    // вызываем функцию исправления дефолтных таблиц
-                    // Принцип исправлени: найти все используемые внешние ключи, заменить их на представленный дефолт, после чего удалить лишние записи из дефолтных таблиц
-                    RebuildDefaultTables(problemTables, defaultTables);
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Приступаем к корректировке данных...");
+                    RebuildDefaultTables(worker, problemTables, defaultTables);
                     return true;
                 }
                 return false;
@@ -472,7 +480,10 @@ namespace SqlDBManager
             return true;
         }
 
-        public void RebuildDefaultTables(Dictionary<string, List<Dictionary<string, string>>> problemTables, Dictionary<string, Tuple<string, Dictionary<string, List<string>>>> defaultTables)
+        /// <summary>
+        /// Вносит изменения в БД. Корректирует невалидные данные дефолтных таблиц
+        /// </summary>
+        public void RebuildDefaultTables(BackgroundWorker worker, Dictionary<string, List<Dictionary<string, string>>> problemTables, Dictionary<string, Tuple<string, Dictionary<string, List<string>>>> defaultTables)
         {
             foreach (string tableName in problemTables.Keys)
             {
@@ -486,7 +497,8 @@ namespace SqlDBManager
                     }
                     DeleteValue(tableName, string.Join("", defaultTables[tableName].Item2.Keys), row[string.Join("", defaultTables[tableName].Item2.Keys)]);
                 }
-            } 
+            }
+            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Данные скорректированы.");
         }
     }
 }

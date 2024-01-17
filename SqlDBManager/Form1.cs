@@ -189,7 +189,7 @@ namespace SqlDBManager
                     {
 
                         // по окончаю всех валидаций
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидация прошла успешно!");
+                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидация успешно завершена!");
 
                         MessageBox.Show("Break");
 
