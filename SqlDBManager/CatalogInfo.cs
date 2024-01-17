@@ -292,6 +292,12 @@ namespace SqlDBManager
             UpdateAdapter(request, connection);
         }
 
+        public void DeleteValue(string tableName, string filterColumn, string filterValue)
+        {
+            string request = SQLRequests.DeleteRowRequest(Catalog, tableName, filterColumn, filterValue);
+            DeleteAdapter(request, connection);
+        }
+
         static void InsertAdapter(string request, SqlConnection connection)
         {
             SqlDataAdapter adapter = new SqlDataAdapter();
@@ -308,6 +314,17 @@ namespace SqlDBManager
             adapter.UpdateCommand = new SqlCommand(request, connection);
             adapter.UpdateCommand.ExecuteNonQuery();
             adapter.Dispose();
+        }
+
+        public int DeleteAdapter(string request, SqlConnection connection)
+        {
+            SqlDataAdapter adapter = new SqlDataAdapter();
+
+            adapter.DeleteCommand = new SqlCommand(request, connection);
+            int deletedCount = adapter.DeleteCommand.ExecuteNonQuery();
+
+            adapter.Dispose();
+            return deletedCount;
         }
 
         /// <summary>
@@ -455,33 +472,21 @@ namespace SqlDBManager
             return true;
         }
 
-        public void RebuildDefaultTables(Dictionary<string, List<Dictionary<string, string>>> problemTables, Dictionary<string, Tuple<string, Dictionary<string, List<string>>>> defaultTables, string defaultValue =null)
+        public void RebuildDefaultTables(Dictionary<string, List<Dictionary<string, string>>> problemTables, Dictionary<string, Tuple<string, Dictionary<string, List<string>>>> defaultTables)
         {
             foreach (string tableName in problemTables.Keys)
             {
                 foreach (Dictionary<string, string> row in problemTables[tableName])
                 {
-
                     Dictionary<string, string> foreignsDict = SelectTablesAndForeignKeyUsage(tableName);
 
                     foreach (string updateTable in foreignsDict.Keys)
                     {
                         UpdateValue(updateTable, foreignsDict[updateTable], defaultTables[tableName].Item1, foreignsDict[updateTable], row[foreignsDict[updateTable]]);
                     }
-
+                    DeleteValue(tableName, string.Join("", defaultTables[tableName].Item2.Keys), row[string.Join("", defaultTables[tableName].Item2.Keys)]);
                 }
-
-
-
-                
-
-                
-                //UpdateValue(foreignsDict[tableName], )
-
-
-            }
-
-            
+            } 
         }
     }
 }

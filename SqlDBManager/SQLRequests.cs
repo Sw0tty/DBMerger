@@ -49,11 +49,11 @@ namespace SqlDBManager
         }
 
         /// <summary>
-        /// Запрос удаления обределенной строки
+        /// Запрос удаления определенной строки
         /// </summary>
-        public static string DeleteRowRequest(string catalog, string table, string filterColumn, string filterValue)
+        public static string DeleteRowRequest(string catalog, string tableName, string filterColumn, string filterValue)
         {
-            return $"DELETE [{catalog}].[dbo].[{table}] WHERE {filterColumn} = {filterValue}";
+            return $"DELETE [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue}";
         }
 
         /// <summary>
