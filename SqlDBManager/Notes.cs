@@ -31,6 +31,29 @@ namespace NotesNamespace
         public const int SPACE_SIZE = 4;
     }
 
+    public static class DefaultTablesValues
+    {
+        /// <summary>
+        /// Наименование таблицы - фильтруемая колонка - ключи дефолтных значений
+        /// </summary>
+/*        public static Dictionary<string, Dictionary<string, List<string>>> DefaultTables { get; } = new Dictionary<string, Dictionary<string, List<string>>>()
+        {
+            { "tblPERIOD", new Dictionary<string, List<string>>() { { "ISN_PERIOD", new List<string>() { "1", "2", "3" } } } },
+            { "tblSECURLEVEL", new Dictionary<string, List<string>>() { { "ISN_SECURLEVEL", new List<string>() { "1", "2", "3" } } } },
+            { "tblSECURITY_REASON", new Dictionary<string, List<string>>() { { "ISN_SECURITY_REASON", new List<string>() { "1", "2", "3", "4", "8" } } } },
+        };*/
+
+        /// <summary>
+        /// Наименование таблицы - (дефолтное значение для корректировки, фильтруемая колонка) - ключи дефолтных значений
+        /// </summary>
+        public static Dictionary<string, Tuple<string, Dictionary<string, List<string>>>> DefaultTables { get; } = new Dictionary<string, Tuple<string, Dictionary<string, List<string>>>>()
+        {
+            { "tblPERIOD", new Tuple<string, Dictionary<string, List<string>>>("3", new Dictionary<string, List<string>>() { { "ISN_PERIOD", new List<string>() { "1", "2", "3" } } }) },
+            { "tblSECURLEVEL", new Tuple<string, Dictionary<string, List<string>>>("1", new Dictionary<string, List<string>>() { { "ISN_SECURLEVEL", new List<string>() { "1", "2", "3" } } }) },
+            { "tblSECURITY_REASON", new Tuple<string, Dictionary<string, List<string>>>("null", new Dictionary<string, List<string>>() { { "ISN_SECURITY_REASON", new List<string>() { "1", "2", "3", "4", "8" } } }) },
+        };
+    }
+
 
     public class CatalogInfo
     {

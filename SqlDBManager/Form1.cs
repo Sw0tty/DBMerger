@@ -185,47 +185,59 @@ namespace SqlDBManager
                     // При обнаружении ошибок предлогать исправить БД
                     // Проверить tblFUND ключ tblFUND - tblFUND
 
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидация прошла успешно!");
+                    if (daughterCatalog.ValidateDefaultTables(worker))
+                    {
 
-                    // --------------
-                    // Создаем резервную копию для транзакций
-/*                    BackupManager backupManager = new BackupManager(mainCatalog.SelectCatalogPath()[0], mainCatalog.ReturnCatalog(), text1, textBox2.Text.Trim(' '), textBox3.Text.Trim(' '));
+                        // по окончаю всех валидаций
+                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидация прошла успешно!");
 
-                    backupManager.OpenConnection();
-                    backupManager.CreateReserveBackup(mainCatalog.ReturnCatalog());
+                        MessageBox.Show("Break");
 
-                    MessageBox.Show("Created");
+                        // --------------
+                        // Создаем резервную копию для транзакций
+                        /*                    BackupManager backupManager = new BackupManager(mainCatalog.SelectCatalogPath()[0], mainCatalog.ReturnCatalog(), text1, textBox2.Text.Trim(' '), textBox3.Text.Trim(' '));
 
-                    mainCatalog.CloseConnection();
+                                            backupManager.OpenConnection();
+                                            backupManager.CreateReserveBackup(mainCatalog.ReturnCatalog());
 
-                    backupManager.RestoreFromBackup(mainCatalog.ReturnCatalog());
+                                            MessageBox.Show("Created");
 
-                    MessageBox.Show("restored");
+                                            mainCatalog.CloseConnection();
 
+                                            backupManager.RestoreFromBackup(mainCatalog.ReturnCatalog());
 
-                    backupManager.DeleteReserveBackup();
-
-                    MessageBox.Show("Deleted");
-
-                    MessageBox.Show("Break");*/
-                    // --------------
-
-                    // Очищаем логи
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Очистка логов ---");
-                    bool successOperation = MergeManager.ClearLogs(mainCatalog, worker);
-
-                    // Проходим по дефолтным таблицам
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка дефолтных таблиц ---");
-                    MergeManager.ProcessSkipTables(mainCatalog, daughterCatalog, worker);
-                    MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, worker);
-
-                    // Проходим по таблицам с ключами (провряем на уникальность)
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка таблиц с внешними ключами ---");
-                    MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, worker);
+                                            MessageBox.Show("restored");
 
 
+                                            backupManager.DeleteReserveBackup();
 
-                    e.Result = "Слияние успешно завершено!";
+                                            MessageBox.Show("Deleted");
+
+                                            MessageBox.Show("Break");*/
+                        // --------------
+
+                        // Очищаем логи
+                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Очистка логов ---");
+                        bool successOperation = MergeManager.ClearLogs(mainCatalog, worker);
+
+                        // Проходим по дефолтным таблицам
+                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка дефолтных таблиц ---");
+                        MergeManager.ProcessSkipTables(mainCatalog, daughterCatalog, worker);
+                        MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, worker);
+
+                        // Проходим по таблицам с ключами (провряем на уникальность)
+                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка таблиц с внешними ключами ---");
+                        MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, worker);
+
+
+
+                        e.Result = "Слияние успешно завершено!";
+                    }
+                    else
+                    {
+                        e.Result = "Дефолтные таблицы содержат недопустимые значения!";
+                        MessageBox.Show("Ошибка валидации!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
                 else
                 {

@@ -40,10 +40,20 @@ namespace SqlDBManager
             return $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' and TABLE_NAME like '%log' ORDER BY TABLE_NAME";
         }
 
-        // Запрос на полную очистку таблицы
+        /// <summary>
+        /// Запрос очистики таблицы
+        /// </summary>
         public static string ClearTableRequest(string catalog, string table)
         {
             return $"DELETE [{catalog}].[dbo].[{table}]";
+        }
+
+        /// <summary>
+        /// Запрос удаления обределенной строки
+        /// </summary>
+        public static string DeleteRowRequest(string catalog, string table, string filterColumn, string filterValue)
+        {
+            return $"DELETE [{catalog}].[dbo].[{table}] WHERE {filterColumn} = {filterValue}";
         }
 
         /// <summary>
@@ -68,6 +78,11 @@ namespace SqlDBManager
             return $"UPDATE [{catalog}].[dbo].[{table}] SET ID = NEWID() WHERE {filterColumn} = '{filterValue}'";
         }
 
+        public static string UpdateRowRequest(string catalog, string tableName, string updateColumn, string updateValue, string filterColumn, string filterValue)
+        {
+            return $"UPDATE [{catalog}].[dbo].[{tableName}] SET {updateColumn} = {updateValue} WHERE {filterColumn} = {filterValue}";
+        }
+
         public static string InsertFromRequest(string inCatalog, string inTable, List<string> columns, string fromCatalog, string fromTable, string filterColumn, string filterValue)
         {
             return $"INSERT INTO [{inCatalog}].[dbo].[{inTable}] SELECT {string.Join(", ", columns)} FROM [{fromCatalog}].[dbo].[{fromTable}] WHERE {filterColumn} = '{filterValue}'";
@@ -89,6 +104,7 @@ namespace SqlDBManager
 
         /// <summary>
         /// Запрос получения записей по переданному фильтру
+        /// Фильтрация по одному параметру WHERE key = value
         /// </summary>
         public static string SelectWhereRequest(List<string> columns, string catalog, string tableName, string filterColumn, string filterValue)
         {
@@ -97,14 +113,21 @@ namespace SqlDBManager
 
         /// <summary>
         /// Запрос на получение всех записей переданной таблицы
+        /// Содержит фильтрацию WHERE key IN (value, value, ...) и фильтрацию WHERE key NOT IN (value, value, ...) в зависимости от переданных параметров
+        /// Опционально принимает список необходимых столбцов
         /// </summary>
-        public static string AllRecordsRequest(string catalog, string tableName, Dictionary<string, List<string>> filter = null)
+        public static string AllRecordsRequest(string catalog, string tableName, Dictionary<string, List<string>> filter = null, bool filterIN = true, List<string> columns = null)
         {
-            if (filter != null)
+            string strColumns = (columns == null) ? "*" : string.Join(", ", columns);
+            if (filter != null && filterIN)
             {
-                return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} in ({string.Join(", ", filter[string.Join("", filter.Keys)])})";
+                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} IN ({string.Join(", ", filter[string.Join("", filter.Keys)])})";
             }
-            return $"SELECT * FROM [{catalog}].[dbo].[{tableName}]";
+            else if (filter != null && !filterIN)
+            {
+                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} NOT IN ({string.Join(", ", filter[string.Join("", filter.Keys)])})";
+            }
+            return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}]";
         }
 
         // Получение наименований столбцов переданной таблицы

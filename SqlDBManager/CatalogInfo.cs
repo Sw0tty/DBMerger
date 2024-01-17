@@ -1,8 +1,11 @@
-﻿using System;
+﻿using NotesNamespace;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -95,9 +98,9 @@ namespace SqlDBManager
         /// <summary>
         /// Возвращает список найденых записей в виде словаря (колонка - значение)
         /// </summary>
-        public List<Dictionary<string, string>> SelectAllFrom(string tableName, Dictionary<string, List<string>> filter = null)
+        public List<Dictionary<string, string>> SelectAllFrom(string tableName, Dictionary<string, List<string>> filter = null, bool filterIN = true, List<string> columns = null)
         {
-            string request = SQLRequests.AllRecordsRequest(Catalog, tableName, filter);
+            string request = SQLRequests.AllRecordsRequest(Catalog, tableName, filter, filterIN, columns);
             return ReturnListDictsFromDB(request, SelectColumnsNames(tableName), connection);
         }
 
@@ -283,6 +286,12 @@ namespace SqlDBManager
             //return request;
         }
 
+        public void UpdateValue(string tableName, string updateColumn, string updateValue, string filterColumn, string filterValue)
+        {
+            string request = SQLRequests.UpdateRowRequest(Catalog, tableName, updateColumn, updateValue, filterColumn, filterValue);
+            UpdateAdapter(request, connection);
+        }
+
         static void InsertAdapter(string request, SqlConnection connection)
         {
             SqlDataAdapter adapter = new SqlDataAdapter();
@@ -406,6 +415,73 @@ namespace SqlDBManager
                 return false;
             }
             return true;
+        }
+
+        public bool ValidateDefaultTables(BackgroundWorker worker)
+        {
+            Dictionary<string, Tuple<string, Dictionary<string, List<string>>>> defaultTables = DefaultTablesValues.DefaultTables;
+            Dictionary<string, List<Dictionary<string, string>>> problemTables = new Dictionary<string, List<Dictionary<string, string>>>();
+
+            foreach (string tableName in defaultTables.Keys)
+            {
+                List<Dictionary<string, string>> invalidRows = SelectAllFrom(tableName, defaultTables[tableName].Item2, filterIN: false);
+
+                if (invalidRows.Count > 0)
+                {
+                    problemTables.Add(tableName, new List<Dictionary<string, string>>(invalidRows));
+
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Недопустимые значения в {tableName}, в колонке {string.Join("", defaultTables[tableName].Item2.Keys)}:");
+                    string invalidUniqueValues = "";
+                    foreach (Dictionary<string, string> invalidRow in invalidRows)
+                    {
+                        invalidUniqueValues += invalidRow[string.Join("", defaultTables[tableName].Item2.Keys)] + " ";
+                    }
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"{invalidUniqueValues}");
+                }
+            }
+
+            if (problemTables.Count > 0)
+            {
+                Thread.Sleep(2000);
+                if (MessageBox.Show("Исправить дочернюю базу данных?", "Предложение", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    // вызываем функцию исправления дефолтных таблиц
+                    // Принцип исправлени: найти все используемые внешние ключи, заменить их на представленный дефолт, после чего удалить лишние записи из дефолтных таблиц
+                    RebuildDefaultTables(problemTables, defaultTables);
+                    return true;
+                }
+                return false;
+            }
+            return true;
+        }
+
+        public void RebuildDefaultTables(Dictionary<string, List<Dictionary<string, string>>> problemTables, Dictionary<string, Tuple<string, Dictionary<string, List<string>>>> defaultTables, string defaultValue =null)
+        {
+            foreach (string tableName in problemTables.Keys)
+            {
+                foreach (Dictionary<string, string> row in problemTables[tableName])
+                {
+
+                    Dictionary<string, string> foreignsDict = SelectTablesAndForeignKeyUsage(tableName);
+
+                    foreach (string updateTable in foreignsDict.Keys)
+                    {
+                        UpdateValue(updateTable, foreignsDict[updateTable], defaultTables[tableName].Item1, foreignsDict[updateTable], row[foreignsDict[updateTable]]);
+                    }
+
+                }
+
+
+
+                
+
+                
+                //UpdateValue(foreignsDict[tableName], )
+
+
+            }
+
+            
         }
     }
 }
