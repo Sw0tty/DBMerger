@@ -22,7 +22,7 @@ namespace SqlDBManager
             
             // Добавить в ProcessFunc две переменные. Первая отвечает за поиск уникальных записей (например, по имени). Вторая отвечает за вторичный ключ 
             
-            { "eqUsers", ProcessTBLUsers },
+            { "eqUsers", ProcessUsers }, // ProcessTBLUsers
             { "tblACT_TYPE_CL", ProcessActTypeCL },
             { "tblAuthorizedDep", ProcessAuthorizedDep },
             { "tblCLS", ProcessCLS },
@@ -249,15 +249,22 @@ namespace SqlDBManager
             }
         }
 
-/*        static void ProcessSomeTable() // Template process
-        {
-            // Наименование функции = наименование обрабатываемой таблицы
-            // Принимает оба каталога, инициализирует необходимые объекты для опознования уникальности записи.
-            // Передает все в функцию обработчик ProcessTable, которая найдет уникальные записи и запишит их в главную БД
-            // Возвращается количество импортированных записей
-        }*/
+        /*        static void ProcessSomeTable() // Template process
+                {
+                    // Наименование функции = наименование обрабатываемой таблицы
+                    // Принимает оба каталога, инициализирует необходимые объекты для опознования уникальности записи.
+                    // Передает все в функцию обработчик ProcessTable, которая найдет уникальные записи и запишит их в главную БД
+                    // Возвращается количество импортированных записей
+                }*/
 
         // --- Process Functions for DafaultTables ---
+        static int ProcessUsers(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+        {
+            string highLevelColumnName = "";
+            string uniqueColumnName = "Login";
+            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, tableName, excludeColumns: new List<string>() { "DisplayName" });
+        }
+
         static int ProcessActTypeCL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
             string highLevelColumnName = "";
@@ -1043,13 +1050,12 @@ namespace SqlDBManager
         // --- Master merge process table ---
 
         // Для обработки дефолтных таблиц (дописать логику позже)
-        static int ProcessDefaultTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string tableName, string highLevelColumnName = "")
+        static int ProcessDefaultTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string tableName, List<string> excludeColumns = null, string highLevelColumnName = null)
         {
             // Принцип импорта. По типу Users. Передать необязательнуый список колонок, которые нужно удалить из импорта Например List<string>() { "ID", "DisplayName"}
-
             int countImports = 0;
 
-            if (highLevelColumnName != "")
+            if (highLevelColumnName != null)
             {
 
             }
@@ -1060,16 +1066,35 @@ namespace SqlDBManager
                     daughterCatalog.SelectListColumnsData(uniqueValueColumnName, tableName)
                 );
 
+                if (uniqueValues.Count > 0)
+                {
+                    List<Dictionary<string, string>> onImportRows = daughterCatalog.SelectAllFrom(tableName, new Dictionary<string, List<string>>() { { uniqueValueColumnName, uniqueValues } });
 
-                // Список колонок для формирования запроса на добавление уникальной записи
+                    foreach (Dictionary<string, string> row in onImportRows)
+                    {
+                        row.Remove("ID");
+
+                        if (excludeColumns != null)
+                        {
+                            foreach (string column in excludeColumns)
+                            {
+                                row.Remove(column);
+                            }
+                        }
+                        mainCatalog.InsertValue(tableName, row);
+                    }
+                    countImports += uniqueValues.Count;
+                }
+
+                /*// Список колонок для формирования запроса на добавление уникальной записи
                 List<string> forImportColumns = mainCatalog.SelectColumnsNames(tableName);
 
 
 
-                /*            if (tableName == "eqUsers")
+                *//*            if (tableName == "eqUsers")
                             {
                                 forImportColumns.Remove("DisplayName");
-                            }*/
+                            }*//*
 
                 if (uniqueValues.Count > 0)
                 {
@@ -1104,9 +1129,8 @@ namespace SqlDBManager
                         ValuesManager.AddUniqueValue(tableName, forImportColumns, uniqueValueColumnName, filterValue, mainCatalog, daughterCatalog);
                     }
                     countImports += uniqueValues.Count;
-                }
+                }*/
             }
-
             return countImports;
         }
 

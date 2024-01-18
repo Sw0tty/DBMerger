@@ -191,7 +191,7 @@ namespace SqlDBManager
                         // по окончаю всех валидаций
                         worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидация успешно завершена!");
 
-                        MessageBox.Show("Break");
+                        
 
                         // --------------
                         // Создаем резервную копию для транзакций
@@ -224,6 +224,8 @@ namespace SqlDBManager
                         worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка дефолтных таблиц ---");
                         MergeManager.ProcessSkipTables(mainCatalog, daughterCatalog, worker);
                         MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, worker);
+
+                        MessageBox.Show("End of default tables");
 
                         // Проходим по таблицам с ключами (провряем на уникальность)
                         worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка таблиц с внешними ключами ---");
