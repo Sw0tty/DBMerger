@@ -166,10 +166,10 @@ namespace SqlDBManager
 
             Invoke(new Action(() => tabControl1.SelectedIndex++));
 
-            for (int i = 0; i < 5; i++)
+/*            for (int i = 0; i < 5; i++)
             {
                 Thread.Sleep(1000);
-            }
+            }*/
             //Thread.Sleep(1000);
             //listBox1.Items.Add("Валидируем каталоги на возможность слияния...");
 

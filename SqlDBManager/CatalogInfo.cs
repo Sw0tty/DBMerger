@@ -104,16 +104,16 @@ namespace SqlDBManager
             return ReturnListDictsFromDB(request, SelectColumnsNames(tableName), connection);
         }
 
-        public List<string> SelectTablesNames()
+        public List<string> SelectTablesNames(bool likeDBString = false, bool itsRow = false)
         {
             string request = SQLRequests.AllTablesRequest(Catalog);
-            return ReturnListFromDB(request, connection);
+            return ReturnListFromDB(request, connection, likeDBString, itsRow);
         }
 
-        public List<string> SelectLogTables()
+        public List<string> SelectLogTables(bool likeDBString = false, bool itsRow = false)
         {
             string request = SQLRequests.LogTablesRequest(Catalog);
-            return ReturnListFromDB(request, connection);
+            return ReturnListFromDB(request, connection, likeDBString, itsRow);
         }
 
         public List<string> SelectDefaultSkipTables()
@@ -133,10 +133,10 @@ namespace SqlDBManager
         /// <summary>
         /// Возвращает список значений по одной колонке
         /// </summary>
-        public List<string> SelectListColumnsData(string column, string tableName)
+        public List<string> SelectListColumnsData(string column, string tableName, bool likeDBString = false, bool itsRow = false)
         {
             string request = SQLRequests.OneColumnRequest(column, Catalog, tableName);
-            return ReturnListFromDB(request, connection);
+            return ReturnListFromDB(request, connection, likeDBString, itsRow);
         }
 
         /// <summary>
@@ -167,10 +167,10 @@ namespace SqlDBManager
         /// <summary>
         /// Возвращает список наименований столбцов переданной таблицы
         /// </summary>
-        public List<string> SelectColumnsNames(string tableName)
+        public List<string> SelectColumnsNames(string tableName, bool likeDBString = false, bool itsRow = false)
         {
             string request = SQLRequests.ColumnsNamesRequest(Catalog, tableName);
-            return ReturnListFromDB(request, connection, forSelect: true);
+            return ReturnListFromDB(request, connection, likeDBString, itsRow);
         }
 
         public List<string> SelectLinksTables()
@@ -344,7 +344,7 @@ namespace SqlDBManager
                 {
                     if (reader[i].ToString() == "")
                     {
-                        rowData[columnsNames[i]] = "null";
+                        rowData[columnsNames[i]] = null;
                     }
                     else
                     {
@@ -378,17 +378,17 @@ namespace SqlDBManager
             return dictTableData;
         }
 
-        static List<string> ReturnListFromDB(string request, SqlConnection connection, bool forSelect = false, bool itsRow = false)
+        static List<string> ReturnListFromDB(string request, SqlConnection connection, bool likeDBString = false, bool itsRow = false)
         {
             SqlCommand command = new SqlCommand(request, connection);
             SqlDataReader reader = command.ExecuteReader();
             List<string> listTablesNames = new List<string>();
 
-            if (forSelect)
+            if (likeDBString)
             {
                 while (reader.Read())
                 {
-                    listTablesNames.Add(reader.GetValue(0).ToString());
+                    listTablesNames.Add("'" + reader.GetValue(0).ToString() + "'");
                 }
             }
             else if (itsRow)
