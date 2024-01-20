@@ -99,7 +99,7 @@ namespace SqlDBManager
         /// </summary>
         public static string InsertDictValueRequst(string catalog, string tableName, Dictionary<string, string> data)
         {
-            return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("''", null)})";
+            return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("'null'", "null")})";
         }
 
         /// <summary>

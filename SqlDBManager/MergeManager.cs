@@ -1022,80 +1022,101 @@ namespace SqlDBManager
         }
         // -------------------------------------
 
-        static int ProcessWithHIGHTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string columnName, string tableName)
-        {
-            int countImports = 0;
-            List<string> mainListCheckData = mainCatalog.SelectListColumnsData(columnName, tableName);
-            List<string> daughterListCheckData = daughterCatalog.SelectListColumnsData(columnName, tableName);
-            List<string> uniqueValues = ValuesManager.CheckUniqueValue(mainListCheckData, daughterListCheckData);
-            List<string> forImportColumns = mainCatalog.SelectColumnsNames(tableName);
-
-            List<string> isnSubjects = mainCatalog.SelectListColumnsData("ISN_SUBJECT", tableName);
-
-            /*if (isnSubjects.Contains("повтор isn_key") "ISN_SUBJECT" in) {
-
-                new "ISN_SUBJECT" = mainCatalog.SelectCountRowsTable(tableName) + 1;
-            }*/
-
-
-            if (tableName == "eqUsers")
-            {
-                forImportColumns.Remove("[DisplayName]");
-            }
-
-            if (uniqueValues.Count > 0)
-            {
-                foreach (string value in uniqueValues)
-                {
-                    ValuesManager.AddUniqueValue(tableName, forImportColumns, columnName, value, mainCatalog, daughterCatalog);
-                }
-                countImports += uniqueValues.Count;
-            }
-
-            return countImports;
-        }
 
         // --- Master merge process table ---
 
         // Для обработки дефолтных таблиц (дописать логику позже)
         static int ProcessDefaultTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string idLikeColumnName, string tableName, List<string> excludeColumns = null, string highLevelColumnName = null)
         {
-            // Принцип импорта. По типу Users. Передать необязательнуый список колонок, которые нужно удалить из импорта Например List<string>() { "ID", "DisplayName"}
-            int countImports = 0;
+            // -------- Общий блок инициализации вне зависимости от переданных парпаметров--------
+            int countOfImports = 0;
 
-            // int usageCount = ValuesManager.AddNewTableToReserve(mainCatalog, tableName);
+            long lastId = 0;
+            if (idLikeColumnName != null)
+            {
+                string lastIDFromDB = string.Join("", mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)).Replace("\'", "");
+                lastId = (lastIDFromDB != "") ? Convert.ToInt64(lastIDFromDB) : 0;
+            }
+            //long lastId = Convert.ToInt64(string.Join("", mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)).Replace("\'", ""));
+            // 1. Берем все записи двух каталогов в виде словарей
+            List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
+            List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
+            List<Dictionary<string, string>> reservedRows = new List<Dictionary<string, string>>();
+
+            // 2. Берем список значений по уникальному полю из главного каталога
+            List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainData, uniqueValueColumnName);
+
+            // 3. Берем таблицы в дальнейшем используемые
+            Dictionary<string, string> foreigns = mainCatalog.SelectTablesAndForeignKeyUsage(tableName);
+
+            // 4. Проверяем foreigns на наличие использования. Если True, то добавляем все в RealoadDict
+            if (foreigns.Count > 0)
+            {
+                ValuesManager.AddTablesToReloadDict(foreigns);
+            }
+            // ----------------
+
+
+            
+
 
             if (highLevelColumnName != null)
             {
+                // Если есть highLevelColumnName значит есть и idLikeColumnName
 
-            }
-            else
-            {
-                // 1. Берем все записи двух каталогов в виде словарей
-                List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
-                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
 
-                // 2. Берем список значений по уникальному полю из главного каталога
-                List<string> mainCatalogValues = mainCatalog.SelectListColumnsData(uniqueValueColumnName, tableName, likeDBString: true);
-
-                // 3. Берем таблицы в дальнейшем используемые
-                Dictionary<string, string> foreigns = mainCatalog.SelectTablesAndForeignKeyUsage(tableName);
-
-                // 4. Проверяем foreigns на наличие использования. Если True, то добавляем все в RealoadDict
-                if (foreigns.Count > 0)
+                foreach (Dictionary<string, string> row in allFromDaughterData)
                 {
-                    ValuesManager.AddTablesToReloadDict(foreigns);
+                    // Если значение присутствует в главной таблице
+                    if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
+                    {
+                        ValuesManager.AddPairKeysToReloadDict(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
+                    }
+                    // Если значения в главной нет и idLikeColumnName БОЛЬШЕ чем highLevelColumnName 
+                    else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]) && Convert.ToInt64(row[idLikeColumnName].Replace("\'", "")) > Convert.ToInt64(row[highLevelColumnName].Replace("\'", "")))
+                    {
+                        // Первым делом взять high и проверить его значение в дочерней с главной
+                        //string s = ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName);
+                        if (mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
+                        {
+                            row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
+                            row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+                            ValuesManager.AddPairKeysToReloadDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                            mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                            mainCatalogValues.Add(row[uniqueValueColumnName]);
+                            countOfImports++;
+                        }// Если значения по ключу High нет в записях главного каталога
+                        else if (!mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
+                        {
+                            // Добавляем в конец очереди остальных
+                            reservedRows.Add(row);
+                        }
+                    } // Если значения в главной нет и idLikeColumnName МЕНЬШЕ чем highLevelColumnName 
+                    else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]) && Convert.ToInt64(row[idLikeColumnName].Replace("\'", "")) < Convert.ToInt64(row[highLevelColumnName].Replace("\'", "")))
+                    {
+                        if (mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
+                        {
+                            row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
+                            row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+                            ValuesManager.AddPairKeysToReloadDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                            mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                            mainCatalogValues.Add(row[uniqueValueColumnName]);
+                            countOfImports++;
+                        }// Если значения по ключу High нет в записях главного каталога
+                        else if (!mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
+                        {
+                            // Добавляем в конец очереди остальных
+                            reservedRows.Add(row);
+                        }
+                    }
                 }
 
 
 
-                // 5. Проверяем передачу idLikeColumnName. Если есть, то узнаем последний idLike
-/*                if (idLikeColumnName != null)
-                {
-                    long lastId = Convert.ToInt64(string.Join("", mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)));
-                }*/
-               
 
+            }
+            else // Готовый блок
+            {
                 // N. Создаем цикл перебора значений дочернего каталога
                 foreach (Dictionary<string, string> row in allFromDaughterData)
                 {
@@ -1103,7 +1124,8 @@ namespace SqlDBManager
                     if (idLikeColumnName == null && !mainCatalogValues.Contains(row[uniqueValueColumnName]))
                     {
                         mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
-                        countImports++;
+                        mainCatalogValues.Add(row[uniqueValueColumnName]);
+                        countOfImports++;
                     } // Если значение из дочерней БД уже есть в главной
                     else if (idLikeColumnName != null && mainCatalogValues.Contains(row[uniqueValueColumnName]) && foreigns.Count > 0)
                     {
@@ -1111,98 +1133,42 @@ namespace SqlDBManager
                     }// Если нашлось новое значения, которого нет в главной БД
                     else if (idLikeColumnName != null && !mainCatalogValues.Contains(row[uniqueValueColumnName]) && row[uniqueValueColumnName] != null)
                     {
-                        long lastId = Convert.ToInt64(string.Join("", mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)).Replace("\'", ""));
-                        row[idLikeColumnName] = $"'{countImports + lastId + 1}'";
-                        ValuesManager.AddPairKeysToReloadDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                        //long lastId = Convert.ToInt64(string.Join("", mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)).Replace("\'", ""));
+                        row[idLikeColumnName] = $"'{countOfImports + lastId + 1}'";
+                        //ValuesManager.AddPairKeysToReloadDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                        ValuesManager.AddPairKeysToReloadDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
                         mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
-                        countImports++;
+                        mainCatalogValues.Add(row[uniqueValueColumnName]);
+                        countOfImports++;
                     }
                 }
-/*
-                List<string> uniqueValues = ValuesManager.CheckUniqueValue(
-                    mainCatalog.SelectListColumnsData(uniqueValueColumnName, tableName),
-                    daughterCatalog.SelectListColumnsData(uniqueValueColumnName, tableName)
-                );
-
-
-                mainCatalog.SelectListColumnsData(uniqueValueColumnName, tableName);
-                daughterCatalog.SelectListColumnsData(uniqueValueColumnName, tableName);
-
-
-                if (uniqueValues.Count > 0)
-                {
-                    List<Dictionary<string, string>> onImportRows = daughterCatalog.SelectAllFrom(tableName, new Dictionary<string, List<string>>() { { uniqueValueColumnName, uniqueValues } });
-
-                    foreach (Dictionary<string, string> row in onImportRows)
-                    {
-                        countImports++;
-
-                        if (idLikeColumnName != null)
-                        {
-                            List<string> uniqueKeys = mainCatalog.SelectListColumnsData(idLikeColumnName, tableName);
-                            Dictionary<string, string> foreigns = mainCatalog.SelectTablesAndForeignKeyUsage(tableName);
-
-                            long lastId = Convert.ToInt64(string.Join("", mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)));
-                            row[idLikeColumnName] = $"'{countImports + lastId}'";
-
-                        }
-
-
-
-
-
-                        mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
-                        
-                    }
-                    //countImports += uniqueValues.Count;
-                }*/
-
-                /*// Список колонок для формирования запроса на добавление уникальной записи
-                List<string> forImportColumns = mainCatalog.SelectColumnsNames(tableName);
-
-
-
-                *//*            if (tableName == "eqUsers")
-                            {
-                                forImportColumns.Remove("DisplayName");
-                            }*//*
-
-                if (uniqueValues.Count > 0)
-                {
-                    // Цикл импортирования уникальных значений
-                    foreach (string filterValue in uniqueValues)
-                    {
-                        // Формирование списка, который содержит в себе набор данных для импорта одного значения
-                        List<string> forImportData = daughterCatalog.SelectRecordsWhere(forImportColumns, tableName, uniqueValueColumnName, filterValue);
-
-                        // ---
-                        // Словарь ключ строка, который содержит Список, который содержит Словарь ключ строка со значением пара 
-                        // Если передано уникальное поле, то ищем по нему значения на транзакцию.
-                        // Если поле не передано, то берется поле из словаря резервных записей и также от-туда берется значение, по которому найти записи
-                        // Также в таком раскладе исппользуется другой запрос, нежели если бы было передано изначальное поле для поиска
-                        // В случае не нахождения в словаре поля вернуть 0 импортированных значений.
-                        //
-
-                        // Где-то в данном блоке необходимо сделать запрос внешних ключей.
-                        // После проверки, если такие имеются, то создать запись в reserveDict "таблица, в которой используется" -> "oldKey", "newKey". А в middle заменить его на новый, который равняется: (количество всех записей (запрос имеется в каталоге, а также используется перед входом в данный обработчик) в главной + 1) 
-                        Dictionary<string, string> middleRecordDict = new Dictionary<string, string>();
-
-                        for (int i = 0; i < forImportColumns.Count; i++)
-                        {
-                            middleRecordDict[forImportColumns[i]] = forImportData[i];
-                        }
-
-                        middleRecordDict.Remove("ID");
-                        //middleRecordDict["unique_column_name"] = $"'{reserveDict[tableName][0][oldKey]}'";
-
-                        // ---
-
-                        ValuesManager.AddUniqueValue(tableName, forImportColumns, uniqueValueColumnName, filterValue, mainCatalog, daughterCatalog);
-                    }
-                    countImports += uniqueValues.Count;
-                }*/
             }
-            return countImports;
+            // Обработка отложенных записей
+            if (reservedRows.Count > 0)
+            {
+                foreach (Dictionary<string, string> row in reservedRows)
+                {
+                    if (mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
+                    {
+                        row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
+                        row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+                        ValuesManager.AddPairKeysToReloadDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                        mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                        mainCatalogValues.Add(row[uniqueValueColumnName]);
+                        countOfImports++;
+                    }
+                    else
+                    {
+                        row[highLevelColumnName] = "'null'";
+                        row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+                        ValuesManager.AddPairKeysToReloadDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                        mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                        mainCatalogValues.Add(row[uniqueValueColumnName]);
+                        countOfImports++;
+                    }
+                }
+            }
+            return countOfImports;
         }
 
         // Для обработки таблиц с внешними ключами
@@ -1453,6 +1419,11 @@ namespace SqlDBManager
             return reserveDictNew;
         }
 
+        public static Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>> ReturnReload()
+        {
+            return reloadDict;
+        }
+
         public static int CheckDefaultUsers(List<string> usersLogins, int countImports)
         {
             foreach (string userLogin in defaultUsers)
@@ -1477,6 +1448,14 @@ namespace SqlDBManager
             }
             row.Remove("ID");
             return row;
+        }
+
+        public static List<string> SelectDataFromColumn(List<Dictionary<string, string>> allFromMainData, string columnName)
+        {
+            List<string> listData = new List<string>();
+            foreach (Dictionary<string, string> dataDict in allFromMainData)
+                listData.Add(dataDict[columnName]);
+            return listData;
         }
 
         public static void AddTablesToReloadDict(Dictionary<string, string> foreigns)

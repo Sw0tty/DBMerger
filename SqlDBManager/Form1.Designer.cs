@@ -68,6 +68,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.listBox2 = new System.Windows.Forms.ListBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.button2 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -420,6 +421,7 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.button2);
             this.tabPage4.Controls.Add(this.listView1);
             this.tabPage4.Controls.Add(this.button10);
             this.tabPage4.Controls.Add(this.label10);
@@ -496,6 +498,16 @@
             this.backgroundWorker1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker1_ProgressChanged);
             this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(255, 495);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(167, 49);
+            this.button2.TabIndex = 7;
+            this.button2.Text = "visualizator";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -562,6 +574,7 @@
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.TextBox textBoxStatus;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.Button button2;
     }
 }
 

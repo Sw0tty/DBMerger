@@ -33,6 +33,12 @@ namespace SqlDBManager
             label7.Text = label3.Text;
             label8.Text = label4.Text;
 
+
+            textBox2.Text = "sa";
+            textBox5.Text = textBox2.Text;
+            textBox3.Text = "123";
+            textBox6.Text = textBox3.Text;
+
             checkConnectionMainCatalog.Text = "Проверить соединение";
             checkConnectionDaughterCatalog.Text = checkConnectionMainCatalog.Text;
 
@@ -555,6 +561,21 @@ namespace SqlDBManager
         private void checkConnectionMainCatalog_MouseLeave(object sender, EventArgs e)
         {
             Cursor = Cursors.Default;
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //Visualizator.VisualizateReserv();
+
+            Tuple<string, string, string> tr = new Tuple<string, string, string>("1", "2", "3");
+
+
+            MessageBox.Show(Sommmmss(tr.Item1, tr.Item2, tr.Item3));
+        }
+
+        public static string Sommmmss(string one, string two, string three)
+        {
+            return $"{one} {two} {three}";
         }
     }
 

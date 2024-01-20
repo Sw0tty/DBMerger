@@ -19,9 +19,7 @@ namespace NotesNamespace
         {
             string space = "";
             for (int i = 1; i <= spaceSize; i++)
-            {
                 space += " ";
-            }
             return space;
         }
     }
@@ -54,8 +52,72 @@ namespace NotesNamespace
         };
     }
 
+    static public class Visualizator
+    {
+        const int VISUAL_LVL_TWO = 8;
+        const int VISUAL_LVL_THREE = 12;
+        const int VISUAL_LVL_FOUR = 16;
 
-    public class CatalogInfo
+        /// <summary>
+        /// Визуализирует входящие данные в резервный словарь в момент вызова визуализации
+        /// </summary>
+        static public void VisualizateReserv(Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>> reloadDict)
+        {
+            //Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>> reloadDict
+
+
+            /*Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>> reloadDict = new Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>>();
+            reloadDict["SOME_TABLE"] = new List<Dictionary<string, List<Tuple<string, string>>>>();
+            reloadDict["SOME_TABLE"].Add(new Dictionary<string, List<Tuple<string, string>>>() { { "ISN_SOME", new List<Tuple<string, string>>() } });
+            reloadDict["SOME_TABLE"].Add(new Dictionary<string, List<Tuple<string, string>>>() { { "ISN_SOME_2", new List<Tuple<string, string>>() { new Tuple<string, string>("1232132", "dfgdfgf"), new Tuple<string, string>("1232132", "dfgdfgf") } } });
+*/
+
+            if (reloadDict.Count == 0)
+            {
+                MessageBox.Show("словарь пуст");
+            }
+            else
+            {
+                //string wrapperKey = "";
+                //string insideDictKey = "";
+                //string insideDict = $"{insideDictKey}: " + "[\n" + "\n]";
+
+
+                List<string> insideDicts = new List<string>();
+                List<string> insideTuples = new List<string>();
+
+                string dictWrapper = null;
+
+                foreach (string key in reloadDict.Keys)
+                {
+                    string wrapperKey = key;
+                    foreach (Dictionary<string, List<Tuple<string, string>>> keyColumn in reloadDict[key])
+                    {
+                        foreach (string insideKey in keyColumn.Keys)
+                        {
+                            string insideDictKey = insideKey;
+                            foreach(Tuple<string, string> tuple in keyColumn[insideKey])
+                            {
+                                insideTuples.Add($"{HelpFunction.CreateSpace(VISUAL_LVL_THREE)}({tuple.Item1}, {tuple.Item2})");
+                            }
+                            string insideDict = $"{HelpFunction.CreateSpace(VISUAL_LVL_TWO)}{insideDictKey}: " + "[\n" + $"{string.Join(",\n", insideTuples)}" + $"\n{HelpFunction.CreateSpace(VISUAL_LVL_TWO)}]";
+                            insideDicts.Add(insideDict);
+                        }
+                        dictWrapper = $"{wrapperKey}: " + "[\n" + $"{string.Join("\n", insideDicts)}" + "\n]";
+                    }
+                    MessageBox.Show(dictWrapper);
+                }
+            }
+        }
+
+        static public void VisualizateDefaultTables()
+        { 
+
+        }
+    }
+
+
+    /*public class CatalogInfo
     {
         protected List<string> logTables;
         protected List<string> defaultTables;
@@ -85,7 +147,7 @@ namespace NotesNamespace
             List<string> list = new List<string>();
             return new List<string>();
         }
-    }
+    }*/
 
     // System.Data.SqlClient.SqlException
 
