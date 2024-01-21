@@ -1047,6 +1047,7 @@ namespace SqlDBManager
             }
             // ----------------
 
+
             if (highLevelColumnName != null)
             {
                 // Если есть highLevelColumnName значит есть и idLikeColumnName
@@ -1057,7 +1058,7 @@ namespace SqlDBManager
                     // Если значение присутствует в главной таблице
                     if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
                     {
-                        ValuesManager.AddPairKeysToReloadDict(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
+                        ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
                     }
                     // Если значения в главной нет и idLikeColumnName БОЛЬШЕ чем highLevelColumnName 
                     else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]) && Convert.ToInt64(row[idLikeColumnName].Replace("\'", "")) > Convert.ToInt64(row[highLevelColumnName].Replace("\'", "")))
@@ -1068,7 +1069,7 @@ namespace SqlDBManager
                         {
                             row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
                             row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
-                            ValuesManager.AddPairKeysToReloadDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                            ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
                             mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                             mainCatalogValues.Add(row[uniqueValueColumnName]);
                             countOfImports++;
@@ -1085,7 +1086,7 @@ namespace SqlDBManager
                         {
                             row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
                             row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
-                            ValuesManager.AddPairKeysToReloadDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                            ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
                             mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                             mainCatalogValues.Add(row[uniqueValueColumnName]);
                             countOfImports++;
@@ -1112,14 +1113,14 @@ namespace SqlDBManager
                     } // Если значение из дочерней БД уже есть в главной
                     else if (idLikeColumnName != null && mainCatalogValues.Contains(row[uniqueValueColumnName]) && foreigns.Count > 0)
                     {
-                        ValuesManager.AddPairKeysToReloadDict(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
+                        ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
                     }// Если нашлось новое значения, которого нет в главной БД
                     else if (idLikeColumnName != null && !mainCatalogValues.Contains(row[uniqueValueColumnName]) && row[uniqueValueColumnName] != null)
                     {
                         //long lastId = Convert.ToInt64(string.Join("", mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)).Replace("\'", ""));
                         row[idLikeColumnName] = $"'{countOfImports + lastId + 1}'";
                         //ValuesManager.AddPairKeysToReloadDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
-                        ValuesManager.AddPairKeysToReloadDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                        ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
                         mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                         mainCatalogValues.Add(row[uniqueValueColumnName]);
                         countOfImports++;
@@ -1135,7 +1136,7 @@ namespace SqlDBManager
                     {
                         row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
                         row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
-                        ValuesManager.AddPairKeysToReloadDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                        ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
                         mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                         mainCatalogValues.Add(row[uniqueValueColumnName]);
                         countOfImports++;
@@ -1144,7 +1145,7 @@ namespace SqlDBManager
                     {
                         row[highLevelColumnName] = "'null'";
                         row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
-                        ValuesManager.AddPairKeysToReloadDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                        ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
                         mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                         mainCatalogValues.Add(row[uniqueValueColumnName]);
                         countOfImports++;
@@ -1166,7 +1167,12 @@ namespace SqlDBManager
                 string lastIDFromDB = string.Join("", mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)).Replace("\'", "");
                 lastId = (lastIDFromDB != "") ? Convert.ToInt64(lastIDFromDB) : 0;
             }
-            //long lastId = Convert.ToInt64(string.Join("", mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)).Replace("\'", ""));
+            
+            // Послднее значение по полю число, если было передано
+            if (numerateColumn != null)
+            {
+                string lastNumric = string.Join("", mainCatalog.SelectLastRecord(numerateColumn, tableName, numerateColumn)).Replace("\'", "");
+            }
             
 
             // 3. Берем таблицы в дальнейшем используемые
@@ -1202,23 +1208,23 @@ namespace SqlDBManager
 
                         if (foreigns.Count > 0)
                         {
-
+                            //ValuesManager.AddPairKeysToReserve();
                         }
                     } // Если значения НЕТ в главном каталоге
                     else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]))
                     {
-                        if (ValuesManager.ContainsInRewrite(tableName))
-                        {
-
-                        }
+                        
 
 
                         if (foreigns.Count > 0)
                         {
-
+                            //ValuesManager.AddPairKeysToReserve();
                         }
 
-                        ValuesManager.RemoveUnnecessary(row, excludeColumns);
+                        if (ValuesManager.ContainsInRewrite(tableName))
+                        {
+                            mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
+                        }
                         mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                         countOfImports++;
                     }
@@ -1418,7 +1424,7 @@ namespace SqlDBManager
         static Dictionary<string, List<Dictionary<string, string>>> reserveDict = new Dictionary<string, List<Dictionary<string, string>>>();
 
         // Словарь для дефолтных таблиц. Содержит ключи из дефолтных, которые нкжно будет перезаписать в процессе формирования импортируемой записи в обработчике линкованных таблиц
-        static Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>> rewriteDict = new Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>>();
+        static Dictionary<string, Dictionary<string, List<Tuple<string, string>>>> rewriteDict = new Dictionary<string, Dictionary<string, List<Tuple<string, string>>>>();
 
 
 
@@ -1437,12 +1443,12 @@ namespace SqlDBManager
             return reserveDictNew;
         }
 
-        public static Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>> ReturnRewriteDict()
+        public static Dictionary<string, Dictionary<string, List<Tuple<string, string>>>> ReturnRewriteDict()
         {
             return rewriteDict;
         }
 
-        public static List<Dictionary<string, List<Tuple<string, string>>>> ReturnTableValuesRewriteDict(string tableName)
+        public static Dictionary<string, List<Tuple<string, string>>> ReturnTableValuesRewriteDict(string tableName)
         {
             return rewriteDict[tableName];
         }
@@ -1480,11 +1486,18 @@ namespace SqlDBManager
 
         public static Dictionary<string, string> RepareColumnsValues(Dictionary<string, string> row, string tableName)
         {
-            foreach (Dictionary<string, List<Tuple<string, string>>> columnValues in ReturnTableValuesRewriteDict(tableName))
+            Dictionary<string, List<Tuple<string, string>>> rewriteDict = ReturnTableValuesRewriteDict(tableName);
+            foreach (string columnName in rewriteDict.Keys)
             {
-
+                foreach (Tuple<string, string> keysTuple in rewriteDict[columnName])
+                {
+                    if (row[columnName] == keysTuple.Item1)
+                    {
+                        row[columnName] = keysTuple.Item2;
+                        break;
+                    }
+                }
             }
-
             return row;
         }
 
@@ -1502,21 +1515,21 @@ namespace SqlDBManager
             {
                 if (!rewriteDict.ContainsKey(inTable))
                 {
-                    rewriteDict[inTable] = new List<Dictionary<string, List<Tuple<string, string>>>>();
+                    rewriteDict[inTable] = new Dictionary<string, List<Tuple<string, string>>>();
                 }
-                rewriteDict[inTable].Add(new Dictionary<string, List<Tuple<string, string>>>() { { foreigns[inTable], new List<Tuple<string, string>>() } });
+                rewriteDict[inTable][foreigns[inTable]] = new List<Tuple<string, string>>();
             }
         }
 
-        public static void AddPairKeysToReloadDict(Dictionary<string, string> foreigns, string idLikeColumnName, Tuple<string, string> pairKeys)
+        public static void AddPairKeysToRewriteDict(Dictionary<string, string> foreigns, string idLikeColumnName, Tuple<string, string> pairKeys)
         {
             foreach (string inTable in foreigns.Keys)
             {
-                foreach(Dictionary<string, List<Tuple<string, string>>> foreignKey in rewriteDict[inTable])
+                foreach(string foreignKey in rewriteDict[inTable].Keys)
                 {
-                    if (string.Join("", foreignKey.Keys) == idLikeColumnName)
+                    if (foreignKey == idLikeColumnName)
                     {
-                        foreignKey[idLikeColumnName].Add(pairKeys);
+                        rewriteDict[inTable][idLikeColumnName].Add(pairKeys);
                     }
                     continue;
                 }
