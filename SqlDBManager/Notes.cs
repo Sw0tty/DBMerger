@@ -473,3 +473,262 @@ tblDOCUMENT - обработка после tblSECURLEVEL, tblDOC_KIND_CL, tblUN
  
  
  */
+
+/*
+
+// Словарь дефолтных (без внешних ключей) таблиц и функций для их обработки
+public static Dictionary<string, Func<DBCatalog, DBCatalog, string, int>> defaultTablesFunctions = new Dictionary<string, Func<DBCatalog, DBCatalog, string, int>> {
+            { "eqUsers", ProcessUsers }, // ProcessTBLUsers
+            { "tblACT_TYPE_CL", ProcessActTypeCL },
+            { "tblAuthorizedDep", ProcessAuthorizedDep },
+            { "tblCLS", ProcessCLS },
+            { "tblDataExport", ProcessDataExport },
+            { "tblDECL_COMMISSION_CL", ProcessDECL_COMMISSION_CL },
+            //{ "tblConstantsSpec", ProcessConstantsSpec },
+            { "tblGROUPING_ATTRIBUTE_CL", ProcessGROUPING_ATTRIBUTE_CL },
+            { "tblINV_REQUIRED_WORK_CL", ProcessINV_REQUIRED_WORK_CL },
+            { "tblLANGUAGE_CL", ProcessLANGUAGE_CL },
+            { "tblFEATURE", ProcessFEATURE },
+            { "tblCITIZEN_CL", ProcessCITIZEN_CL },
+            { "tblORGANIZ_CL", ProcessORGANIZ_CL },
+            { "tblPAPER_CLS", ProcessPAPER_CLS },
+            { "tblPAPER_CLS_INV", ProcessPAPER_CLS_INV },
+            { "tblPUBLICATION_TYPE_CL", ProcessPUBLICATION_TYPE_CL },
+            { "tblQUESTION", ProcessQUESTION },
+            { "tblRECEIPT_REASON_CL", ProcessRECEIPT_REASON_CL },
+            { "tblRECEIPT_SOURCE_CL", ProcessRECEIPT_SOURCE_CL },
+            { "tblREF_FILE", ProcessREF_FILE },
+            { "tblREPRODUCTION_METHOD_CL", ProcessREPRODUCTION_METHOD_CL },
+            // { "tblService", ProcessService },
+            { "tblSTATE_CL", ProcessSTATE_CL },
+            { "tblSTORAGE_MEDIUM_CL", ProcessSTORAGE_MEDIUM_CL },
+            { "tblSUBJECT_CL", ProcessSUBJECT_CL },
+            { "tblTREE_SUPPORT", ProcessTREE_SUPPORT },
+            { "tblWORK_CL", ProcessWORK_CL },
+            { "rptFUND_PAPER", ProcessFUND_PAPER },
+            { "rptFUND_UNIT_REG_STATS", ProcessFUND_UNIT_REG_STATS },
+        };
+
+
+// --- Process Functions for DafaultTables ---
+static int ProcessUsers(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = null;
+    string uniqueColumnName = "Login";
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName, excludeColumns: new List<string>() { "DisplayName" });
+}
+
+static int ProcessActTypeCL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = "ISN_ACT_TYPE";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_ACT_TYPE]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]"  };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessAuthorizedDep(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = "ISN_AuthorizedDep";
+    string uniqueColumnName = "ShortName";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_AuthorizedDep]", "[ShortName]", "[FullName]", "[Address]", "[District]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessCLS(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string highLevelColumnName = "ISN_HIGH_CLS";
+    string idLikeColumnName = "ISN_CLS";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_CLS]", "[ISN_HIGH_CLS]", "[CODE]", "[WEIGHT]", "[NAME]", "[OBJ_KIND]", "[MULTISELECT]", "[NOTE]", "[FOREST_ELEM]", "[PROTECTED]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName, highLevelColumnName: highLevelColumnName);
+}
+
+static int ProcessDataExport(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = null;
+    string uniqueColumnName = "fcDbName";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[StatusID]", "[OwnerID]", "[CreationDateTime]", "[Deleted]", "[fcDbName]", "[fcDbBacPath]", "[isZiped]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessDECL_COMMISSION_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = "ISN_COMMISSION";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_COMMISSION]", "[CODE]", "[NAME_SHORT]", "[NAME]", "[CREATE_DATE]", "[DELETE_DATE]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessGROUPING_ATTRIBUTE_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = "ISN_GROUPING_ATTRIBUTE";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_GROUPING_ATTRIBUTE]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessINV_REQUIRED_WORK_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = "ISN_REQUIRED_WORK";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_REQUIRED_WORK]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessLANGUAGE_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = "ISN_LANGUAGE";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_LANGUAGE]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessFEATURE(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string highLevelColumnName = "ISN_HIGH_FEATURE";
+    string idLikeColumnName = "ISN_FEATURE";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_FEATURE]", "[ISN_HIGH_FEATURE]", "[CODE]", "[NAME]", "[NOTE]", "[FOREST_ELEM]", "[PROTECTED]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName, highLevelColumnName: highLevelColumnName);
+}
+
+static int ProcessCITIZEN_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = "ISN_CITIZEN";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_CITIZEN]", "[NAME]", "[TITLE]", "[RELATIONSHIP]", "[LAST_FAMILY_NAME]", "[NICKNAME]", "[BIRTH_DATE]", "[DEATH_DATE]", "[PROFESSION]", "[POST]", "[DEGREE]", "[MILITARY_RANK]", "[HONORARY_RANK]", "[NOTE]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessORGANIZ_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = "ISN_ORGANIZ";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_ORGANIZ]", "[NAME]", "[CODE]", "[CREATE_YEAR]", "[CREATE_YEAR_INEXACT]", "[DELETE_YEAR]", "[DELETE_YEAR_INEXACT]", "[ADDRESS]", "[CEO_NAME]", "[ARCHIVIST_NAME]", "[CEO_PHONE]", "[ARCHIVIST_PHONE]", "[ARCHIVE_REGULATIONS]", "[HAS_EPK]", "[DELO_INSTRUCTION_YEAR]", "[WORKER_COUNT]", "[APPROVED_NOM]", "[KEEPING_PLACE]", "[NOTE]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessPAPER_CLS(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = "ISN_PAPER_CLS";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_PAPER_CLS]", "[CLS_TYPE]", "[CODE]", "[NAME]", "[TYPEID]", "[SCOPE]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessPAPER_CLS_INV(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = "ISN_PAPER_CLS_INV";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_PAPER_CLS_INV]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessPUBLICATION_TYPE_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = "ISN_PUBLICATION_TYPE";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_PUBLICATION_TYPE]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessQUESTION(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = "ISN_QUESTION";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_QUESTION]", "[NAME]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessRECEIPT_REASON_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = "ISN_RECEIPT_REASON";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_RECEIPT_REASON]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessRECEIPT_SOURCE_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = "ISN_RECEIPT_SOURCE";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_RECEIPT_SOURCE]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessREF_FILE(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = "ISN_REF_FILE";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_REF_FILE]", "[ISN_OBJ]", "[KIND]", "[GR_STORAGE]", "[NAME]", "[CATEGORY]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessREPRODUCTION_METHOD_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = "ISN_REPRODUCTION_METHOD";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_REPRODUCTION_METHOD]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessSTATE_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string highLevelColumnName = "ISN_HIGH_STATE";
+    string idLikeColumnName = "ISN_STATE";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_STATE]", "[ISN_HIGH_STATE]", "[CODE]", "[NAME]", "[NOTE]", "[FOREST_ELEM]", "[PROTECTED]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName, highLevelColumnName: highLevelColumnName);
+}
+
+static int ProcessSTORAGE_MEDIUM_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string highLevelColumnName = "ISN_HIGH_STORAGE_MEDIUM";
+    string idLikeColumnName = "ISN_STORAGE_MEDIUM";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_STORAGE_MEDIUM]", "[ISN_HIGH_STORAGE_MEDIUM]", "[CODE]", "[NAME]", "[FOREST_ELEM]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName, highLevelColumnName: highLevelColumnName);
+}
+
+static int ProcessSUBJECT_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string highLevelColumnName = "ISN_HIGH_SUBJECT";
+    string idLikeColumnName = "ISN_SUBJECT";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_SUBJECT]", "[ISN_HIGH_SUBJECT]", "[CODE]", "[NAME]", "[NOTE]", "[FOREST_ELEM]", "[PROTECTED]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName, highLevelColumnName: highLevelColumnName);
+}
+
+static int ProcessTREE_SUPPORT(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = null;
+    string uniqueColumnName = "ISN";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN]", "[DUE]", "[WDUE]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessWORK_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = "ISN_WORK";
+    string uniqueColumnName = "NAME";
+    //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_WORK]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessFUND_PAPER(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = null;
+    string uniqueColumnName = "ISN_FUND";
+    //List<string> forImportColumns = new List<string>() { "[ISN_FUND]", "[SORT_ORDER]", "[TEXT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+
+static int ProcessFUND_UNIT_REG_STATS(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+{
+    string idLikeColumnName = null;
+    string uniqueColumnName = "ISN_FUND";
+    //List<string> forImportColumns = new List<string>() { "[ISN_FUND]", "[UNIT_COUNT]", "[REG_UNIT]", "[TEXT]" };
+    return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
+}
+// -------------------------------------
+// last check, with_high: 5*/

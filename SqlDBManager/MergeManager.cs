@@ -18,42 +18,6 @@ namespace SqlDBManager
 {
     public static class MergeManager
     {
-        // Словарь дефолтных (без внешних ключей) таблиц и функций для их обработки
-        public static Dictionary<string, Func<DBCatalog, DBCatalog, string, int>> defaultTablesFunctions = new Dictionary<string, Func<DBCatalog, DBCatalog, string, int>> {
-            
-            // Добавить в ProcessFunc две переменные. Первая отвечает за поиск уникальных записей (например, по имени). Вторая отвечает за вторичный ключ 
-            
-            { "eqUsers", ProcessUsers }, // ProcessTBLUsers
-            { "tblACT_TYPE_CL", ProcessActTypeCL },
-            { "tblAuthorizedDep", ProcessAuthorizedDep },
-            { "tblCLS", ProcessCLS },
-            { "tblDataExport", ProcessDataExport },
-            { "tblDECL_COMMISSION_CL", ProcessDECL_COMMISSION_CL },
-            //{ "tblConstantsSpec", ProcessConstantsSpec },
-            { "tblGROUPING_ATTRIBUTE_CL", ProcessGROUPING_ATTRIBUTE_CL },
-            { "tblINV_REQUIRED_WORK_CL", ProcessINV_REQUIRED_WORK_CL },
-            { "tblLANGUAGE_CL", ProcessLANGUAGE_CL },
-            { "tblFEATURE", ProcessFEATURE },
-            { "tblCITIZEN_CL", ProcessCITIZEN_CL },
-            { "tblORGANIZ_CL", ProcessORGANIZ_CL },
-            { "tblPAPER_CLS", ProcessPAPER_CLS },
-            { "tblPAPER_CLS_INV", ProcessPAPER_CLS_INV },
-            { "tblPUBLICATION_TYPE_CL", ProcessPUBLICATION_TYPE_CL },
-            { "tblQUESTION", ProcessQUESTION },
-            { "tblRECEIPT_REASON_CL", ProcessRECEIPT_REASON_CL },
-            { "tblRECEIPT_SOURCE_CL", ProcessRECEIPT_SOURCE_CL },
-            { "tblREF_FILE", ProcessREF_FILE },
-            { "tblREPRODUCTION_METHOD_CL", ProcessREPRODUCTION_METHOD_CL },
-            // { "tblService", ProcessService },
-            { "tblSTATE_CL", ProcessSTATE_CL },
-            { "tblSTORAGE_MEDIUM_CL", ProcessSTORAGE_MEDIUM_CL },
-            //{ "tblSUBJECT_CL", ProcessSUBJECT_CL },  // Может быть, что ISN_HIGH быть больше, чем основной ISN_SUBJECT (добавить новый обработчик отдельный. Или выбор вызова функции). В данных случаях, необходимо отложить импорт записи, пока не будет импортирована запись с указанным ID. Или найти по данному ID и сразу испортировать
-            { "tblTREE_SUPPORT", ProcessTREE_SUPPORT },
-            { "tblWORK_CL", ProcessWORK_CL },
-            { "rptFUND_PAPER", ProcessFUND_PAPER },
-            { "rptFUND_UNIT_REG_STATS", ProcessFUND_UNIT_REG_STATS },
-        };
-
         // Словарь сборных (с внешними ключами) таблиц и функций для их обработки
         public static Dictionary<string, Func<DBCatalog, DBCatalog, string, int>> linksTablesFunctions = new Dictionary<string, Func<DBCatalog, DBCatalog, string, int>> {
             { "tblORGANIZ_RENAME", ProcessORGANIZ_RENAME },
@@ -113,6 +77,263 @@ namespace SqlDBManager
             { "tblDOCUMENT", ProcessDOCUMENT },
         };
 
+        public static Dictionary<string, Tuple<string, string, List<string>, string>> defaultTablesParams = new Dictionary<string, Tuple<string, string, List<string>, string>>
+        {
+            // 1. string uniqueValueColumnName         2. string idLikeColumnName         3. List<string> excludeColumns         4. string highLevelColumnName
+            { "eqUsers",
+                new Tuple<string, string, List<string>, string>("Login", null, new List<string>(){ "DisplayName" }, null) },
+            
+            { "tblACT_TYPE_CL",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_ACT_TYPE", null, null) },
+            
+            { "tblAuthorizedDep",
+                new Tuple<string, string, List<string>, string>("ShortName", "ISN_AuthorizedDep", null, null) },
+            
+            { "tblCLS",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_CLS", null, "ISN_HIGH_CLS") },
+            
+            { "tblDataExport",
+                new Tuple<string, string, List<string>, string>("fcDbName", null, null, null) },
+            
+            { "tblDECL_COMMISSION_CL",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_COMMISSION", null, null) },
+            
+            //{ "tblConstantsSpec", ProcessConstantsSpec },
+            
+            { "tblGROUPING_ATTRIBUTE_CL",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_GROUPING_ATTRIBUTE", null, null) },
+            
+            { "tblINV_REQUIRED_WORK_CL",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_REQUIRED_WORK", null, null) },
+            
+            { "tblLANGUAGE_CL",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_LANGUAGE", null, null) },
+            
+            { "tblFEATURE",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_FEATURE", null, "ISN_HIGH_FEATURE") },
+            
+            { "tblCITIZEN_CL",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_CITIZEN", null, null) },
+            
+            { "tblORGANIZ_CL",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_ORGANIZ", null, null) },
+            
+            { "tblPAPER_CLS",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_PAPER_CLS", null, null) },
+            
+            { "tblPAPER_CLS_INV",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_PAPER_CLS_INV", null, null) },
+            
+            { "tblPUBLICATION_TYPE_CL",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_PUBLICATION_TYPE", null, null) },
+            
+            { "tblQUESTION",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_QUESTION", null, null) },
+            
+            { "tblRECEIPT_REASON_CL",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_RECEIPT_REASON", null, null) },
+            
+            { "tblRECEIPT_SOURCE_CL",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_RECEIPT_SOURCE", null, null) },
+            
+            { "tblREF_FILE",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_REF_FILE", null, null) },
+            
+            { "tblREPRODUCTION_METHOD_CL",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_REPRODUCTION_METHOD", null, null) },
+            
+            // { "tblService", ProcessService },
+            
+            { "tblSTATE_CL",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_STATE", null, "ISN_HIGH_STATE") },
+            
+            { "tblSTORAGE_MEDIUM_CL",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_STORAGE_MEDIUM", null, "ISN_HIGH_STORAGE_MEDIUM") },
+            
+            { "tblSUBJECT_CL",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_SUBJECT", null, "ISN_HIGH_SUBJECT") },
+            
+            { "tblTREE_SUPPORT",
+                new Tuple<string, string, List<string>, string>("ISN", null, null, null) },
+            
+            { "tblWORK_CL",
+                new Tuple<string, string, List<string>, string>("NAME", "ISN_WORK", null, null) },
+            
+            { "rptFUND_PAPER",
+                new Tuple<string, string, List<string>, string>("ISN_FUND", null, null, null) },
+            
+            { "rptFUND_UNIT_REG_STATS",
+                new Tuple<string, string, List<string>, string>("ISN_FUND", null, null, null) },
+        };
+
+        public static Dictionary<string, Tuple<string, string, List<string>, string, string>> linksTablesParams = new Dictionary<string, Tuple<string, string, List<string>, string, string>>
+        {
+            // 1. string uniqueValueColumnName         2. string idLikeColumnName         3. List<string> excludeColumns         4. string parentIdColumn         5. string numerateColumn                          bool usedFurther, string foreignIdColumn = null
+            { "tblORGANIZ_RENAME",
+                new Tuple<string, string, List<string>, string, string>("NAME", null, null, null, null) },
+
+            //{ "tblARCHIVE",
+            //    new Tuple<string, string, List<string>, string>("", null, null, null, null) },
+
+            { "tblLOCATION",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblARCHIVE_STORAGE",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            //{ "tblARCHIVE_PASSPORT",
+            //    new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            //{ "tblARCHIVE_STATS",
+            //    new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblFUND",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblFUND_RENAME",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblFUND_CHECK",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblFUND_DOC_TYPE",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblFUND_INCLUSION",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblFUND_PAPER_CLS",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblPUBLICATION_CL",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblFUND_PUBLICATION",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblFUND_RECEIPT_REASON",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblFUND_RECEIPT_SOURCE",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblFUND_OAF",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblFUND_OAF_REASON",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblFUND_COLLECTION_REASONS",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            //{ "tblFUND_CREATOR",
+            //    new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblUNDOCUMENTED_PERIOD",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblDEPOSIT",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblDEPOSIT_DOC_TYPE",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblACT",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblINVENTORY",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblINVENTORY_CHECK",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblINVENTORY_DOC_STORAGE",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblINVENTORY_DOC_TYPE",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+            
+            { "tblINVENTORY_CLS_ATTR",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblINVENTORY_GROUPING_ATTRIBUTE",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblINVENTORY_PAPER_CLS",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblINVENTORY_REQUIRED_WORK",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblINVENTORY_STRUCTURE",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblDOCUMENT_STATS",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblREF_ACT",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblREF_CLS",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblREF_FEATURE",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblREF_LANGUAGE",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblREF_LOCATION",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblREF_QUESTION",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblUNIT",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblUNIT_ELECTRONIC",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblUNIT_FOTO",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblUNIT_FOTO_EX",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblUNIT_MICROFORM",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblUNIT_MOVIE",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblUNIT_MOVIE_EX",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblUNIT_NTD",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblUNIT_PHONO",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblUNIT_REQUIRED_WORK",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblUNIT_STATE",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblUNIT_VIDEO",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblUNIT_VIDEO_EX",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblUNIT_WORK",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+
+            { "tblDOCUMENT",
+                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+        };
 
         /// <summary>
         /// Очищает таблицы с логами
@@ -180,9 +401,17 @@ namespace SqlDBManager
                 {
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Пустая таблица.");
                 }
-                else if (defaultTablesFunctions.ContainsKey(tableName))
+                // старый принцип. Испольщовал взятия функции из словаря, далее формировния данных в этих функция (более не актуально, удалится после написания логики составных таблиц)
+/*                else if (defaultTablesFunctions.ContainsKey(tableName))
                 {
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {defaultTablesFunctions[tableName](mainCatalog, daughterCatalog, tableName)}");
+
+                }*/
+                // Вызывается функция обработчик, которая собирает данные из кортежа
+                else if (defaultTablesParams.ContainsKey(tableName))
+                {
+                    Tuple<string, string, List<string>, string> paramsForProcessing = defaultTablesParams[tableName];
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4)}");
                 }
                 else
                 {
@@ -250,244 +479,6 @@ namespace SqlDBManager
             }
         }
 
-        /*        static void ProcessSomeTable() // Template process
-                {
-                    // Наименование функции = наименование обрабатываемой таблицы
-                    // Принимает оба каталога, инициализирует необходимые объекты для опознования уникальности записи.
-                    // Передает все в функцию обработчик ProcessTable, которая найдет уникальные записи и запишит их в главную БД
-                    // Возвращается количество импортированных записей
-                }*/
-
-        // --- Process Functions for DafaultTables ---
-        static int ProcessUsers(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = null;
-            string uniqueColumnName = "Login";
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName, excludeColumns: new List<string>() { "DisplayName" });
-        }
-
-        static int ProcessActTypeCL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = "ISN_ACT_TYPE";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_ACT_TYPE]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]"  };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessAuthorizedDep(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = "ISN_AuthorizedDep";
-            string uniqueColumnName = "ShortName";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_AuthorizedDep]", "[ShortName]", "[FullName]", "[Address]", "[District]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessCLS(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string highLevelColumnName = "ISN_HIGH_CLS";
-            string idLikeColumnName = "ISN_CLS";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_CLS]", "[ISN_HIGH_CLS]", "[CODE]", "[WEIGHT]", "[NAME]", "[OBJ_KIND]", "[MULTISELECT]", "[NOTE]", "[FOREST_ELEM]", "[PROTECTED]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName, highLevelColumnName: highLevelColumnName);
-        }
-
-        static int ProcessDataExport(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = null;
-            string uniqueColumnName = "fcDbName";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[StatusID]", "[OwnerID]", "[CreationDateTime]", "[Deleted]", "[fcDbName]", "[fcDbBacPath]", "[isZiped]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessDECL_COMMISSION_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = "ISN_COMMISSION";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_COMMISSION]", "[CODE]", "[NAME_SHORT]", "[NAME]", "[CREATE_DATE]", "[DELETE_DATE]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessGROUPING_ATTRIBUTE_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = "ISN_GROUPING_ATTRIBUTE";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_GROUPING_ATTRIBUTE]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessINV_REQUIRED_WORK_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = "ISN_REQUIRED_WORK";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_REQUIRED_WORK]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessLANGUAGE_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = "ISN_LANGUAGE";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_LANGUAGE]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessFEATURE(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string highLevelColumnName = "ISN_HIGH_FEATURE";
-            string idLikeColumnName = "ISN_FEATURE";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_FEATURE]", "[ISN_HIGH_FEATURE]", "[CODE]", "[NAME]", "[NOTE]", "[FOREST_ELEM]", "[PROTECTED]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName, highLevelColumnName: highLevelColumnName);
-        }
-
-        static int ProcessCITIZEN_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = "ISN_CITIZEN";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_CITIZEN]", "[NAME]", "[TITLE]", "[RELATIONSHIP]", "[LAST_FAMILY_NAME]", "[NICKNAME]", "[BIRTH_DATE]", "[DEATH_DATE]", "[PROFESSION]", "[POST]", "[DEGREE]", "[MILITARY_RANK]", "[HONORARY_RANK]", "[NOTE]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessORGANIZ_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = "ISN_ORGANIZ";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_ORGANIZ]", "[NAME]", "[CODE]", "[CREATE_YEAR]", "[CREATE_YEAR_INEXACT]", "[DELETE_YEAR]", "[DELETE_YEAR_INEXACT]", "[ADDRESS]", "[CEO_NAME]", "[ARCHIVIST_NAME]", "[CEO_PHONE]", "[ARCHIVIST_PHONE]", "[ARCHIVE_REGULATIONS]", "[HAS_EPK]", "[DELO_INSTRUCTION_YEAR]", "[WORKER_COUNT]", "[APPROVED_NOM]", "[KEEPING_PLACE]", "[NOTE]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessPAPER_CLS(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = "ISN_PAPER_CLS";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_PAPER_CLS]", "[CLS_TYPE]", "[CODE]", "[NAME]", "[TYPEID]", "[SCOPE]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessPAPER_CLS_INV(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = "ISN_PAPER_CLS_INV";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_PAPER_CLS_INV]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessPUBLICATION_TYPE_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = "ISN_PUBLICATION_TYPE";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_PUBLICATION_TYPE]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessQUESTION(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = "ISN_QUESTION";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_QUESTION]", "[NAME]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessRECEIPT_REASON_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = "ISN_RECEIPT_REASON";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_RECEIPT_REASON]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessRECEIPT_SOURCE_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = "ISN_RECEIPT_SOURCE";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_RECEIPT_SOURCE]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessREF_FILE(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = "ISN_REF_FILE";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[DocID]", "[RowID]", "[ISN_REF_FILE]", "[ISN_OBJ]", "[KIND]", "[GR_STORAGE]", "[NAME]", "[CATEGORY]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessREPRODUCTION_METHOD_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = "ISN_REPRODUCTION_METHOD";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_REPRODUCTION_METHOD]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessSTATE_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string highLevelColumnName = "ISN_HIGH_STATE";
-            string idLikeColumnName = "ISN_STATE";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_STATE]", "[ISN_HIGH_STATE]", "[CODE]", "[NAME]", "[NOTE]", "[FOREST_ELEM]", "[PROTECTED]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName, highLevelColumnName: highLevelColumnName);
-        }
-
-        static int ProcessSTORAGE_MEDIUM_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string highLevelColumnName = "ISN_HIGH_STORAGE_MEDIUM";
-            string idLikeColumnName = "ISN_STORAGE_MEDIUM";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_STORAGE_MEDIUM]", "[ISN_HIGH_STORAGE_MEDIUM]", "[CODE]", "[NAME]", "[FOREST_ELEM]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName, highLevelColumnName: highLevelColumnName);
-        }
-
-        static int ProcessSUBJECT_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string highLevelColumnName = "ISN_HIGH_SUBJECT";
-            string idLikeColumnName = "ISN_SUBJECT";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_SUBJECT]", "[ISN_HIGH_SUBJECT]", "[CODE]", "[NAME]", "[NOTE]", "[FOREST_ELEM]", "[PROTECTED]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName, highLevelColumnName: highLevelColumnName);
-        }
-        
-/*        static int ProcessSUBJECT_CL_NEW(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string highLevelColumnName = "";
-            string idLikeColumnName = "";
-            string uniqueColumnName = "NAME";
-            return ProcessWithHIGHTable(mainCatalog, daughterCatalog, uniqueColumnName, tableName);
-        }*/
-
-        static int ProcessTREE_SUPPORT(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = null;
-            string uniqueColumnName = "ISN";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN]", "[DUE]", "[WDUE]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessWORK_CL(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = "ISN_WORK";
-            string uniqueColumnName = "NAME";
-            //List<string> forImportColumns = new List<string>() { "[ID]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Deleted]", "[ISN_WORK]", "[CODE]", "[NAME]", "[NOTE]", "[PROTECTED]", "[WEIGHT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessFUND_PAPER(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = null;
-            string uniqueColumnName = "ISN_FUND";
-            //List<string> forImportColumns = new List<string>() { "[ISN_FUND]", "[SORT_ORDER]", "[TEXT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-
-        static int ProcessFUND_UNIT_REG_STATS(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            string idLikeColumnName = null;
-            string uniqueColumnName = "ISN_FUND";
-            //List<string> forImportColumns = new List<string>() { "[ISN_FUND]", "[UNIT_COUNT]", "[REG_UNIT]", "[TEXT]" };
-            return ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueColumnName, idLikeColumnName, tableName);
-        }
-// -------------------------------------
-        // last check, with_high: 5
 
 // --- Process Functions for LinksTables ---
         static int ProcessORGANIZ_RENAME(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
@@ -1056,10 +1047,6 @@ namespace SqlDBManager
             }
             // ----------------
 
-
-            
-
-
             if (highLevelColumnName != null)
             {
                 // Если есть highLevelColumnName значит есть и idLikeColumnName
@@ -1110,10 +1097,6 @@ namespace SqlDBManager
                         }
                     }
                 }
-
-
-
-
             }
             else // Готовый блок
             {
@@ -1172,9 +1155,89 @@ namespace SqlDBManager
         }
 
         // Для обработки таблиц с внешними ключами
-        static int ProcessLinksTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string idLikeColumnName, string tableName, bool usedFurther, string foreignIdColumn = null)
+        static int ProcessLinksTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string idLikeColumnName, string tableName, bool usedFurther, string foreignIdColumn = null, List<string> excludeColumns = null, string parentIdColumn = null, string numerateColumn = null)
         {
-            int countImports = 0; // Переменная для подсчета импортированных записей
+            // -------- Общий блок инициализации вне зависимости от переданных парпаметров--------
+            int countOfImports = 0;
+
+            long lastId = 0;
+            if (idLikeColumnName != null)
+            {
+                string lastIDFromDB = string.Join("", mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)).Replace("\'", "");
+                lastId = (lastIDFromDB != "") ? Convert.ToInt64(lastIDFromDB) : 0;
+            }
+            //long lastId = Convert.ToInt64(string.Join("", mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)).Replace("\'", ""));
+            
+
+            // 3. Берем таблицы в дальнейшем используемые
+            Dictionary<string, string> foreigns = mainCatalog.SelectTablesAndForeignKeyUsage(tableName);
+
+            // 4. Проверяем foreigns на наличие использования. Если True, то добавляем все в RealoadDict
+            if (foreigns.Count > 0)
+            {
+                ValuesManager.AddTablesToReloadDict(foreigns);
+            }
+            // ----------------
+
+
+            // Если нет ролителя к которому цепляются записи, то обработка по всем значениям таблицы
+            if (parentIdColumn == null)
+            {
+                // 1. Берем все записи двух каталогов в виде словарей
+                List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
+                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
+                List<Dictionary<string, string>> reservedRows = new List<Dictionary<string, string>>();
+
+                // 2. Берем список значений по уникальному полю из главного каталога
+                List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainData, uniqueValueColumnName);
+
+
+                foreach (Dictionary<string, string> row in allFromDaughterData)
+                {
+                    // Если значение ИМЕЕТСЯ в главном каталоге и используется дальше
+                    if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
+                    {
+                        
+
+
+                        if (foreigns.Count > 0)
+                        {
+
+                        }
+                    } // Если значения НЕТ в главном каталоге
+                    else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]))
+                    {
+                        if (ValuesManager.ContainsInRewrite(tableName))
+                        {
+
+                        }
+
+
+                        if (foreigns.Count > 0)
+                        {
+
+                        }
+
+                        ValuesManager.RemoveUnnecessary(row, excludeColumns);
+                        mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                        countOfImports++;
+                    }
+
+
+
+                }
+            } // Если есть родителей, то отбор данных совершенно иной
+            else if (parentIdColumn != null)
+            {
+
+            }
+            
+
+
+
+            return countOfImports;
+
+            /*int countImports = 0; // Переменная для подсчета импортированных записей
 
             // остановка на "tblINVENTORY". Значения для импорта ищутся по ISN_INVENTORY, а должны по ISN_FUND. Также данная таблица используется далее, как внешние значения. Переделать логику составления импорта данных. По типу проверить на внешние ключи, потом составить данные для импорта и проверить данные в резерве. После этого сделать импорт из зарезервированных, а после добавить в резервный словарь внешние ключи переданной таблицы. (Логика перерабатывается в блоке когда нет значений на фильтрацию уникальных)
 
@@ -1231,11 +1294,11 @@ namespace SqlDBManager
                 //List<string> mainListCheckData = mainCatalog.SelectListColumnsData(columnName, tableName);
                 //List<string> daughterListCheckData = daughterCatalog.SelectListColumnsData(columnName, tableName);
 
-/*                if (idLikeColumnName != "")
+*//*                if (idLikeColumnName != "")
                 {
                     // Доюавдение в резерв используемых далее
                     ValuesManager.AddNewTableToReserve(mainCatalog, tableName);
-                }*/
+                }*//*
 
 
 
@@ -1243,13 +1306,13 @@ namespace SqlDBManager
                 List<Dictionary<string, string>> mainRecordsFromTable = mainCatalog.SelectAllFrom(tableName);
 
                 // ----- проверка (не используется в программе)
-                /*            foreach (Dictionary<string, string> i in mainRecordsFromTable)
+                *//*            foreach (Dictionary<string, string> i in mainRecordsFromTable)
                             {
                                 foreach (string j in i.Keys)
                                 {
                                     MessageBox.Show(j + " --- " + i[j]);
                                 }
-                            }*/
+                            }*//*
                 // ---------
 
 
@@ -1269,20 +1332,20 @@ namespace SqlDBManager
 
 
                 // Список уникальных значений, по которым можно найти необходимые записи в дочерней БД
-                /*List<string> uniqueValues = ValuesManager.CheckUniqueValue(
+                *//*List<string> uniqueValues = ValuesManager.CheckUniqueValue(
                     mainCatalog.SelectListColumnsData(uniqueValueColumnName, tableName),
                     daughterCatalog.SelectListColumnsData(uniqueValueColumnName, tableName)
-                );*/
+                );*//*
 
                 // Список колонок для формирования запроса на добавление уникальной записи
                 //List<string> forImportColumns = mainCatalog.SelectColumnsNames(tableName);
 
 
 
-                /*            if (tableName == "eqUsers")
+                *//*            if (tableName == "eqUsers")
                             {
                                 forImportColumns.Remove("DisplayName");
-                            }*/
+                            }*//*
 
                 if (onImportData.Count > 0)
                 {
@@ -1304,14 +1367,14 @@ namespace SqlDBManager
 
                         // Где-то в данном блоке необходимо сделать запрос внешних ключей.
                         // После проверки, если такие имеются, то создать запись в reserveDict "таблица, в которой используется" -> "oldKey", "newKey". А в middle заменить его на новый, который равняется: (количество всех записей (запрос имеется в каталоге, а также используется перед входом в данный обработчик) в главной + 1) 
-                        /*Dictionary<string, string> middleRecordDict = new Dictionary<string, string>();
+                        *//*Dictionary<string, string> middleRecordDict = new Dictionary<string, string>();
 
                         for (int i = 0; i < forImportColumns.Count; i++)
                         {
                             middleRecordDict[forImportColumns[i]] = forImportData[i];
                         }
 
-                        middleRecordDict.Remove("ID");*/
+                        middleRecordDict.Remove("ID");*//*
                         //middleRecordDict["unique_column_name"] = $"'{reserveDict[tableName][0][oldKey]}'";
 
                         // ---
@@ -1321,11 +1384,11 @@ namespace SqlDBManager
                     countImports += onImportData.Count;
                 }
                 return countImports;
-            }
+            }*/
         }
         // --------------------------------------
 
-        static int ProcessTBLUsers(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
+        /*static int ProcessTBLUsers(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
         {
             List<string> mainListUsersLogins = mainCatalog.SelectListColumnsData("Login", tableName);
             List<string> daughterListUsersLogins = daughterCatalog.SelectListColumnsData("Login", tableName);
@@ -1345,53 +1408,8 @@ namespace SqlDBManager
                 }
                 countImports += uniqueValues.Count;
             }
-
-
-            
-
-
-            /*
-            // [DisplayName] лишнее значение, так это вычисляемая строка
-              INSERT INTO [test].[dbo].[eqUsers] SELECT [ID]
-                  ,[Login]
-                  ,[Department]
-                  ,[Deleted]
-                  ,[OwnerID]
-                  ,[CreationDateTime]
-                  ,[StatusID]
-                  ,[Email]
-                  ,[patronymic]
-                  ,[Position]
-                  ,[Phone]
-                  ,[Room_Number]
-                  ,[Description]
-                  ,[surname]
-                  ,[AccessGranted]
-                  ,[Supervisor]
-                  ,[FirstName]
-                  ,[BUILD_IN_ACCOUNT]
-
-                  ,[Pass]
-                  ,[Cookie]
-                  ,[UserTheme] FROM [main].[dbo].[eqUsers] WHERE Login = 'reader'
-
-
-             */
-
-
-            //DefaultValuesManager.CheckUsers(mainUsersLogins);
-
-            /*            for (int i = 1; i <= mainUsersLogins.Count; i++)
-                        {
-                            foreach (string data in mainUsersLogins[1])
-                            {
-
-                            }
-                        }*/
-
-            //3. Выводим в листбокс количество импортированных пользователей
             return countImports;
-        }
+        }*/
     }
 
     public static class ValuesManager
@@ -1400,7 +1418,7 @@ namespace SqlDBManager
         static Dictionary<string, List<Dictionary<string, string>>> reserveDict = new Dictionary<string, List<Dictionary<string, string>>>();
 
         // Словарь для дефолтных таблиц. Содержит ключи из дефолтных, которые нкжно будет перезаписать в процессе формирования импортируемой записи в обработчике линкованных таблиц
-        static Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>> reloadDict = new Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>>();
+        static Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>> rewriteDict = new Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>>();
 
 
 
@@ -1419,9 +1437,19 @@ namespace SqlDBManager
             return reserveDictNew;
         }
 
-        public static Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>> ReturnReload()
+        public static Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>> ReturnRewriteDict()
         {
-            return reloadDict;
+            return rewriteDict;
+        }
+
+        public static List<Dictionary<string, List<Tuple<string, string>>>> ReturnTableValuesRewriteDict(string tableName)
+        {
+            return rewriteDict[tableName];
+        }
+
+        public static bool ContainsInRewrite(string tableName)
+        {
+            return rewriteDict.ContainsKey(tableName);
         }
 
         public static int CheckDefaultUsers(List<string> usersLogins, int countImports)
@@ -1450,6 +1478,16 @@ namespace SqlDBManager
             return row;
         }
 
+        public static Dictionary<string, string> RepareColumnsValues(Dictionary<string, string> row, string tableName)
+        {
+            foreach (Dictionary<string, List<Tuple<string, string>>> columnValues in ReturnTableValuesRewriteDict(tableName))
+            {
+
+            }
+
+            return row;
+        }
+
         public static List<string> SelectDataFromColumn(List<Dictionary<string, string>> allFromMainData, string columnName)
         {
             List<string> listData = new List<string>();
@@ -1462,11 +1500,11 @@ namespace SqlDBManager
         {
             foreach (string inTable in foreigns.Keys)
             {
-                if (!reloadDict.ContainsKey(inTable))
+                if (!rewriteDict.ContainsKey(inTable))
                 {
-                    reloadDict[inTable] = new List<Dictionary<string, List<Tuple<string, string>>>>();
+                    rewriteDict[inTable] = new List<Dictionary<string, List<Tuple<string, string>>>>();
                 }
-                reloadDict[inTable].Add(new Dictionary<string, List<Tuple<string, string>>>() { { foreigns[inTable], new List<Tuple<string, string>>() } });
+                rewriteDict[inTable].Add(new Dictionary<string, List<Tuple<string, string>>>() { { foreigns[inTable], new List<Tuple<string, string>>() } });
             }
         }
 
@@ -1474,7 +1512,7 @@ namespace SqlDBManager
         {
             foreach (string inTable in foreigns.Keys)
             {
-                foreach(Dictionary<string, List<Tuple<string, string>>> foreignKey in reloadDict[inTable])
+                foreach(Dictionary<string, List<Tuple<string, string>>> foreignKey in rewriteDict[inTable])
                 {
                     if (string.Join("", foreignKey.Keys) == idLikeColumnName)
                     {
@@ -1545,8 +1583,6 @@ namespace SqlDBManager
         /// <summary>
         /// Сортирует данные из главной таблицы и дочерней
         /// </summary>
-        /// <param name="mainRecordsFromTable"></param>
-        /// <param name="daughterRecordsFromTable"></param>
         /// <returns>Записи готовые к импорту в главный каталог</returns>
         public static List<Dictionary<string, string>> SortData(DBCatalog mainCatalog, List<Dictionary<string, string>> mainRecordsFromTable, List<Dictionary<string, string>> daughterRecordsFromTable, string uniqueValueColumnName, string idLikeColumnName, string tableName, bool usedFurther)
         {
@@ -1608,11 +1644,6 @@ namespace SqlDBManager
         public static void RestoreUser(string userLogin)
         {
 
-        }
-
-        static string ReturnNewKey(string lastKey)
-        {
-            return $"{Convert.ToInt32(lastKey) + 1}";
         }
 
         public static void AddUniqueValue(string tableName, List<string> forImportColumns, string filterColumn, string filterValue, DBCatalog maincatalog, DBCatalog daughterCatalog)
