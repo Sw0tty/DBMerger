@@ -490,12 +490,12 @@ namespace SqlDBManager
             // ----------------------
             Dictionary<string, string> reserveRocords = new Dictionary<string, string>();
             List<string> keys = testCatalog.SelectColumnsNames("tblCITIZEN_CL");
-            List<string> values = testCatalog.SelectRecordsWhere(keys, "tblCITIZEN_CL", "ISN_CITIZEN", "1");
+            //List<string> values = testCatalog.SelectRecordsWhere(keys, "tblCITIZEN_CL", "ISN_CITIZEN", "1");
 
-            for (int i = 0; i < keys.Count; i++)
+            /*for (int i = 0; i < keys.Count; i++)
             {
                 reserveRocords[keys[i]] = values[i];
-            }
+            }*/
 
             reserveRocords["ISN_CITIZEN"] = "'3'";
             reserveRocords.Remove("ID"); // Обязательно удаляем ID. Он формируется новый в запросе

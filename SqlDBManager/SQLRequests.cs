@@ -112,7 +112,9 @@ namespace SqlDBManager
         /// </summary>
         public static string SelectWhereRequest(List<string> columns, string catalog, string tableName, string filterColumn, string filterValue)
         {
-            return $"SELECT {string.Join(", ", columns).Replace('\"', ' ')} FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = '{filterValue}'";
+            if (columns.Count > 0)
+                return $"SELECT {string.Join(", ", columns).Replace('\"', ' ')} FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue}";
+            return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue}";
         }
 
         /// <summary>

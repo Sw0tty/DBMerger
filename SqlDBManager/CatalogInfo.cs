@@ -142,10 +142,10 @@ namespace SqlDBManager
         /// <summary>
         /// Возвращает список полученных значений по фильтру
         /// </summary>
-        public List<string> SelectRecordsWhere(List<string> columns, string tableName, string filterColumn, string filterData)
+        public List<Dictionary<string, string>> SelectRecordsWhere(List<string> columns, string tableName, string filterColumn, string filterData)
         {
             string request = SQLRequests.SelectWhereRequest(columns, Catalog, tableName, filterColumn, filterData);
-            return ReturnListFromDB(request, connection, itsRow: true);
+            return ReturnListDictsFromDB(request, SelectColumnsNames(tableName), connection);
         }
 
 /*        public Dictionary<int, List<string>> SelectColumnsData(List<string> columns, string table)
