@@ -97,8 +97,12 @@ namespace SqlDBManager
         /// <summary>
         /// Запрос на вставку записи в таблицу
         /// </summary>
-        public static string InsertDictValueRequst(string catalog, string tableName, Dictionary<string, string> data)
+        public static string InsertDictValueRequst(string catalog, string tableName, Dictionary<string, string> data, bool withoutID = false)
         {
+            if (withoutID)
+            {
+                return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES ({string.Join(", ", data.Values).Replace("'null'", "null")})";
+            }
             return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("'null'", "null")})";
         }
 

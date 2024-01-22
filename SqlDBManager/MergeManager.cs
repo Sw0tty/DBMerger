@@ -166,173 +166,173 @@ namespace SqlDBManager
                 new Tuple<string, string, List<string>, string>("ISN_FUND", null, null, null) },
         };
 
-        public static Dictionary<string, Tuple<string, string, List<string>, string, string>> linksTablesParams = new Dictionary<string, Tuple<string, string, List<string>, string, string>>
+        public static Dictionary<string, Tuple<string, string, List<string>, string, string, string>> linksTablesParams = new Dictionary<string, Tuple<string, string, List<string>, string, string, string>>
         {
-            // 1. string uniqueValueColumnName         2. string idLikeColumnName         3. List<string> excludeColumns         4. string parentIdColumn         5. string numerateColumn                          bool usedFurther, string foreignIdColumn = null
+            // 1. string uniqueValueColumnName         2. string idLikeColumnName         3. List<string> excludeColumns    4. string highLevelColumnName     5. string parentIdColumn         6. string numerateColumn                          bool usedFurther, string foreignIdColumn = null
             { "tblORGANIZ_RENAME",
-                new Tuple<string, string, List<string>, string, string>("NAME", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("NAME", "ISN_ORGANIZ_RENAME", null, null, null, null) },
 
             //{ "tblARCHIVE",
             //    new Tuple<string, string, List<string>, string>("", null, null, null, null) },
 
             { "tblLOCATION",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("NAME", "ISN_LOCATION", null, "ISN_HIGH_LOCATION", null, null) },
 
-            { "tblARCHIVE_STORAGE",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+/*            { "tblARCHIVE_STORAGE",
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },*/
 
             //{ "tblARCHIVE_PASSPORT",
-            //    new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+            //    new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             //{ "tblARCHIVE_STATS",
-            //    new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+            //    new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblFUND",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("FUND_NAME_SHORT", "ISN_FUND", null, null, null, "FUND_NUM_2") },
 
             { "tblFUND_RENAME",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("FUND_NAME_SHORT", "ISN_FUND_RENAME", null, null, "ISN_FUND", null) },
 
             { "tblFUND_CHECK",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_FUND", null) },
 
             { "tblFUND_DOC_TYPE",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_FUND", null) },
 
             { "tblFUND_INCLUSION",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblFUND_PAPER_CLS",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblPUBLICATION_CL",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("PUBLICATION_NAME", "ISN_PUBLICATION", null, null, null, null) },
 
             { "tblFUND_PUBLICATION",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblFUND_RECEIPT_REASON",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblFUND_RECEIPT_SOURCE",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblFUND_OAF",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblFUND_OAF_REASON",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblFUND_COLLECTION_REASONS",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             //{ "tblFUND_CREATOR",
-            //    new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+            //    new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblUNDOCUMENTED_PERIOD",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("PERIOD_START_YEAR", "ISN_PERIOD", null, null, "ISN_FUND", null) },
 
             { "tblDEPOSIT",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblDEPOSIT_DOC_TYPE",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblACT",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("ACT_DATE", "ISN_ACT", null, null, "ISN_FUND", null) },
 
             { "tblINVENTORY",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("INVENTORY_NAME", "ISN_INVENTORY", null, null, "ISN_FUND", "INVENTORY_NUM_1") },
 
             { "tblINVENTORY_CHECK",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_INVENTORY", null) },
 
             { "tblINVENTORY_DOC_STORAGE",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_INVENTORY", null) },
 
             { "tblINVENTORY_DOC_TYPE",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_INVENTORY", null) },
             
             { "tblINVENTORY_CLS_ATTR",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_INVENTORY", null) },
 
             { "tblINVENTORY_GROUPING_ATTRIBUTE",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblINVENTORY_PAPER_CLS",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblINVENTORY_REQUIRED_WORK",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblINVENTORY_STRUCTURE",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblDOCUMENT_STATS",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblREF_ACT",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblREF_CLS",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblREF_FEATURE",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblREF_LANGUAGE",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblREF_LOCATION",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblREF_QUESTION",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblUNIT",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblUNIT_ELECTRONIC",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblUNIT_FOTO",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblUNIT_FOTO_EX",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblUNIT_MICROFORM",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblUNIT_MOVIE",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblUNIT_MOVIE_EX",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblUNIT_NTD",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblUNIT_PHONO",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblUNIT_REQUIRED_WORK",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblUNIT_STATE",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblUNIT_VIDEO",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblUNIT_VIDEO_EX",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblUNIT_WORK",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
 
             { "tblDOCUMENT",
-                new Tuple<string, string, List<string>, string, string>("", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
         };
 
         /// <summary>
@@ -1043,7 +1043,7 @@ namespace SqlDBManager
             // 4. Проверяем foreigns на наличие использования. Если True, то добавляем все в RealoadDict
             if (foreigns.Count > 0)
             {
-                ValuesManager.AddTablesToReloadDict(foreigns);
+                ValuesManager.AddTablesToRewriteDict(foreigns);
             }
             // ----------------
 
@@ -1107,7 +1107,14 @@ namespace SqlDBManager
                     // Если значения нет и не передано уникальное поле idLike
                     if (idLikeColumnName == null && !mainCatalogValues.Contains(row[uniqueValueColumnName]))
                     {
-                        mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                        if (row.ContainsKey("ID"))
+                        {
+                            mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                        }
+                        else
+                        {
+                            mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns), withoutID: true);
+                        }
                         mainCatalogValues.Add(row[uniqueValueColumnName]);
                         countOfImports++;
                     } // Если значение из дочерней БД уже есть в главной
@@ -1167,11 +1174,13 @@ namespace SqlDBManager
                 string lastIDFromDB = string.Join("", mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)).Replace("\'", "");
                 lastId = (lastIDFromDB != "") ? Convert.ToInt64(lastIDFromDB) : 0;
             }
-            
-            // Послднее значение по полю число, если было передано
+
+            // Последнее значение по полю число, если было передано
+            int lastNumeric = 0;
             if (numerateColumn != null)
             {
-                string lastNumric = string.Join("", mainCatalog.SelectLastRecord(numerateColumn, tableName, numerateColumn)).Replace("\'", "");
+                string lastNumricFromDB = string.Join("", mainCatalog.SelectLastRecord(numerateColumn, tableName, numerateColumn)).Replace("\'", "");
+                lastNumeric = (lastNumricFromDB != "") ? Convert.ToInt32(lastNumricFromDB) : 0;
             }
             
 
@@ -1181,7 +1190,7 @@ namespace SqlDBManager
             // 4. Проверяем foreigns на наличие использования. Если True, то добавляем все в RealoadDict
             if (foreigns.Count > 0)
             {
-                ValuesManager.AddTablesToReloadDict(foreigns);
+                ValuesManager.AddNewTableToReserve(foreigns);
             }
             // ----------------
 
@@ -1200,25 +1209,29 @@ namespace SqlDBManager
 
                 foreach (Dictionary<string, string> row in allFromDaughterData)
                 {
-                    // Если значение ИМЕЕТСЯ в главном каталоге и используется дальше
+                    // Если значение ИМЕЕТСЯ в главном каталоге
                     if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
                     {
-                        
-
-
+                        // и используется дальше, то добавляем 
                         if (foreigns.Count > 0)
                         {
-                            //ValuesManager.AddPairKeysToReserve();
+                            ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, idLikeColumnName, row[idLikeColumnName], idLikeColumnName)));
                         }
                     } // Если значения НЕТ в главном каталоге
                     else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]))
                     {
+                        row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+
+                        if (numerateColumn != null)
+                        {
+                            row[numerateColumn] = $"'{lastNumeric + countOfImports + 1}'";
+                        }
                         
 
 
                         if (foreigns.Count > 0)
                         {
-                            //ValuesManager.AddPairKeysToReserve();
+                            ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
                         }
 
                         if (ValuesManager.ContainsInRewrite(tableName))
@@ -1421,7 +1434,7 @@ namespace SqlDBManager
     public static class ValuesManager
     {
         static List<string> defaultUsers = new List<string>() { "sa", "anonymous", "admin", "reader", "arch", "tech" };
-        static Dictionary<string, List<Dictionary<string, string>>> reserveDict = new Dictionary<string, List<Dictionary<string, string>>>();
+        //static Dictionary<string, List<Dictionary<string, string>>> reserveDict = new Dictionary<string, List<Dictionary<string, string>>>();
 
         // Словарь для дефолтных таблиц. Содержит ключи из дефолтных, которые нкжно будет перезаписать в процессе формирования импортируемой записи в обработчике линкованных таблиц
         static Dictionary<string, Dictionary<string, List<Tuple<string, string>>>> rewriteDict = new Dictionary<string, Dictionary<string, List<Tuple<string, string>>>>();
@@ -1433,14 +1446,14 @@ namespace SqlDBManager
         //      "SECURY_LVL": [ ('10023', '10067'), ('10001', '10432') ],
         //      "REASON": [ ('10003', '10007'), ('10001', '10032') ]
         // ]
-        static Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>> reserveDictNew = new Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>>();
+        static Dictionary<string, Dictionary<string, List<Tuple<string, string>>>> reserveDict = new Dictionary<string, Dictionary<string, List<Tuple<string, string>>>>();
         // "tblINVENTORY": [{"old_key": "new_key"}, {"old_key": "new_key"}, {"old_key": "new_key"}]
         // 1. Ищем в словаре по таблице. Если нету, то делаем поиск по уникальности. В итоге след пункт
         // 2. Берем
 
-        public static Dictionary<string, List<Dictionary<string, List<Tuple<string, string>>>>> ReturnReserve()
+        public static Dictionary<string, Dictionary<string, List<Tuple<string, string>>>> ReturnReserve()
         {
-            return reserveDictNew;
+            return reserveDict;
         }
 
         public static Dictionary<string, Dictionary<string, List<Tuple<string, string>>>> ReturnRewriteDict()
@@ -1509,7 +1522,7 @@ namespace SqlDBManager
             return listData;
         }
 
-        public static void AddTablesToReloadDict(Dictionary<string, string> foreigns)
+        public static void AddTablesToRewriteDict(Dictionary<string, string> foreigns)
         {
             foreach (string inTable in foreigns.Keys)
             {
@@ -1540,13 +1553,20 @@ namespace SqlDBManager
         /// Добавляет в резервный словарь наименование таблицы и наименое столбца на которые используется ссылка переданной таблицы
         /// </summary>
         /// <returns>Количество найденых таблиц</returns>
-        public static int AddNewTableToReserve(DBCatalog mainCatalog, string tableName)
+        public static void AddNewTableToReserve(Dictionary<string, string> foreigns)
         {
-            Dictionary<string, string> inUsage = mainCatalog.SelectTablesAndForeignKeyUsage(tableName);
+            foreach (string inTable in foreigns.Keys)
+            {
+                if (!reserveDict.ContainsKey(inTable))
+                {
+                    reserveDict[inTable] = new Dictionary<string, List<Tuple<string, string>>>();
+                }
+                reserveDict[inTable][foreigns[inTable]] = new List<Tuple<string, string>>();
+            }
 
             // Пример пришедших данных
             // "FUND" -> "ISN_FUND"
-            if (inUsage.Count > 0)
+/*            if (inUsage.Count > 0)
             {
                 foreach (string inTable in inUsage.Keys)
                 {
@@ -1559,20 +1579,24 @@ namespace SqlDBManager
                     reserveDictNew[inTable].Add(new Dictionary<string, List<Tuple<string, string>>>() { { inUsage[inTable], new List<Tuple<string, string>>() } });
                 }
             }
-            return inUsage.Count;
+            return inUsage.Count;*/
         }
 
         /// <summary>
         /// Добавляет пару ключей к таблице в резервной копии
         /// </summary>
-        public static void AddPairKeysToReserve(DBCatalog mainCatalog, string tableName, string idLikeColumnName, Tuple<string, string> pairKeys)
+        public static void AddPairKeysToReserve(Dictionary<string, string> foreigns, string idLikeColumnName, Tuple<string, string> pairKeys)
         {
-            Dictionary<string, string> inUsage = mainCatalog.SelectTablesAndForeignKeyUsage(tableName);
-
-            foreach (string inTable in inUsage.Keys)
+            foreach (string inTable in foreigns.Keys)
             {
-                // Добавляем в список таблицы наименование колонки, которая содержит ключ
-                reserveDictNew[inTable][0][inUsage[inTable]].Add(pairKeys);
+                foreach (string foreignKey in reserveDict[inTable].Keys)
+                {
+                    if (foreignKey == idLikeColumnName)
+                    {
+                        reserveDict[inTable][idLikeColumnName].Add(pairKeys);
+                    }
+                    continue;
+                }
             }
         }
 
@@ -1600,11 +1624,11 @@ namespace SqlDBManager
         public static List<Dictionary<string, string>> SortData(DBCatalog mainCatalog, List<Dictionary<string, string>> mainRecordsFromTable, List<Dictionary<string, string>> daughterRecordsFromTable, string uniqueValueColumnName, string idLikeColumnName, string tableName, bool usedFurther)
         {
             List<Dictionary<string, string>> onImportData = new List<Dictionary<string, string>>();
-            List<string> mainData = new List<string>();
+            /*List<string> mainData = new List<string>();
             List<string> daughterData = new List<string>();
             List<string> uniqueRecords = new List<string>();
-/*            string ssssssss = ;
-            MessageBox.Show(ssssssss);*/
+*//*            string ssssssss = ;
+            MessageBox.Show(ssssssss);*//*
             long lastIdLikeInMain = Convert.ToInt64(mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)[0].Replace("\'", ""));
 
             // Отбираем записи по уникальному переданному полю для дальнейшей сортировки
@@ -1635,7 +1659,7 @@ namespace SqlDBManager
                         AddPairKeysToReserve(mainCatalog, tableName, idLikeColumnName, new Tuple<string, string>(rowDataInDaughter[idLikeColumnName], onAdd[idLikeColumnName]));
                     }
                 }
-            }
+            }*/
             return onImportData;
         }
 
@@ -1661,7 +1685,7 @@ namespace SqlDBManager
 
         public static void AddUniqueValue(string tableName, List<string> forImportColumns, string filterColumn, string filterValue, DBCatalog maincatalog, DBCatalog daughterCatalog)
         {
-            if (reserveDict.ContainsKey(tableName))
+            /*if (reserveDict.ContainsKey(tableName))
             {
                 foreach (string oldKey in reserveDict[tableName][0].Keys)
                 {
@@ -1686,7 +1710,7 @@ namespace SqlDBManager
                 daughterCatalog.UpdateID(tableName, filterColumn, filterValue);
                 maincatalog.InsertFromUniqueValue(tableName, forImportColumns, daughterCatalog.ReturnCatalog(), tableName, filterColumn, filterValue);
 
-            }
+            }*/
         }
 
     }

@@ -271,9 +271,9 @@ namespace SqlDBManager
         /// <summary>
         /// Вставляет переданные данные в указанную таблицу (ID формируется средствами SQL)
         /// </summary>
-        public void InsertValue(string tableName, Dictionary<string, string> data)
+        public void InsertValue(string tableName, Dictionary<string, string> data, bool withoutID = false)
         {
-            string request = SQLRequests.InsertDictValueRequst(Catalog, tableName, data);
+            string request = SQLRequests.InsertDictValueRequst(Catalog, tableName, data, withoutID);
             //MessageBox.Show(request);
 
             InsertAdapter(request, connection);
