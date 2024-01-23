@@ -257,82 +257,82 @@ namespace SqlDBManager
                 new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_INVENTORY", null) },
 
             { "tblINVENTORY_GROUPING_ATTRIBUTE",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_GROUPING_ATTRIBUTE", null, null, "ISN_INVENTORY", null) },
 
             { "tblINVENTORY_PAPER_CLS",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_PAPER_CLS_INV", null, null, "ISN_INVENTORY", null) },
 
             { "tblINVENTORY_REQUIRED_WORK",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REQUIRED_WORK", null, null, "ISN_INVENTORY", null) },
 
             { "tblINVENTORY_STRUCTURE",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_INVENTORY_CLS", null, "ISN_HIGH_INVENTORY_CLS", "ISN_INVENTORY", null) },
 
-            { "tblDOCUMENT_STATS",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
-
+            /*{ "tblDOCUMENT_STATS",
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_DOCUMENT_STATS", null, null, "ISN_INVENTORY", null) },
+*/
             { "tblREF_ACT",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_ACT", null, null, null, null) },
 
             { "tblREF_CLS",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_CLS", null, null, null, null) },
 
             { "tblREF_FEATURE",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_FEATURE", null, null, null, null) },
 
             { "tblREF_LANGUAGE",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_LANGUAGE", null, null, null, null) },
 
             { "tblREF_LOCATION",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_LOCATION", null, null, null, null) },
 
             { "tblREF_QUESTION",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_QUESTION", null, null, null, null) },
 
             { "tblUNIT",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("NAME", "ISN_UNIT", null, null, "ISN_INVENTORY", null) },
 
             { "tblUNIT_ELECTRONIC",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_FOTO",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
 
-            { "tblUNIT_FOTO_EX",
+            /*{ "tblUNIT_FOTO_EX",
                 new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
-
+*/
             { "tblUNIT_MICROFORM",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_MOVIE",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
 
-            { "tblUNIT_MOVIE_EX",
+            /*{ "tblUNIT_MOVIE_EX",
                 new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
-
+*/
             { "tblUNIT_NTD",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_PHONO",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_REQUIRED_WORK",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_UNIT_REQUIRED_WORK", null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_STATE",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_UNIT_STATE", null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_VIDEO",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
 
-            { "tblUNIT_VIDEO_EX",
+            /*{ "tblUNIT_VIDEO_EX",
                 new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
-
+*/
             { "tblUNIT_WORK",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_UNIT_WORK", null, null, "ISN_UNIT", null) },
 
             { "tblDOCUMENT",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("NAME", "ISN_DOCUM", null, null, "ISN_UNIT", null) },
         };
 
         /// <summary>
@@ -437,17 +437,17 @@ namespace SqlDBManager
                 {
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Пустая таблица.");
                 }
-                else if (linksTablesFunctions.ContainsKey(tableName))
+/*                else if (linksTablesFunctions.ContainsKey(tableName))
                 {
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {linksTablesFunctions[tableName](mainCatalog, daughterCatalog, tableName)}");
-                }
-/*                else if (linksTablesParams.ContainsKey(tableName))
+                }*/
+                else if (linksTablesParams.ContainsKey(tableName))
                 {
                     Tuple<string, string, List<string>, string, string, string> paramsForProcessing = linksTablesParams[tableName];
                     // 1. string uniqueValueColumnName         2. string idLikeColumnName         3. List<string> excludeColumns    4. string highLevelColumnName     5. string parentIdColumn         6. string numerateColumn                          bool usedFurther, string foreignIdColumn = null
 
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4, parentIdColumn: paramsForProcessing.Item5, numerateColumn: paramsForProcessing.Item6)}");
-                }*/
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable_new(mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4, parentIdColumn: paramsForProcessing.Item5, numerateColumn: paramsForProcessing.Item6)}");
+                }
                 else
                 {
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
@@ -1169,21 +1169,30 @@ namespace SqlDBManager
             return countOfImports;
         }
 
-        // Для обработки таблиц с внешними ключами
         static int ProcessLinksTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string idLikeColumnName, string tableName, bool usedFurther, string foreignIdColumn = null, List<string> excludeColumns = null, string parentIdColumn = null, string numerateColumn = null)
+        {
+            return 1;
+        }
+
+        // 1. string uniqueValueColumnName         2. string idLikeColumnName         3. List<string> excludeColumns    4. string highLevelColumnName     5. string parentIdColumn         6. string numerateColumn
+        // Для обработки таблиц с внешними ключами mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4, parentIdColumn: paramsForProcessing.Item5, numerateColumn: paramsForProcessing.Item6
+        static int ProcessLinksTable_new(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string idLikeColumnName, string tableName, List<string> excludeColumns, string highLevelColumnName, string parentIdColumn, string numerateColumn)
         {
             // -------- Общий блок инициализации вне зависимости от переданных парпаметров--------
             int countOfImports = 0;
 
+
             long lastId = 0;
+            // Инициализиуем ID строки, если был передан как параметр
             if (idLikeColumnName != null)
             {
                 string lastIDFromDB = string.Join("", mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)).Replace("\'", "");
                 lastId = (lastIDFromDB != "") ? Convert.ToInt64(lastIDFromDB) : 0;
             }
 
-            // Последнее значение по полю число, если было передано
+
             int lastNumeric = 0;
+            // Инициализиуем НУМЕРАЦИЮ строки, если был передан как параметр
             if (numerateColumn != null)
             {
                 string lastNumricFromDB = string.Join("", mainCatalog.SelectLastRecord(numerateColumn, tableName, numerateColumn)).Replace("\'", "");
@@ -1194,15 +1203,16 @@ namespace SqlDBManager
             // 3. Берем таблицы в дальнейшем используемые
             Dictionary<string, string> foreigns = mainCatalog.SelectTablesAndForeignKeyUsage(tableName);
 
-            // 4. Проверяем foreigns на наличие использования. Если True, то добавляем все в RealoadDict
+            // 4. Проверяем foreigns на наличие использования. Если True, то добавляем все в ReservDict
             if (foreigns.Count > 0)
             {
                 ValuesManager.AddNewTableToReserve(foreigns);
             }
             // ----------------
 
+            MessageBox.Show(tableName + "\n" + string.Join("  ", foreigns.Keys));
 
-            // Если нет ролителя к которому цепляются записи, то обработка по всем значениям таблицы
+            // Если нет родителя к которому цепляются записи, то обработка по всем значениям таблицы
             if (parentIdColumn == null && uniqueValueColumnName != null)
             {
                 // 1. Берем все записи двух каталогов в виде словарей
@@ -1222,7 +1232,8 @@ namespace SqlDBManager
                         // и используется дальше, то добавляем 
                         if (foreigns.Count > 0)
                         {
-                            ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, idLikeColumnName, row[idLikeColumnName], idLikeColumnName)));
+                            MessageBox.Show((row[idLikeColumnName] + "   new: " + ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
+                            ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
                         }
                     } // Если значения НЕТ в главном каталоге
                     else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]))
@@ -1259,14 +1270,14 @@ namespace SqlDBManager
             } // Если есть родителей, то отбор данных совершенно иной
             else if (parentIdColumn != null && uniqueValueColumnName != null)
             {
-                Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesRewriteDict(tableName);
+                Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
                 List<Dictionary<string, string>> reservedRows = new List<Dictionary<string, string>>();
 
                 foreach (Tuple<string, string> pairKeys in tableReservedValues[parentIdColumn])
                 {
                     //pairKeys.Item1; // значения ключей, которые были в дочерней
                     //pairKeys.Item2; // значения ключей, которые теперь в главной
-
+                    MessageBox.Show("old:" + pairKeys.Item1 + "  new:" + pairKeys.Item2);
                     List<Dictionary<string, string>> filterFromMainData = mainCatalog.SelectRecordsWhere(new List<string>(), tableName, parentIdColumn, pairKeys.Item2);
                     List<Dictionary<string, string>> filterFromDaughterData = daughterCatalog.SelectRecordsWhere(new List<string>(), tableName, parentIdColumn, pairKeys.Item1);
                     List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(filterFromMainData, uniqueValueColumnName);
@@ -1277,6 +1288,7 @@ namespace SqlDBManager
                         {
                             if (foreigns.Count > 0)
                             {
+                                
                                 ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(filterFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
                             }
                         }
@@ -1318,10 +1330,11 @@ namespace SqlDBManager
             else if (parentIdColumn != null && uniqueValueColumnName == null)
             {
                 List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
-                Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesRewriteDict(tableName);
+                Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
 
                 foreach (Dictionary<string, string> row in allFromDaughterData)
                 {
+                    
                     foreach (Tuple<string, string> tuple in tableReservedValues[parentIdColumn])
                     {
                         if (row[parentIdColumn] == tuple.Item1)
@@ -1540,6 +1553,11 @@ namespace SqlDBManager
         public static Dictionary<string, Dictionary<string, List<Tuple<string, string>>>> ReturnReserve()
         {
             return reserveDict;
+        }
+
+        public static Dictionary<string, List<Tuple<string, string>>> ReturnTableValuesReserveDict(string tableName)
+        {
+            return reserveDict[tableName];
         }
 
         public static Dictionary<string, Dictionary<string, List<Tuple<string, string>>>> ReturnRewriteDict()
