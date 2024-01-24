@@ -136,17 +136,6 @@ namespace SqlDBManager
                 // Start the asynchronous operation.
                 backgroundWorker1.RunWorkerAsync();
             }
-            
-
-            /*
-            // 1. Создаем объекты соединения
-            // 2. Открываем соединения с БД
-            3. Валидируем БД на наименования таблиц. Если не сходится, то закрываем соединение, выдаем ошибку. Иначе идем дальше
-            4. Выбираем набор таблиц на каждый акт действий
-            5. Очищаем логи
-            6. Проходим по дефолтным таблицам
-            7. Проходим по таблицам с ключами (провряем на уникальность)
-             */
         }
 
 
@@ -172,12 +161,7 @@ namespace SqlDBManager
 
             Invoke(new Action(() => tabControl1.SelectedIndex++));
 
-/*            for (int i = 0; i < 5; i++)
-            {
-                Thread.Sleep(1000);
-            }*/
-            //Thread.Sleep(1000);
-            //listBox1.Items.Add("Валидируем каталоги на возможность слияния...");
+            textBoxStatus.Clear();
 
             worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидируем каталоги на возможность слияния...");
             
@@ -186,18 +170,27 @@ namespace SqlDBManager
             {
                 if (mainCatalog.ValidateNamesTables(daughterCatalog.SelectTablesNames()))
                 {
-                    // Валидация tblSECURITY_REASON и других дефолтных значений
-                    // Сделать завтра же. После этого покопаться в линкованных таблицах. При багах на эти таблицы вернуться.
-                    // При обнаружении ошибок предлогать исправить БД
-                    // Проверить tblFUND ключ tblFUND - tblFUND
-
                     if (daughterCatalog.ValidateDefaultTables(worker))
                     {
 
                         // по окончаю всех валидаций
                         worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидация успешно завершена!");
 
-                        
+                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Вносим правки ключей таблиц...");
+                        // тут функция, которая исполнит запросы к главной базе, чтобы добавить ключи
+
+                        /*                        --добавление в ключей в акты
+                          ALTER TABLE[5307_main].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[5307_main].[dbo].[tblFUND](ISN_FUND);
+                                                ALTER TABLE[5307_daughter].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[5307_daughter].[dbo].[tblFUND](ISN_FUND);
+
+                                                --добавление в ключей в акты
+
+                              ALTER TABLE[5307_main].[dbo].[tblINVENTORY_STRUCTURE] ADD FOREIGN KEY(ISN_INVENTORY) REFERENCES[5307_main].[dbo].[tblINVENTORY](ISN_INVENTORY);
+                                                ALTER TABLE[5307_daughter].[dbo].[tblINVENTORY_STRUCTURE] ADD FOREIGN KEY(ISN_INVENTORY) REFERENCES[5307_daughter].[dbo].[tblINVENTORY](ISN_INVENTORY);*/
+
+                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Необходимые правки успешно применены!");
+
+                        // после данных запросов создается резервная копия
 
                         // --------------
                         // Создаем резервную копию для транзакций
@@ -240,6 +233,7 @@ namespace SqlDBManager
 
 
                         e.Result = "Слияние успешно завершено!";
+                        MessageBox.Show("Слияние успешно завершено!", "Слияние завершено", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
                     {
