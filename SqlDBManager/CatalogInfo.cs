@@ -148,12 +148,6 @@ namespace SqlDBManager
             return ReturnListDictsFromDB(request, SelectColumnsNames(tableName), connection);
         }
 
-/*        public Dictionary<int, List<string>> SelectColumnsData(List<string> columns, string table)
-        {
-            string request = SQLRequests.ColumnsDataRequest(columns, Catalog, table);
-            return ReturnDictFromDB(request, connection);
-        }*/
-
         /// <summary>
         /// Возвращает словарь значений где ключ - таблица в которой используются значения из переданной таблицы.
         /// Значение - наименование столбца через который осуществляется связь
@@ -261,12 +255,6 @@ namespace SqlDBManager
             UpdateAdapter(request, connection);
             //return request;
         }
-
-        /*        public string InsertUniqueValue()
-                {
-                    string request = SQLRequests.InsertRequest(Catalog);
-                    return request;
-                }*/
 
         /// <summary>
         /// Вставляет переданные данные в указанную таблицу (ID формируется средствами SQL)

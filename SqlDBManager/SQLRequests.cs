@@ -88,12 +88,6 @@ namespace SqlDBManager
             return $"INSERT INTO [{inCatalog}].[dbo].[{inTable}] SELECT {string.Join(", ", columns)} FROM [{fromCatalog}].[dbo].[{fromTable}] WHERE {filterColumn} = '{filterValue}'";
         }
 
-        
-/*        public static string InsertValueRequest(string catalog, string tableName, List<string> tableColumns, List<string> values)
-        {
-            return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", tableColumns).Replace('\"', '\'')}) VALUES ({string.Join(", ", values).Replace('\"', '\'')})";
-        }*/
-
         /// <summary>
         /// Запрос на вставку записи в таблицу
         /// </summary>
@@ -183,7 +177,6 @@ namespace SqlDBManager
                    $"JOIN [{catalog}].sys.tables AS t ON fk.parent_object_id = t.object_id " +
                    $"JOIN [{catalog}].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id " +
                    $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalog}].sys.tables WHERE name = '{tableName}') and c.name != 'ID' and t.name != '{tableName}'";
-            //return "SELECT \r\nt.name AS TableWithForeignKey,\r\nc.name AS ForeignKeyColumnName \r\nFROM sys.foreign_key_columns AS fk\r\nJOIN sys.tables AS t ON fk.parent_object_id = t.object_id\r\nJOIN sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id\r\nWHERE fk.referenced_object_id = (SELECT object_id FROM sys.tables WHERE name = 'tblFUND_RENAME') and c.name != 'ID' and t.name != 'tblFUND'";
         }
     }
 }

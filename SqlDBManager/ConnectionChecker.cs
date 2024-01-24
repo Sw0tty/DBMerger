@@ -45,7 +45,7 @@ namespace SqlDBManager
             SqlDataReader reader;
             string request, connectionString, response = "";
 
-            connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password};Connect Timeout=30";
+            connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password};Connect Timeout=15";
 
             SqlConnection cnn = new SqlConnection(connectionString);
 

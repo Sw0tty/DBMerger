@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Sql;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
@@ -21,8 +22,8 @@ namespace SqlDBManager
         public Form1()
         {
             InitializeComponent();
-            backgroundWorker1.WorkerReportsProgress = true;
-            backgroundWorker1.WorkerSupportsCancellation = true;
+            mergerBackWorker.WorkerReportsProgress = true;
+            mergerBackWorker.WorkerSupportsCancellation = true;
 
             label1.Text = "Сервер:";
             label2.Text = "Наименование базы данных:";
@@ -54,23 +55,49 @@ namespace SqlDBManager
             }
         }
 
+        private void trimAllOnForm()
+        {
+            comboBox1.Text = comboBox1.Text.Trim(' ');
+            textBox1.Text = textBox1.Text.Trim(' ');
+            textBox2.Text = textBox2.Text.Trim(' ');
+            textBox3.Text = textBox3.Text.Trim(' ');
+            comboBox2.Text = comboBox2.Text.Trim(' ');
+            textBox4.Text = textBox4.Text.Trim(' ');
+            textBox5.Text = textBox5.Text.Trim(' ');
+            textBox6.Text = textBox6.Text.Trim(' ');
+        }
+
         // Логика первой вкладки формы
         private void checkConnectionMainCatalog_Click(object sender, EventArgs e)
         {
             /*
              Проверяет соединения с главной БД
              */
-            if (textBox1.Text.Trim(' ') != textBox4.Text.Trim(' '))
+            trimAllOnForm();
+
+
+            if (textBox1.Text != textBox4.Text)
             {
-                ConnectionChecker.CheckConnectionMessage(comboBox1.Text.Trim(' '),
+/*                ConnectionChecker.CheckConnectionMessage(comboBox1.Text.Trim(' '),
                                                      textBox1.Text.Trim(' '),
                                                      textBox2.Text.Trim(' '),
-                                                     textBox3.Text.Trim(' '));
+                                                     textBox3.Text.Trim(' '));*/
+
+                if (!dirtyJobBackWorker.IsBusy)
+                {
+                    groupBox1.Enabled = false;
+                    groupBox2.Enabled = false;
+                    dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox1.Text, textBox1.Text, textBox2.Text, textBox3.Text));
+                }
             }
             else
             {
                 MessageBox.Show("Вабрана одна и тажа база данных", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            
+
+
         }
 
         private void checkConnectionDaughterCatalog_Click(object sender, EventArgs e)
@@ -78,12 +105,22 @@ namespace SqlDBManager
             /*
              Проверяет соединения с дочерней БД
              */
-            if (textBox1.Text.Trim(' ') != textBox4.Text.Trim(' '))
+
+            trimAllOnForm();
+
+            if (textBox1.Text != textBox4.Text)
             {
-                ConnectionChecker.CheckConnectionMessage(comboBox2.Text.Trim(' '),
+/*                ConnectionChecker.CheckConnectionMessage(comboBox2.Text.Trim(' '),
                                                          textBox4.Text.Trim(' '),
                                                          textBox5.Text.Trim(' '),
-                                                         textBox6.Text.Trim(' '));
+                                                         textBox6.Text.Trim(' '));*/
+
+                if (!dirtyJobBackWorker.IsBusy)
+                {
+                    groupBox1.Enabled = false;
+                    groupBox2.Enabled = false;
+                    dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox2.Text, textBox4.Text, textBox5.Text, textBox6.Text));
+                }
             }
             else
             {
@@ -121,7 +158,6 @@ namespace SqlDBManager
             }
         }
 
-
         // Логика второй вкладки формы
         private void button5_Click(object sender, EventArgs e)
         {
@@ -131,16 +167,14 @@ namespace SqlDBManager
         public void button8_Click(object sender, EventArgs e)
         {
             // Вызов backGroundWorker
-            if (!backgroundWorker1.IsBusy)
+            if (!mergerBackWorker.IsBusy)
             {
                 // Start the asynchronous operation.
-                backgroundWorker1.RunWorkerAsync();
+                mergerBackWorker.RunWorkerAsync();
             }
         }
 
-
-
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        private void mergerBackWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
 
@@ -243,10 +277,7 @@ namespace SqlDBManager
                 }
                 else
                 {
-                    //listBox1.Items.Add("Наименования таблиц не совпадает!"); // В функции предусмотреть возвращение ошибочной таблицы
-                    //textBoxStatus.AppendText("Наименования таблиц не совпадает!" + "\r\n");
                     e.Result = "Наименования таблиц не совпадают!";
-                    // Передать в listBox, что какая-то из таблиц не найдена, отменить слияние
 
                     MessageBox.Show("Ошибка валидации!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
@@ -271,16 +302,15 @@ namespace SqlDBManager
             daughterCatalog.CloseConnection();
         }*/
 
-        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void mergerBackWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             if (e.ProgressPercentage == WorkerConsts.MIDDLE_STATUS_CODE)
             {
                 textBoxStatus.AppendText(e.UserState.ToString() + "\r\n");
             }
-            
         }
 
-        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void mergerBackWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Error != null)
             {
@@ -304,107 +334,184 @@ namespace SqlDBManager
             }
         }
 
+        private void dirtyJobBackWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Tuple<string, string, string, string> takingParams = e.Argument as Tuple<string, string, string, string>;
+
+
+            ConnectionChecker.CheckConnectionMessage(takingParams.Item1,
+                                                         takingParams.Item2,
+                                                         takingParams.Item3,
+                                                         takingParams.Item4);
+
+            Invoke(new Action(() =>
+            {
+                groupBox1.Enabled = true;
+                groupBox2.Enabled = true;
+            }));
+
+        }
+
+        private void dirtyJobBackWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+
+        }
+
+        private void dirtyJobBackWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         private void button10_Click(object sender, EventArgs e)
         {
-            string baseNum = "10000315523";
 
-            long baseToInt = Convert.ToInt64(baseNum);
-
-
-            Dictionary<string, List<string>> filter = new Dictionary<string, List<string>>() { { "1", new List<string>() { "1", "2", "3", "4", "5", "6" } } };
+            string myServer = Environment.MachineName;
 
 
 
-            string req = $"SELECT * FROM [].[dbo].[] WHERE {string.Join("", filter.Keys)} in ({string.Join(", ", filter[string.Join("", filter.Keys)])})";
+            /*            DataTable servers = SqlDataSourceEnumerator.Instance.GetDataSources();
+                        for (int i = 0; i < servers.Rows.Count; i++)
+                        {
+                            listBox2.Items.Add(servers.Rows[i]["ServerName"].ToString());
+                            if (myServer == servers.Rows[i]["ServerName"].ToString()) ///// used to get the servers in the local machine////
+                            {
+                                if ((servers.Rows[i]["InstanceName"] as string) != null)
+                                    listBox2.Items.Add(servers.Rows[i]["ServerName"] + "\\" + servers.Rows[i]["InstanceName"]);
+                                else
+                                    listBox2.Items.Add(servers.Rows[i]["ServerName"].ToString());
+                            }
+                        }*/
 
+            
 
+            SqlDataSourceEnumerator instance = SqlDataSourceEnumerator.Instance;
+            DataTable table = instance.GetDataSources();
 
+            MessageBox.Show(table.Rows.Count.ToString());
 
-
-
-
-            //Dictionary<string, string> filter = new Dictionary<string, string>() { { "some_key", "some_value" } };
-
-            MessageBox.Show(req);
-
-            /*List<Dictionary<string, string>> lst = new List<Dictionary<string, string>>();
-
-            for (int k = 0; k < 5; k++)
+            foreach (DataRow row in table.Rows)
             {
-                Dictionary<string, string> dictTableData = new Dictionary<string, string>();
-                for (int i = 0; i < 5; i++)
-                {
-                    dictTableData[i.ToString()] = i.ToString();
-                }
-                lst.Add(new Dictionary<string, string>(dictTableData));
+                if (row["InstanceName"].ToString() == "")
+                    comboBox3.Items.Add(row["ServerName"]);
+                else
+                    comboBox3.Items.Add(row["ServerName"] + "" + row["InstanceName"]);
             }
+            /* string baseNum = "10000315523";
 
-            for (int i = 0; i < lst.Count; i++)
-            {
-                MessageBox.Show(lst[i]["1"]);
-            }*/
-            Tuple<string, string> s = new Tuple<string, string>("dffdg", "sdfsd");
-
-            MessageBox.Show(s.Item1 + "---" + s.Item2);
-
-            Dictionary<string, string> f = new Dictionary<string, string>();
-
-            f["1"] = "Apple";
-
-            Dictionary<string, string> ddd = new Dictionary<string, string>(f);
-
-            ddd["1"] = "Melone";
-            f["1"] = "dsf";
+             long baseToInt = Convert.ToInt64(baseNum);
 
 
-            MessageBox.Show(f["1"]);
-            MessageBox.Show(ddd["1"]);
+             Dictionary<string, List<string>> filter = new Dictionary<string, List<string>>() { { "1", new List<string>() { "1", "2", "3", "4", "5", "6" } } };
 
 
 
-            string usageName = "";
-
-            // Пример пришедших данных
-            // "FUND" -> "ISN_FUND"
-            for (int i = 0; i < 10; i++)
-            {
-                usageName = $"{i}";
-            }
-            MessageBox.Show(usageName);
+             string req = $"SELECT * FROM [].[dbo].[] WHERE {string.Join("", filter.Keys)} in ({string.Join(", ", filter[string.Join("", filter.Keys)])})";
 
 
 
-            string catalog = "ArchiveFund";
-            string sss = $"C:\\Program Files\\Microsoft SQL Server\\MSSQL16.SQLEXPRESS2022\\MSSQL\\DATA\\{catalog}.mdf";
-            sss = sss.Replace($"DATA\\{catalog}.mdf", $"Backup\\{catalog}_reserv.bak");
-
-            MessageBox.Show(sss);
 
 
-            Dictionary<string, Func< List<string>, string>> trest = new Dictionary<string, Func<List<string>, string>> { { "eqUsers", Some } };
-            // test button
-            string value = "Nothing";
-            Dictionary<int, string> dict = new Dictionary<int, string>() { { 1, "1"}, { 2, "2" }, { 3, "3" } };
 
-            for (int i = 1; i <= dict.Count; i++)
-            {
-                MessageBox.Show(dict[i]);
-            }
-            //string element = dict.TryGetValue("5", out value);
-            string dictStr = "";
-            //dict.Remove(element);
 
-            //label9.Text = element;
+             //Dictionary<string, string> filter = new Dictionary<string, string>() { { "some_key", "some_value" } };
 
-            foreach(string item in dict.Values)
-            {
-                if (trest.ContainsKey("eqUsers"))
-                {
-                    MessageBox.Show(trest["eqUsers"](new List<string> { "login" }));
-                }
-                dictStr += item;
-            }
-            label10.Text = dictStr;
+             MessageBox.Show(req);
+
+             *//*List<Dictionary<string, string>> lst = new List<Dictionary<string, string>>();
+
+             for (int k = 0; k < 5; k++)
+             {
+                 Dictionary<string, string> dictTableData = new Dictionary<string, string>();
+                 for (int i = 0; i < 5; i++)
+                 {
+                     dictTableData[i.ToString()] = i.ToString();
+                 }
+                 lst.Add(new Dictionary<string, string>(dictTableData));
+             }
+
+             for (int i = 0; i < lst.Count; i++)
+             {
+                 MessageBox.Show(lst[i]["1"]);
+             }*//*
+             Tuple<string, string> s = new Tuple<string, string>("dffdg", "sdfsd");
+
+             MessageBox.Show(s.Item1 + "---" + s.Item2);
+
+             Dictionary<string, string> f = new Dictionary<string, string>();
+
+             f["1"] = "Apple";
+
+             Dictionary<string, string> ddd = new Dictionary<string, string>(f);
+
+             ddd["1"] = "Melone";
+             f["1"] = "dsf";
+
+
+             MessageBox.Show(f["1"]);
+             MessageBox.Show(ddd["1"]);
+
+
+
+             string usageName = "";
+
+             // Пример пришедших данных
+             // "FUND" -> "ISN_FUND"
+             for (int i = 0; i < 10; i++)
+             {
+                 usageName = $"{i}";
+             }
+             MessageBox.Show(usageName);
+
+
+
+             string catalog = "ArchiveFund";
+             string sss = $"C:\\Program Files\\Microsoft SQL Server\\MSSQL16.SQLEXPRESS2022\\MSSQL\\DATA\\{catalog}.mdf";
+             sss = sss.Replace($"DATA\\{catalog}.mdf", $"Backup\\{catalog}_reserv.bak");
+
+             MessageBox.Show(sss);
+
+
+             Dictionary<string, Func< List<string>, string>> trest = new Dictionary<string, Func<List<string>, string>> { { "eqUsers", Some } };
+             // test button
+             string value = "Nothing";
+             Dictionary<int, string> dict = new Dictionary<int, string>() { { 1, "1"}, { 2, "2" }, { 3, "3" } };
+
+             for (int i = 1; i <= dict.Count; i++)
+             {
+                 MessageBox.Show(dict[i]);
+             }
+             //string element = dict.TryGetValue("5", out value);
+             string dictStr = "";
+             //dict.Remove(element);
+
+             //label9.Text = element;
+
+             foreach(string item in dict.Values)
+             {
+                 if (trest.ContainsKey("eqUsers"))
+                 {
+                     MessageBox.Show(trest["eqUsers"](new List<string> { "login" }));
+                 }
+                 dictStr += item;
+             }
+             label10.Text = dictStr;*/
         }
 
         public string Some(List<string> columns)
@@ -571,6 +678,8 @@ namespace SqlDBManager
         {
             return $"{one} {two} {three}";
         }
+
+
     }
 
     public static class WorkerConsts

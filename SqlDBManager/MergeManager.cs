@@ -18,8 +18,6 @@ namespace SqlDBManager
 {
     public static class MergeManager
     {
-
-
         public static Dictionary<string, Tuple<string, string, List<string>, string>> defaultTablesParams = new Dictionary<string, Tuple<string, string, List<string>, string>>
         {
             // 1. string uniqueValueColumnName         2. string idLikeColumnName         3. List<string> excludeColumns         4. string highLevelColumnName
@@ -389,7 +387,7 @@ namespace SqlDBManager
                     Tuple<string, string, List<string>, string, string, string> paramsForProcessing = linksTablesParams[tableName];
                     // 1. string uniqueValueColumnName         2. string idLikeColumnName         3. List<string> excludeColumns    4. string highLevelColumnName     5. string parentIdColumn         6. string numerateColumn                          bool usedFurther, string foreignIdColumn = null
 
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable_new(mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4, parentIdColumn: paramsForProcessing.Item5, numerateColumn: paramsForProcessing.Item6)}");
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4, parentIdColumn: paramsForProcessing.Item5, numerateColumn: paramsForProcessing.Item6)}");
                 }
                 else
                 {
@@ -429,11 +427,8 @@ namespace SqlDBManager
             }
         }
 
-
-
         // --- Master merge process table ---
-
-        // Для обработки дефолтных таблиц (дописать логику позже)
+        // Для обработки дефолтных таблиц
         static int ProcessDefaultTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string idLikeColumnName, string tableName, List<string> excludeColumns = null, string highLevelColumnName = null)
         {
             // -------- Общий блок инициализации вне зависимости от переданных парпаметров--------
@@ -579,14 +574,9 @@ namespace SqlDBManager
             return countOfImports;
         }
 
-        static int ProcessLinksTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string idLikeColumnName, string tableName, bool usedFurther, string foreignIdColumn = null, List<string> excludeColumns = null, string parentIdColumn = null, string numerateColumn = null)
-        {
-            return 1;
-        }
-
         // 1. string uniqueValueColumnName         2. string idLikeColumnName         3. List<string> excludeColumns    4. string highLevelColumnName     5. string parentIdColumn         6. string numerateColumn
         // Для обработки таблиц с внешними ключами mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4, parentIdColumn: paramsForProcessing.Item5, numerateColumn: paramsForProcessing.Item6
-        static int ProcessLinksTable_new(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string idLikeColumnName, string tableName, List<string> excludeColumns, string highLevelColumnName, string parentIdColumn, string numerateColumn)
+        static int ProcessLinksTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string idLikeColumnName, string tableName, List<string> excludeColumns, string highLevelColumnName, string parentIdColumn, string numerateColumn)
         {
             // -------- Общий блок инициализации вне зависимости от переданных парпаметров--------
             int countOfImports = 0;
@@ -655,8 +645,6 @@ namespace SqlDBManager
                             row[numerateColumn] = $"'{lastNumeric + countOfImports + 1}'";
                         }
 
-
-
                         if (foreigns.Count > 0)
                         {
                             ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
@@ -670,12 +658,8 @@ namespace SqlDBManager
                         {
                             mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                         }
-
                         countOfImports++;
                     }
-
-
-
                 }
             } // Если есть родителей, то отбор данных совершенно иной
             else if (parentIdColumn != null && uniqueValueColumnName != null)
@@ -698,7 +682,6 @@ namespace SqlDBManager
                         {
                             if (foreigns.Count > 0)
                             {
-                                
                                 ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(filterFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
                             }
                         }
@@ -724,18 +707,10 @@ namespace SqlDBManager
                             {
                                 mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                             }
-
                             countOfImports++;
                         }
                     }
-
-
                 }
-
-
-
-
-
             }
             else if (parentIdColumn != null && uniqueValueColumnName == null)
             {
@@ -773,180 +748,7 @@ namespace SqlDBManager
                 }
             }
             return countOfImports;
-
-            /*int countImports = 0; // Переменная для подсчета импортированных записей
-
-            // остановка на "tblINVENTORY". Значения для импорта ищутся по ISN_INVENTORY, а должны по ISN_FUND. Также данная таблица используется далее, как внешние значения. Переделать логику составления импорта данных. По типу проверить на внешние ключи, потом составить данные для импорта и проверить данные в резерве. После этого сделать импорт из зарезервированных, а после добавить в резервный словарь внешние ключи переданной таблицы. (Логика перерабатывается в блоке когда нет значений на фильтрацию уникальных)
-
-            int usageCount = ValuesManager.AddNewTableToReserve(mainCatalog, tableName);
-
-
-            // 1. У нее могут быть ключи на внешние 2. Могут отсутствовть, но может быть, что она в резерве.
-            if (usageCount > 0)
-            {
-
-            }
-
-            if (ValuesManager.ReturnReserve().ContainsKey(tableName))
-            {
-                // old --- new
-                List<Tuple<string, string>> keysTuples = ValuesManager.ReturnReserve()[tableName][0][foreignIdColumn];
-
-                List<Dictionary<string, string>> daughterRecordsFromTable = new List<Dictionary<string, string>>();
-
-                List<string> oldKeys = new List<string>();
-
-                foreach (Tuple<string, string>  tTuple in keysTuples)
-                {
-                    oldKeys.Add(tTuple.Item1);
-                    // Если таблица была занесена в резерв, то найти значения только оттуда и сделать импорты в главную.
-                    //daughterRecordsFromTable = daughterCatalog.SelectAllFrom(tableName, new Dictionary<string, List<string>>() { { "", "" } });
-
-                }
-
-                daughterRecordsFromTable = daughterCatalog.SelectAllFrom(tableName, new Dictionary<string, List<string>>() { { idLikeColumnName, oldKeys } });
-
-
-
-                if (daughterRecordsFromTable.Count > 0)
-                {
-                    foreach (Dictionary<string, string> insertData in daughterRecordsFromTable)
-                    {
-                        Dictionary<string, string> prepareData = new Dictionary<string, string>(insertData);
-
-                        prepareData.Remove("ID");
-
-                        mainCatalog.InsertValue(tableName, prepareData);
-                    }
-                    countImports += daughterRecordsFromTable.Count;
-                }
-                return countImports;
-            }
-            else
-            {
-                // Если нет, то ищем по каталогу
-                ValuesManager.AddNewTableToReserve(mainCatalog, tableName);
-                // В данной функции собрать и сформировать все данные для импорта, чтобы передать на непосредственный импорт
-
-                //List<string> mainListCheckData = mainCatalog.SelectListColumnsData(columnName, tableName);
-                //List<string> daughterListCheckData = daughterCatalog.SelectListColumnsData(columnName, tableName);
-
-*//*                if (idLikeColumnName != "")
-                {
-                    // Доюавдение в резерв используемых далее
-                    ValuesManager.AddNewTableToReserve(mainCatalog, tableName);
-                }*//*
-
-
-
-                // 1. Список в котором словари со всеми значениями из главного каталога по переданной таблице List<Dictionary<string, string>> list = new List<Dictionary<string, string>>();
-                List<Dictionary<string, string>> mainRecordsFromTable = mainCatalog.SelectAllFrom(tableName);
-
-                // ----- проверка (не используется в программе)
-                *//*            foreach (Dictionary<string, string> i in mainRecordsFromTable)
-                            {
-                                foreach (string j in i.Keys)
-                                {
-                                    MessageBox.Show(j + " --- " + i[j]);
-                                }
-                            }*//*
-                // ---------
-
-
-                // 2. Список в котором словари со всеми значениями из дочернего каталога по переданной таблице
-                List<Dictionary<string, string>> daughterRecordsFromTable = daughterCatalog.SelectAllFrom(tableName);
-
-                // 3. Обработчик, который принимает списки из  пунктов 1 и 2. Проходит по дочернему списку. Если по уникальному не нашел значения в главной, то в резервный словарь записывает нынешний ключ, как старый и новый формирует на основе последнего в главной + 1. После передает обработчику, который сформирует и добавит в очередь на импорт. Если нашел подобное значение. То в словарь записывает нынешний, как старый ключ. А новый, как он есть в главной. После чего переходит к следующей записи. На выходе возвращает готовый словарь записей, которые будут испортированы
-                // ЧТОБЫ добавить вторичный ключ нынешней таблицы, нужно проверить idLikeColumnName. Если его передали, то мы добавляем значение в резервный словарь. Если такого нет. Значит данные из таблицы нигде не используются. А значит нужно только сформировать запись на импорт в гланый каталог
-                List<Dictionary<string, string>> onImportData = ValuesManager.SortData(mainCatalog, mainRecordsFromTable, daughterRecordsFromTable, uniqueValueColumnName, idLikeColumnName, tableName, usedFurther);
-
-
-
-                // 4. Импортируем сформированные записи из пункта 3.
-
-                // Дальше идет обработчик, который берет все записи из главной и дочерней баз. И проверяет вхождения по уникальному ID, который передается при вызове обработчика
-
-
-
-                // Список уникальных значений, по которым можно найти необходимые записи в дочерней БД
-                *//*List<string> uniqueValues = ValuesManager.CheckUniqueValue(
-                    mainCatalog.SelectListColumnsData(uniqueValueColumnName, tableName),
-                    daughterCatalog.SelectListColumnsData(uniqueValueColumnName, tableName)
-                );*//*
-
-                // Список колонок для формирования запроса на добавление уникальной записи
-                //List<string> forImportColumns = mainCatalog.SelectColumnsNames(tableName);
-
-
-
-                *//*            if (tableName == "eqUsers")
-                            {
-                                forImportColumns.Remove("DisplayName");
-                            }*//*
-
-                if (onImportData.Count > 0)
-                {
-                    // Цикл импортирования уникальных значений
-                    foreach (Dictionary<string, string> uniqueRowData in onImportData)
-                    {
-                        mainCatalog.InsertValue(tableName, uniqueRowData);
-
-                        // Формирование списка, который содержит в себе набор данных для импорта одного значения
-                        //List<string> forImportData = daughterCatalog.SelectRecordsWhere(forImportColumns, tableName, uniqueValueColumnName, filterValue);
-
-                        // ---
-                        // Словарь ключ строка, который содержит Список, который содержит Словарь ключ строка со значением пара 
-                        // Если передано уникальное поле, то ищем по нему значения на транзакцию.
-                        // Если поле не передано, то берется поле из словаря резервных записей и также от-туда берется значение, по которому найти записи
-                        // Также в таком раскладе исппользуется другой запрос, нежели если бы было передано изначальное поле для поиска
-                        // В случае не нахождения в словаре поля вернуть 0 импортированных значений.
-                        //
-
-                        // Где-то в данном блоке необходимо сделать запрос внешних ключей.
-                        // После проверки, если такие имеются, то создать запись в reserveDict "таблица, в которой используется" -> "oldKey", "newKey". А в middle заменить его на новый, который равняется: (количество всех записей (запрос имеется в каталоге, а также используется перед входом в данный обработчик) в главной + 1) 
-                        *//*Dictionary<string, string> middleRecordDict = new Dictionary<string, string>();
-
-                        for (int i = 0; i < forImportColumns.Count; i++)
-                        {
-                            middleRecordDict[forImportColumns[i]] = forImportData[i];
-                        }
-
-                        middleRecordDict.Remove("ID");*//*
-                        //middleRecordDict["unique_column_name"] = $"'{reserveDict[tableName][0][oldKey]}'";
-
-                        // ---
-
-                        //ValuesManager.AddUniqueValue(tableName, forImportColumns, uniqueValueColumnName, filterValue, mainCatalog, daughterCatalog);
-                    }
-                    countImports += onImportData.Count;
-                }
-                return countImports;
-            }*/
         }
-        // --------------------------------------
-
-        /*static int ProcessTBLUsers(DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName)
-        {
-            List<string> mainListUsersLogins = mainCatalog.SelectListColumnsData("Login", tableName);
-            List<string> daughterListUsersLogins = daughterCatalog.SelectListColumnsData("Login", tableName);
-            List<string> forImportColumns = new List<string>() { "[ID]", "[Login]", "[Department]", "[Deleted]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Email]", "[patronymic]", "[Position]", "[Phone]", "[Room_Number]", "[Description]", "[surname]", "[AccessGranted]", "[Supervisor]", "[FirstName]", "[BUILD_IN_ACCOUNT]", "[Pass]", "[Cookie]", "[UserTheme]" };
-            List<string> uniqueValues = ValuesManager.CheckUniqueValue(mainListUsersLogins, daughterListUsersLogins);
-            int countImports = 0;
-
-            //1. Берем список логинов из главной и проверяем, что все дефолтные пользователи на месте. Добавляем, если не хватает
-            countImports += ValuesManager.CheckDefaultUsers(mainListUsersLogins, countImports);
-
-             //2. Берем список логинов из дочерней и сравниваем с главными. Если есть уникальный, то делаем запрос на получение данных этого пользователя и добавляем его в главную
-             if (uniqueValues.Count > 0)
-            {
-                foreach (string value in uniqueValues)
-                {
-                    ValuesManager.AddUniqueValue(tableName, forImportColumns, "Login", value, mainCatalog, daughterCatalog);
-                }
-                countImports += uniqueValues.Count;
-            }
-            return countImports;
-        }*/
     }
 
     public static class ValuesManager
@@ -956,8 +758,6 @@ namespace SqlDBManager
 
         // Словарь для дефолтных таблиц. Содержит ключи из дефолтных, которые нкжно будет перезаписать в процессе формирования импортируемой записи в обработчике линкованных таблиц
         static Dictionary<string, Dictionary<string, List<Tuple<string, string>>>> rewriteDict = new Dictionary<string, Dictionary<string, List<Tuple<string, string>>>>();
-
-
 
         // Наименование таблицы в которой есть внешние ключи на дефолтные таблицы - Список словарей, у которых Ключ это наименование колонки с внешним ключом - Которая содержит список кортежей (старый ключ, и ключ на который нужно обновить)
         // "tblINVENTORY": [
@@ -1086,23 +886,6 @@ namespace SqlDBManager
                 }
                 reserveDict[inTable][foreigns[inTable]] = new List<Tuple<string, string>>();
             }
-
-            // Пример пришедших данных
-            // "FUND" -> "ISN_FUND"
-/*            if (inUsage.Count > 0)
-            {
-                foreach (string inTable in inUsage.Keys)
-                {
-                    // Если еще нет таблицы в словаре
-                    if (!reserveDictNew.ContainsKey(inTable))
-                    {
-                        reserveDictNew[inTable] = new List<Dictionary<string, List<Tuple<string, string>>>>();
-                    }
-                    // Добавляем в список таблицы наименование колонки, которая содержит ключ
-                    reserveDictNew[inTable].Add(new Dictionary<string, List<Tuple<string, string>>>() { { inUsage[inTable], new List<Tuple<string, string>>() } });
-                }
-            }
-            return inUsage.Count;*/
         }
 
         /// <summary>
@@ -1141,52 +924,6 @@ namespace SqlDBManager
         }
 
         /// <summary>
-        /// Сортирует данные из главной таблицы и дочерней
-        /// </summary>
-        /// <returns>Записи готовые к импорту в главный каталог</returns>
-        public static List<Dictionary<string, string>> SortData(DBCatalog mainCatalog, List<Dictionary<string, string>> mainRecordsFromTable, List<Dictionary<string, string>> daughterRecordsFromTable, string uniqueValueColumnName, string idLikeColumnName, string tableName, bool usedFurther)
-        {
-            List<Dictionary<string, string>> onImportData = new List<Dictionary<string, string>>();
-            /*List<string> mainData = new List<string>();
-            List<string> daughterData = new List<string>();
-            List<string> uniqueRecords = new List<string>();
-*//*            string ssssssss = ;
-            MessageBox.Show(ssssssss);*//*
-            long lastIdLikeInMain = Convert.ToInt64(mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)[0].Replace("\'", ""));
-
-            // Отбираем записи по уникальному переданному полю для дальнейшей сортировки
-            foreach (Dictionary<string, string> rowDataInMain in mainRecordsFromTable)
-            {
-                mainData.Add(rowDataInMain[uniqueValueColumnName]);
-            }
-
-
-            foreach (Dictionary<string, string> rowDataInDaughter in daughterRecordsFromTable)
-            {
-                // Логика, если значение имеется. Мы добавляем в резерм пару ключей как они есть
-                if (mainData.Contains(rowDataInDaughter[uniqueValueColumnName]) && usedFurther)
-                {
-                    AddPairKeysToReserve(mainCatalog, tableName, idLikeColumnName, new Tuple<string, string>(rowDataInDaughter[idLikeColumnName], ReturnValue(mainRecordsFromTable, uniqueValueColumnName, rowDataInDaughter[uniqueValueColumnName], idLikeColumnName)));
-                }
-                else
-                {
-                    // Логика, если значение не найдено. Мы добавляем в резерм пару ключей: старый ключ из дочерней - новый ключ сформированный на основе последнего ключа из главной
-                    Dictionary<string, string> onAdd = new Dictionary<string, string>(rowDataInDaughter);
-
-                    onAdd.Remove("ID");
-                    onAdd[idLikeColumnName] = $"{lastIdLikeInMain + onImportData.Count + 1}";
-                    onImportData.Add(onAdd);
-
-                    if (usedFurther)
-                    {
-                        AddPairKeysToReserve(mainCatalog, tableName, idLikeColumnName, new Tuple<string, string>(rowDataInDaughter[idLikeColumnName], onAdd[idLikeColumnName]));
-                    }
-                }
-            }*/
-            return onImportData;
-        }
-
-        /// <summary>
         /// Ищет в словаре значение и возвращает по переданным параметрам
         /// </summary>
         public static string ReturnValue(List<Dictionary<string, string>> mainRecordsFromTable, string searchColumn, string searchValue, string returnTheColumnValue)
@@ -1205,36 +942,5 @@ namespace SqlDBManager
         {
 
         }
-
-        public static void AddUniqueValue(string tableName, List<string> forImportColumns, string filterColumn, string filterValue, DBCatalog maincatalog, DBCatalog daughterCatalog)
-        {
-            /*if (reserveDict.ContainsKey(tableName))
-            {
-                foreach (string oldKey in reserveDict[tableName][0].Keys)
-                {
-                    Dictionary<string, string> middleRecordDict = new Dictionary<string, string>();
-                    List<string> tableColumns = daughterCatalog.SelectColumnsNames(tableName);
-                    List<string> tableValues = daughterCatalog.SelectRecordsWhere(tableColumns, tableName, "ISN_CITIZEN", oldKey);
-
-                    for (int i = 0; i < tableColumns.Count; i++)
-                    {
-                        middleRecordDict[tableColumns[i]] = tableValues[i];
-                    }
-
-                    middleRecordDict.Remove("ID");
-                    middleRecordDict["unique_column_name"] = $"'{reserveDict[tableName][0][oldKey]}'";
-
-                    maincatalog.InsertValue(tableName, middleRecordDict);
-                    reserveDict[tableName][0].Remove(oldKey);
-                }
-            }
-            else
-            {
-                daughterCatalog.UpdateID(tableName, filterColumn, filterValue);
-                maincatalog.InsertFromUniqueValue(tableName, forImportColumns, daughterCatalog.ReturnCatalog(), tableName, filterColumn, filterValue);
-
-            }*/
-        }
-
     }
 }
