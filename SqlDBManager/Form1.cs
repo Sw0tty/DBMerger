@@ -43,15 +43,24 @@ namespace SqlDBManager
             checkConnectionMainCatalog.Text = "Проверить соединение";
             checkConnectionDaughterCatalog.Text = checkConnectionMainCatalog.Text;
 
-            StringCollection coll = Properties.Settings.Default.comboBox1Default;
-            
-            if (coll != null)
+            StringCollection combo1Collection = Properties.Settings.Default.comboBox1Default;
+            StringCollection combo2Collection = Properties.Settings.Default.comboBox1Default;
+
+            if (combo1Collection != null)
             {
-                foreach (var s in coll)
+                foreach (var str in combo1Collection)
                 {
-                    comboBox1.Items.Add(s);
+                    comboBox1.Items.Add(str);
                 }
-                //comboBox1.Text = Properties.Settings.Default.comboBox1LastSelect;
+                comboBox1.Text = Properties.Settings.Default.comboBox1LastSelect;
+            }
+            if (combo2Collection != null)
+            {
+                foreach (var str in combo2Collection)
+                {
+                    comboBox2.Items.Add(str);
+                }
+                comboBox2.Text = Properties.Settings.Default.comboBox2LastSelect;
             }
         }
 
@@ -75,17 +84,11 @@ namespace SqlDBManager
              */
             trimAllOnForm();
 
-
             if (textBox1.Text != textBox4.Text)
             {
-/*                ConnectionChecker.CheckConnectionMessage(comboBox1.Text.Trim(' '),
-                                                     textBox1.Text.Trim(' '),
-                                                     textBox2.Text.Trim(' '),
-                                                     textBox3.Text.Trim(' '));*/
-
                 if (!dirtyJobBackWorker.IsBusy)
                 {
-                    groupBox1.Enabled = false;
+                    mainDBGroupBox.Enabled = false;
                     groupBox2.Enabled = false;
                     dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox1.Text, textBox1.Text, textBox2.Text, textBox3.Text));
                 }
@@ -94,10 +97,6 @@ namespace SqlDBManager
             {
                 MessageBox.Show("Вабрана одна и тажа база данных", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            
-
-
         }
 
         private void checkConnectionDaughterCatalog_Click(object sender, EventArgs e)
@@ -110,14 +109,9 @@ namespace SqlDBManager
 
             if (textBox1.Text != textBox4.Text)
             {
-/*                ConnectionChecker.CheckConnectionMessage(comboBox2.Text.Trim(' '),
-                                                         textBox4.Text.Trim(' '),
-                                                         textBox5.Text.Trim(' '),
-                                                         textBox6.Text.Trim(' '));*/
-
                 if (!dirtyJobBackWorker.IsBusy)
                 {
-                    groupBox1.Enabled = false;
+                    mainDBGroupBox.Enabled = false;
                     groupBox2.Enabled = false;
                     dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox2.Text, textBox4.Text, textBox5.Text, textBox6.Text));
                 }
@@ -133,6 +127,8 @@ namespace SqlDBManager
             /*
              Переход к надстройке слияния. Проверяет соединения с основной и дочерней БД
              */
+            trimAllOnForm();
+
             if (!ConnectionChecker.CheckConnection(comboBox1.Text.Trim(' '),
                                                    textBox1.Text.Trim(' '),
                                                    textBox2.Text.Trim(' '),
@@ -147,15 +143,36 @@ namespace SqlDBManager
             {
                 MessageBox.Show("Проверьте настройки соединения с дочерней БД", "Ошибка соединения", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            else if (textBox1.Text.Trim(' ') == textBox4.Text.Trim(' '))
+            else if (textBox1.Text == textBox4.Text)
             {
                 MessageBox.Show("Вабрана одна и тажа база данных", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
-                // идем на следующую форму
+                saveComboBoxes();
                 tabControl1.SelectedIndex++;
             }
+        }
+
+        public void saveComboBoxes()
+        {
+            StringCollection combo1Collection = new StringCollection();
+            StringCollection combo2Collection = new StringCollection();
+
+            if (!comboBox1.Items.Contains(comboBox1.Text))
+                comboBox1.Items.Add(comboBox1.Text);
+            if (!comboBox2.Items.Contains(comboBox2.Text))
+                comboBox2.Items.Add(comboBox2.Text);
+
+            combo1Collection.AddRange(comboBox1.Items.Cast<string>().ToArray());
+            combo2Collection.AddRange(comboBox2.Items.Cast<string>().ToArray());
+
+            Properties.Settings.Default.comboBox1Default = combo1Collection;
+            Properties.Settings.Default.comboBox1LastSelect = comboBox1.Text;
+            Properties.Settings.Default.comboBox2Default = combo2Collection;
+            Properties.Settings.Default.comboBox2LastSelect = comboBox2.Text;
+
+            Properties.Settings.Default.Save();
         }
 
         // Логика второй вкладки формы
@@ -181,12 +198,12 @@ namespace SqlDBManager
             string text1 = "";
             string text2 = "";
 
-            Invoke(new Action(() => text1 = comboBox1.Text.Trim(' ')));
-            Invoke(new Action(() => text2 = comboBox1.Text.Trim(' ')));
+            Invoke(new Action(() => text1 = comboBox1.Text));
+            Invoke(new Action(() => text2 = comboBox1.Text));
 
             // 1. Создаем объекты соединения
-            DBCatalog mainCatalog = new DBCatalog(text1, textBox1.Text.Trim(' '), textBox2.Text.Trim(' '), textBox3.Text.Trim(' '));
-            DBCatalog daughterCatalog = new DBCatalog(text2, textBox4.Text.Trim(' '), textBox5.Text.Trim(' '), textBox6.Text.Trim(' '));
+            DBCatalog mainCatalog = new DBCatalog(text1, textBox1.Text, textBox2.Text, textBox3.Text);
+            DBCatalog daughterCatalog = new DBCatalog(text2, textBox4.Text, textBox5.Text, textBox6.Text);
 
             // 2. Открываем соединения с БД
             mainCatalog.OpenConnection();
@@ -211,7 +228,12 @@ namespace SqlDBManager
                         worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидация успешно завершена!");
 
                         worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Вносим правки ключей таблиц...");
-                        // тут функция, которая исполнит запросы к главной базе, чтобы добавить ключи
+
+                        foreach (string tableName in DefaultTablesValues.WithoutKeysTables.Keys)
+                        {
+                            Tuple<string, string> tupleParams = DefaultTablesValues.WithoutKeysTables[tableName];
+                            mainCatalog.AddReference(tableName, tupleParams.Item1, tupleParams.Item2);
+                        }
 
                         /*                        --добавление в ключей в акты
                           ALTER TABLE[5307_main].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[5307_main].[dbo].[tblFUND](ISN_FUND);
@@ -338,15 +360,14 @@ namespace SqlDBManager
         {
             Tuple<string, string, string, string> takingParams = e.Argument as Tuple<string, string, string, string>;
 
-
             ConnectionChecker.CheckConnectionMessage(takingParams.Item1,
-                                                         takingParams.Item2,
-                                                         takingParams.Item3,
-                                                         takingParams.Item4);
+                                                     takingParams.Item2,
+                                                     takingParams.Item3,
+                                                     takingParams.Item4);
 
             Invoke(new Action(() =>
             {
-                groupBox1.Enabled = true;
+                mainDBGroupBox.Enabled = true;
                 groupBox2.Enabled = true;
             }));
 
@@ -379,27 +400,47 @@ namespace SqlDBManager
 
 
 
+
+
+
+
+
+
+
+
+
+
+
         private void button10_Click(object sender, EventArgs e)
         {
 
+            BackupManager backUp = new BackupManager("C:\\Program Files\\Microsoft SQL Server\\MSSQL16.SQL2022\\MSSQL\\DATA\\5558.mdf", "5558", "(local)\\SQL2022", "sa", "123");
+
+            backUp.OpenConnection();
+
+            backUp.CreateReserveBackup("5558");
+
+            MessageBox.Show("sdfsd");
+            backUp.DeleteReserveBackup();
+
+            MessageBox.Show("sdfsd");
             string myServer = Environment.MachineName;
 
 
 
-            /*            DataTable servers = SqlDataSourceEnumerator.Instance.GetDataSources();
-                        for (int i = 0; i < servers.Rows.Count; i++)
-                        {
-                            listBox2.Items.Add(servers.Rows[i]["ServerName"].ToString());
-                            if (myServer == servers.Rows[i]["ServerName"].ToString()) ///// used to get the servers in the local machine////
-                            {
-                                if ((servers.Rows[i]["InstanceName"] as string) != null)
-                                    listBox2.Items.Add(servers.Rows[i]["ServerName"] + "\\" + servers.Rows[i]["InstanceName"]);
-                                else
-                                    listBox2.Items.Add(servers.Rows[i]["ServerName"].ToString());
-                            }
-                        }*/
+            DataTable servers = SqlDataSourceEnumerator.Instance.GetDataSources();
+            for (int i = 0; i < servers.Rows.Count; i++)
+            {
+                if (myServer == servers.Rows[i]["ServerName"].ToString()) ///// used to get the servers in the local machine////
+                {
+                    if ((servers.Rows[i]["InstanceName"] as string) != null)
+                        listBox2.Items.Add(servers.Rows[i]["ServerName"] + "\\" + servers.Rows[i]["InstanceName"]);
+                    else
+                        listBox2.Items.Add(servers.Rows[i]["ServerName"].ToString());
+                }
+            }
 
-            
+
 
             SqlDataSourceEnumerator instance = SqlDataSourceEnumerator.Instance;
             DataTable table = instance.GetDataSources();
@@ -409,9 +450,9 @@ namespace SqlDBManager
             foreach (DataRow row in table.Rows)
             {
                 if (row["InstanceName"].ToString() == "")
-                    comboBox3.Items.Add(row["ServerName"]);
+                    listBox2.Items.Add(row["ServerName"]);
                 else
-                    comboBox3.Items.Add(row["ServerName"] + "" + row["InstanceName"]);
+                    listBox2.Items.Add(row["ServerName"] + "\\" + row["InstanceName"]);
             }
             /* string baseNum = "10000315523";
 
@@ -670,16 +711,7 @@ namespace SqlDBManager
 
             Tuple<string, string, string> tr = new Tuple<string, string, string>("1", "2", "3");
 
-
-            MessageBox.Show(Sommmmss(tr.Item1, tr.Item2, tr.Item3));
         }
-
-        public static string Sommmmss(string one, string two, string three)
-        {
-            return $"{one} {two} {three}";
-        }
-
-
     }
 
     public static class WorkerConsts

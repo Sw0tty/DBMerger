@@ -123,10 +123,10 @@ namespace SqlDBManager
                 new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },*/
 
             //{ "tblARCHIVE_PASSPORT",
-            //    new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+            //    new Tuple<string, string, List<string>, string, string, string>("PASS_YEAR", "ISN_PASSPORT", null, null, "ISN_ARCHIVE", null) },
 
             //{ "tblARCHIVE_STATS",
-            //    new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
+            //    new Tuple<string, string, List<string>, string, string, string>(null, "ISN_ARCHIVE_STATS", null, null, "ISN_PASSPORT", null) },
 
             { "tblFUND",
                 new Tuple<string, string, List<string>, string, string, string>("FUND_NAME_SHORT", "ISN_FUND", null, null, null, "FUND_NUM_2") },
@@ -210,7 +210,7 @@ namespace SqlDBManager
                 new Tuple<string, string, List<string>, string, string, string>("NAME", "ISN_INVENTORY_CLS", null, "ISN_HIGH_INVENTORY_CLS", "ISN_INVENTORY", null) },
 
             /*{ "tblDOCUMENT_STATS",
-                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_DOCUMENT_STATS", null, null, "ISN_INVENTORY", null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_DOCUMENT_STATS", null, null, "ISN_FUND", null) },
 */
             { "tblREF_ACT",
                 new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_ACT", null, null, null, null) },
@@ -239,18 +239,18 @@ namespace SqlDBManager
             { "tblUNIT_FOTO",
                 new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
 
-            /*{ "tblUNIT_FOTO_EX",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
-*/
+            { "tblUNIT_FOTO_EX",
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_UNIT", null) },
+
             { "tblUNIT_MICROFORM",
                 new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_MOVIE",
                 new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
 
-            /*{ "tblUNIT_MOVIE_EX",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
-*/
+            { "tblUNIT_MOVIE_EX",
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_UNIT", null) },
+
             { "tblUNIT_NTD",
                 new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
 
@@ -266,9 +266,9 @@ namespace SqlDBManager
             { "tblUNIT_VIDEO",
                 new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
 
-            /*{ "tblUNIT_VIDEO_EX",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },
-*/
+            { "tblUNIT_VIDEO_EX",
+                new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
+
             { "tblUNIT_WORK",
                 new Tuple<string, string, List<string>, string, string, string>(null, "ISN_UNIT_WORK", null, null, "ISN_UNIT", null) },
 

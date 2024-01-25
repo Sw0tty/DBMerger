@@ -42,24 +42,24 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SqlDBManager.exe" size="69088">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SqlDBManager.exe" size="71648">
       <assemblyIdentity name="SqlDBManager" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>POvzF5EbP1EWw0Dqhzgxv4eKfhFCL87NEh+W9yiqsUc=</dsig:DigestValue>
+        <dsig:DigestValue>mWAIaE0bePz5dBmBuW1IsM3vLXmMZA2Erl7haBSBKqM=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="SqlDBManager.exe.config" size="1280">
+  <file name="SqlDBManager.exe.config" size="1402">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>FPW590juuKl7l7B1Sd3b9Cq1uTnhgIZHpo6tsgNdMEg=</dsig:DigestValue>
+      <dsig:DigestValue>r1UYAqwRPB/gZeqetl4sqB0maQk4g3Rnv8j+TLQMOpk=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>

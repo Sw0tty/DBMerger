@@ -178,5 +178,10 @@ namespace SqlDBManager
                    $"JOIN [{catalog}].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id " +
                    $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalog}].sys.tables WHERE name = '{tableName}') and c.name != 'ID' and t.name != '{tableName}'";
         }
+
+        public static string AddForeignKeyOnTable(string catalog, string repairTableName, string referenceTableName, string linkColumn)
+        {
+            return $"ALTER TABLE[{catalog}].[dbo].[{repairTableName}] ADD FOREIGN KEY({linkColumn}) REFERENCES[{catalog}].[dbo].[{referenceTableName}]({linkColumn});";
+        }
     }
 }

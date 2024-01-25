@@ -249,6 +249,12 @@ namespace SqlDBManager
             return deletedCount;
         }
 
+        public void AddReference(string repairTableName, string referenceTableName, string linkColumn)
+        {
+            string request = SQLRequests.AddForeignKeyOnTable(Catalog, repairTableName, referenceTableName, linkColumn);
+            AnotherRequest(request, connection);
+        }
+
         public void UpdateID(string table, string column, string value)
         {
             string request = SQLRequests.UpdateIDRequest(Catalog, table, column, value);
@@ -284,6 +290,13 @@ namespace SqlDBManager
         {
             string request = SQLRequests.DeleteRowRequest(Catalog, tableName, filterColumn, filterValue);
             DeleteAdapter(request, connection);
+        }
+
+        static void AnotherRequest(string request, SqlConnection connection)
+        {
+            SqlCommand cmd = new SqlCommand(request, connection);
+            cmd.ExecuteNonQuery();
+            cmd.Dispose();
         }
 
         static void InsertAdapter(string request, SqlConnection connection)

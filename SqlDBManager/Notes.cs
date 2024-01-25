@@ -40,6 +40,12 @@ namespace NotesNamespace
             { "tblSECURLEVEL", new Tuple<string, Dictionary<string, List<string>>>("1", new Dictionary<string, List<string>>() { { "ISN_SECURLEVEL", new List<string>() { "1", "2", "3" } } }) },
             { "tblSECURITY_REASON", new Tuple<string, Dictionary<string, List<string>>>("null", new Dictionary<string, List<string>>() { { "ISN_SECURITY_REASON", new List<string>() { "1", "2", "3", "4", "8" } } }) },
         };
+
+        public static Dictionary<string, Tuple<string, string>> WithoutKeysTables { get; } = new Dictionary<string, Tuple<string, string>>()
+        {
+            { "tblACT", new Tuple<string, string>("tblFUND", "ISN_FUND") },
+            { "tblINVENTORY_STRUCTURE", new Tuple<string, string>("tblINVENTORY", "ISN_INVENTORY") },
+        };
     }
 
     
