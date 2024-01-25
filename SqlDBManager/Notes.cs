@@ -29,6 +29,41 @@ namespace NotesNamespace
         public const int SPACE_SIZE = 4;
     }
 
+    public static class WorkerConsts
+    {
+        public const int MIDDLE_STATUS_CODE = 999;
+        public const int ERROR_STATUS_CODE = 500;
+    }
+
+    public static class Consts
+    {
+        // При истине выбрасывает исключения и прекращает работу с указание места ошибки
+        public const bool DEBUG_MOD = true;
+    }
+
+    public static class ProgramMessages
+    {
+        public static void ErrorMessage()
+        {
+            MessageBox.Show("В процессе возникла ошибка!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        public static void ValidationErrorMessage()
+        {
+            MessageBox.Show("Ошибка валидации!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        public static void MergeCompletedMessage()
+        {
+            MessageBox.Show("Слияние успешно завершено!", "Слияние завершено", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        public static void SameCatalogMessage()
+        {
+            MessageBox.Show("Вабрана одна и тажа база данных", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
     public static class DefaultTablesValues
     {
         /// <summary>

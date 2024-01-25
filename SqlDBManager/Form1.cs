@@ -95,7 +95,7 @@ namespace SqlDBManager
             }
             else
             {
-                MessageBox.Show("Вабрана одна и тажа база данных", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ProgramMessages.SameCatalogMessage();
             }
         }
 
@@ -118,7 +118,7 @@ namespace SqlDBManager
             }
             else
             {
-                MessageBox.Show("Вабрана одна и тажа база данных", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ProgramMessages.SameCatalogMessage();
             }
         }
 
@@ -145,7 +145,7 @@ namespace SqlDBManager
             }
             else if (textBox1.Text == textBox4.Text)
             {
-                MessageBox.Show("Вабрана одна и тажа база данных", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ProgramMessages.SameCatalogMessage();
             }
             else
             {
@@ -223,28 +223,7 @@ namespace SqlDBManager
                 {
                     if (daughterCatalog.ValidateDefaultTables(worker))
                     {
-
-                        // по окончаю всех валидаций
                         worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидация успешно завершена!");
-
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Вносим правки ключей таблиц...");
-
-                        foreach (string tableName in DefaultTablesValues.WithoutKeysTables.Keys)
-                        {
-                            Tuple<string, string> tupleParams = DefaultTablesValues.WithoutKeysTables[tableName];
-                            mainCatalog.AddReference(tableName, tupleParams.Item1, tupleParams.Item2);
-                        }
-
-                        /*                        --добавление в ключей в акты
-                          ALTER TABLE[5307_main].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[5307_main].[dbo].[tblFUND](ISN_FUND);
-                                                ALTER TABLE[5307_daughter].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[5307_daughter].[dbo].[tblFUND](ISN_FUND);
-
-                                                --добавление в ключей в акты
-
-                              ALTER TABLE[5307_main].[dbo].[tblINVENTORY_STRUCTURE] ADD FOREIGN KEY(ISN_INVENTORY) REFERENCES[5307_main].[dbo].[tblINVENTORY](ISN_INVENTORY);
-                                                ALTER TABLE[5307_daughter].[dbo].[tblINVENTORY_STRUCTURE] ADD FOREIGN KEY(ISN_INVENTORY) REFERENCES[5307_daughter].[dbo].[tblINVENTORY](ISN_INVENTORY);*/
-
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Необходимые правки успешно применены!");
 
                         // после данных запросов создается резервная копия
 
@@ -271,9 +250,31 @@ namespace SqlDBManager
                                             MessageBox.Show("Break");*/
                         // --------------
 
-                        // Очищаем логи
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Очистка логов ---");
-                        bool successOperation = MergeManager.ClearLogs(mainCatalog, worker);
+
+                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Вносим правки ключей таблиц...");
+
+                        bool successOperation = MergeManager.RepeirDBKeys(mainCatalog, worker);
+
+                        /*                        --добавление в ключей в акты
+                          ALTER TABLE[5307_main].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[5307_main].[dbo].[tblFUND](ISN_FUND);
+                                                ALTER TABLE[5307_daughter].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[5307_daughter].[dbo].[tblFUND](ISN_FUND);
+
+                                                --добавление в ключей в акты
+
+                              ALTER TABLE[5307_main].[dbo].[tblINVENTORY_STRUCTURE] ADD FOREIGN KEY(ISN_INVENTORY) REFERENCES[5307_main].[dbo].[tblINVENTORY](ISN_INVENTORY);
+                                                ALTER TABLE[5307_daughter].[dbo].[tblINVENTORY_STRUCTURE] ADD FOREIGN KEY(ISN_INVENTORY) REFERENCES[5307_daughter].[dbo].[tblINVENTORY](ISN_INVENTORY);*/
+                        
+                        
+                        
+                        if (successOperation)
+                        {
+                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Необходимые правки успешно применены!");
+
+
+                            // Очищаем логи
+                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Очистка логов ---");
+                            successOperation = MergeManager.ClearLogs(mainCatalog, worker);
+                        }
 
                         // Проходим по дефолтным таблицам
                         worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка дефолтных таблиц ---");
@@ -287,31 +288,32 @@ namespace SqlDBManager
                         MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, worker);
 
 
-
-                        e.Result = "Слияние успешно завершено!";
-                        MessageBox.Show("Слияние успешно завершено!", "Слияние завершено", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        if (successOperation)
+                        {
+                            e.Result = "Слияние успешно завершено!";
+                            ProgramMessages.MergeCompletedMessage();
+                        }
+                        else
+                        {
+                            ProgramMessages.ErrorMessage();
+                        }
                     }
                     else
                     {
                         e.Result = "Дефолтные таблицы содержат недопустимые значения!";
-                        MessageBox.Show("Ошибка валидации!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        ProgramMessages.ValidationErrorMessage();
                     }
                 }
                 else
                 {
                     e.Result = "Наименования таблиц не совпадают!";
-
-                    MessageBox.Show("Ошибка валидации!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    ProgramMessages.ValidationErrorMessage();
                 }
             }
             else
             {
-                //listBox1.Items.Add("Количество таблиц в заданных каталогах не равно!");
-                //textBoxStatus.AppendText("Количество таблиц в заданных каталогах не равно!" + "\r\n");
                 e.Result = "Количество таблиц в заданных каталогах не равно!";
-                // Передать в listBox, что количество таблиц не равно, отменить слияние
-
-                MessageBox.Show("Ошибка валидации!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ProgramMessages.ValidationErrorMessage();
             }
 
             mainCatalog.CloseConnection();
@@ -329,6 +331,10 @@ namespace SqlDBManager
             if (e.ProgressPercentage == WorkerConsts.MIDDLE_STATUS_CODE)
             {
                 textBoxStatus.AppendText(e.UserState.ToString() + "\r\n");
+            }
+            else if (e.ProgressPercentage == WorkerConsts.ERROR_STATUS_CODE)
+            {
+                textBoxStatus.AppendText("--- ERROR ---" + "\r\n" + e.UserState.ToString() + "--- ERROR ---" + "\r\n");
             }
         }
 
@@ -409,10 +415,41 @@ namespace SqlDBManager
 
 
 
+        public void Mess()
+        {
+            List<string> list = new List<string>() { "1", "2" };
+            string s = "";
+            Invoke(new Action(() => { MessageBox.Show("df"); }));
+            for (int i = 0; i < 10; i++)
+            {
+                listBox2.Items.Add(i.ToString());
+            }
 
+
+            MessageBox.Show("df2");
+        }
 
         private void button10_Click(object sender, EventArgs e)
         {
+            bool foo = true;
+
+            if (foo)
+            {
+                try
+                {
+                    Mess();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error: {ex.Message}");
+                }
+            }
+            else
+            {
+                Mess();
+            }
+
+            
 
             BackupManager backUp = new BackupManager("C:\\Program Files\\Microsoft SQL Server\\MSSQL16.SQL2022\\MSSQL\\DATA\\5558.mdf", "5558", "(local)\\SQL2022", "sa", "123");
 
@@ -712,10 +749,5 @@ namespace SqlDBManager
             Tuple<string, string, string> tr = new Tuple<string, string, string>("1", "2", "3");
 
         }
-    }
-
-    public static class WorkerConsts
-    {
-        public const int MIDDLE_STATUS_CODE = 999;
     }
 }

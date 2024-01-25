@@ -276,6 +276,41 @@ namespace SqlDBManager
                 new Tuple<string, string, List<string>, string, string, string>("NAME", "ISN_DOCUM", null, null, "ISN_UNIT", null) },
         };
 
+        public static bool RepeirDBKeys(DBCatalog mainCatalog, BackgroundWorker worker)
+        {
+            if (Consts.DEBUG_MOD)
+            {
+                RepairTable(mainCatalog);
+            }
+            else
+            {
+                try
+                {
+                    foreach (string tableName in DefaultTablesValues.WithoutKeysTables.Keys)
+                    {
+                        Tuple<string, string> tupleParams = DefaultTablesValues.WithoutKeysTables[tableName];
+                        mainCatalog.AddReference(tableName, tupleParams.Item1, tupleParams.Item2);
+                    }
+                }
+                catch (Exception error)
+                {
+                    worker.ReportProgress(WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                    return false;
+                }
+
+            }
+            return true;
+        }
+
+        static void RepairTable(DBCatalog mainCatalog)
+        {
+            foreach (string tableName in DefaultTablesValues.WithoutKeysTables.Keys)
+            {
+                Tuple<string, string> tupleParams = DefaultTablesValues.WithoutKeysTables[tableName];
+                mainCatalog.AddReference(tableName, tupleParams.Item1, tupleParams.Item2);
+            }
+        }
+
         /// <summary>
         /// Очищает таблицы с логами
         /// </summary>
@@ -342,17 +377,27 @@ namespace SqlDBManager
                 {
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Пустая таблица.");
                 }
-                // старый принцип. Испольщовал взятия функции из словаря, далее формировния данных в этих функция (более не актуально, удалится после написания логики составных таблиц)
-/*                else if (defaultTablesFunctions.ContainsKey(tableName))
-                {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {defaultTablesFunctions[tableName](mainCatalog, daughterCatalog, tableName)}");
-
-                }*/
                 // Вызывается функция обработчик, которая собирает данные из кортежа
                 else if (defaultTablesParams.ContainsKey(tableName))
                 {
                     Tuple<string, string, List<string>, string> paramsForProcessing = defaultTablesParams[tableName];
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4)}");
+
+                    if (Consts.DEBUG_MOD)
+                    {
+                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4)}");
+                    }
+                    else
+                    {
+                        try
+                        {
+                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4)}");
+                        }
+                        catch (Exception error)
+                        {
+                            worker.ReportProgress(WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                        }
+                        break;
+                    }
                 }
                 else
                 {
@@ -378,16 +423,27 @@ namespace SqlDBManager
                 {
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Пустая таблица.");
                 }
-/*                else if (linksTablesFunctions.ContainsKey(tableName))
-                {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {linksTablesFunctions[tableName](mainCatalog, daughterCatalog, tableName)}");
-                }*/
                 else if (linksTablesParams.ContainsKey(tableName))
                 {
                     Tuple<string, string, List<string>, string, string, string> paramsForProcessing = linksTablesParams[tableName];
                     // 1. string uniqueValueColumnName         2. string idLikeColumnName         3. List<string> excludeColumns    4. string highLevelColumnName     5. string parentIdColumn         6. string numerateColumn                          bool usedFurther, string foreignIdColumn = null
 
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4, parentIdColumn: paramsForProcessing.Item5, numerateColumn: paramsForProcessing.Item6)}");
+                    if (Consts.DEBUG_MOD)
+                    {
+                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4, parentIdColumn: paramsForProcessing.Item5, numerateColumn: paramsForProcessing.Item6)}");
+                    }
+                    else
+                    {
+                        try
+                        {
+                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4, parentIdColumn: paramsForProcessing.Item5, numerateColumn: paramsForProcessing.Item6)}");
+                        }
+                        catch (Exception error)
+                        {
+                            worker.ReportProgress(WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                        }
+                        break;
+                    }                    
                 }
                 else
                 {
