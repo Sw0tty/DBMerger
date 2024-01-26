@@ -106,8 +106,12 @@ namespace SqlDBManager
         /// </summary>
         public static string SelectWhereRequest(List<string> columns, string catalog, string tableName, string filterColumn, string filterValue)
         {
-            if (columns.Count > 0)
+            if (columns.Count > 0 && !columns.Contains("Deleted"))
                 return $"SELECT {string.Join(", ", columns).Replace('\"', ' ')} FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue}";
+            if (columns.Count > 0 && columns.Contains("Deleted"))
+                return $"SELECT {string.Join(", ", columns).Replace('\"', ' ')} FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue} and Deleted = '0'";
+            if (columns.Count == 0 && columns.Contains("Deleted"))
+                return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue} and Deleted = '0'";
             return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue}";
         }
 
@@ -119,14 +123,17 @@ namespace SqlDBManager
         public static string AllRecordsRequest(string catalog, string tableName, Dictionary<string, List<string>> filter = null, bool filterIN = true, List<string> columns = null)
         {
             string strColumns = (columns == null) ? "*" : string.Join(", ", columns);
-            if (filter != null && filterIN)
-            {
+
+            if (filter != null && filterIN && !strColumns.Contains("Deleted"))
                 return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} IN ({string.Join(", ", filter[string.Join("", filter.Keys)])})";
-            }
-            else if (filter != null && !filterIN)
-            {
+            if (filter != null && filterIN && strColumns.Contains("Deleted"))
+                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} IN ({string.Join(", ", filter[string.Join("", filter.Keys)])}) and Deleted = '0'";
+            if (filter != null && !filterIN && !strColumns.Contains("Deleted"))
                 return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} NOT IN ({string.Join(", ", filter[string.Join("", filter.Keys)])})";
-            }
+            if (filter != null && !filterIN && strColumns.Contains("Deleted"))
+                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} NOT IN ({string.Join(", ", filter[string.Join("", filter.Keys)])}) and Deleted = '0'";
+            if (filter == null && !strColumns.Contains("Deleted"))
+                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE Deleted = '0'";
             return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}]";
         }
 

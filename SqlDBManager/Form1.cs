@@ -276,17 +276,22 @@ namespace SqlDBManager
                             successOperation = MergeManager.ClearLogs(mainCatalog, worker);
                         }
 
-                        // Проходим по дефолтным таблицам
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка дефолтных таблиц ---");
-                        MergeManager.ProcessSkipTables(mainCatalog, daughterCatalog, worker);
-                        MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, worker);
+                        if (successOperation)
+                        {
+                            // Проходим по дефолтным таблицам
+                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка дефолтных таблиц ---");
+                            MergeManager.ProcessSkipTables(mainCatalog, daughterCatalog, worker);
+                            successOperation = MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, worker);
+                        }
 
                         MessageBox.Show("End of default tables");
 
-                        // Проходим по таблицам с ключами (провряем на уникальность)
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка таблиц с внешними ключами ---");
-                        MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, worker);
-
+                        if (successOperation)
+                        {
+                            // Проходим по таблицам с ключами (провряем на уникальность)
+                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка таблиц с внешними ключами ---");
+                            successOperation = MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, worker);
+                        }
 
                         if (successOperation)
                         {

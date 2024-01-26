@@ -360,7 +360,7 @@ namespace SqlDBManager
             }
         }
 
-        public static void ProcessDefaultTables(DBCatalog mainCatalog, DBCatalog daughterCatalog, BackgroundWorker worker)
+        public static bool ProcessDefaultTables(DBCatalog mainCatalog, DBCatalog daughterCatalog, BackgroundWorker worker)
         {
             //ReturnProcessStatus(worker, mainCatalog, defaultTablesFunctions, daughterCatalog);
 
@@ -395,8 +395,8 @@ namespace SqlDBManager
                         catch (Exception error)
                         {
                             worker.ReportProgress(WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                            return false;
                         }
-                        break;
                     }
                 }
                 else
@@ -404,9 +404,10 @@ namespace SqlDBManager
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
                 }
             }
+            return true;
         }
 
-        public static void ProcessLinksTables(DBCatalog mainCatalog, DBCatalog daughterCatalog, BackgroundWorker worker)
+        public static bool ProcessLinksTables(DBCatalog mainCatalog, DBCatalog daughterCatalog, BackgroundWorker worker)
         {
             //ReturnProcessStatus(worker, mainCatalog, linksTablesFunctions, daughterCatalog);
 
@@ -441,8 +442,8 @@ namespace SqlDBManager
                         catch (Exception error)
                         {
                             worker.ReportProgress(WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                            return false;
                         }
-                        break;
                     }                    
                 }
                 else
@@ -450,6 +451,7 @@ namespace SqlDBManager
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
                 }
             }
+            return true;
         }
 
         static void ReturnProcessStatus(BackgroundWorker worker, DBCatalog mainCatalog, Dictionary<string, Func<DBCatalog, DBCatalog, string, int>> functionsDict = null, DBCatalog daughterCatalog = null)
