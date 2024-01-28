@@ -18,8 +18,6 @@ namespace SqlDBManager
             string connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password};Connect Timeout=30";
             SqlConnection cnn = new SqlConnection(connectionString);
 
-            //Thread.Sleep(1000);
-
             try
             {
                 //SqlExtensions.QuickOpen(cnn, 60);

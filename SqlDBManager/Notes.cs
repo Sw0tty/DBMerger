@@ -27,10 +27,12 @@ namespace NotesNamespace
     public static class VisualConsts
     {
         public const int SPACE_SIZE = 4;
+        public const int HEADING_SPACE = 40;
     }
 
     public static class WorkerConsts
     {
+        public const int BLOCK_HEADING = 800;
         public const int MIDDLE_STATUS_CODE = 999;
         public const int ERROR_STATUS_CODE = 500;
     }
@@ -38,7 +40,7 @@ namespace NotesNamespace
     public static class Consts
     {
         // При истине выбрасывает исключения и прекращает работу с указание места ошибки
-        public const bool DEBUG_MOD = true;
+        public const bool DEBUG_MOD = false;
     }
 
     public static class ProgramMessages
@@ -61,6 +63,11 @@ namespace NotesNamespace
         public static void SameCatalogMessage()
         {
             MessageBox.Show("Вабрана одна и тажа база данных", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        public static void CheckConnectingSettings(string catalog)
+        {
+            MessageBox.Show($"Проверьте настройки соединения с {catalog} БД", "Ошибка соединения", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 

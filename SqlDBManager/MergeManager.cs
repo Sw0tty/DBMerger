@@ -286,18 +286,13 @@ namespace SqlDBManager
             {
                 try
                 {
-                    foreach (string tableName in DefaultTablesValues.WithoutKeysTables.Keys)
-                    {
-                        Tuple<string, string> tupleParams = DefaultTablesValues.WithoutKeysTables[tableName];
-                        mainCatalog.AddReference(tableName, tupleParams.Item1, tupleParams.Item2);
-                    }
+                    RepairTable(mainCatalog);
                 }
                 catch (Exception error)
                 {
                     worker.ReportProgress(WorkerConsts.ERROR_STATUS_CODE, error.Message);
                     return false;
                 }
-
             }
             return true;
         }
@@ -521,8 +516,6 @@ namespace SqlDBManager
             if (highLevelColumnName != null)
             {
                 // Если есть highLevelColumnName значит есть и idLikeColumnName
-
-
                 foreach (Dictionary<string, string> row in allFromDaughterData)
                 {
                     // Если значение присутствует в главной таблице
@@ -546,7 +539,6 @@ namespace SqlDBManager
                         }// Если значения по ключу High нет в записях главного каталога
                         else if (!mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
                         {
-                            // Добавляем в конец очереди остальных
                             reservedRows.Add(row);
                         }
                     } // Если значения в главной нет и idLikeColumnName МЕНЬШЕ чем highLevelColumnName 
@@ -563,7 +555,6 @@ namespace SqlDBManager
                         }// Если значения по ключу High нет в записях главного каталога
                         else if (!mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
                         {
-                            // Добавляем в конец очереди остальных
                             reservedRows.Add(row);
                         }
                     }
@@ -668,7 +659,7 @@ namespace SqlDBManager
             }
             // ----------------
 
-            MessageBox.Show(tableName + "\n" + string.Join("  ", foreigns.Keys));
+            // MessageBox.Show(tableName + "\n" + string.Join("  ", foreigns.Keys));
 
             // Если нет родителя к которому цепляются записи, то обработка по всем значениям таблицы
             if (parentIdColumn == null && uniqueValueColumnName != null)
@@ -769,6 +760,7 @@ namespace SqlDBManager
                         }
                     }
                 }
+                ValuesManager.DeleteTableFromReserve(tableName);
             }
             else if (parentIdColumn != null && uniqueValueColumnName == null)
             {
@@ -804,6 +796,7 @@ namespace SqlDBManager
                         }
                     }
                 }
+                ValuesManager.DeleteTableFromReserve(tableName);
             }
             return countOfImports;
         }
@@ -837,6 +830,11 @@ namespace SqlDBManager
             return reserveDict[tableName];
         }
 
+        public static void DeleteTableFromReserve(string tableName)
+        {
+            reserveDict.Remove(tableName);
+        }
+
         public static Dictionary<string, Dictionary<string, List<Tuple<string, string>>>> ReturnRewriteDict()
         {
             return rewriteDict;
@@ -845,6 +843,11 @@ namespace SqlDBManager
         public static Dictionary<string, List<Tuple<string, string>>> ReturnTableValuesRewriteDict(string tableName)
         {
             return rewriteDict[tableName];
+        }
+
+        public static void DeleteTableFromRewrite(string tableName)
+        {
+            rewriteDict.Remove(tableName);
         }
 
         public static bool ContainsInRewrite(string tableName)
@@ -892,6 +895,7 @@ namespace SqlDBManager
                     }
                 }
             }
+            DeleteTableFromRewrite(tableName);
             return row;
         }
 
@@ -993,7 +997,7 @@ namespace SqlDBManager
                     return rowData[returnTheColumnValue];
                 }
             }
-            return "";
+            return "--.-.--.-.--";
         }
 
         public static void RestoreUser(string userLogin)

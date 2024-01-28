@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace SqlDBManager
 {
@@ -132,8 +133,6 @@ namespace SqlDBManager
                 return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} NOT IN ({string.Join(", ", filter[string.Join("", filter.Keys)])})";
             if (filter != null && !filterIN && strColumns.Contains("Deleted"))
                 return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} NOT IN ({string.Join(", ", filter[string.Join("", filter.Keys)])}) and Deleted = '0'";
-            if (filter == null && !strColumns.Contains("Deleted"))
-                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE Deleted = '0'";
             return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}]";
         }
 
@@ -186,9 +185,26 @@ namespace SqlDBManager
                    $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalog}].sys.tables WHERE name = '{tableName}') and c.name != 'ID' and t.name != '{tableName}'";
         }
 
-        public static string AddForeignKeyOnTable(string catalog, string repairTableName, string referenceTableName, string linkColumn)
+        public static string AddForeignKeyOnTable_old(string catalog, string repairTableName, string referenceTableName, string linkColumn)
         {
             return $"ALTER TABLE[{catalog}].[dbo].[{repairTableName}] ADD FOREIGN KEY({linkColumn}) REFERENCES[{catalog}].[dbo].[{referenceTableName}]({linkColumn});";
         }
+
+        public static string AddForeignKeyOnTable(string catalog, string repairTableName, string referenceTableName, string linkColumn)
+        {
+            return $"IF NOT EXISTS (SELECT t.name AS TableWithForeignKey " +
+                $"FROM [{catalog}].sys.foreign_key_columns AS fk " +
+                $"JOIN [{catalog}].sys.tables AS t ON fk.parent_object_id = t.object_id " +
+                $"JOIN [{catalog}].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id " +
+                $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalog}].sys.tables WHERE name = '{referenceTableName}') and c.name != 'ID' and t.name = '{repairTableName}') " +
+                $"ALTER TABLE[{catalog}].[dbo].[{repairTableName}] ADD FOREIGN KEY({linkColumn}) REFERENCES[{catalog}].[dbo].[{referenceTableName}]({linkColumn});";
+        }
+
+/*        IF NOT EXISTS(SELECT t.name AS TableWithForeignKey
+                FROM [TestDB].sys.foreign_key_columns AS fk
+                JOIN [TestDB].sys.tables AS t ON fk.parent_object_id = t.object_id
+                JOIN[TestDB].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id
+                WHERE fk.referenced_object_id = (SELECT object_id FROM [TestDB].sys.tables WHERE name = 'tblFUND') and c.name != 'ID' and t.name = 'tblACT')
+  ALTER TABLE[TestDB].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[TestDB].[dbo].[tblFUND] (ISN_FUND);*/
     }
 }

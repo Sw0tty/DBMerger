@@ -61,8 +61,9 @@
             this.button8 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.progressBar2 = new System.Windows.Forms.ProgressBar();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.textBoxStatus = new System.Windows.Forms.TextBox();
-            this.listBox1 = new System.Windows.Forms.ListBox();
             this.button7 = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.tabPage4 = new System.Windows.Forms.TabPage();
@@ -89,9 +90,9 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(17, 24);
+            this.label1.Location = new System.Drawing.Point(17, 22);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(47, 13);
+            this.label1.Size = new System.Drawing.Size(53, 15);
             this.label1.TabIndex = 1;
             this.label1.Text = "Сервер:";
             // 
@@ -137,9 +138,9 @@
             // button4
             // 
             this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Location = new System.Drawing.Point(366, 565);
+            this.button4.Location = new System.Drawing.Point(342, 561);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(126, 30);
+            this.button4.Size = new System.Drawing.Size(148, 34);
             this.button4.TabIndex = 13;
             this.button4.Text = "Далее";
             this.button4.UseVisualStyleBackColor = true;
@@ -159,26 +160,27 @@
             this.groupBox2.Controls.Add(this.label8);
             this.groupBox2.Controls.Add(this.textBox5);
             this.groupBox2.Controls.Add(this.textBox6);
+            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.groupBox2.Location = new System.Drawing.Point(6, 236);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(486, 323);
+            this.groupBox2.Size = new System.Drawing.Size(486, 230);
             this.groupBox2.TabIndex = 12;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Дочерняя база данных";
             // 
             // textBox4
             // 
-            this.textBox4.Location = new System.Drawing.Point(24, 103);
+            this.textBox4.Location = new System.Drawing.Point(20, 97);
             this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(100, 20);
+            this.textBox4.Size = new System.Drawing.Size(443, 21);
             this.textBox4.TabIndex = 11;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(33, 24);
+            this.label5.Location = new System.Drawing.Point(17, 24);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(35, 13);
+            this.label5.Size = new System.Drawing.Size(41, 15);
             this.label5.TabIndex = 10;
             this.label5.Text = "label5";
             // 
@@ -186,9 +188,9 @@
             // 
             this.checkConnectionDaughterCatalog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkConnectionDaughterCatalog.Location = new System.Drawing.Point(309, 112);
+            this.checkConnectionDaughterCatalog.Location = new System.Drawing.Point(297, 186);
             this.checkConnectionDaughterCatalog.Name = "checkConnectionDaughterCatalog";
-            this.checkConnectionDaughterCatalog.Size = new System.Drawing.Size(166, 40);
+            this.checkConnectionDaughterCatalog.Size = new System.Drawing.Size(181, 34);
             this.checkConnectionDaughterCatalog.TabIndex = 6;
             this.checkConnectionDaughterCatalog.Text = "button3";
             this.checkConnectionDaughterCatalog.UseVisualStyleBackColor = true;
@@ -197,9 +199,9 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(21, 79);
+            this.label6.Location = new System.Drawing.Point(17, 79);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(35, 13);
+            this.label6.Size = new System.Drawing.Size(41, 15);
             this.label6.TabIndex = 1;
             this.label6.Text = "label6";
             // 
@@ -208,43 +210,43 @@
             this.comboBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(27, 40);
+            this.comboBox2.Location = new System.Drawing.Point(20, 42);
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(409, 21);
+            this.comboBox2.Size = new System.Drawing.Size(443, 23);
             this.comboBox2.TabIndex = 5;
             this.comboBox2.Text = "(local)\\SQLEXPRESS";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(24, 126);
+            this.label7.Location = new System.Drawing.Point(17, 126);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(35, 13);
+            this.label7.Size = new System.Drawing.Size(41, 15);
             this.label7.TabIndex = 9;
             this.label7.Text = "label7";
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(170, 126);
+            this.label8.Location = new System.Drawing.Point(255, 126);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(35, 13);
+            this.label8.Size = new System.Drawing.Size(41, 15);
             this.label8.TabIndex = 2;
             this.label8.Text = "label8";
             // 
             // textBox5
             // 
-            this.textBox5.Location = new System.Drawing.Point(24, 142);
+            this.textBox5.Location = new System.Drawing.Point(20, 144);
             this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(100, 20);
+            this.textBox5.Size = new System.Drawing.Size(205, 21);
             this.textBox5.TabIndex = 7;
             // 
             // textBox6
             // 
-            this.textBox6.Location = new System.Drawing.Point(164, 142);
+            this.textBox6.Location = new System.Drawing.Point(258, 144);
             this.textBox6.Name = "textBox6";
             this.textBox6.PasswordChar = '•';
-            this.textBox6.Size = new System.Drawing.Size(100, 20);
+            this.textBox6.Size = new System.Drawing.Size(205, 21);
             this.textBox6.TabIndex = 8;
             // 
             // mainDBGroupBox
@@ -260,6 +262,7 @@
             this.mainDBGroupBox.Controls.Add(this.label2);
             this.mainDBGroupBox.Controls.Add(this.textBox1);
             this.mainDBGroupBox.Controls.Add(this.textBox2);
+            this.mainDBGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.mainDBGroupBox.Location = new System.Drawing.Point(6, 6);
             this.mainDBGroupBox.Name = "mainDBGroupBox";
             this.mainDBGroupBox.Size = new System.Drawing.Size(486, 224);
@@ -271,7 +274,7 @@
             // 
             this.textBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.textBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.textBox3.Location = new System.Drawing.Point(258, 145);
+            this.textBox3.Location = new System.Drawing.Point(258, 144);
             this.textBox3.Name = "textBox3";
             this.textBox3.PasswordChar = '•';
             this.textBox3.Size = new System.Drawing.Size(205, 22);
@@ -282,16 +285,16 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(255, 126);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(48, 13);
+            this.label4.Size = new System.Drawing.Size(54, 15);
             this.label4.TabIndex = 10;
             this.label4.Text = "Пароль:";
             // 
             // checkConnectionMainCatalog
             // 
             this.checkConnectionMainCatalog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkConnectionMainCatalog.Location = new System.Drawing.Point(312, 175);
+            this.checkConnectionMainCatalog.Location = new System.Drawing.Point(297, 179);
             this.checkConnectionMainCatalog.Name = "checkConnectionMainCatalog";
-            this.checkConnectionMainCatalog.Size = new System.Drawing.Size(151, 35);
+            this.checkConnectionMainCatalog.Size = new System.Drawing.Size(181, 34);
             this.checkConnectionMainCatalog.TabIndex = 6;
             this.checkConnectionMainCatalog.Text = "Проверить соединение";
             this.checkConnectionMainCatalog.UseVisualStyleBackColor = true;
@@ -306,7 +309,7 @@
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(20, 40);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(443, 21);
+            this.comboBox1.Size = new System.Drawing.Size(443, 23);
             this.comboBox1.TabIndex = 5;
             this.comboBox1.Text = "(local)\\SQLEXPRESS";
             // 
@@ -315,16 +318,16 @@
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(17, 126);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(41, 13);
+            this.label3.Size = new System.Drawing.Size(44, 15);
             this.label3.TabIndex = 9;
             this.label3.Text = "Логин:";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(17, 75);
+            this.label2.Location = new System.Drawing.Point(17, 73);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(105, 13);
+            this.label2.Size = new System.Drawing.Size(118, 15);
             this.label2.TabIndex = 2;
             this.label2.Text = "Наименование БД:";
             // 
@@ -342,23 +345,24 @@
             // 
             this.textBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.textBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.textBox2.Location = new System.Drawing.Point(20, 145);
+            this.textBox2.Location = new System.Drawing.Point(20, 144);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(205, 22);
             this.textBox2.TabIndex = 8;
             // 
             // tabPage2
             // 
+            this.tabPage2.BackColor = System.Drawing.SystemColors.Window;
             this.tabPage2.Controls.Add(this.groupBox3);
             this.tabPage2.Controls.Add(this.button8);
             this.tabPage2.Controls.Add(this.button5);
+            this.tabPage2.ForeColor = System.Drawing.SystemColors.ControlText;
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(498, 603);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Предварительные настройки";
-            this.tabPage2.UseVisualStyleBackColor = true;
             // 
             // groupBox3
             // 
@@ -368,6 +372,7 @@
             this.groupBox3.Controls.Add(this.radioButton1);
             this.groupBox3.Controls.Add(this.textBox7);
             this.groupBox3.Controls.Add(this.label11);
+            this.groupBox3.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox3.Location = new System.Drawing.Point(8, 6);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(482, 167);
@@ -378,9 +383,10 @@
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
+            this.radioButton2.Checked = true;
             this.radioButton2.Location = new System.Drawing.Point(176, 35);
             this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(85, 17);
+            this.radioButton2.Size = new System.Drawing.Size(101, 21);
             this.radioButton2.TabIndex = 5;
             this.radioButton2.TabStop = true;
             this.radioButton2.Text = "radioButton2";
@@ -391,7 +397,7 @@
             this.radioButton1.AutoSize = true;
             this.radioButton1.Location = new System.Drawing.Point(23, 35);
             this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(85, 17);
+            this.radioButton1.Size = new System.Drawing.Size(101, 21);
             this.radioButton1.TabIndex = 0;
             this.radioButton1.TabStop = true;
             this.radioButton1.Text = "radioButton1";
@@ -401,7 +407,7 @@
             // 
             this.textBox7.Location = new System.Drawing.Point(23, 129);
             this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(322, 20);
+            this.textBox7.Size = new System.Drawing.Size(322, 25);
             this.textBox7.TabIndex = 4;
             // 
             // label11
@@ -409,16 +415,17 @@
             this.label11.AutoSize = true;
             this.label11.Location = new System.Drawing.Point(20, 99);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(224, 13);
+            this.label11.Size = new System.Drawing.Size(292, 17);
             this.label11.TabIndex = 2;
             this.label11.Text = "Наименование архива после объединения";
             // 
             // button8
             // 
             this.button8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button8.Location = new System.Drawing.Point(331, 432);
+            this.button8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.button8.Location = new System.Drawing.Point(342, 561);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(128, 38);
+            this.button8.Size = new System.Drawing.Size(148, 34);
             this.button8.TabIndex = 1;
             this.button8.Text = "Начать слияние";
             this.button8.UseVisualStyleBackColor = true;
@@ -427,9 +434,10 @@
             // button5
             // 
             this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button5.Location = new System.Drawing.Point(166, 432);
+            this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.button5.Location = new System.Drawing.Point(8, 561);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(142, 38);
+            this.button5.Size = new System.Drawing.Size(142, 34);
             this.button5.TabIndex = 0;
             this.button5.Text = "Назад";
             this.button5.UseVisualStyleBackColor = true;
@@ -437,8 +445,9 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.progressBar2);
+            this.tabPage3.Controls.Add(this.progressBar1);
             this.tabPage3.Controls.Add(this.textBoxStatus);
-            this.tabPage3.Controls.Add(this.listBox1);
             this.tabPage3.Controls.Add(this.button7);
             this.tabPage3.Controls.Add(this.button6);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
@@ -448,40 +457,47 @@
             this.tabPage3.Text = "Процесс слияния";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // progressBar2
+            // 
+            this.progressBar2.Location = new System.Drawing.Point(19, 499);
+            this.progressBar2.Name = "progressBar2";
+            this.progressBar2.Size = new System.Drawing.Size(458, 23);
+            this.progressBar2.TabIndex = 5;
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(19, 470);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(458, 23);
+            this.progressBar1.TabIndex = 4;
+            // 
             // textBoxStatus
             // 
             this.textBoxStatus.Location = new System.Drawing.Point(19, 18);
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxStatus.Size = new System.Drawing.Size(452, 466);
+            this.textBoxStatus.Size = new System.Drawing.Size(458, 435);
             this.textBoxStatus.TabIndex = 3;
-            // 
-            // listBox1
-            // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(9, 490);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(452, 43);
-            this.listBox1.TabIndex = 2;
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(346, 539);
+            this.button7.Location = new System.Drawing.Point(253, 539);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(105, 32);
+            this.button7.Size = new System.Drawing.Size(131, 32);
             this.button7.TabIndex = 1;
             this.button7.Text = "Далее";
             this.button7.UseVisualStyleBackColor = true;
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(201, 539);
+            this.button6.Location = new System.Drawing.Point(115, 539);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(118, 32);
+            this.button6.Size = new System.Drawing.Size(132, 32);
             this.button6.TabIndex = 0;
             this.button6.Text = "Назад";
             this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // tabPage4
             // 
@@ -596,7 +612,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Form1";
+            this.Text = "Утилита слияния баз данных";
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
@@ -648,7 +664,6 @@
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.Button button9;
-        private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Button button10;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;
@@ -663,6 +678,8 @@
         private System.Windows.Forms.RadioButton radioButton1;
         private System.ComponentModel.BackgroundWorker dirtyJobBackWorker;
         private System.Windows.Forms.ComboBox comboBox3;
+        private System.Windows.Forms.ProgressBar progressBar2;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
 

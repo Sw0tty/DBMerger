@@ -14,6 +14,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using NotesNamespace;
+using System.Transactions;
+using System.Windows.Forms.VisualStyles;
 
 namespace SqlDBManager
 {
@@ -34,6 +36,9 @@ namespace SqlDBManager
             label7.Text = label3.Text;
             label8.Text = label4.Text;
 
+            //textBox2.Font = new Font(FontFamily.GenericSansSerif, 14);
+
+
 
             textBox2.Text = "sa";
             textBox5.Text = textBox2.Text;
@@ -43,6 +48,11 @@ namespace SqlDBManager
             checkConnectionMainCatalog.Text = "Проверить соединение";
             checkConnectionDaughterCatalog.Text = checkConnectionMainCatalog.Text;
 
+            LoadProperties();
+        }
+
+        private void LoadProperties()
+        {
             StringCollection combo1Collection = Properties.Settings.Default.comboBox1Default;
             StringCollection combo2Collection = Properties.Settings.Default.comboBox1Default;
 
@@ -64,97 +74,7 @@ namespace SqlDBManager
             }
         }
 
-        private void trimAllOnForm()
-        {
-            comboBox1.Text = comboBox1.Text.Trim(' ');
-            textBox1.Text = textBox1.Text.Trim(' ');
-            textBox2.Text = textBox2.Text.Trim(' ');
-            textBox3.Text = textBox3.Text.Trim(' ');
-            comboBox2.Text = comboBox2.Text.Trim(' ');
-            textBox4.Text = textBox4.Text.Trim(' ');
-            textBox5.Text = textBox5.Text.Trim(' ');
-            textBox6.Text = textBox6.Text.Trim(' ');
-        }
-
-        // Логика первой вкладки формы
-        private void checkConnectionMainCatalog_Click(object sender, EventArgs e)
-        {
-            /*
-             Проверяет соединения с главной БД
-             */
-            trimAllOnForm();
-
-            if (textBox1.Text != textBox4.Text)
-            {
-                if (!dirtyJobBackWorker.IsBusy)
-                {
-                    mainDBGroupBox.Enabled = false;
-                    groupBox2.Enabled = false;
-                    dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox1.Text, textBox1.Text, textBox2.Text, textBox3.Text));
-                }
-            }
-            else
-            {
-                ProgramMessages.SameCatalogMessage();
-            }
-        }
-
-        private void checkConnectionDaughterCatalog_Click(object sender, EventArgs e)
-        {
-            /*
-             Проверяет соединения с дочерней БД
-             */
-
-            trimAllOnForm();
-
-            if (textBox1.Text != textBox4.Text)
-            {
-                if (!dirtyJobBackWorker.IsBusy)
-                {
-                    mainDBGroupBox.Enabled = false;
-                    groupBox2.Enabled = false;
-                    dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox2.Text, textBox4.Text, textBox5.Text, textBox6.Text));
-                }
-            }
-            else
-            {
-                ProgramMessages.SameCatalogMessage();
-            }
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            /*
-             Переход к надстройке слияния. Проверяет соединения с основной и дочерней БД
-             */
-            trimAllOnForm();
-
-            if (!ConnectionChecker.CheckConnection(comboBox1.Text.Trim(' '),
-                                                   textBox1.Text.Trim(' '),
-                                                   textBox2.Text.Trim(' '),
-                                                   textBox3.Text.Trim(' ')))
-            {
-                MessageBox.Show("Проверьте настройки соединения с главной БД", "Ошибка соединения", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else if (!ConnectionChecker.CheckConnection(comboBox2.Text.Trim(' '),
-                                                        textBox4.Text.Trim(' '),
-                                                        textBox5.Text.Trim(' '),
-                                                        textBox6.Text.Trim(' ')))
-            {
-                MessageBox.Show("Проверьте настройки соединения с дочерней БД", "Ошибка соединения", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else if (textBox1.Text == textBox4.Text)
-            {
-                ProgramMessages.SameCatalogMessage();
-            }
-            else
-            {
-                saveComboBoxes();
-                tabControl1.SelectedIndex++;
-            }
-        }
-
-        public void saveComboBoxes()
+        public void SaveProperties()
         {
             StringCollection combo1Collection = new StringCollection();
             StringCollection combo2Collection = new StringCollection();
@@ -175,6 +95,82 @@ namespace SqlDBManager
             Properties.Settings.Default.Save();
         }
 
+        private void TrimAllOnForm()
+        {
+            comboBox1.Text = comboBox1.Text.Trim(' ');
+            textBox1.Text = textBox1.Text.Trim(' ');
+            textBox2.Text = textBox2.Text.Trim(' ');
+            textBox3.Text = textBox3.Text.Trim(' ');
+            comboBox2.Text = comboBox2.Text.Trim(' ');
+            textBox4.Text = textBox4.Text.Trim(' ');
+            textBox5.Text = textBox5.Text.Trim(' ');
+            textBox6.Text = textBox6.Text.Trim(' ');
+        }
+
+        // Логика первой вкладки формы
+        private void checkConnectionMainCatalog_Click(object sender, EventArgs e)
+        {
+            // Проверяет соединения с главной БД
+
+            TrimAllOnForm();
+
+            if (textBox1.Text != textBox4.Text)
+            {
+                if (!dirtyJobBackWorker.IsBusy)
+                {
+                    mainDBGroupBox.Enabled = false;
+                    groupBox2.Enabled = false;
+                    dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox1.Text, textBox1.Text, textBox2.Text, textBox3.Text));
+                }
+            }
+            else
+            {
+                ProgramMessages.SameCatalogMessage();
+            }
+        }
+
+        private void checkConnectionDaughterCatalog_Click(object sender, EventArgs e)
+        {
+            // Проверяет соединения с дочерней БД
+
+            TrimAllOnForm();
+
+            if (textBox1.Text != textBox4.Text)
+            {
+                if (!dirtyJobBackWorker.IsBusy)
+                {
+                    mainDBGroupBox.Enabled = false;
+                    groupBox2.Enabled = false;
+                    dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox2.Text, textBox4.Text, textBox5.Text, textBox6.Text));
+                }
+            }
+            else
+            {
+                ProgramMessages.SameCatalogMessage();
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            // Переход к надстройке слияния. Проверяет соединения с основной и дочерней БД
+
+            TrimAllOnForm();
+
+            if (textBox1.Text != textBox4.Text)
+            {
+                if (!dirtyJobBackWorker.IsBusy)
+                {
+                    mainDBGroupBox.Enabled = false;
+                    groupBox2.Enabled = false;
+                    dirtyJobBackWorker.RunWorkerAsync();
+                }
+            }
+            else
+            {
+                ProgramMessages.SameCatalogMessage();
+            }
+        }
+
         // Логика второй вкладки формы
         private void button5_Click(object sender, EventArgs e)
         {
@@ -183,10 +179,8 @@ namespace SqlDBManager
 
         public void button8_Click(object sender, EventArgs e)
         {
-            // Вызов backGroundWorker
             if (!mergerBackWorker.IsBusy)
             {
-                // Start the asynchronous operation.
                 mergerBackWorker.RunWorkerAsync();
             }
         }
@@ -208,17 +202,27 @@ namespace SqlDBManager
             // 2. Открываем соединения с БД
             mainCatalog.OpenConnection();
             daughterCatalog.OpenConnection();
+
+            SqlTransaction transaction = mainCatalog.StartTransaction();
+
+            int countTables = daughterCatalog.SelectCountTables();
+            int countsTasks;
+            // int allCountTasks = 3 + 1 + 1 + количество таблиц логов + количество пропускных таблиц + количество дефолтный + количество линкованных;
             
 
-            Invoke(new Action(() => tabControl1.SelectedIndex++));
+            Invoke(new Action(() => tabControl1.SelectedIndex++ ));
 
-            textBoxStatus.Clear();
+            Invoke(new Action(() => textBoxStatus.Clear() ));
 
+            worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Предварительные проверки ---");
             worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидируем каталоги на возможность слияния...");
-            
 
-            if (mainCatalog.ValidateCountTables(daughterCatalog.SelectCountTables()))
+            countsTasks = 1;
+            if (mainCatalog.ValidateCountTables(countTables))
             {
+                worker.ReportProgress(100);
+
+                countsTasks = 1;
                 if (mainCatalog.ValidateNamesTables(daughterCatalog.SelectTablesNames()))
                 {
                     if (daughterCatalog.ValidateDefaultTables(worker))
@@ -250,6 +254,8 @@ namespace SqlDBManager
                                             MessageBox.Show("Break");*/
                         // --------------
 
+                        
+
 
                         worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Вносим правки ключей таблиц...");
 
@@ -272,14 +278,17 @@ namespace SqlDBManager
 
 
                             // Очищаем логи
-                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Очистка логов ---");
+                            worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Очистка логов ---");
                             successOperation = MergeManager.ClearLogs(mainCatalog, worker);
                         }
+
+
+                        
 
                         if (successOperation)
                         {
                             // Проходим по дефолтным таблицам
-                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка дефолтных таблиц ---");
+                            worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Обработка дефолтных таблиц ---");
                             MergeManager.ProcessSkipTables(mainCatalog, daughterCatalog, worker);
                             successOperation = MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, worker);
                         }
@@ -289,17 +298,19 @@ namespace SqlDBManager
                         if (successOperation)
                         {
                             // Проходим по таблицам с ключами (провряем на уникальность)
-                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "\r\n" + "--- Обработка таблиц с внешними ключами ---");
+                            worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Обработка таблиц с внешними ключами ---");
                             successOperation = MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, worker);
                         }
 
                         if (successOperation)
                         {
+                            transaction.Commit();
                             e.Result = "Слияние успешно завершено!";
                             ProgramMessages.MergeCompletedMessage();
                         }
                         else
                         {
+                            transaction.Rollback();
                             ProgramMessages.ErrorMessage();
                         }
                     }
@@ -333,13 +344,17 @@ namespace SqlDBManager
 
         private void mergerBackWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if (e.ProgressPercentage == WorkerConsts.MIDDLE_STATUS_CODE)
+            if (e.ProgressPercentage == WorkerConsts.BLOCK_HEADING)
+            {
+                textBoxStatus.AppendText("\r\n" + HelpFunction.CreateSpace(VisualConsts.HEADING_SPACE) + e.UserState.ToString() + "\r\n");
+            }
+            else if (e.ProgressPercentage == WorkerConsts.MIDDLE_STATUS_CODE)
             {
                 textBoxStatus.AppendText(e.UserState.ToString() + "\r\n");
             }
             else if (e.ProgressPercentage == WorkerConsts.ERROR_STATUS_CODE)
             {
-                textBoxStatus.AppendText("--- ERROR ---" + "\r\n" + e.UserState.ToString() + "--- ERROR ---" + "\r\n");
+                textBoxStatus.AppendText("--- ERROR ---" + "\r\n" + e.UserState.ToString() + "\r\n" + "--- ERROR ---" + "\r\n");
             }
         }
 
@@ -359,7 +374,7 @@ namespace SqlDBManager
                 // CancelAsync was called.
                 resultLabel.Text = "Canceled";
             }*/
-            else
+            else if (e.Result != null)
             {
                 // Finally, handle the case where the operation 
                 // succeeded.
@@ -369,19 +384,48 @@ namespace SqlDBManager
 
         private void dirtyJobBackWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            Tuple<string, string, string, string> takingParams = e.Argument as Tuple<string, string, string, string>;
+            if (e.Argument != null)
+            {
+                Tuple<string, string, string, string> takingParams = e.Argument as Tuple<string, string, string, string>;
 
-            ConnectionChecker.CheckConnectionMessage(takingParams.Item1,
-                                                     takingParams.Item2,
-                                                     takingParams.Item3,
-                                                     takingParams.Item4);
+                ConnectionChecker.CheckConnectionMessage(takingParams.Item1,
+                                                         takingParams.Item2,
+                                                         takingParams.Item3,
+                                                         takingParams.Item4);
+            }
+            else
+            {
+                string text1 = "";
+                string text2 = "";
+
+                Invoke(new Action(() => text1 = comboBox1.Text));
+                Invoke(new Action(() => text2 = comboBox1.Text));
+
+                if (!ConnectionChecker.CheckConnection(text1,
+                                                  textBox1.Text,
+                                                  textBox2.Text,
+                                                  textBox3.Text)){
+                    ProgramMessages.CheckConnectingSettings("главной");
+                }
+                else if (!ConnectionChecker.CheckConnection(text2,
+                                                  textBox4.Text,
+                                                  textBox5.Text,
+                                                  textBox6.Text))
+                {
+                    ProgramMessages.CheckConnectingSettings("дочерней");
+                }
+                else
+                {
+                    Invoke(new Action(() => SaveProperties()));
+                    Invoke(new Action(() => tabControl1.SelectedIndex++));
+                }
+            }
 
             Invoke(new Action(() =>
             {
                 mainDBGroupBox.Enabled = true;
                 groupBox2.Enabled = true;
             }));
-
         }
 
         private void dirtyJobBackWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -394,7 +438,10 @@ namespace SqlDBManager
 
         }
 
-
+        private void button6_Click(object sender, EventArgs e)
+        {
+            tabControl1.SelectedIndex--;
+        }
 
 
 
@@ -436,6 +483,23 @@ namespace SqlDBManager
 
         private void button10_Click(object sender, EventArgs e)
         {
+
+            tabControl1.SelectedIndex--;
+
+
+            for (int i = 10; i <= 100; i += 10)
+            {
+                for (int j = 10; j <= 100; j += 10)
+                {
+                    progressBar1.Value = j;
+                    Thread.Sleep(1000);
+                }
+                progressBar2.Value = i;
+            }
+
+
+
+
             bool foo = true;
 
             if (foo)
@@ -754,5 +818,7 @@ namespace SqlDBManager
             Tuple<string, string, string> tr = new Tuple<string, string, string>("1", "2", "3");
 
         }
+
+
     }
 }
