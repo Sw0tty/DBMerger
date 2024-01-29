@@ -206,23 +206,16 @@ namespace SqlDBManager
             SqlTransaction transaction = mainCatalog.StartTransaction();
 
             int countTables = daughterCatalog.SelectCountTables();
-            int countsTasks;
-            // int allCountTasks = 3 + 1 + 1 + количество таблиц логов + количество пропускных таблиц + количество дефолтный + количество линкованных;
             
 
             Invoke(new Action(() => tabControl1.SelectedIndex++ ));
-
             Invoke(new Action(() => textBoxStatus.Clear() ));
 
             worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Предварительные проверки ---");
             worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидируем каталоги на возможность слияния...");
 
-            countsTasks = 1;
             if (mainCatalog.ValidateCountTables(countTables))
             {
-                worker.ReportProgress(100, WorkerConsts.ITS_MAIN_PROGRESS_BAR);
-
-                countsTasks = 1;
                 if (mainCatalog.ValidateNamesTables(daughterCatalog.SelectTablesNames()))
                 {
                     if (daughterCatalog.ValidateDefaultTables(worker))
@@ -261,16 +254,7 @@ namespace SqlDBManager
 
                         bool successOperation = MergeManager.RepeirDBKeys(mainCatalog, worker);
 
-                        /*                        --добавление в ключей в акты
-                          ALTER TABLE[5307_main].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[5307_main].[dbo].[tblFUND](ISN_FUND);
-                                                ALTER TABLE[5307_daughter].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[5307_daughter].[dbo].[tblFUND](ISN_FUND);
-
-                                                --добавление в ключей в акты
-
-                              ALTER TABLE[5307_main].[dbo].[tblINVENTORY_STRUCTURE] ADD FOREIGN KEY(ISN_INVENTORY) REFERENCES[5307_main].[dbo].[tblINVENTORY](ISN_INVENTORY);
-                                                ALTER TABLE[5307_daughter].[dbo].[tblINVENTORY_STRUCTURE] ADD FOREIGN KEY(ISN_INVENTORY) REFERENCES[5307_daughter].[dbo].[tblINVENTORY](ISN_INVENTORY);*/
-                        
-                        
+                        //  ALTER TABLE[5307_main].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[5307_main].[dbo].[tblFUND](ISN_FUND);
                         
                         if (successOperation)
                         {
@@ -281,9 +265,6 @@ namespace SqlDBManager
                             worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Очистка логов ---");
                             successOperation = MergeManager.ClearLogs(mainCatalog, worker);
                         }
-
-
-                        
 
                         if (successOperation)
                         {
@@ -331,16 +312,9 @@ namespace SqlDBManager
                 e.Result = "Количество таблиц в заданных каталогах не равно!";
                 ProgramMessages.ValidationErrorMessage();
             }
-
             mainCatalog.CloseConnection();
             daughterCatalog.CloseConnection();
         }
-
-/*        static public void CloseConnections(DBCatalog mainCatalog, DBCatalog daughterCatalog)
-        {
-            mainCatalog.CloseConnection();
-            daughterCatalog.CloseConnection();
-        }*/
 
         private void mergerBackWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
@@ -410,22 +384,22 @@ namespace SqlDBManager
                 Invoke(new Action(() => text2 = comboBox1.Text));
 
                 if (!ConnectionChecker.CheckConnection(text1,
-                                                  textBox1.Text,
-                                                  textBox2.Text,
-                                                  textBox3.Text)){
+                                                       textBox1.Text,
+                                                       textBox2.Text,
+                                                       textBox3.Text)){
                     ProgramMessages.CheckConnectingSettings("главной");
                 }
                 else if (!ConnectionChecker.CheckConnection(text2,
-                                                  textBox4.Text,
-                                                  textBox5.Text,
-                                                  textBox6.Text))
+                                                            textBox4.Text,
+                                                            textBox5.Text,
+                                                            textBox6.Text))
                 {
                     ProgramMessages.CheckConnectingSettings("дочерней");
                 }
                 else
                 {
-                    Invoke(new Action(() => SaveProperties()));
-                    Invoke(new Action(() => tabControl1.SelectedIndex++));
+                    Invoke(new Action(() => SaveProperties() ));
+                    Invoke(new Action(() => tabControl1.SelectedIndex++ ));
                 }
             }
 

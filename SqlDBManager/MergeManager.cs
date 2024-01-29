@@ -328,8 +328,7 @@ namespace SqlDBManager
                     {
                         worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Записей удалено {recordsCount}");
                     }
-                    Consts.MAIN_PROGRESS_NOW_STATUS += 1;
-                    worker.ReportProgress(Consts.MAIN_PROGRESS_NOW_STATUS * 100 / Consts.MAIN_PROGRESS_BAR, WorkerConsts.ITS_MAIN_PROGRESS_BAR);
+                    worker.ReportProgress(Consts.UpdateMainBar(), WorkerConsts.ITS_MAIN_PROGRESS_BAR);
                 }
                 catch {
                     return false;
@@ -354,6 +353,7 @@ namespace SqlDBManager
                 {
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Таблица с дефолтными значениями.");
                 }
+                worker.ReportProgress(Consts.UpdateMainBar(), WorkerConsts.ITS_MAIN_PROGRESS_BAR);
             }
         }
 
@@ -381,13 +381,13 @@ namespace SqlDBManager
 
                     if (Consts.DEBUG_MOD)
                     {
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4)}");
+                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(worker, mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4)}");
                     }
                     else
                     {
                         try
                         {
-                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4)}");
+                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(worker, mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4)}");
                         }
                         catch (Exception error)
                         {
@@ -400,6 +400,7 @@ namespace SqlDBManager
                 {
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
                 }
+                worker.ReportProgress(Consts.UpdateMainBar(), WorkerConsts.ITS_MAIN_PROGRESS_BAR);
             }
             return true;
         }
@@ -428,13 +429,13 @@ namespace SqlDBManager
 
                     if (Consts.DEBUG_MOD)
                     {
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4, parentIdColumn: paramsForProcessing.Item5, numerateColumn: paramsForProcessing.Item6)}");
+                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(worker, mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4, parentIdColumn: paramsForProcessing.Item5, numerateColumn: paramsForProcessing.Item6)}");
                     }
                     else
                     {
                         try
                         {
-                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4, parentIdColumn: paramsForProcessing.Item5, numerateColumn: paramsForProcessing.Item6)}");
+                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(worker, mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4, parentIdColumn: paramsForProcessing.Item5, numerateColumn: paramsForProcessing.Item6)}");
                         }
                         catch (Exception error)
                         {
@@ -447,6 +448,7 @@ namespace SqlDBManager
                 {
                     worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
                 }
+                worker.ReportProgress(Consts.UpdateMainBar(), WorkerConsts.ITS_MAIN_PROGRESS_BAR);
             }
             return true;
         }
@@ -484,7 +486,7 @@ namespace SqlDBManager
 
         // --- Master merge process table ---
         // Для обработки дефолтных таблиц
-        static int ProcessDefaultTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string idLikeColumnName, string tableName, List<string> excludeColumns = null, string highLevelColumnName = null)
+        static int ProcessDefaultTable(BackgroundWorker worker, DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string idLikeColumnName, string tableName, List<string> excludeColumns = null, string highLevelColumnName = null)
         {
             // -------- Общий блок инициализации вне зависимости от переданных парпаметров--------
             int countOfImports = 0;
@@ -514,6 +516,8 @@ namespace SqlDBManager
             }
             // ----------------
 
+            Consts.ClearTasksBlock();
+            Consts.AddTaskInBlock(allFromDaughterData.Count);
 
             if (highLevelColumnName != null)
             {
@@ -542,6 +546,7 @@ namespace SqlDBManager
                         else if (!mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
                         {
                             reservedRows.Add(row);
+                            Consts.AddTaskInBlock();
                         }
                     } // Если значения в главной нет и idLikeColumnName МЕНЬШЕ чем highLevelColumnName 
                     else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]) && Convert.ToInt64(row[idLikeColumnName].Replace("\'", "")) < Convert.ToInt64(row[highLevelColumnName].Replace("\'", "")))
@@ -558,8 +563,10 @@ namespace SqlDBManager
                         else if (!mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
                         {
                             reservedRows.Add(row);
+                            Consts.AddTaskInBlock();
                         }
                     }
+                    worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
             }
             else // Готовый блок
@@ -596,6 +603,7 @@ namespace SqlDBManager
                         countOfImports++;
                     }
                 }
+                worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
             }
             // Обработка отложенных записей
             if (reservedRows.Count > 0)
@@ -621,13 +629,14 @@ namespace SqlDBManager
                         countOfImports++;
                     }
                 }
+                worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
             }
             return countOfImports;
         }
 
         // 1. string uniqueValueColumnName         2. string idLikeColumnName         3. List<string> excludeColumns    4. string highLevelColumnName     5. string parentIdColumn         6. string numerateColumn
         // Для обработки таблиц с внешними ключами mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4, parentIdColumn: paramsForProcessing.Item5, numerateColumn: paramsForProcessing.Item6
-        static int ProcessLinksTable(DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string idLikeColumnName, string tableName, List<string> excludeColumns, string highLevelColumnName, string parentIdColumn, string numerateColumn)
+        static int ProcessLinksTable(BackgroundWorker worker, DBCatalog mainCatalog, DBCatalog daughterCatalog, string uniqueValueColumnName, string idLikeColumnName, string tableName, List<string> excludeColumns, string highLevelColumnName, string parentIdColumn, string numerateColumn)
         {
             // -------- Общий блок инициализации вне зависимости от переданных парпаметров--------
             int countOfImports = 0;
@@ -674,6 +683,8 @@ namespace SqlDBManager
                 // 2. Берем список значений по уникальному полю из главного каталога
                 List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainData, uniqueValueColumnName);
 
+                Consts.ClearTasksBlock();
+                Consts.AddTaskInBlock(allFromDaughterData.Count);
 
                 foreach (Dictionary<string, string> row in allFromDaughterData)
                 {
@@ -711,12 +722,16 @@ namespace SqlDBManager
                         }
                         countOfImports++;
                     }
+                    worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
             } // Если есть родителей, то отбор данных совершенно иной
             else if (parentIdColumn != null && uniqueValueColumnName != null)
             {
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
                 List<Dictionary<string, string>> reservedRows = new List<Dictionary<string, string>>();
+
+                Consts.ClearTasksBlock();
+                Consts.AddTaskInBlock(tableReservedValues[parentIdColumn].Count);
 
                 foreach (Tuple<string, string> pairKeys in tableReservedValues[parentIdColumn])
                 {
@@ -761,6 +776,7 @@ namespace SqlDBManager
                             countOfImports++;
                         }
                     }
+                    worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
                 ValuesManager.DeleteTableFromReserve(tableName);
             }
@@ -768,6 +784,9 @@ namespace SqlDBManager
             {
                 List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
+
+                Consts.ClearTasksBlock();
+                Consts.AddTaskInBlock(tableReservedValues.Count);
 
                 foreach (Dictionary<string, string> row in allFromDaughterData)
                 {
@@ -797,6 +816,7 @@ namespace SqlDBManager
                             break;
                         }
                     }
+                    worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
                 ValuesManager.DeleteTableFromReserve(tableName);
             }
