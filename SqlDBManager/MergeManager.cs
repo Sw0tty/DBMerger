@@ -328,6 +328,8 @@ namespace SqlDBManager
                     {
                         worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Записей удалено {recordsCount}");
                     }
+                    Consts.MAIN_PROGRESS_NOW_STATUS += 1;
+                    worker.ReportProgress(Consts.MAIN_PROGRESS_NOW_STATUS * 100 / Consts.MAIN_PROGRESS_BAR, WorkerConsts.ITS_MAIN_PROGRESS_BAR);
                 }
                 catch {
                     return false;

@@ -35,12 +35,16 @@ namespace NotesNamespace
         public const int BLOCK_HEADING = 800;
         public const int MIDDLE_STATUS_CODE = 999;
         public const int ERROR_STATUS_CODE = 500;
+        public const string ITS_BLOCK_PROGRESS_BAR = "BLOCK";
+        public const string ITS_MAIN_PROGRESS_BAR = "MAIN";
     }
 
     public static class Consts
     {
         // При истине выбрасывает исключения и прекращает работу с указание места ошибки
         public const bool DEBUG_MOD = false;
+        public static int MAIN_PROGRESS_BAR = DefaultTablesValues.DefaultTables.Count + DefaultTablesValues.WithoutKeysTables.Count + 162 + 3;
+        public static int MAIN_PROGRESS_NOW_STATUS = 0;
     }
 
     public static class ProgramMessages

@@ -220,7 +220,7 @@ namespace SqlDBManager
             countsTasks = 1;
             if (mainCatalog.ValidateCountTables(countTables))
             {
-                worker.ReportProgress(100);
+                worker.ReportProgress(100, WorkerConsts.ITS_MAIN_PROGRESS_BAR);
 
                 countsTasks = 1;
                 if (mainCatalog.ValidateNamesTables(daughterCatalog.SelectTablesNames()))
@@ -355,6 +355,14 @@ namespace SqlDBManager
             else if (e.ProgressPercentage == WorkerConsts.ERROR_STATUS_CODE)
             {
                 textBoxStatus.AppendText("--- ERROR ---" + "\r\n" + e.UserState.ToString() + "\r\n" + "--- ERROR ---" + "\r\n");
+            }
+            else if (e.UserState.ToString() == WorkerConsts.ITS_BLOCK_PROGRESS_BAR)
+            {
+                progressBar1.Value = e.ProgressPercentage;
+            }
+            else if (e.UserState.ToString() == WorkerConsts.ITS_MAIN_PROGRESS_BAR)
+            {
+                progressBar2.Value = e.ProgressPercentage;
             }
         }
 
