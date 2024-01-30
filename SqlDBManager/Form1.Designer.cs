@@ -61,6 +61,7 @@
             this.button8 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.label12 = new System.Windows.Forms.Label();
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.textBoxStatus = new System.Windows.Forms.TextBox();
@@ -77,7 +78,6 @@
             this.listBox2 = new System.Windows.Forms.ListBox();
             this.mergerBackWorker = new System.ComponentModel.BackgroundWorker();
             this.dirtyJobBackWorker = new System.ComponentModel.BackgroundWorker();
-            this.label12 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -129,9 +129,9 @@
             // button9
             // 
             this.button9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button9.Location = new System.Drawing.Point(9, 570);
+            this.button9.Location = new System.Drawing.Point(8, 561);
             this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(104, 25);
+            this.button9.Size = new System.Drawing.Size(148, 34);
             this.button9.TabIndex = 12;
             this.button9.Text = "Справка";
             this.button9.UseVisualStyleBackColor = true;
@@ -459,6 +459,17 @@
             this.tabPage3.Text = "Процесс слияния";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // label12
+            // 
+            this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(330, 465);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(138, 13);
+            this.label12.TabIndex = 6;
+            this.label12.Text = "Записей импортировано: ";
+            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // progressBar2
             // 
             this.progressBar2.Location = new System.Drawing.Point(19, 525);
@@ -604,17 +615,6 @@
             this.dirtyJobBackWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.dirtyJobBackWorker_DoWork);
             this.dirtyJobBackWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.dirtyJobBackWorker_ProgressChanged);
             this.dirtyJobBackWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.dirtyJobBackWorker_RunWorkerCompleted);
-            // 
-            // label12
-            // 
-            this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(330, 465);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(138, 13);
-            this.label12.TabIndex = 6;
-            this.label12.Text = "Записей импортировано: ";
-            this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // Form1
             // 

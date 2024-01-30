@@ -113,8 +113,8 @@ namespace SqlDBManager
             { "tblORGANIZ_RENAME",
                 new Tuple<string, string, List<string>, string, string, string>("NAME", "ISN_ORGANIZ_RENAME", null, null, "ISN_ORGANIZ", null) },
 
-            //{ "tblARCHIVE",
-            //    new Tuple<string, string, List<string>, string>("", null, null, null, null) },
+            { "tblARCHIVE",
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_ARCHIVE", null, null, null, null) },
 
             { "tblLOCATION",
                 new Tuple<string, string, List<string>, string, string, string>("NAME", "ISN_LOCATION", null, "ISN_HIGH_LOCATION", null, null) },
@@ -135,7 +135,7 @@ namespace SqlDBManager
                 new Tuple<string, string, List<string>, string, string, string>("FUND_NAME_SHORT", "ISN_FUND_RENAME", null, null, "ISN_FUND", null) },
 
             { "tblFUND_CHECK",
-                new Tuple<string, string, List<string>, string, string, string>("ISN_FUND", null, null, null, "ISN_FUND", null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_FUND", null) },
 
             { "tblFUND_DOC_TYPE",
                 new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_FUND", null) },
@@ -213,13 +213,13 @@ namespace SqlDBManager
                 new Tuple<string, string, List<string>, string, string, string>(null, "ISN_DOCUMENT_STATS", null, null, "ISN_FUND", null) },
 */
             { "tblREF_ACT",
-                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_ACT", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_ACT", null, null, "ISN_ACT", null) },
 
             { "tblREF_CLS",
-                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_CLS", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_CLS", null, null, "ISN_CLS", null) },
 
             { "tblREF_FEATURE",
-                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_FEATURE", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_FEATURE", null, null, "ISN_FEATURE", null) },
 
             { "tblREF_LANGUAGE",
                 new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_LANGUAGE", null, null, null, null) },
@@ -275,18 +275,18 @@ namespace SqlDBManager
             { "tblDOCUMENT",
                 new Tuple<string, string, List<string>, string, string, string>("NAME", "ISN_DOCUM", null, null, "ISN_UNIT", null) },
         };
-
+        // (uniqueValueColumnName == null && highLevelColumnName == null && parentIdColumn == null)
         public static bool RepeirDBKeys(DBCatalog mainCatalog, BackgroundWorker worker)
         {
             if (Consts.DEBUG_MOD)
             {
-                RepairTable(mainCatalog);
+                RepairTable(mainCatalog, worker);
             }
             else
             {
                 try
                 {
-                    RepairTable(mainCatalog);
+                    RepairTable(mainCatalog, worker);
                 }
                 catch (Exception error)
                 {
@@ -297,12 +297,14 @@ namespace SqlDBManager
             return true;
         }
 
-        static void RepairTable(DBCatalog mainCatalog)
+        static void RepairTable(DBCatalog mainCatalog, BackgroundWorker worker)
         {
             foreach (string tableName in DefaultTablesValues.WithoutKeysTables.Keys)
             {
                 Tuple<string, string> tupleParams = DefaultTablesValues.WithoutKeysTables[tableName];
                 mainCatalog.AddReference(tableName, tupleParams.Item1, tupleParams.Item2);
+
+                worker.ReportProgress(Consts.UpdateMainBar(), WorkerConsts.ITS_MAIN_PROGRESS_BAR);
             }
         }
 
@@ -641,6 +643,7 @@ namespace SqlDBManager
             // -------- Общий блок инициализации вне зависимости от переданных парпаметров--------
             int countOfImports = 0;
 
+            
 
             long lastId = 0;
             // Инициализиуем ID строки, если был передан как параметр
@@ -670,20 +673,45 @@ namespace SqlDBManager
             }
             // ----------------
 
+            Consts.ClearTasksBlock();
+
             // MessageBox.Show(tableName + "\n" + string.Join("  ", foreigns.Keys));
 
+
+            /*if (uniqueValueColumnName == null && highLevelColumnName == null && parentIdColumn == null)
+            {
+                List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
+                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
+
+                if (foreigns.Count != 0)
+                { 
+                    ValuesManager.AddTablesToRewriteDict(foreigns);
+                    ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(allFromDaughterData[0][idLikeColumnName], allFromMainData[0][idLikeColumnName]));
+                }
+            }*/
+            if (tableName == "tblARCHIVE")
+            {
+                List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
+                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
+
+                ValuesManager.AddTablesToRewriteDict(foreigns);
+                ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(allFromDaughterData[0][idLikeColumnName], allFromMainData[0][idLikeColumnName]));
+
+            }
             // Если нет родителя к которому цепляются записи, то обработка по всем значениям таблицы
-            if (parentIdColumn == null && uniqueValueColumnName != null)
+            // Данный IF работает, все значения передаются в резерв.
+            else if (uniqueValueColumnName != null && idLikeColumnName != null && parentIdColumn == null && highLevelColumnName == null)
             {
                 // 1. Берем все записи двух каталогов в виде словарей
                 List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
                 List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
                 List<Dictionary<string, string>> reservedRows = new List<Dictionary<string, string>>();
 
+
+
                 // 2. Берем список значений по уникальному полю из главного каталога
                 List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainData, uniqueValueColumnName);
 
-                Consts.ClearTasksBlock();
                 Consts.AddTaskInBlock(allFromDaughterData.Count);
 
                 foreach (Dictionary<string, string> row in allFromDaughterData)
@@ -694,12 +722,13 @@ namespace SqlDBManager
                         // и используется дальше, то добавляем 
                         if (foreigns.Count > 0)
                         {
-                            //MessageBox.Show((row[idLikeColumnName] + "   new: " + ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
+                            // MessageBox.Show("old: " + row[idLikeColumnName] + "   new: " + ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName));
                             ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
                         }
                     } // Если значения НЕТ в главном каталоге
                     else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]))
                     {
+                        string oldKey = row[idLikeColumnName];
                         row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
 
                         if (numerateColumn != null)
@@ -709,7 +738,8 @@ namespace SqlDBManager
 
                         if (foreigns.Count > 0)
                         {
-                            ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                            //MessageBox.Show("old: " + oldKey + " new: "  + row[idLikeColumnName]);
+                            ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
                         }
 
                         if (ValuesManager.ContainsInRewrite(tableName))
@@ -725,12 +755,11 @@ namespace SqlDBManager
                     worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
             } // Если есть родителей, то отбор данных совершенно иной
-            else if (parentIdColumn != null && uniqueValueColumnName != null)
+            else if (uniqueValueColumnName != null && idLikeColumnName != null && parentIdColumn != null && highLevelColumnName == null)
             {
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
-                List<Dictionary<string, string>> reservedRows = new List<Dictionary<string, string>>();
-
-                Consts.ClearTasksBlock();
+                // List<Dictionary<string, string>> reservedRows = new List<Dictionary<string, string>>();
+                
                 Consts.AddTaskInBlock(tableReservedValues[parentIdColumn].Count);
 
                 foreach (Tuple<string, string> pairKeys in tableReservedValues[parentIdColumn])
@@ -741,6 +770,8 @@ namespace SqlDBManager
                     List<Dictionary<string, string>> filterFromMainData = mainCatalog.SelectRecordsWhere(new List<string>(), tableName, parentIdColumn, pairKeys.Item2);
                     List<Dictionary<string, string>> filterFromDaughterData = daughterCatalog.SelectRecordsWhere(new List<string>(), tableName, parentIdColumn, pairKeys.Item1);
                     List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(filterFromMainData, uniqueValueColumnName);
+
+                    // MessageBox.Show(filterFromMainData.Count.ToString() + filterFromDaughterData.Count.ToString());
 
                     foreach (Dictionary<string, string> row in filterFromDaughterData)
                     {
@@ -753,7 +784,9 @@ namespace SqlDBManager
                         }
                         else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]))
                         {
+                            string oldKey = row[idLikeColumnName];
                             row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+                            row[parentIdColumn] = pairKeys.Item2;
 
                             if (numerateColumn != null)
                             {
@@ -779,14 +812,16 @@ namespace SqlDBManager
                     worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
                 ValuesManager.DeleteTableFromReserve(tableName);
-            }
-            else if (parentIdColumn != null && uniqueValueColumnName == null)
+            } // Если из параметров только родитель
+            else if (uniqueValueColumnName == null && idLikeColumnName == null && parentIdColumn != null && highLevelColumnName == null)
             {
                 List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
 
-                Consts.ClearTasksBlock();
-                Consts.AddTaskInBlock(tableReservedValues.Count);
+
+                // List<Dictionary<string, string>> allFromDaughterDataWhere = daughterCatalog.SelectRecordsWhere(new List<string>, tableName, parentIdColumn, );
+
+                Consts.AddTaskInBlock(allFromDaughterData.Count);
 
                 foreach (Dictionary<string, string> row in allFromDaughterData)
                 {
@@ -813,6 +848,79 @@ namespace SqlDBManager
 
                             //mainCatalog.InsertValue(tableName, row);
                             countOfImports++;
+                            break;
+                        }
+                    }
+                    worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
+                }
+                ValuesManager.DeleteTableFromReserve(tableName);
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            else if (parentIdColumn != null && uniqueValueColumnName != null && highLevelColumnName != null)
+            {
+                ValuesManager.AddTablesToRewriteDict(foreigns);
+
+                
+
+
+                List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
+                List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainData, uniqueValueColumnName);
+                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
+                Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
+
+                Consts.AddTaskInBlock(allFromDaughterData.Count);
+
+
+
+
+
+                foreach (Dictionary<string, string> row in allFromDaughterData)
+                {
+                    
+                    foreach (Tuple<string, string> tuple in tableReservedValues[parentIdColumn])
+                    {
+                        if (row[parentIdColumn] == tuple.Item1)
+                        {
+                            row[parentIdColumn] = tuple.Item2;
+
+
+                            if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
+                            {
+                                ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
+                            }
+                            else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]))
+                            {
+                                row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+
+                                ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+
+                                if (ValuesManager.ContainsInRewrite(tableName))
+                                {
+                                    mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
+                                }
+                                else
+                                {
+                                    mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                                }
+
+                                mainCatalogValues.Add(row[uniqueValueColumnName]);
+                                countOfImports++;
+                            }
                             break;
                         }
                     }
@@ -959,7 +1067,6 @@ namespace SqlDBManager
         /// <summary>
         /// Добавляет в резервный словарь наименование таблицы и наименое столбца на которые используется ссылка переданной таблицы
         /// </summary>
-        /// <returns>Количество найденых таблиц</returns>
         public static void AddNewTableToReserve(Dictionary<string, string> foreigns)
         {
             foreach (string inTable in foreigns.Keys)

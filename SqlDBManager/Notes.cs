@@ -42,7 +42,7 @@ namespace NotesNamespace
     public static class Consts
     {
         // При истине выбрасывает исключения и прекращает работу с указание места ошибки
-        public const bool DEBUG_MOD = false;
+        public const bool DEBUG_MOD = true;
         public static int COUNT_OF_ALL_TASKS = DefaultTablesValues.DefaultTables.Count + DefaultTablesValues.WithoutKeysTables.Count + 162 + 3;
         public static int MAIN_PROGRESS_NOW_STATUS = 0;
         public static int COUNT_OF_ALL_BLOCK_TASKS = 0;

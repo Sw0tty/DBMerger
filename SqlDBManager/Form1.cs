@@ -285,6 +285,7 @@ namespace SqlDBManager
 
                         if (successOperation)
                         {
+                            MessageBox.Show("NEXT STEP COMMIT!");
                             transaction.Commit();
                             e.Result = "Слияние успешно завершено!";
                             ProgramMessages.MergeCompletedMessage();
