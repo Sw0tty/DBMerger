@@ -144,7 +144,7 @@ namespace SqlDBManager
                 new Tuple<string, string, List<string>, string, string, string>(null, "ISN_INCLUSION", null, null, "ISN_FUND", null) },
 
             { "tblFUND_PAPER_CLS",
-                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_PAPER_CLS", null, null, "ISN_FUND", null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_FUND", null) },
 
             { "tblPUBLICATION_CL",
                 new Tuple<string, string, List<string>, string, string, string>("PUBLICATION_NAME", "ISN_PUBLICATION", null, null, null, "PUBLICATION_NUM") },
@@ -511,6 +511,8 @@ namespace SqlDBManager
             // 3. Берем таблицы в дальнейшем используемые
             Dictionary<string, string> foreigns = mainCatalog.SelectTablesAndForeignKeyUsage(tableName);
 
+
+
             // 4. Проверяем foreigns на наличие использования. Если True, то добавляем все в RealoadDict
             if (foreigns.Count > 0)
             {
@@ -538,9 +540,10 @@ namespace SqlDBManager
                         //string s = ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName);
                         if (mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
                         {
+                            string oldKey = row[idLikeColumnName];
                             row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
                             row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
-                            ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                            ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
                             mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                             mainCatalogValues.Add(row[uniqueValueColumnName]);
                             countOfImports++;
@@ -555,9 +558,10 @@ namespace SqlDBManager
                     {
                         if (mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
                         {
+                            string oldKey = row[idLikeColumnName];
                             row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
                             row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
-                            ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                            ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
                             mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                             mainCatalogValues.Add(row[uniqueValueColumnName]);
                             countOfImports++;
@@ -596,10 +600,11 @@ namespace SqlDBManager
                     }// Если нашлось новое значения, которого нет в главной БД
                     else if (idLikeColumnName != null && !mainCatalogValues.Contains(row[uniqueValueColumnName]) && row[uniqueValueColumnName] != null)
                     {
+                        string oldKey = row[idLikeColumnName];
                         //long lastId = Convert.ToInt64(string.Join("", mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)).Replace("\'", ""));
                         row[idLikeColumnName] = $"'{countOfImports + lastId + 1}'";
                         //ValuesManager.AddPairKeysToReloadDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
-                        ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                        ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
                         mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                         mainCatalogValues.Add(row[uniqueValueColumnName]);
                         countOfImports++;
@@ -614,18 +619,20 @@ namespace SqlDBManager
                 {
                     if (mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
                     {
+                        string oldKey = row[idLikeColumnName];
                         row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
                         row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
-                        ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                        ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
                         mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                         mainCatalogValues.Add(row[uniqueValueColumnName]);
                         countOfImports++;
                     }
                     else
                     {
+                        string oldKey = row[idLikeColumnName];
                         row[highLevelColumnName] = "'null'";
                         row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
-                        ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                        ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
                         mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                         mainCatalogValues.Add(row[uniqueValueColumnName]);
                         countOfImports++;
@@ -811,7 +818,7 @@ namespace SqlDBManager
                     }
                     worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
-                ValuesManager.DeleteTableFromReserve(tableName);
+               // ValuesManager.DeleteTableFromReserve(tableName);
             } // Если из параметров только родитель
             else if (uniqueValueColumnName == null && idLikeColumnName == null && parentIdColumn != null && highLevelColumnName == null)
             {
@@ -823,7 +830,42 @@ namespace SqlDBManager
 
                 Consts.AddTaskInBlock(allFromDaughterData.Count);
 
-                foreach (Dictionary<string, string> row in allFromDaughterData)
+
+
+                foreach (Tuple<string, string> tuple in tableReservedValues[parentIdColumn])
+                {
+                    List<Dictionary<string, string>> allFromMainDataWhere = mainCatalog.SelectRecordsWhere(new List<string>(), tableName, parentIdColumn, tuple.Item2);
+
+                    if (allFromMainDataWhere.Count > 0)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        foreach (Dictionary<string, string> row in allFromDaughterData)
+                        {
+                            if (row[parentIdColumn] == tuple.Item1)
+                            {
+                                row[parentIdColumn] = tuple.Item2;
+
+                                
+                                if (ValuesManager.ContainsInRewrite(tableName))
+                                {
+                                    mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
+                                }
+                                else
+                                {
+                                    mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                                }
+                                countOfImports++;
+                            }
+                        }
+                    }
+                    //worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
+                }
+
+
+               /* foreach (Dictionary<string, string> row in allFromDaughterData)
                 {
                     
                     foreach (Tuple<string, string> tuple in tableReservedValues[parentIdColumn])
@@ -832,10 +874,10 @@ namespace SqlDBManager
                         {
                             row[parentIdColumn] = tuple.Item2;
 
-                            /*                            if (foreigns.Count > 0)
+                            *//*                            if (foreigns.Count > 0)
                                                         {
                                                             ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(tuple.Item1, tuple.Item2));
-                                                        }*/
+                                                        }*//*
 
                             if (ValuesManager.ContainsInRewrite(tableName))
                             {
@@ -853,7 +895,7 @@ namespace SqlDBManager
                     }
                     worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
-                ValuesManager.DeleteTableFromReserve(tableName);
+                ValuesManager.DeleteTableFromReserve(tableName);*/
             }
 
 
@@ -926,7 +968,7 @@ namespace SqlDBManager
                     }
                     worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
-                ValuesManager.DeleteTableFromReserve(tableName);
+                // ValuesManager.DeleteTableFromReserve(tableName);
             }
             return countOfImports;
         }
@@ -1025,7 +1067,7 @@ namespace SqlDBManager
                     }
                 }
             }
-            DeleteTableFromRewrite(tableName);
+            // DeleteTableFromRewrite(tableName);
             return row;
         }
 

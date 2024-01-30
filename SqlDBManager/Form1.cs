@@ -333,7 +333,8 @@ namespace SqlDBManager
             }
             else if (e.UserState.ToString() == WorkerConsts.ITS_BLOCK_PROGRESS_BAR)
             {
-                progressBar1.Value = e.ProgressPercentage;
+                label13.Text = $"{e.ProgressPercentage} %";
+                // progressBar1.Value = e.ProgressPercentage;
             }
             else if (e.UserState.ToString() == WorkerConsts.ITS_MAIN_PROGRESS_BAR)
             {
