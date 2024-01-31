@@ -117,7 +117,7 @@ namespace SqlDBManager
                 new Tuple<string, string, List<string>, string, string, string>(null, "ISN_ARCHIVE", null, null, null, null) },
 
             { "tblLOCATION",
-                new Tuple<string, string, List<string>, string, string, string>("NAME", "ISN_LOCATION", null, "ISN_HIGH_LOCATION", null, null) },
+                new Tuple<string, string, List<string>, string, string, string>("NOTE", "ISN_LOCATION", null, "ISN_HIGH_LOCATION", null, null) },
 
 /*            { "tblARCHIVE_STORAGE",
                 new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },*/
@@ -206,56 +206,56 @@ namespace SqlDBManager
             { "tblINVENTORY_REQUIRED_WORK",
                 new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REQUIRED_WORK", null, null, "ISN_INVENTORY", null) },
 
-            { "tblINVENTORY_STRUCTURE",
-                new Tuple<string, string, List<string>, string, string, string>("NAME", "ISN_INVENTORY_CLS", null, "ISN_HIGH_INVENTORY_CLS", "ISN_INVENTORY", null) },
+            { "tblINVENTORY_STRUCTURE", // Есть уникальное по NAME, но оно не заполняется пользователем
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_INVENTORY_CLS", null, "ISN_HIGH_INVENTORY_CLS", "ISN_INVENTORY", null) },
 
-            /*{ "tblDOCUMENT_STATS",
+            { "tblDOCUMENT_STATS",
                 new Tuple<string, string, List<string>, string, string, string>(null, "ISN_DOCUMENT_STATS", null, null, "ISN_FUND", null) },
-*/
+
             { "tblREF_ACT",
                 new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_ACT", null, null, "ISN_ACT", null) },
 
             { "tblREF_CLS",
-                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_CLS", null, null, "ISN_CLS", null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_CLS", null, null, null, null) },
 
             { "tblREF_FEATURE",
-                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_FEATURE", null, null, "ISN_FEATURE", null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_FEATURE", null, null, null, null) },
 
             { "tblREF_LANGUAGE",
                 new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_LANGUAGE", null, null, null, null) },
 
             { "tblREF_LOCATION",
-                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_LOCATION", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_LOCATION", null, null, "ISN_LOCATION", null) },
 
             { "tblREF_QUESTION",
-                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_QUESTION", null, null, null, null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_QUESTION", null, null, "ISN_QUESTION", null) },
 
             { "tblUNIT",
                 new Tuple<string, string, List<string>, string, string, string>("NAME", "ISN_UNIT", null, null, "ISN_INVENTORY", null) },
 
             { "tblUNIT_ELECTRONIC",
-                new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_FOTO",
-                new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_FOTO_EX",
                 new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_MICROFORM",
-                new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_MOVIE",
-                new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_MOVIE_EX",
                 new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_NTD",
-                new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_PHONO",
-                new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_REQUIRED_WORK",
                 new Tuple<string, string, List<string>, string, string, string>(null, "ISN_UNIT_REQUIRED_WORK", null, null, "ISN_UNIT", null) },
@@ -264,10 +264,10 @@ namespace SqlDBManager
                 new Tuple<string, string, List<string>, string, string, string>(null, "ISN_UNIT_STATE", null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_VIDEO",
-                new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_VIDEO_EX",
-                new Tuple<string, string, List<string>, string, string, string>("ISN_UNIT", null, null, null, "ISN_UNIT", null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_UNIT", null) },
 
             { "tblUNIT_WORK",
                 new Tuple<string, string, List<string>, string, string, string>(null, "ISN_UNIT_WORK", null, null, "ISN_UNIT", null) },
@@ -696,7 +696,13 @@ namespace SqlDBManager
                     ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(allFromDaughterData[0][idLikeColumnName], allFromMainData[0][idLikeColumnName]));
                 }
             }*/
-            if (tableName == "tblARCHIVE")
+
+            // Пока ошибка на UNIT с=столбец ISN_INVENTORY_CLS . Просмотреть INVENTORY_STRUCTURE
+            if (tableName == "tblDOCUMENT_STATS")
+            {
+                
+            }
+            else if (tableName == "tblARCHIVE")
             {
                 List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
                 List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
@@ -707,7 +713,7 @@ namespace SqlDBManager
             }
             // Если нет родителя к которому цепляются записи, то обработка по всем значениям таблицы
             // Данный IF работает, все значения передаются в резерв.
-            else if (uniqueValueColumnName != null && idLikeColumnName != null && parentIdColumn == null && highLevelColumnName == null)
+            else if (uniqueValueColumnName != null && idLikeColumnName != null && highLevelColumnName == null && parentIdColumn == null)
             {
                 // 1. Берем все записи двух каталогов в виде словарей
                 List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
@@ -762,11 +768,11 @@ namespace SqlDBManager
                     worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
             } // Если есть родителей, то отбор данных совершенно иной
-            else if (uniqueValueColumnName != null && idLikeColumnName != null && parentIdColumn != null && highLevelColumnName == null)
+            else if (uniqueValueColumnName != null && idLikeColumnName != null && highLevelColumnName == null && parentIdColumn != null)
             {
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
                 // List<Dictionary<string, string>> reservedRows = new List<Dictionary<string, string>>();
-                
+
                 Consts.AddTaskInBlock(tableReservedValues[parentIdColumn].Count);
 
                 foreach (Tuple<string, string> pairKeys in tableReservedValues[parentIdColumn])
@@ -802,7 +808,7 @@ namespace SqlDBManager
 
                             if (foreigns.Count > 0)
                             {
-                                ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(filterFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                                ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
                             }
 
                             if (ValuesManager.ContainsInRewrite(tableName))
@@ -818,9 +824,9 @@ namespace SqlDBManager
                     }
                     worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
-               // ValuesManager.DeleteTableFromReserve(tableName);
+                // ValuesManager.DeleteTableFromReserve(tableName);
             } // Если из параметров только родитель
-            else if (uniqueValueColumnName == null && idLikeColumnName == null && parentIdColumn != null && highLevelColumnName == null)
+            else if (uniqueValueColumnName == null && idLikeColumnName == null && highLevelColumnName == null && parentIdColumn != null)
             {
                 List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
@@ -848,7 +854,6 @@ namespace SqlDBManager
                             {
                                 row[parentIdColumn] = tuple.Item2;
 
-                                
                                 if (ValuesManager.ContainsInRewrite(tableName))
                                 {
                                     mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
@@ -863,93 +868,104 @@ namespace SqlDBManager
                     }
                     //worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
+            }
+            else if (uniqueValueColumnName != null && idLikeColumnName != null && highLevelColumnName != null && parentIdColumn == null)
+            {
+                List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
+                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
+                List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainData, uniqueValueColumnName);
+                List<Dictionary<string, string>> reservedRows = new List<Dictionary<string, string>>();
 
-
-               /* foreach (Dictionary<string, string> row in allFromDaughterData)
+                if (foreigns.Count > 0)
                 {
-                    
-                    foreach (Tuple<string, string> tuple in tableReservedValues[parentIdColumn])
+                    ValuesManager.AddTablesToRewriteDict(foreigns);
+                }
+
+                foreach (Dictionary<string, string> row in allFromDaughterData)
+                {
+                    if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
                     {
-                        if (row[parentIdColumn] == tuple.Item1)
+                        ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
+                    }
+                    // Если значения в главной нет и idLikeColumnName БОЛЬШЕ чем highLevelColumnName 
+                    else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]))
+                    {
+                        // Первым делом взять high и проверить его значение в дочерней с главной
+                        //string s = ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName);
+                        if (mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
                         {
-                            row[parentIdColumn] = tuple.Item2;
+                            string oldKey = row[idLikeColumnName];
+                            row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
 
-                            *//*                            if (foreigns.Count > 0)
-                                                        {
-                                                            ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(tuple.Item1, tuple.Item2));
-                                                        }*//*
-
-                            if (ValuesManager.ContainsInRewrite(tableName))
-                            {
-                                mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
-                            }
-                            else
-                            {
-                                mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
-                            }
-
-                            //mainCatalog.InsertValue(tableName, row);
+                            row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+                            ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
+                            mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                            mainCatalogValues.Add(row[uniqueValueColumnName]);
                             countOfImports++;
-                            break;
+                        }// Если значения по ключу High нет в записях главного каталога
+                        else if (!mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
+                        {
+                            reservedRows.Add(row);
+                            Consts.AddTaskInBlock();
+                        }
+                    }
+                }
+                if (reservedRows.Count > 0)
+                {
+                    foreach (Dictionary<string, string> row in reservedRows)
+                    {
+                        if (mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
+                        {
+                            string oldKey = row[idLikeColumnName];
+                            row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
+                            MessageBox.Show(row[highLevelColumnName]);
+                            row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+                            ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
+                            mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                            mainCatalogValues.Add(row[uniqueValueColumnName]);
+                            countOfImports++;
+                        }
+                        else
+                        {
+                            string oldKey = row[idLikeColumnName];
+                            row[highLevelColumnName] = "'null'";
+                            row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+                            ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
+                            mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                            mainCatalogValues.Add(row[uniqueValueColumnName]);
+                            countOfImports++;
                         }
                     }
                     worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
-                ValuesManager.DeleteTableFromReserve(tableName);*/
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            else if (parentIdColumn != null && uniqueValueColumnName != null && highLevelColumnName != null)
+            else if (uniqueValueColumnName == null && idLikeColumnName != null && highLevelColumnName == null && parentIdColumn != null)
             {
-                ValuesManager.AddTablesToRewriteDict(foreigns);
-
-                
-
-
-                List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
-                List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainData, uniqueValueColumnName);
                 List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
+
+
+                // List<Dictionary<string, string>> allFromDaughterDataWhere = daughterCatalog.SelectRecordsWhere(new List<string>, tableName, parentIdColumn, );
 
                 Consts.AddTaskInBlock(allFromDaughterData.Count);
 
 
 
-
-
-                foreach (Dictionary<string, string> row in allFromDaughterData)
+                foreach (Tuple<string, string> tuple in tableReservedValues[parentIdColumn])
                 {
-                    
-                    foreach (Tuple<string, string> tuple in tableReservedValues[parentIdColumn])
+                    List<Dictionary<string, string>> allFromMainDataWhere = mainCatalog.SelectRecordsWhere(new List<string>(), tableName, parentIdColumn, tuple.Item2);
+
+                    if (allFromMainDataWhere.Count > 0)
                     {
-                        if (row[parentIdColumn] == tuple.Item1)
+                        continue;
+                    }
+                    else
+                    {
+                        foreach (Dictionary<string, string> row in allFromDaughterData)
                         {
-                            row[parentIdColumn] = tuple.Item2;
-
-
-                            if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
+                            if (row[parentIdColumn] == tuple.Item1)
                             {
-                                ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
-                            }
-                            else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]))
-                            {
-                                row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
-
-                                ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+                                row[parentIdColumn] = tuple.Item2;
 
                                 if (ValuesManager.ContainsInRewrite(tableName))
                                 {
@@ -959,17 +975,156 @@ namespace SqlDBManager
                                 {
                                     mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                                 }
-
-                                mainCatalogValues.Add(row[uniqueValueColumnName]);
                                 countOfImports++;
                             }
-                            break;
                         }
                     }
-                    worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
+                    //worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
-                // ValuesManager.DeleteTableFromReserve(tableName);
             }
+            else if (uniqueValueColumnName == null && idLikeColumnName != null && highLevelColumnName != null && parentIdColumn != null)
+            {
+
+                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
+                List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
+                Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
+                List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainData, highLevelColumnName);
+
+                // List<Dictionary<string, string>> allFromDaughterDataWhere = daughterCatalog.SelectRecordsWhere(new List<string>, tableName, parentIdColumn, );
+
+                Consts.AddTaskInBlock(allFromDaughterData.Count);
+
+                if (foreigns.Count > 0)
+                {
+                    ValuesManager.AddTablesToRewriteDict(foreigns);
+                }
+
+
+                foreach (Tuple<string, string> tuple in tableReservedValues[parentIdColumn])
+                {
+                    List<Dictionary<string, string>> allFromMainDataWhere = mainCatalog.SelectRecordsWhere(new List<string>(), tableName, parentIdColumn, tuple.Item2);
+
+                    if (allFromMainDataWhere.Count > 0)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        foreach (Dictionary<string, string> row in allFromDaughterData)
+                        {
+                            if (row[parentIdColumn] == tuple.Item1)
+                            {
+                                string oldKey = row[idLikeColumnName];
+                                row[parentIdColumn] = tuple.Item2;
+                                row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+
+                                if (!mainCatalogValues.Contains(row[highLevelColumnName]))
+                                {
+                                    foreach (Dictionary<string, string> sameRow in allFromDaughterData)
+                                    {
+                                        if (sameRow[idLikeColumnName] == row[highLevelColumnName] && ValuesManager.ContainsInRewrite(tableName))
+                                        {
+                                            mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(sameRow, excludeColumns), tableName));
+                                            mainCatalogValues.Add(sameRow[idLikeColumnName]);
+                                            break;
+                                        }
+                                        else if (sameRow[idLikeColumnName] == row[highLevelColumnName] && !ValuesManager.ContainsInRewrite(tableName))
+                                        {
+                                            mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(sameRow, excludeColumns));
+                                            mainCatalogValues.Add(sameRow[idLikeColumnName]);
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if (ValuesManager.ContainsInRewrite(tableName))
+                                {
+                                    mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
+                                }
+                                else
+                                {
+                                    mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                                }
+                                ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
+                                countOfImports++;
+                            }
+                        }
+                    }
+                    //worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
+                }
+
+
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+            //else if (uniqueValueColumnName != null && idLikeColumnName == null && parentIdColumn != null && highLevelColumnName != null)
+            //{
+            //    ValuesManager.AddTablesToRewriteDict(foreigns);
+
+                
+
+
+            //    List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
+            //    List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainData, uniqueValueColumnName);
+            //    List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
+            //    Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
+
+            //    Consts.AddTaskInBlock(allFromDaughterData.Count);
+
+
+
+
+
+            //    foreach (Dictionary<string, string> row in allFromDaughterData)
+            //    {
+                    
+            //        foreach (Tuple<string, string> tuple in tableReservedValues[parentIdColumn])
+            //        {
+            //            if (row[parentIdColumn] == tuple.Item1)
+            //            {
+            //                row[parentIdColumn] = tuple.Item2;
+
+
+            //                if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
+            //                {
+            //                    ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
+            //                }
+            //                else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]))
+            //                {
+            //                    row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+
+            //                    ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
+
+            //                    if (ValuesManager.ContainsInRewrite(tableName))
+            //                    {
+            //                        mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
+            //                    }
+            //                    else
+            //                    {
+            //                        mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+            //                    }
+
+            //                    mainCatalogValues.Add(row[uniqueValueColumnName]);
+            //                    countOfImports++;
+            //                }
+            //                break;
+            //            }
+            //        }
+            //        worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
+            //    }
+            //    // ValuesManager.DeleteTableFromReserve(tableName);
+            //}
             return countOfImports;
         }
     }
@@ -1168,7 +1323,7 @@ namespace SqlDBManager
                     return rowData[returnTheColumnValue];
                 }
             }
-            return "--.-.--.-.--";
+            return "";
         }
 
         public static void RestoreUser(string userLogin)
