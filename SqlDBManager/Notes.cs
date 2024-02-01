@@ -24,93 +24,11 @@ namespace NotesNamespace
         }
     }
 
-    public static class VisualConsts
-    {
-        public const int SPACE_SIZE = 4;
-        public const int HEADING_SPACE = 40;
-    }
+    
 
-    public static class WorkerConsts
-    {
-        public const int BLOCK_HEADING = 800;
-        public const int MIDDLE_STATUS_CODE = 999;
-        public const int ERROR_STATUS_CODE = 500;
-        public const string ITS_BLOCK_PROGRESS_BAR = "BLOCK";
-        public const string ITS_MAIN_PROGRESS_BAR = "MAIN";
-    }
+    
 
-    public static class Consts
-    {
-        // При истине выбрасывает исключения и прекращает работу с указание места ошибки
-        public const bool DEBUG_MOD = true;
-        public static int COUNT_OF_ALL_TASKS = DefaultTablesValues.DefaultTables.Count + DefaultTablesValues.WithoutKeysTables.Count + 162 + 3;
-        public static int MAIN_PROGRESS_NOW_STATUS = 0;
-        public static int COUNT_OF_ALL_BLOCK_TASKS = 0;
-        public static int BLOCK_PROGRESS_NOW = 0;
-
-        /// <summary>
-        /// Добавляет 1 исполненную задачу
-        /// </summary>
-        public static int UpdateMainBar()
-        {
-            MAIN_PROGRESS_NOW_STATUS++;
-            return MAIN_PROGRESS_NOW_STATUS * 100 / COUNT_OF_ALL_TASKS;
-        }
-
-        public static void ClearTasksBlock()
-        {
-            COUNT_OF_ALL_BLOCK_TASKS = 0;
-            BLOCK_PROGRESS_NOW = 0;
-        }
-
-        public static void AddTaskInBlock(int countTasks = 0)
-        {
-            if (countTasks != 0)
-            {
-                COUNT_OF_ALL_BLOCK_TASKS += countTasks;
-            }
-            else
-            {
-                COUNT_OF_ALL_BLOCK_TASKS++;
-            } 
-        }
-
-        public static int UpdateBlockBar()
-        {
-            BLOCK_PROGRESS_NOW++;
-            return BLOCK_PROGRESS_NOW * 100 / COUNT_OF_ALL_BLOCK_TASKS;
-        }
-    }
-
-    public static class ProgramMessages
-    {
-        public static void ErrorMessage()
-        {
-            MessageBox.Show("В процессе возникла ошибка!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        public static void ValidationErrorMessage()
-        {
-            MessageBox.Show("Ошибка валидации!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        public static void MergeCompletedMessage()
-        {
-            MessageBox.Show("Слияние успешно завершено!", "Слияние завершено", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        public static void SameCatalogMessage()
-        {
-            MessageBox.Show("Вабрана одна и тажа база данных", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-
-        public static void CheckConnectingSettings(string catalog)
-        {
-            MessageBox.Show($"Проверьте настройки соединения с {catalog} БД", "Ошибка соединения", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
-    }
-
-    public static class DefaultTablesValues
+    public static class SpecialTablesValues
     {
         /// <summary>
         /// Наименование таблицы - (дефолтное значение для корректировки, фильтруемая колонка) - ключи дефолтных значений
@@ -132,6 +50,13 @@ namespace NotesNamespace
         { // Before Merge, After Merge
             { "tblINVENTORY", new Tuple<Tuple<string, string>, Tuple<string, string>>(new Tuple<string, string>("ISN_INVENTORY_STORAGE", "ISN_STORAGE_MEDIUM"), new Tuple<string, string>("ISN_STORAGE_MEDIUM", "ISN_INVENTORY_STORAGE")) },
         };
+
+        public static List<string> DefaultUsers { get; } = new List<string>() { "sa", "anonymous", "admin", "reader", "arch", "tech" };
+
+/*        public static List<string> ReturnDefaultUsers()
+        {
+            return defaultUsers;
+        }*/
     }
 
     

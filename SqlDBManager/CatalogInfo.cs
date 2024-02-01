@@ -268,6 +268,12 @@ namespace SqlDBManager
             AnotherRequest(request, connection, ReturnTransaction());
         }
 
+        public void MakeBigInsertRequest()
+        {
+            string requests = ValuesManager.ReturnRequestsToTable();
+            InsertAdapter(requests, connection, ReturnTransaction());
+        }
+
         /// <summary>
         /// Вставляет переданные данные в указанную таблицу (ID формируется средствами SQL)
         /// </summary>
@@ -451,7 +457,7 @@ namespace SqlDBManager
         /// <returns>Успешность прохождения валидации</returns>
         public bool ValidateDefaultTables(BackgroundWorker worker)
         {
-            Dictionary<string, Tuple<string, Dictionary<string, List<string>>>> defaultTables = DefaultTablesValues.DefaultTables;
+            Dictionary<string, Tuple<string, Dictionary<string, List<string>>>> defaultTables = SpecialTablesValues.DefaultTables;
             Dictionary<string, List<Dictionary<string, string>>> problemTables = new Dictionary<string, List<Dictionary<string, string>>>();
 
             foreach (string tableName in defaultTables.Keys)

@@ -487,7 +487,7 @@ namespace SqlDBManager
 
         private void button10_Click(object sender, EventArgs e)
         {
-            string sss = "'hhhhh'bbbbb'ggggg'";
+            string sss = "'1111'";
 
             MessageBox.Show("'" + sss.Substring(1, sss.Length - 2).Replace("'", "\''") + "'");
             //tabControl1.SelectedIndex--;

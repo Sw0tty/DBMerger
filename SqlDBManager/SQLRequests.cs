@@ -76,17 +76,17 @@ namespace SqlDBManager
         // Запрос на обновление ID
         public static string UpdateIDRequest(string catalog, string table, string filterColumn, string filterValue)
         {
-            return $"UPDATE [{catalog}].[dbo].[{table}] SET ID = NEWID() WHERE {filterColumn} = '{filterValue}'";
+            return $"UPDATE [{catalog}].[dbo].[{table}] SET ID = NEWID() WHERE {filterColumn} = '{filterValue}';";
         }
 
         public static string UpdateRowRequest(string catalog, string tableName, string updateColumn, string updateValue, string filterColumn, string filterValue)
         {
-            return $"UPDATE [{catalog}].[dbo].[{tableName}] SET {updateColumn} = {updateValue} WHERE {filterColumn} = {filterValue}";
+            return $"UPDATE [{catalog}].[dbo].[{tableName}] SET {updateColumn} = {updateValue} WHERE {filterColumn} = {filterValue};";
         }
 
         public static string InsertFromRequest(string inCatalog, string inTable, List<string> columns, string fromCatalog, string fromTable, string filterColumn, string filterValue)
         {
-            return $"INSERT INTO [{inCatalog}].[dbo].[{inTable}] SELECT {string.Join(", ", columns)} FROM [{fromCatalog}].[dbo].[{fromTable}] WHERE {filterColumn} = '{filterValue}'";
+            return $"INSERT INTO [{inCatalog}].[dbo].[{inTable}] SELECT {string.Join(", ", columns)} FROM [{fromCatalog}].[dbo].[{fromTable}] WHERE {filterColumn} = '{filterValue}';";
         }
 
         /// <summary>
@@ -96,13 +96,13 @@ namespace SqlDBManager
         {
             if (tableName == "")
             {
-                return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("'null'", "''")})";
+                return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("'null'", "''")});";
             }
             else if (withoutID)
             {
-                return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES ({string.Join(", ", data.Values).Replace("'null'", "null")})";
+                return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES ({string.Join(", ", data.Values).Replace("'null'", "null")});";
             }
-            return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("'null'", "null")})";
+            return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("'null'", "null")});";
         }
 
         /// <summary>
@@ -112,12 +112,12 @@ namespace SqlDBManager
         public static string SelectWhereRequest(List<string> columns, string catalog, string tableName, string filterColumn, string filterValue)
         {
             if (columns.Count > 0 && !columns.Contains("Deleted"))
-                return $"SELECT {string.Join(", ", columns).Replace('\"', ' ')} FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue}";
+                return $"SELECT {string.Join(", ", columns).Replace('\"', ' ')} FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
             if (columns.Count > 0 && columns.Contains("Deleted"))
-                return $"SELECT {string.Join(", ", columns).Replace('\"', ' ')} FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue} and Deleted = '0'";
+                return $"SELECT {string.Join(", ", columns).Replace('\"', ' ')} FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue} and Deleted = '0';";
             if (columns.Count == 0 && columns.Contains("Deleted"))
-                return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue} and Deleted = '0'";
-            return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue}";
+                return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue} and Deleted = '0';";
+            return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
         }
 
         /// <summary>
@@ -130,20 +130,20 @@ namespace SqlDBManager
             string strColumns = (columns == null) ? "*" : string.Join(", ", columns);
 
             if (filter != null && filterIN && !strColumns.Contains("Deleted"))
-                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} IN ({string.Join(", ", filter[string.Join("", filter.Keys)])})";
+                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} IN ({string.Join(", ", filter[string.Join("", filter.Keys)])});";
             if (filter != null && filterIN && strColumns.Contains("Deleted"))
-                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} IN ({string.Join(", ", filter[string.Join("", filter.Keys)])}) and Deleted = '0'";
+                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} IN ({string.Join(", ", filter[string.Join("", filter.Keys)])}) and Deleted = '0';";
             if (filter != null && !filterIN && !strColumns.Contains("Deleted"))
-                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} NOT IN ({string.Join(", ", filter[string.Join("", filter.Keys)])})";
+                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} NOT IN ({string.Join(", ", filter[string.Join("", filter.Keys)])});";
             if (filter != null && !filterIN && strColumns.Contains("Deleted"))
-                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} NOT IN ({string.Join(", ", filter[string.Join("", filter.Keys)])}) and Deleted = '0'";
+                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} NOT IN ({string.Join(", ", filter[string.Join("", filter.Keys)])}) and Deleted = '0';";
             return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}]";
         }
 
         // Получение наименований столбцов переданной таблицы
         public static string ColumnsNamesRequest(string catalog, string tableName)
         {
-            return $"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG = '{catalog}' and TABLE_SCHEMA = 'dbo' and TABLE_NAME = '{tableName}'";
+            return $"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG = '{catalog}' and TABLE_SCHEMA = 'dbo' and TABLE_NAME = '{tableName}';";
         }
 
         /// <summary>

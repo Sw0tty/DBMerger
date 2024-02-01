@@ -88,6 +88,8 @@
     <Compile Include="MergeManager.cs" />
     <Compile Include="Notes.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="ProgramConsts.cs" />
+    <Compile Include="ProgramMessages.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQLRequests.cs" />
     <EmbeddedResource Include="Form1.resx">
