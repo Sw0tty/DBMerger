@@ -127,6 +127,11 @@ namespace NotesNamespace
             { "tblACT", new Tuple<string, string>("tblFUND", "ISN_FUND") },
             { "tblINVENTORY_STRUCTURE", new Tuple<string, string>("tblINVENTORY", "ISN_INVENTORY") },
         };
+
+        public static Dictionary<string, Tuple<Tuple<string, string>, Tuple<string, string>>> RenamedColumns { get; } = new Dictionary<string, Tuple<Tuple<string, string>, Tuple<string, string>>>()
+        { // Before Merge, After Merge
+            { "tblINVENTORY", new Tuple<Tuple<string, string>, Tuple<string, string>>(new Tuple<string, string>("ISN_INVENTORY_STORAGE", "ISN_STORAGE_MEDIUM"), new Tuple<string, string>("ISN_STORAGE_MEDIUM", "ISN_INVENTORY_STORAGE")) },
+        };
     }
 
     

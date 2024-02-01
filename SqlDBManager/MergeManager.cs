@@ -198,13 +198,13 @@ namespace SqlDBManager
                 new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_INVENTORY", null) },
 
             { "tblINVENTORY_GROUPING_ATTRIBUTE",
-                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_GROUPING_ATTRIBUTE", null, null, "ISN_INVENTORY", null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_INVENTORY", null) },
 
             { "tblINVENTORY_PAPER_CLS",
-                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_PAPER_CLS_INV", null, null, "ISN_INVENTORY", null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_INVENTORY", null) },
 
             { "tblINVENTORY_REQUIRED_WORK",
-                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REQUIRED_WORK", null, null, "ISN_INVENTORY", null) },
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, "ISN_INVENTORY", null) },
 
             { "tblINVENTORY_STRUCTURE", // Есть уникальное по NAME, но оно не заполняется пользователем
                 new Tuple<string, string, List<string>, string, string, string>(null, "ISN_INVENTORY_CLS", null, "ISN_HIGH_INVENTORY_CLS", "ISN_INVENTORY", null) },
@@ -899,7 +899,18 @@ namespace SqlDBManager
 
                             row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
                             ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
-                            mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                            //mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+
+
+                            if (ValuesManager.ContainsInRewrite(tableName))
+                            {
+                                mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
+                            }
+                            else
+                            {
+                                mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                            }
+
                             mainCatalogValues.Add(row[uniqueValueColumnName]);
                             countOfImports++;
                         }// Если значения по ключу High нет в записях главного каталога
@@ -921,7 +932,18 @@ namespace SqlDBManager
                             MessageBox.Show(row[highLevelColumnName]);
                             row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
                             ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
-                            mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                            //mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+
+
+                            if (ValuesManager.ContainsInRewrite(tableName))
+                            {
+                                mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
+                            }
+                            else
+                            {
+                                mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                            }
+
                             mainCatalogValues.Add(row[uniqueValueColumnName]);
                             countOfImports++;
                         }
@@ -931,7 +953,17 @@ namespace SqlDBManager
                             row[highLevelColumnName] = "'null'";
                             row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
                             ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
-                            mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                            //mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+
+                            if (ValuesManager.ContainsInRewrite(tableName))
+                            {
+                                mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
+                            }
+                            else
+                            {
+                                mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                            }
+
                             mainCatalogValues.Add(row[uniqueValueColumnName]);
                             countOfImports++;
                         }
@@ -966,6 +998,7 @@ namespace SqlDBManager
                             if (row[parentIdColumn] == tuple.Item1)
                             {
                                 row[parentIdColumn] = tuple.Item2;
+                                row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
 
                                 if (ValuesManager.ContainsInRewrite(tableName))
                                 {
@@ -1020,21 +1053,22 @@ namespace SqlDBManager
 
                                 if (!mainCatalogValues.Contains(row[highLevelColumnName]))
                                 {
-                                    foreach (Dictionary<string, string> sameRow in allFromDaughterData)
-                                    {
-                                        if (sameRow[idLikeColumnName] == row[highLevelColumnName] && ValuesManager.ContainsInRewrite(tableName))
-                                        {
-                                            mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(sameRow, excludeColumns), tableName));
-                                            mainCatalogValues.Add(sameRow[idLikeColumnName]);
-                                            break;
-                                        }
-                                        else if (sameRow[idLikeColumnName] == row[highLevelColumnName] && !ValuesManager.ContainsInRewrite(tableName))
-                                        {
-                                            mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(sameRow, excludeColumns));
-                                            mainCatalogValues.Add(sameRow[idLikeColumnName]);
-                                            break;
-                                        }
-                                    }
+                                    row[highLevelColumnName] = "'null'";
+                                    //foreach (Dictionary<string, string> sameRow in allFromDaughterData)
+                                    //{
+                                    //    if (sameRow[idLikeColumnName] == row[highLevelColumnName] && ValuesManager.ContainsInRewrite(tableName))
+                                    //    {
+                                    //        mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(sameRow, excludeColumns), tableName));
+                                    //        mainCatalogValues.Add(sameRow[idLikeColumnName]);
+                                    //        break;
+                                    //    }
+                                    //    else if (sameRow[idLikeColumnName] == row[highLevelColumnName] && !ValuesManager.ContainsInRewrite(tableName))
+                                    //    {
+                                    //        mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(sameRow, excludeColumns));
+                                    //        mainCatalogValues.Add(sameRow[idLikeColumnName]);
+                                    //        break;
+                                    //    }
+                                    //}
                                 }
 
                                 if (ValuesManager.ContainsInRewrite(tableName))
@@ -1127,6 +1161,64 @@ namespace SqlDBManager
             //}
             return countOfImports;
         }
+
+        public static bool RenameBeforeMergeTableColumn(DBCatalog mainCatalog, DBCatalog daughterCatalog, BackgroundWorker worker)
+        {
+            if (Consts.DEBUG_MOD)
+            {
+                foreach (string tableName in DefaultTablesValues.RenamedColumns.Keys)
+                {
+                    mainCatalog.RenameColumn(tableName, DefaultTablesValues.RenamedColumns[tableName].Item1.Item1, DefaultTablesValues.RenamedColumns[tableName].Item1.Item2);
+                    daughterCatalog.RenameColumn(tableName, DefaultTablesValues.RenamedColumns[tableName].Item1.Item1, DefaultTablesValues.RenamedColumns[tableName].Item1.Item2);
+                }
+            }
+            else
+            {
+                try
+                {
+                    foreach (string tableName in DefaultTablesValues.RenamedColumns.Keys)
+                    {
+                        mainCatalog.RenameColumn(tableName, DefaultTablesValues.RenamedColumns[tableName].Item1.Item1, DefaultTablesValues.RenamedColumns[tableName].Item1.Item2);
+                        daughterCatalog.RenameColumn(tableName, DefaultTablesValues.RenamedColumns[tableName].Item1.Item1, DefaultTablesValues.RenamedColumns[tableName].Item1.Item2);
+                    }
+                }
+                catch (Exception error)
+                {
+                    worker.ReportProgress(WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public static bool RenameAfterMergeTableColumn(DBCatalog mainCatalog, DBCatalog daughterCatalog, BackgroundWorker worker)
+        {
+            if (Consts.DEBUG_MOD)
+            {
+                foreach (string tableName in DefaultTablesValues.RenamedColumns.Keys)
+                {
+                    mainCatalog.RenameColumn(tableName, DefaultTablesValues.RenamedColumns[tableName].Item2.Item1, DefaultTablesValues.RenamedColumns[tableName].Item2.Item2);
+                    //daughterCatalog.RenameColumn(tableName, DefaultTablesValues.RenamedColumns[tableName].Item2.Item1, DefaultTablesValues.RenamedColumns[tableName].Item2.Item2);
+                }
+            }
+            else
+            {
+                try
+                {
+                    foreach (string tableName in DefaultTablesValues.RenamedColumns.Keys)
+                    {
+                        mainCatalog.RenameColumn(tableName, DefaultTablesValues.RenamedColumns[tableName].Item2.Item1, DefaultTablesValues.RenamedColumns[tableName].Item2.Item2);
+                        //daughterCatalog.RenameColumn(tableName, DefaultTablesValues.RenamedColumns[tableName].Item2.Item1, DefaultTablesValues.RenamedColumns[tableName].Item2.Item2);
+                    }
+                }
+                catch (Exception error)
+                {
+                    worker.ReportProgress(WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
     public static class ValuesManager
@@ -1213,8 +1305,13 @@ namespace SqlDBManager
             Dictionary<string, List<Tuple<string, string>>> rewriteDict = ReturnTableValuesRewriteDict(tableName);
             foreach (string columnName in rewriteDict.Keys)
             {
+                
                 foreach (Tuple<string, string> keysTuple in rewriteDict[columnName])
                 {
+                    //if (tableName == "tblINVENTORY")
+                    //{
+                    //    MessageBox.Show("Now value: " + row[columnName] + "  " + keysTuple.Item1 + "  " + keysTuple.Item2 + "   " + columnName);
+                    //}
                     if (row[columnName] == keysTuple.Item1)
                     {
                         row[columnName] = keysTuple.Item2;
@@ -1324,6 +1421,18 @@ namespace SqlDBManager
                 }
             }
             return "";
+        }
+
+        public static void InsertNewValue(DBCatalog mainCatalog, Dictionary<string, string> row, string tableName, List<string> excludeColumns)
+        {
+            if (ContainsInRewrite(tableName))
+            {
+                mainCatalog.InsertValue(tableName, RepareColumnsValues(RemoveUnnecessary(row, excludeColumns), tableName));
+            }
+            else
+            {
+                mainCatalog.InsertValue(tableName, RemoveUnnecessary(row, excludeColumns));
+            }
         }
 
         public static void RestoreUser(string userLogin)

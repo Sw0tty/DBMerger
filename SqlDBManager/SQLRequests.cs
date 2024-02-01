@@ -94,7 +94,11 @@ namespace SqlDBManager
         /// </summary>
         public static string InsertDictValueRequst(string catalog, string tableName, Dictionary<string, string> data, bool withoutID = false)
         {
-            if (withoutID)
+            if (tableName == "")
+            {
+                return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("'null'", "''")})";
+            }
+            else if (withoutID)
             {
                 return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES ({string.Join(", ", data.Values).Replace("'null'", "null")})";
             }
@@ -183,6 +187,12 @@ namespace SqlDBManager
                    $"JOIN [{catalog}].sys.tables AS t ON fk.parent_object_id = t.object_id " +
                    $"JOIN [{catalog}].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id " +
                    $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalog}].sys.tables WHERE name = '{tableName}') and c.name != 'ID' and t.name != '{tableName}'";
+        }
+
+        public static string RenameTableColumnRequest(string catalog, string tableName, string oldColumnName, string newColumnName)
+        {
+            // EXEC [5572_verh].[dbo].sp_rename 'tblINVENTORY.ISN_INVENTORY_STORAGE', 'ISN_STORAGE_MEDIUM', 'COLUMN';
+            return $"EXEC [{catalog}].[dbo].sp_rename '{tableName}.{oldColumnName}', '{newColumnName}', 'COLUMN';";
         }
 
         public static string AddForeignKeyOnTable_old(string catalog, string repairTableName, string referenceTableName, string linkColumn)

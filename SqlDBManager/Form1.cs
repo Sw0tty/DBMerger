@@ -181,6 +181,8 @@ namespace SqlDBManager
         {
             if (!mergerBackWorker.IsBusy)
             {
+                progressBar1.Value = 0;
+                progressBar2.Value = 0;
                 mergerBackWorker.RunWorkerAsync();
             }
         }
@@ -204,6 +206,7 @@ namespace SqlDBManager
             daughterCatalog.OpenConnection();
 
             SqlTransaction transaction = mainCatalog.StartTransaction();
+            SqlTransaction transaction2 = daughterCatalog.StartTransaction();
 
             int countTables = daughterCatalog.SelectCountTables();
             
@@ -258,6 +261,13 @@ namespace SqlDBManager
                         
                         if (successOperation)
                         {
+                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Вносим временные изменения в таблицы...");
+
+                            successOperation = MergeManager.RenameBeforeMergeTableColumn(mainCatalog, daughterCatalog, worker);
+                        }
+
+                        if (successOperation)
+                        {
                             worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Необходимые правки успешно применены!");
 
 
@@ -285,14 +295,24 @@ namespace SqlDBManager
 
                         if (successOperation)
                         {
+                            worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Заключение слияния ---");
+                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Возвращаем временные изменения...");
+
+                            successOperation = MergeManager.RenameAfterMergeTableColumn(mainCatalog, daughterCatalog, worker);
+                        }
+
+                        if (successOperation)
+                        {
                             MessageBox.Show("NEXT STEP COMMIT!");
-                            transaction.Commit();
+                            //transaction.Commit();
+                            transaction2.Rollback();
                             e.Result = "Слияние успешно завершено!";
                             ProgramMessages.MergeCompletedMessage();
                         }
                         else
                         {
                             transaction.Rollback();
+                            transaction2.Rollback();
                             ProgramMessages.ErrorMessage();
                         }
                     }
@@ -467,19 +487,23 @@ namespace SqlDBManager
 
         private void button10_Click(object sender, EventArgs e)
         {
+            string sss = "'hhhhh'bbbbb'ggggg'";
 
-            tabControl1.SelectedIndex--;
+            MessageBox.Show("'" + sss.Substring(1, sss.Length - 2).Replace("'", "\''") + "'");
+            //tabControl1.SelectedIndex--;
 
 
-            for (int i = 10; i <= 100; i += 10)
-            {
-                for (int j = 10; j <= 100; j += 10)
-                {
-                    progressBar1.Value = j;
-                    Thread.Sleep(1000);
-                }
-                progressBar2.Value = i;
-            }
+
+
+            //for (int i = 10; i <= 100; i += 10)
+            //{
+            //    for (int j = 10; j <= 100; j += 10)
+            //    {
+            //        progressBar1.Value = j;
+            //        Thread.Sleep(1000);
+            //    }
+            //    progressBar2.Value = i;
+            //}
 
 
 

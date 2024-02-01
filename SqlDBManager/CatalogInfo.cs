@@ -262,6 +262,12 @@ namespace SqlDBManager
             AnotherRequest(request, connection, ReturnTransaction());
         }
 
+        public void RenameColumn(string tableName, string oldColumnName, string newColumnName)
+        {
+            string request = SQLRequests.RenameTableColumnRequest(Catalog, tableName, oldColumnName, newColumnName);
+            AnotherRequest(request, connection, ReturnTransaction());
+        }
+
         /// <summary>
         /// Вставляет переданные данные в указанную таблицу (ID формируется средствами SQL)
         /// </summary>
