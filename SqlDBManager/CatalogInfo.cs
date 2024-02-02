@@ -117,7 +117,11 @@ namespace SqlDBManager
         public List<Dictionary<string, string>> SelectAllFrom(string tableName, Dictionary<string, List<string>> filter = null, bool filterIN = true, List<string> columns = null)
         {
             string request = SQLRequests.AllRecordsRequest(Catalog, tableName, filter, filterIN, columns);
-            return ReturnListDictsFromDB(request, SelectColumnsNames(tableName), connection, ReturnTransaction());
+            if (columns == null)
+            {
+                columns = SelectColumnsNames(tableName);
+            }
+            return ReturnListDictsFromDB(request, columns, connection, ReturnTransaction());
         }
 
         public List<string> SelectTablesNames(bool likeDBString = false, bool itsRow = false)

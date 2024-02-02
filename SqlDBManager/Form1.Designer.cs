@@ -61,6 +61,7 @@
             this.button8 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.label13 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
@@ -78,7 +79,6 @@
             this.listBox2 = new System.Windows.Forms.ListBox();
             this.mergerBackWorker = new System.ComponentModel.BackgroundWorker();
             this.dirtyJobBackWorker = new System.ComponentModel.BackgroundWorker();
-            this.label13 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -112,6 +112,7 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(506, 629);
             this.tabControl1.TabIndex = 3;
+            this.tabControl1.Selecting += new System.Windows.Forms.TabControlCancelEventHandler(this.tabControl1_Selecting);
             // 
             // tabPage1
             // 
@@ -147,6 +148,8 @@
             this.button4.Text = "Далее";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
+            this.button4.MouseEnter += new System.EventHandler(this.button4_MouseEnter);
+            this.button4.MouseLeave += new System.EventHandler(this.button4_MouseLeave);
             // 
             // groupBox2
             // 
@@ -197,6 +200,8 @@
             this.checkConnectionDaughterCatalog.Text = "button3";
             this.checkConnectionDaughterCatalog.UseVisualStyleBackColor = true;
             this.checkConnectionDaughterCatalog.Click += new System.EventHandler(this.checkConnectionDaughterCatalog_Click);
+            this.checkConnectionDaughterCatalog.MouseEnter += new System.EventHandler(this.checkConnectionDaughterCatalog_MouseEnter);
+            this.checkConnectionDaughterCatalog.MouseLeave += new System.EventHandler(this.checkConnectionDaughterCatalog_MouseLeave);
             // 
             // label6
             // 
@@ -432,6 +437,8 @@
             this.button8.Text = "Начать слияние";
             this.button8.UseVisualStyleBackColor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
+            this.button8.MouseEnter += new System.EventHandler(this.button8_MouseEnter);
+            this.button8.MouseLeave += new System.EventHandler(this.button8_MouseLeave);
             // 
             // button5
             // 
@@ -444,6 +451,8 @@
             this.button5.Text = "Назад";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.button5.MouseEnter += new System.EventHandler(this.button5_MouseEnter);
+            this.button5.MouseLeave += new System.EventHandler(this.button5_MouseLeave);
             // 
             // tabPage3
             // 
@@ -460,6 +469,15 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Процесс слияния";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(232, 500);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(41, 13);
+            this.label13.TabIndex = 7;
+            this.label13.Text = "label13";
             // 
             // label12
             // 
@@ -491,6 +509,7 @@
             this.textBoxStatus.Location = new System.Drawing.Point(19, 18);
             this.textBoxStatus.Multiline = true;
             this.textBoxStatus.Name = "textBoxStatus";
+            this.textBoxStatus.ReadOnly = true;
             this.textBoxStatus.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxStatus.Size = new System.Drawing.Size(458, 435);
             this.textBoxStatus.TabIndex = 3;
@@ -513,6 +532,8 @@
             this.button6.Text = "Назад";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
+            this.button6.MouseEnter += new System.EventHandler(this.button6_MouseEnter);
+            this.button6.MouseLeave += new System.EventHandler(this.button6_MouseLeave);
             // 
             // tabPage4
             // 
@@ -617,15 +638,6 @@
             this.dirtyJobBackWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.dirtyJobBackWorker_DoWork);
             this.dirtyJobBackWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.dirtyJobBackWorker_ProgressChanged);
             this.dirtyJobBackWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.dirtyJobBackWorker_RunWorkerCompleted);
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(232, 500);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(41, 13);
-            this.label13.TabIndex = 7;
-            this.label13.Text = "label13";
             // 
             // Form1
             // 

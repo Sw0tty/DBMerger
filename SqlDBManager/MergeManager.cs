@@ -119,8 +119,8 @@ namespace SqlDBManager
             { "tblLOCATION",
                 new Tuple<string, string, List<string>, string, string, string>("NOTE", "ISN_LOCATION", null, "ISN_HIGH_LOCATION", null, null) },
 
-/*            { "tblARCHIVE_STORAGE",
-                new Tuple<string, string, List<string>, string, string, string>("", null, null, null, null, null) },*/
+            { "tblARCHIVE_STORAGE",
+                new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, null, null) },
 
             //{ "tblARCHIVE_PASSPORT",
             //    new Tuple<string, string, List<string>, string, string, string>("PASS_YEAR", "ISN_PASSPORT", null, null, "ISN_ARCHIVE", null) },
@@ -230,7 +230,7 @@ namespace SqlDBManager
             { "tblREF_QUESTION",
                 new Tuple<string, string, List<string>, string, string, string>(null, "ISN_REF_QUESTION", null, null, "ISN_QUESTION", null) },
 
-            { "tblUNIT",
+            { "tblUNIT", // "ISN_HIGH_UNIT"
                 new Tuple<string, string, List<string>, string, string, string>("NAME", "ISN_UNIT", null, null, "ISN_INVENTORY", null) },
 
             { "tblUNIT_ELECTRONIC",
@@ -501,8 +501,8 @@ namespace SqlDBManager
             }
             //long lastId = Convert.ToInt64(string.Join("", mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)).Replace("\'", ""));
             // 1. Берем все записи двух каталогов в виде словарей
-            List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
-            List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
+            List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
+            List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
             List<Dictionary<string, string>> reservedRows = new List<Dictionary<string, string>>();
 
             // 2. Берем список значений по уникальному полю из главного каталога
@@ -703,8 +703,8 @@ namespace SqlDBManager
             }
             else if (tableName == "tblARCHIVE")
             {
-                List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
-                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
+                List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
+                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
 
                 ValuesManager.AddTablesToRewriteDict(foreigns);
                 ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(allFromDaughterData[0][idLikeColumnName], allFromMainData[0][idLikeColumnName]));
@@ -715,8 +715,8 @@ namespace SqlDBManager
             else if (uniqueValueColumnName != null && idLikeColumnName != null && highLevelColumnName == null && parentIdColumn == null)
             {
                 // 1. Берем все записи двух каталогов в виде словарей
-                List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
-                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
+                List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
+                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
                 List<Dictionary<string, string>> reservedRows = new List<Dictionary<string, string>>();
 
 
@@ -763,7 +763,9 @@ namespace SqlDBManager
                             mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                         }*/
 
-                        ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
+                        //ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
+
+                        mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
 
                         countOfImports++;
                     }
@@ -772,8 +774,8 @@ namespace SqlDBManager
             } // Если есть родителей, то отбор данных совершенно иной
             else if (uniqueValueColumnName != null && idLikeColumnName != null && highLevelColumnName == null && parentIdColumn != null)
             {
-                List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName);
-                List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName);
+                List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
+                List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
 
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
                 // List<Dictionary<string, string>> reservedRows = new List<Dictionary<string, string>>();
@@ -829,7 +831,9 @@ namespace SqlDBManager
                                 mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                             }*/
 
-                            ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
+                            //ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
+
+                            mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
 
                             countOfImports++;
                         }
@@ -840,8 +844,8 @@ namespace SqlDBManager
             } // Если из параметров только родитель
             else if (uniqueValueColumnName == null && idLikeColumnName == null && highLevelColumnName == null && parentIdColumn != null)
             {
-                List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName);
-                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
+                List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
+                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
 
                 Consts.AddTaskInBlock(allFromDaughterData.Count);
@@ -874,7 +878,9 @@ namespace SqlDBManager
                                     mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                                 }*/
 
-                                ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
+                                //ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
+
+                                mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
 
                                 countOfImports++;
                             }
@@ -885,8 +891,8 @@ namespace SqlDBManager
             }
             else if (uniqueValueColumnName != null && idLikeColumnName != null && highLevelColumnName != null && parentIdColumn == null)
             {
-                List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
-                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
+                List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
+                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
                 List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainData, uniqueValueColumnName);
                 List<Dictionary<string, string>> reservedRows = new List<Dictionary<string, string>>();
 
@@ -925,7 +931,9 @@ namespace SqlDBManager
                                 mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                             }*/
 
-                            ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
+                            //ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
+
+                            mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
 
                             mainCatalogValues.Add(row[uniqueValueColumnName]);
                             countOfImports++;
@@ -959,7 +967,9 @@ namespace SqlDBManager
                                 mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                             }*/
 
-                            ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
+                            //ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
+
+                            mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
 
                             mainCatalogValues.Add(row[uniqueValueColumnName]);
                             countOfImports++;
@@ -981,7 +991,9 @@ namespace SqlDBManager
                                 mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                             }*/
 
-                            ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
+                            //ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
+
+                            mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
 
                             mainCatalogValues.Add(row[uniqueValueColumnName]);
                             countOfImports++;
@@ -992,8 +1004,8 @@ namespace SqlDBManager
             }
             else if (uniqueValueColumnName == null && idLikeColumnName != null && highLevelColumnName == null && parentIdColumn != null)
             {
-                List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName);
-                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
+                List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
+                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
 
 
@@ -1029,7 +1041,9 @@ namespace SqlDBManager
                                     mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                                 }*/
 
-                                ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
+                                //ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
+
+                                mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
 
                                 countOfImports++;
                             }
@@ -1040,9 +1054,9 @@ namespace SqlDBManager
             }
             else if (uniqueValueColumnName == null && idLikeColumnName != null && highLevelColumnName != null && parentIdColumn != null)
             {
+                List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
+                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
 
-                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
-                List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName);
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
                 List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainCatalog, highLevelColumnName);
 
@@ -1106,7 +1120,9 @@ namespace SqlDBManager
                                     mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                                 }*/
 
-                                ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
+                                //ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
+
+                                mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
 
                                 ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
                                 countOfImports++;
@@ -1323,6 +1339,15 @@ namespace SqlDBManager
             return countImports;
         }
 
+        public static Dictionary<string, string> MakeEditsInRow(Dictionary<string, string> row, string tableName, List<string> excludeColumns = null)
+        {
+            row = RemoveUnnecessary(row, excludeColumns);
+            if (ContainsInRewrite(tableName))
+                row = RepareColumnsValues(row, tableName);       
+            row = EscapeSymbolsInRow(row);
+            return row;
+        }
+
         public static Dictionary<string, string> RemoveUnnecessary(Dictionary<string, string> row, List<string> excludeColumns)
         {
             if (excludeColumns != null)
@@ -1350,7 +1375,6 @@ namespace SqlDBManager
                     }
                 }
             }
-            // DeleteTableFromRewrite(tableName);
             return row;
         }
 
@@ -1454,7 +1478,7 @@ namespace SqlDBManager
             return "";
         }
 
-        public static void InsertNewValue(DBCatalog mainCatalog, Dictionary<string, string> row, string tableName, List<string> excludeColumns)
+       /* public static void InsertNewValue(DBCatalog mainCatalog, Dictionary<string, string> row, string tableName, List<string> excludeColumns)
         {
             if (ContainsInRewrite(tableName))
             {
@@ -1464,15 +1488,20 @@ namespace SqlDBManager
             {
                 mainCatalog.InsertValue(tableName, RemoveUnnecessary(row, excludeColumns));
             }
-        }
+        }*/
 
-        public static Dictionary<string, string> EscapeSymbolsInRow(Dictionary<string, string> row)
+        static Dictionary<string, string> EscapeSymbolsInRow(Dictionary<string, string> row)
         {
+            Dictionary<string, string> escapedRow = new Dictionary<string, string>(row);
+
             foreach (string key in row.Keys)
             {
-                row[key] = $"'{row[key].Substring(1, row[key].Length - 2).Replace("'", "\''")}'";
+                if (escapedRow[key].Contains("'"))
+                {
+                    escapedRow[key] = $"'{row[key].Substring(1, row[key].Length - 2).Replace("'", "\''")}'";
+                }
             }
-            return row;
+            return escapedRow;
         }
 
         public static List<Dictionary<string, string>> FilterRecordsFrom(List<Dictionary<string, string>> allFromTable, string filterColumn, string filterValue)
@@ -1481,16 +1510,21 @@ namespace SqlDBManager
 
             foreach (Dictionary<string, string> row in allFromTable)
             {
-                if (row.ContainsKey("Deleted") && row["Deleted"] == "'1'")
+                //if (row.ContainsKey("Deleted") && row["Deleted"] == "'1'")
+                //{
+                //    continue;
+                //}
+                //else
+                //{
+                //    if (row[filterColumn] == filterValue)
+                //    {
+                //        filteredData.Add(row);
+                //    }
+                //}
+
+                if (row[filterColumn] == filterValue)
                 {
-                    continue;
-                }
-                else
-                {
-                    if (row[filterColumn] == filterValue)
-                    {
-                        filteredData.Add(row);
-                    }
+                    filteredData.Add(row);
                 }
             }
             return filteredData;

@@ -114,14 +114,11 @@ namespace SqlDBManager
 
             TrimAllOnForm();
 
-            if (textBox1.Text != textBox4.Text)
+            if (textBox1.Text != textBox4.Text && !dirtyJobBackWorker.IsBusy)
             {
-                if (!dirtyJobBackWorker.IsBusy)
-                {
-                    mainDBGroupBox.Enabled = false;
-                    groupBox2.Enabled = false;
-                    dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox1.Text, textBox1.Text, textBox2.Text, textBox3.Text));
-                }
+                mainDBGroupBox.Enabled = false;
+                groupBox2.Enabled = false;
+                dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox1.Text, textBox1.Text, textBox2.Text, textBox3.Text));               
             }
             else
             {
@@ -135,14 +132,11 @@ namespace SqlDBManager
 
             TrimAllOnForm();
 
-            if (textBox1.Text != textBox4.Text)
+            if (textBox1.Text != textBox4.Text && !dirtyJobBackWorker.IsBusy)
             {
-                if (!dirtyJobBackWorker.IsBusy)
-                {
-                    mainDBGroupBox.Enabled = false;
-                    groupBox2.Enabled = false;
-                    dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox2.Text, textBox4.Text, textBox5.Text, textBox6.Text));
-                }
+                mainDBGroupBox.Enabled = false;
+                groupBox2.Enabled = false;
+                dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox2.Text, textBox4.Text, textBox5.Text, textBox6.Text));
             }
             else
             {
@@ -156,14 +150,11 @@ namespace SqlDBManager
 
             TrimAllOnForm();
 
-            if (textBox1.Text != textBox4.Text)
+            if (textBox1.Text != textBox4.Text && !dirtyJobBackWorker.IsBusy)
             {
-                if (!dirtyJobBackWorker.IsBusy)
-                {
-                    mainDBGroupBox.Enabled = false;
-                    groupBox2.Enabled = false;
-                    dirtyJobBackWorker.RunWorkerAsync();
-                }
+                mainDBGroupBox.Enabled = false;
+                groupBox2.Enabled = false;
+                dirtyJobBackWorker.RunWorkerAsync();
             }
             else
             {
@@ -174,17 +165,32 @@ namespace SqlDBManager
         // Логика второй вкладки формы
         private void button5_Click(object sender, EventArgs e)
         {
-            tabControl1.SelectedIndex--;
+            WrapTabControl(tabControl1, false);
+        }
+
+        public void WrapTabControl(TabControl tabControl, bool nextPage)
+        {
+            Consts.TAB_ACCESS = false;
+            if (nextPage)
+                tabControl.SelectedIndex++;
+            else tabControl.SelectedIndex--;
+            Consts.TAB_ACCESS = true;
         }
 
         public void button8_Click(object sender, EventArgs e)
         {
             if (!mergerBackWorker.IsBusy)
             {
-                progressBar1.Value = 0;
-                progressBar2.Value = 0;
+                SetToDefaultStatusBlock();
                 mergerBackWorker.RunWorkerAsync();
             }
+        }
+
+        public void SetToDefaultStatusBlock()
+        {
+            Consts.ClearAllTasks();
+            progressBar1.Value = 0;
+            progressBar2.Value = 0;
         }
 
         private void mergerBackWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -211,7 +217,7 @@ namespace SqlDBManager
             int countTables = daughterCatalog.SelectCountTables();
             
 
-            Invoke(new Action(() => tabControl1.SelectedIndex++ ));
+            Invoke(new Action(() => WrapTabControl(tabControl1, true) ));
             Invoke(new Action(() => textBoxStatus.Clear() ));
 
             worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Предварительные проверки ---");
@@ -297,7 +303,7 @@ namespace SqlDBManager
                         {
                             worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Заключение слияния ---");
                             worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Возвращаем временные изменения...");
-
+                            transaction2.Rollback();
                             successOperation = MergeManager.RenameAfterMergeTableColumn(mainCatalog, daughterCatalog, worker);
                         }
 
@@ -305,7 +311,6 @@ namespace SqlDBManager
                         {
                             MessageBox.Show("NEXT STEP COMMIT!");
                             //transaction.Commit();
-                            transaction2.Rollback();
                             e.Result = "Слияние успешно завершено!";
                             ProgramMessages.MergeCompletedMessage();
                         }
@@ -402,8 +407,8 @@ namespace SqlDBManager
                 string text1 = "";
                 string text2 = "";
 
-                Invoke(new Action(() => text1 = comboBox1.Text));
-                Invoke(new Action(() => text2 = comboBox1.Text));
+                Invoke(new Action(() => text1 = comboBox1.Text ));
+                Invoke(new Action(() => text2 = comboBox1.Text ));
 
                 if (!ConnectionChecker.CheckConnection(text1,
                                                        textBox1.Text,
@@ -421,7 +426,7 @@ namespace SqlDBManager
                 else
                 {
                     Invoke(new Action(() => SaveProperties() ));
-                    Invoke(new Action(() => tabControl1.SelectedIndex++ ));
+                    Invoke(new Action(() => WrapTabControl(tabControl1, true) ));
                 }
             }
 
@@ -444,12 +449,80 @@ namespace SqlDBManager
 
         private void button6_Click(object sender, EventArgs e)
         {
-            tabControl1.SelectedIndex--;
+            WrapTabControl(tabControl1, false);
         }
 
+        private void tabControl1_Selecting(object sender, TabControlCancelEventArgs e)
+        {
+            if (Consts.DEBUG_MOD)
+            {
+                e.Cancel = false;
+            }
+            else
+            {
+                e.Cancel = Consts.TAB_ACCESS;
+            }
+        }
 
+        private void checkConnectionMainCatalog_MouseEnter(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
 
+        private void checkConnectionMainCatalog_MouseLeave(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Default;
+        }
 
+        private void checkConnectionDaughterCatalog_MouseEnter(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void checkConnectionDaughterCatalog_MouseLeave(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Default;
+        }
+
+        private void button4_MouseEnter(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void button4_MouseLeave(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Default;
+        }
+
+        private void button8_MouseEnter(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void button8_MouseLeave(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Default;
+        }
+
+        private void button5_MouseLeave(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Default;
+        }
+
+        private void button5_MouseEnter(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void button6_MouseEnter(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void button6_MouseLeave(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Default;
+        }
 
 
 
@@ -807,16 +880,6 @@ namespace SqlDBManager
             }
             //MessageBox.Show(output);
             cnn.Close();
-        }
-
-        private void checkConnectionMainCatalog_MouseEnter(object sender, EventArgs e)
-        {
-            Cursor = Cursors.Hand;
-        }
-
-        private void checkConnectionMainCatalog_MouseLeave(object sender, EventArgs e)
-        {
-            Cursor = Cursors.Default;
         }
 
         private void button2_Click(object sender, EventArgs e)

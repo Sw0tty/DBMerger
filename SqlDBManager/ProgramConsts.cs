@@ -24,8 +24,12 @@ namespace SqlDBManager
 
     public static class Consts
     {
-        // При истине выбрасывает исключения и прекращает работу с указание места ошибки
+        /// <summary>
+        /// При истине выбрасывает исключения и прекращает работу с указание места ошибки
+        /// </summary>
         public const bool DEBUG_MOD = true;
+
+        public static bool TAB_ACCESS = true;
         public static int COUNT_OF_ALL_TASKS = SpecialTablesValues.DefaultTables.Count + SpecialTablesValues.WithoutKeysTables.Count + 162 + 3;
         public static int MAIN_PROGRESS_NOW_STATUS = 0;
         public static int COUNT_OF_ALL_BLOCK_TASKS = 0;
@@ -42,6 +46,13 @@ namespace SqlDBManager
 
         public static void ClearTasksBlock()
         {
+            COUNT_OF_ALL_BLOCK_TASKS = 0;
+            BLOCK_PROGRESS_NOW = 0;
+        }
+
+        public static void ClearAllTasks()
+        {
+            MAIN_PROGRESS_NOW_STATUS = 0;
             COUNT_OF_ALL_BLOCK_TASKS = 0;
             BLOCK_PROGRESS_NOW = 0;
         }
