@@ -29,8 +29,17 @@ namespace SqlDBManager
         /// </summary>
         public const bool DEBUG_MOD = true;
 
+        public static bool MERGE_WAS_SUCCESS = false;
+        public static bool LOG_SAVED = false;
+        public static string LAST_MAIN_CATALOG = null;
+        public static string LAST_DAUGHTER_CATALOG = null;
         public static bool TAB_ACCESS = true;
-        public static int COUNT_OF_ALL_TASKS = SpecialTablesValues.DefaultTables.Count + SpecialTablesValues.WithoutKeysTables.Count + 162 + 3;
+        public static int COUNT_OF_ALL_TASKS = SpecialTablesValues.DefaultTables.Count +
+                                               SpecialTablesValues.WithoutKeysTables.Count +
+                                               MergeManager.DefaultTablesParams.Count +
+                                               MergeManager.LinksTablesParams.Count +
+                                               3 +
+                                               100;
         public static int MAIN_PROGRESS_NOW_STATUS = 0;
         public static int COUNT_OF_ALL_BLOCK_TASKS = 0;
         public static int BLOCK_PROGRESS_NOW = 0;
@@ -73,6 +82,17 @@ namespace SqlDBManager
         {
             BLOCK_PROGRESS_NOW++;
             return BLOCK_PROGRESS_NOW * 100 / COUNT_OF_ALL_BLOCK_TASKS;
+        }
+
+        public static void AddToAllTasks(int countTasks)
+        {
+            COUNT_OF_ALL_TASKS += countTasks;
+        }
+
+        public static void WriteLastCatalogs(string mainCatalog, string daughterCatalog)
+        {
+            LAST_MAIN_CATALOG = mainCatalog;
+            LAST_DAUGHTER_CATALOG = daughterCatalog;
         }
     }
 }

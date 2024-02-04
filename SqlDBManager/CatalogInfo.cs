@@ -169,6 +169,12 @@ namespace SqlDBManager
             return ReturnDictFromDB(request, connection, ReturnTransaction());
         }
 
+        public Dictionary<string, string> SelectCatalogVersion()
+        {
+            string request = SQLRequests.SelectVersionRequest(Catalog);
+            return ReturnDictFromDB(request, connection, ReturnTransaction());
+        }
+
         /// <summary>
         /// Возвращает список наименований столбцов переданной таблицы
         /// </summary>
@@ -178,7 +184,7 @@ namespace SqlDBManager
             return ReturnListFromDB(request, connection, ReturnTransaction(), likeDBString, itsRow);
         }
 
-        public List<string> SelectLinksTables()
+/*        public List<string> SelectLinksTables()
         {
             List<string> linksTables = new List<string>()
             {
@@ -239,7 +245,7 @@ namespace SqlDBManager
                 "tblDOCUMENT"
             };
             return linksTables;
-        }
+        }*/
 
         /// <summary>
         /// Очищает переданную таблицу
@@ -247,16 +253,7 @@ namespace SqlDBManager
         /// <returns>Количество удаленных записей</returns>
         public int ClearTable(string tableName)
         {
-            //SqlDataAdapter adapter = new SqlDataAdapter();
             string request = SQLRequests.ClearTableRequest(Catalog, tableName);
-
-/*            adapter.DeleteCommand = new SqlCommand(request, connection);
-            adapter.DeleteCommand.Transaction = ReturnTransaction();
-            int deletedCount = adapter.DeleteCommand.ExecuteNonQuery();
-
-            adapter.Dispose();
-            return deletedCount;*/
-
             return DeleteAdapter(request, connection, ReturnTransaction());
         }
 

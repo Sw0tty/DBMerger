@@ -26,19 +26,19 @@ namespace SqlDBManager
         // Запрос количества таблиц в каталоге
         public static string CountTablesRequest(string catalog)
         {
-            return $"SELECT COUNT(TABLE_NAME) FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'";
+            return $"SELECT COUNT(TABLE_NAME) FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE';";
         }
 
         // Запрос наименований всех таблиц
         public static string AllTablesRequest(string catalog)
         {
-            return $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME";
+            return $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME;";
         }
 
         // Запрос таблицы содержащие логи
         public static string LogTablesRequest(string catalog)
         {
-            return $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' and TABLE_NAME like '%log' ORDER BY TABLE_NAME";
+            return $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' and TABLE_NAME like '%log' ORDER BY TABLE_NAME;";
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace SqlDBManager
         /// </summary>
         public static string ClearTableRequest(string catalog, string table)
         {
-            return $"DELETE [{catalog}].[dbo].[{table}]";
+            return $"DELETE [{catalog}].[dbo].[{table}];";
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace SqlDBManager
         /// </summary>
         public static string DeleteRowRequest(string catalog, string tableName, string filterColumn, string filterValue)
         {
-            return $"DELETE [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue}";
+            return $"DELETE [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace SqlDBManager
         /// </summary>
         public static string LastInsertRecordRequest(string catalog, string columns, string tableName, string orderByColumn)
         {
-            return $"SELECT TOP 1 {columns} FROM [{catalog}].[dbo].[{tableName}] ORDER BY {orderByColumn} DESC";
+            return $"SELECT TOP 1 {columns} FROM [{catalog}].[dbo].[{tableName}] ORDER BY {orderByColumn} DESC;";
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace SqlDBManager
         /// </summary>
         public static string CountRowsRequest(string catalog, string table)
         {
-            return $"SELECT COUNT(*) FROM [{catalog}].[dbo].[{table}]";
+            return $"SELECT COUNT(*) FROM [{catalog}].[dbo].[{table}];";
         }
 
         // Запрос на обновление ID
@@ -120,6 +120,11 @@ namespace SqlDBManager
             return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
         }
 
+        public static string SelectVersionRequest(string catalog)
+        {
+            return $"SELECT [Value], [Text] FROM [{catalog}].[dbo].[tblConstantsSpec] WHERE Value = 'Version'";
+        }
+
         /// <summary>
         /// Запрос на получение всех записей переданной таблицы
         /// Содержит фильтрацию WHERE key IN (value, value, ...) и фильтрацию WHERE key NOT IN (value, value, ...) в зависимости от переданных параметров
@@ -137,7 +142,7 @@ namespace SqlDBManager
                 return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} NOT IN ({string.Join(", ", filter[string.Join("", filter.Keys)])});";
             if (filter != null && !filterIN && strColumns.Contains("Deleted"))
                 return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} NOT IN ({string.Join(", ", filter[string.Join("", filter.Keys)])}) and Deleted = '0';";
-            return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}]";
+            return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}];";
         }
 
         // Получение наименований столбцов переданной таблицы
@@ -151,7 +156,7 @@ namespace SqlDBManager
         /// </summary>
         public static string OneColumnRequest(string column, string catalog, string tableName)
         {
-            return $"SELECT {column} FROM [{catalog}].[dbo].[{tableName}]";
+            return $"SELECT {column} FROM [{catalog}].[dbo].[{tableName}];";
         }
 
         /// <summary>
@@ -159,22 +164,22 @@ namespace SqlDBManager
         /// </summary>
         public static string CatalogPathRequest(string catalog)
         {
-            return $"SELECT TOP 1 physical_name FROM [{catalog}].sys.database_files";
+            return $"SELECT TOP 1 physical_name FROM [{catalog}].sys.database_files;";
         }
         
         public static string CreateBackupRequest(string catalog, string path)
         {
-            return $"BACKUP DATABASE [{catalog}] TO DISK = '{path}' ";
+            return $"BACKUP DATABASE [{catalog}] TO DISK = '{path}';";
         }
 
         public static string DeleteBackupRequest(string path)
         {
-            return $"EXECUTE master.dbo.xp_delete_file 0, N'{path}'";
+            return $"EXECUTE master.dbo.xp_delete_file 0, N'{path}';";
         }
 
         public static string RestoreBackupRequest(string catalog, string path)
         {
-            return $"ALTER DATABASE [{catalog}] SET single_user WITH rollback immediate; DROP DATABASE [{catalog}] RESTORE DATABASE [{catalog}] FROM DISK = '{path}'";
+            return $"ALTER DATABASE [{catalog}] SET single_user WITH rollback immediate; DROP DATABASE [{catalog}] RESTORE DATABASE [{catalog}] FROM DISK = '{path}';";
         }
 
         /// <summary>
@@ -186,7 +191,7 @@ namespace SqlDBManager
                    $"FROM [{catalog}].sys.foreign_key_columns AS fk " +
                    $"JOIN [{catalog}].sys.tables AS t ON fk.parent_object_id = t.object_id " +
                    $"JOIN [{catalog}].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id " +
-                   $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalog}].sys.tables WHERE name = '{tableName}') and c.name != 'ID' and t.name != '{tableName}'";
+                   $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalog}].sys.tables WHERE name = '{tableName}') and c.name != 'ID' and t.name != '{tableName}';";
         }
 
         public static string RenameTableColumnRequest(string catalog, string tableName, string oldColumnName, string newColumnName)
@@ -216,5 +221,30 @@ namespace SqlDBManager
                 JOIN[TestDB].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id
                 WHERE fk.referenced_object_id = (SELECT object_id FROM [TestDB].sys.tables WHERE name = 'tblFUND') and c.name != 'ID' and t.name = 'tblACT')
   ALTER TABLE[TestDB].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[TestDB].[dbo].[tblFUND] (ISN_FUND);*/
+    
+
+
+        public static class RecalculationRequests
+        {
+            public static string CountAllFunds(string catalog, int passportYear)
+            {
+                return $"SELECT COUNT(ISN_FUND) FROM [{catalog}].[dbo].[tblFUND] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and Deleted = '0';";
+            }
+
+            public static string CountTypeFunds(string catalog, int passportYear, string fundType)
+            {
+                return $"SELECT COUNT(ISN_FUND) FROM [{catalog}].[dbo].[tblFUND] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and ISN_DOC_TYPE = '{fundType}' and Deleted = '0';";
+            }
+
+            public static string CountAllInCategoryFunds(string catalog, int passportYear, List<string> docsFundTypes, char fundType)
+            {
+                return $"SELECT COUNT(ISN_FUND) FROM [{catalog}].[dbo].[tblFUND] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and ISN_DOC_TYPE in ({string.Join(", ", docsFundTypes)}) and CARRIER_TYPE = '{fundType}' and Deleted = '0';";
+            }
+
+            public static string CountAllInCategoryInventory(string catalog, int passportYear, List<string> docsFundTypes, char fundType)
+            {
+                return $"SELECT COUNT(ISN_INVENTORY) FROM [{catalog}].[dbo].[tblINVENTORY] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and ISN_DOC_TYPE in ({string.Join(", ", docsFundTypes)}) and CARRIER_TYPE = '{fundType}' and Deleted = '0';";
+            }
+        }
     }
 }

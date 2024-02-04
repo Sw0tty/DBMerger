@@ -25,7 +25,26 @@ namespace NotesNamespace
     }
 
     
+    public static class RecalculationConsts
+    {
+        public static char Electronic = 'E';
+        public static char Traditional = 'T';
 
+        public static List<string> PaperFunds = new List<string>()
+        {
+            "'1'", "'2'", "'3'", "'4'",
+        };
+
+        public static List<string> TraditionalFunds = new List<string>()
+        {
+            "'5'", "'6'", "'7'", "'8'",
+        };
+
+        public static List<string> MicroformFunds = new List<string>()
+        {
+            "'9'",
+        };
+    }
     
 
     public static class SpecialTablesValues
@@ -59,8 +78,8 @@ namespace NotesNamespace
         }*/
     }
 
-    
 
+    //   FROM [TestDB].[dbo].[tblFUND] where CreationDateTime <= '{passportYear}0101 00:00:00.000'
 
     /*public class CatalogInfo
     {

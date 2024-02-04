@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using NotesNamespace;
 using System.Transactions;
 using System.Windows.Forms.VisualStyles;
+using System.IO;
 
 namespace SqlDBManager
 {
@@ -107,6 +108,24 @@ namespace SqlDBManager
             textBox6.Text = textBox6.Text.Trim(' ');
         }
 
+        public void WrapTabControl(TabControl tabControl, bool nextPage)
+        {
+            Consts.TAB_ACCESS = false;
+            if (nextPage)
+                tabControl.SelectedIndex++;
+            else tabControl.SelectedIndex--;
+            Consts.TAB_ACCESS = true;
+        }
+
+        public void SetToDefaultStatusBlock()
+        {
+            Consts.ClearAllTasks();
+            Consts.MERGE_WAS_SUCCESS = false;
+            Consts.LOG_SAVED = false;
+            progressBar1.Value = 0;
+            progressBar2.Value = 0;
+        }
+
         // Логика первой вкладки формы
         private void checkConnectionMainCatalog_Click(object sender, EventArgs e)
         {
@@ -168,29 +187,60 @@ namespace SqlDBManager
             WrapTabControl(tabControl1, false);
         }
 
-        public void WrapTabControl(TabControl tabControl, bool nextPage)
-        {
-            Consts.TAB_ACCESS = false;
-            if (nextPage)
-                tabControl.SelectedIndex++;
-            else tabControl.SelectedIndex--;
-            Consts.TAB_ACCESS = true;
-        }
-
         public void button8_Click(object sender, EventArgs e)
         {
-            if (!mergerBackWorker.IsBusy)
+            WrapTabControl(tabControl1, true);
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            WrapTabControl(tabControl1, false);
+        }
+
+        private void mergeLog_Click(object sender, EventArgs e)
+        {
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.InitialDirectory = "c:\\";
+                saveFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+                saveFileDialog.FilterIndex = 1;
+                saveFileDialog.FileName = "MergeLog";
+                saveFileDialog.RestoreDirectory = true;
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    using (StreamWriter writer = new StreamWriter(saveFileDialog.FileName))
+                    {
+                        writer.WriteLine($"Merge log of '{Consts.LAST_MAIN_CATALOG}' and '{Consts.LAST_DAUGHTER_CATALOG}' catalogs. \n");
+
+                        foreach (char s in textBoxStatus.Text)
+                        {
+                            writer.Write(s);
+                        }
+                    }
+                    Consts.LOG_SAVED = true;
+                }
+            }
+        }
+
+        private void startMerge_Click(object sender, EventArgs e)
+        {
+            if (Consts.MERGE_WAS_SUCCESS && !Consts.LOG_SAVED)
+            {
+                if (MessageBox.Show("Результаты слияния не были сохранены в файл. Продолжить без сохранения?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    if (!mergerBackWorker.IsBusy)
+                    {
+                        SetToDefaultStatusBlock();
+                        mergerBackWorker.RunWorkerAsync();
+                    }
+                }
+            }
+            else if (!mergerBackWorker.IsBusy)
             {
                 SetToDefaultStatusBlock();
                 mergerBackWorker.RunWorkerAsync();
             }
-        }
-
-        public void SetToDefaultStatusBlock()
-        {
-            Consts.ClearAllTasks();
-            progressBar1.Value = 0;
-            progressBar2.Value = 0;
         }
 
         private void mergerBackWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -200,13 +250,17 @@ namespace SqlDBManager
             string text1 = "";
             string text2 = "";
 
-            Invoke(new Action(() => text1 = comboBox1.Text));
-            Invoke(new Action(() => text2 = comboBox1.Text));
+            Invoke(new Action(() => {
+                text1 = comboBox1.Text;
+                text2 = comboBox1.Text;
+                mergeLog.Enabled = false;
+                textBoxStatus.Clear();
+            }));
+
 
             // 1. Создаем объекты соединения
             DBCatalog mainCatalog = new DBCatalog(text1, textBox1.Text, textBox2.Text, textBox3.Text);
             DBCatalog daughterCatalog = new DBCatalog(text2, textBox4.Text, textBox5.Text, textBox6.Text);
-
             // 2. Открываем соединения с БД
             mainCatalog.OpenConnection();
             daughterCatalog.OpenConnection();
@@ -214,130 +268,138 @@ namespace SqlDBManager
             SqlTransaction transaction = mainCatalog.StartTransaction();
             SqlTransaction transaction2 = daughterCatalog.StartTransaction();
 
-            int countTables = daughterCatalog.SelectCountTables();
-            
-
-            Invoke(new Action(() => WrapTabControl(tabControl1, true) ));
-            Invoke(new Action(() => textBoxStatus.Clear() ));
+            Consts.WriteLastCatalogs(mainCatalog.ReturnCatalog(), daughterCatalog.ReturnCatalog());
 
             worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Предварительные проверки ---");
             worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидируем каталоги на возможность слияния...");
 
-            if (mainCatalog.ValidateCountTables(countTables))
+            if (Validator.ValidateVersions(mainCatalog, daughterCatalog))
             {
-                if (mainCatalog.ValidateNamesTables(daughterCatalog.SelectTablesNames()))
+                if (Validator.ValidateCountTables(mainCatalog, daughterCatalog))
                 {
-                    if (daughterCatalog.ValidateDefaultTables(worker))
+                    if (Validator.ValidateNamesTables(mainCatalog, daughterCatalog))
                     {
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидация успешно завершена!");
-
-                        // после данных запросов создается резервная копия
-
-                        // --------------
-                        // Создаем резервную копию для транзакций
-                        /*                    BackupManager backupManager = new BackupManager(mainCatalog.SelectCatalogPath()[0], mainCatalog.ReturnCatalog(), text1, textBox2.Text.Trim(' '), textBox3.Text.Trim(' '));
-
-                                            backupManager.OpenConnection();
-                                            backupManager.CreateReserveBackup(mainCatalog.ReturnCatalog());
-
-                                            MessageBox.Show("Created");
-
-                                            mainCatalog.CloseConnection();
-
-                                            backupManager.RestoreFromBackup(mainCatalog.ReturnCatalog());
-
-                                            MessageBox.Show("restored");
-
-
-                                            backupManager.DeleteReserveBackup();
-
-                                            MessageBox.Show("Deleted");
-
-                                            MessageBox.Show("Break");*/
-                        // --------------
-
-                        
-
-
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Вносим правки ключей таблиц...");
-
-                        bool successOperation = MergeManager.RepeirDBKeys(mainCatalog, worker);
-
-                        //  ALTER TABLE[5307_main].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[5307_main].[dbo].[tblFUND](ISN_FUND);
-                        
-                        if (successOperation)
+                        // daughterCatalog.ValidateDefaultTables(worker)
+                        if (Validator.ValidateDefaultTablesValues(mainCatalog, daughterCatalog, worker))
                         {
-                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Вносим временные изменения в таблицы...");
+                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидация успешно завершена!");
 
-                            successOperation = MergeManager.RenameBeforeMergeTableColumn(mainCatalog, daughterCatalog, worker);
-                        }
+                            // после данных запросов создается резервная копия
 
-                        if (successOperation)
-                        {
-                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Необходимые правки успешно применены!");
+                            // --------------
+                            // Создаем резервную копию для транзакций
+                            /*                    BackupManager backupManager = new BackupManager(mainCatalog.SelectCatalogPath()[0], mainCatalog.ReturnCatalog(), text1, textBox2.Text.Trim(' '), textBox3.Text.Trim(' '));
+
+                                                backupManager.OpenConnection();
+                                                backupManager.CreateReserveBackup(mainCatalog.ReturnCatalog());
+
+                                                MessageBox.Show("Created");
+
+                                                mainCatalog.CloseConnection();
+
+                                                backupManager.RestoreFromBackup(mainCatalog.ReturnCatalog());
+
+                                                MessageBox.Show("restored");
 
 
-                            // Очищаем логи
-                            worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Очистка логов ---");
-                            successOperation = MergeManager.ClearLogs(mainCatalog, worker);
-                        }
+                                                backupManager.DeleteReserveBackup();
 
-                        if (successOperation)
-                        {
-                            // Проходим по дефолтным таблицам
-                            worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Обработка дефолтных таблиц ---");
-                            MergeManager.ProcessSkipTables(mainCatalog, daughterCatalog, worker);
-                            successOperation = MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, worker);
-                        }
+                                                MessageBox.Show("Deleted");
 
-                        MessageBox.Show("End of default tables");
+                                                MessageBox.Show("Break");*/
+                            // --------------
 
-                        if (successOperation)
-                        {
-                            // Проходим по таблицам с ключами (провряем на уникальность)
-                            worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Обработка таблиц с внешними ключами ---");
-                            successOperation = MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, worker);
-                        }
 
-                        if (successOperation)
-                        {
-                            worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Заключение слияния ---");
-                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Возвращаем временные изменения...");
-                            transaction2.Rollback();
-                            successOperation = MergeManager.RenameAfterMergeTableColumn(mainCatalog, daughterCatalog, worker);
-                        }
 
-                        if (successOperation)
-                        {
-                            MessageBox.Show("NEXT STEP COMMIT!");
-                            //transaction.Commit();
-                            e.Result = "Слияние успешно завершено!";
-                            ProgramMessages.MergeCompletedMessage();
+
+                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Вносим правки ключей таблиц...");
+
+                            bool successOperation = MergeManager.RepeirDBKeys(mainCatalog, worker);
+
+                            //  ALTER TABLE[5307_main].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[5307_main].[dbo].[tblFUND](ISN_FUND);
+
+                            if (successOperation)
+                            {
+                                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Вносим временные изменения в таблицы...");
+
+                                successOperation = MergeManager.RenameBeforeMergeTableColumn(mainCatalog, daughterCatalog, worker);
+                            }
+
+                            if (successOperation)
+                            {
+                                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Необходимые правки успешно применены!");
+
+
+                                // Очищаем логи
+                                worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Очистка логов ---");
+                                successOperation = MergeManager.ClearLogs(mainCatalog, worker);
+                            }
+
+                            if (successOperation)
+                            {
+                                // Проходим по дефолтным таблицам
+                                worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Обработка дефолтных таблиц ---");
+                                MergeManager.ProcessSkipTables(mainCatalog, daughterCatalog, worker);
+                                successOperation = MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, worker);
+                            }
+
+                            MessageBox.Show("End of default tables");
+
+                            if (successOperation)
+                            {
+                                // Проходим по таблицам с ключами (провряем на уникальность)
+                                worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Обработка таблиц с внешними ключами ---");
+                                successOperation = MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, worker);
+                            }
+
+                            if (successOperation)
+                            {
+                                worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Заключение слияния ---");
+                                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Возвращаем временные изменения...");
+                                transaction2.Rollback();
+                                successOperation = MergeManager.RenameAfterMergeTableColumn(mainCatalog, daughterCatalog, worker);
+                            }
+
+                            if (successOperation)
+                            {
+                                MessageBox.Show("NEXT STEP COMMIT!");
+                                //transaction.Commit();
+                                Consts.MERGE_WAS_SUCCESS = true;
+
+                                e.Result = "Слияние успешно завершено!";
+                                ProgramMessages.MergeCompletedMessage();
+                            }
+                            else
+                            {
+                                transaction.Rollback();
+                                transaction2.Rollback();
+                                ProgramMessages.ErrorMessage();
+                            }
                         }
                         else
                         {
-                            transaction.Rollback();
-                            transaction2.Rollback();
-                            ProgramMessages.ErrorMessage();
+                            e.Result = "Дефолтные таблицы содержат недопустимые значения!";
+                            ProgramMessages.ValidationErrorMessage();
                         }
                     }
                     else
                     {
-                        e.Result = "Дефолтные таблицы содержат недопустимые значения!";
+                        e.Result = "Наименования таблиц не совпадают!";
                         ProgramMessages.ValidationErrorMessage();
                     }
                 }
                 else
                 {
-                    e.Result = "Наименования таблиц не совпадают!";
+                    e.Result = $"В главном каталоге {Validator.TablesCount.Item1} таблиц, когда в дочернем {Validator.TablesCount.Item2} таблиц.";
                     ProgramMessages.ValidationErrorMessage();
                 }
             }
             else
             {
-                e.Result = "Количество таблиц в заданных каталогах не равно!";
+                e.Result = "Версии каталогов не сходятся!";
                 ProgramMessages.ValidationErrorMessage();
             }
+            Invoke(new Action(() => mergeLog.Enabled = true ));
             mainCatalog.CloseConnection();
             daughterCatalog.CloseConnection();
         }
@@ -447,11 +509,6 @@ namespace SqlDBManager
 
         }
 
-        private void button6_Click(object sender, EventArgs e)
-        {
-            WrapTabControl(tabControl1, false);
-        }
-
         private void tabControl1_Selecting(object sender, TabControlCancelEventArgs e)
         {
             if (Consts.DEBUG_MOD)
@@ -543,6 +600,45 @@ namespace SqlDBManager
 
 
 
+
+
+
+
+
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            textBoxStatus.AppendText("dfgfdg" + "\r\n");
+            textBoxStatus.AppendText("dfgfdg" + "\r\n");
+            textBoxStatus.AppendText("dfgfdg" + "\r\n");
+            textBoxStatus.AppendText("dfgfdg" + "\r\n");
+            textBoxStatus.AppendText("dfgfdg" + "\r\n");
+            textBoxStatus.AppendText("" + "\r\n");
+            textBoxStatus.AppendText("dfgfdg" + "\r\n");
+            textBoxStatus.AppendText("dfgfdg" + "\r\n");
+
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.InitialDirectory = "c:\\";
+                saveFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+                saveFileDialog.FilterIndex = 1;
+                saveFileDialog.FileName = "MergeLog";
+                saveFileDialog.RestoreDirectory = true;
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    using (StreamWriter writer = new StreamWriter(saveFileDialog.FileName))
+                    {
+                        writer.WriteLine($"Merge log of '' and '' \n");
+
+                        foreach (char s in textBoxStatus.Text)
+                        {
+                            writer.Write(s);
+                        }
+                    }
+                }
+            }
+        }
 
         public void Mess()
         {

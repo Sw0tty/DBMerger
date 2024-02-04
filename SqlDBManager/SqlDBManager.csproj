@@ -75,6 +75,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArchiveTables.cs" />
     <Compile Include="BackupManager.cs" />
     <Compile Include="CatalogInfo.cs" />
     <Compile Include="ConnectionChecker.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="ProgramMessages.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SQLRequests.cs" />
+    <Compile Include="Validator.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

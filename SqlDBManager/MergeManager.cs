@@ -123,10 +123,12 @@ namespace SqlDBManager
                 new Tuple<string, string, List<string>, string, string, string>(null, null, null, null, null, null) },
 
             //{ "tblARCHIVE_PASSPORT",
-            //    new Tuple<string, string, List<string>, string, string, string>("PASS_YEAR", "ISN_PASSPORT", null, null, "ISN_ARCHIVE", null) },
+            //    new Tuple<string, string, List<string>, string, string, string>("PASS_YEAR", "ISN_PASSPORT", null, null, null, null) },
 
+            // ---In recalc---
             //{ "tblARCHIVE_STATS",
             //    new Tuple<string, string, List<string>, string, string, string>(null, "ISN_ARCHIVE_STATS", null, null, "ISN_PASSPORT", null) },
+            // -------
 
             { "tblFUND",
                 new Tuple<string, string, List<string>, string, string, string>("FUND_NAME_SHORT", "ISN_FUND", null, null, null, "FUND_NUM_2") },
@@ -275,6 +277,13 @@ namespace SqlDBManager
             { "tblDOCUMENT",
                 new Tuple<string, string, List<string>, string, string, string>("NAME", "ISN_DOCUM", null, null, "ISN_UNIT", null) },
         };
+
+        public static Dictionary<string, Tuple<string, string, List<string>, string, string, string>> RecalcTablesParams { get; } = new Dictionary<string, Tuple<string, string, List<string>, string, string, string>>
+        {
+            { "tblARCHIVE_STATS",
+                new Tuple<string, string, List<string>, string, string, string>(null, "ISN_ARCHIVE_STATS", null, null, "ISN_PASSPORT", null) },
+        };
+
         // (uniqueValueColumnName == null && highLevelColumnName == null && parentIdColumn == null)
         public static bool RepeirDBKeys(DBCatalog mainCatalog, BackgroundWorker worker)
         {
@@ -412,7 +421,7 @@ namespace SqlDBManager
             //ReturnProcessStatus(worker, mainCatalog, linksTablesFunctions, daughterCatalog);
 
 
-            foreach (string tableName in mainCatalog.SelectLinksTables())
+            foreach (string tableName in ArchiveTables.OrderedCompositeTables)
             {
                 int mainCount = mainCatalog.SelectCountRowsTable(tableName);
                 int daughterCount = daughterCatalog.SelectCountRowsTable(tableName);
@@ -457,7 +466,7 @@ namespace SqlDBManager
 
         static void ReturnProcessStatus(BackgroundWorker worker, DBCatalog mainCatalog, Dictionary<string, Func<DBCatalog, DBCatalog, string, int>> functionsDict = null, DBCatalog daughterCatalog = null)
         {
-            foreach (string tableName in mainCatalog.SelectLinksTables())
+            foreach (string tableName in ArchiveTables.OrderedCompositeTables)
             {
                 int checkEmpty;
                 if (daughterCatalog != null)
@@ -1502,6 +1511,27 @@ namespace SqlDBManager
                 }
             }
             return escapedRow;
+        }
+
+        /// <summary>
+        /// Вносит изменения в БД. Корректирует невалидные данные дефолтных таблиц
+        /// </summary>
+        public static void RebuildCatalog(DBCatalog catalog, BackgroundWorker worker, Dictionary<string, List<Dictionary<string, string>>> problemTables, Dictionary<string, Tuple<string, Dictionary<string, List<string>>>> defaultTables)
+        {
+            foreach (string tableName in problemTables.Keys)
+            {
+                foreach (Dictionary<string, string> row in problemTables[tableName])
+                {
+                    Dictionary<string, string> foreignsDict = catalog.SelectTablesAndForeignKeyUsage(tableName);
+
+                    foreach (string updateTable in foreignsDict.Keys)
+                    {
+                        catalog.UpdateValue(updateTable, foreignsDict[updateTable], defaultTables[tableName].Item1, foreignsDict[updateTable], row[foreignsDict[updateTable]]);
+                    }
+                    catalog.DeleteValue(tableName, string.Join("", defaultTables[tableName].Item2.Keys), row[string.Join("", defaultTables[tableName].Item2.Keys)]);
+                }
+            }
+            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Каталог '{catalog}' скорректирован.");
         }
 
         public static List<Dictionary<string, string>> FilterRecordsFrom(List<Dictionary<string, string>> allFromTable, string filterColumn, string filterValue)
