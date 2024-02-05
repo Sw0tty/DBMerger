@@ -363,7 +363,7 @@ namespace SqlDBManager
                             if (successOperation)
                             {
                                 MessageBox.Show("NEXT STEP COMMIT!");
-                                //transaction.Commit();
+                                transaction.Commit();
                                 Consts.MERGE_WAS_SUCCESS = true;
 
                                 e.Result = "Слияние успешно завершено!";

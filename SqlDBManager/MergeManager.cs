@@ -706,9 +706,77 @@ namespace SqlDBManager
                 }
             }*/
 
-            if (tableName == "tblDOCUMENT_STATS")
+/*            if (tableName == "tblDOCUMENT_STATS")
             {
                 
+            }*/
+
+            if (tableName == "tblDOCUMENT_STATS")
+            {
+                List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
+                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
+                Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
+
+
+                string secondParent = "ISN_INVENTORY";
+
+                List<Tuple<string, string>> secondParentTuplesKeys = ValuesManager.ReturnTuplesValuesSpecialDict(tableName, secondParent);
+
+                List<Tuple<string, string>> oldTwoParents = ValuesManager.ReturnFilteredTuples(allFromMainCatalog, parentIdColumn, secondParent);
+
+
+
+                Consts.AddTaskInBlock(allFromDaughterData.Count);
+
+
+
+                foreach (Tuple<string, string> tuple in tableReservedValues[parentIdColumn])
+                {
+                    List<Dictionary<string, string>> allFromMainDataWhere = new List<Dictionary<string, string>>();
+
+                    foreach (Tuple<string, string> pairParants in oldTwoParents)
+                    {
+                        if (tuple.Item1 == pairParants.Item1)
+                        {
+                            if (pairParants.Item2 != "'null'")
+                            {
+                                foreach (Tuple<string, string> secondParentKeys in secondParentTuplesKeys)
+                                {
+                                    if (pairParants.Item2 == secondParentKeys.Item1)
+                                    {
+                                        allFromMainDataWhere = ValuesManager.FilterRecordsFrom(allFromMainCatalog, parentIdColumn, tuple.Item2, secondParent, secondParentKeys.Item2);
+                                        goto exitloop;
+                                    }
+                                }
+                            }
+                            allFromMainDataWhere = ValuesManager.FilterRecordsFrom(allFromMainCatalog, parentIdColumn, tuple.Item2);
+                            goto exitloop;
+                        }
+                    }
+
+                    //List<Dictionary<string, string>> allFromMainDataWhere = ValuesManager.FilterRecordsFrom(allFromMainCatalog, parentIdColumn, tuple.Item2);
+                    exitloop:
+                    if (allFromMainDataWhere.Count > 0)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        foreach (Dictionary<string, string> row in allFromDaughterData)
+                        {
+                            if (row[parentIdColumn] == tuple.Item1)
+                            {
+                                row[parentIdColumn] = tuple.Item2;
+                                row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+
+                                mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+
+                                countOfImports++;
+                            }
+                        }
+                    }
+                    //worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
+                }
             }
             else if (tableName == "tblARCHIVE")
             {
@@ -783,6 +851,9 @@ namespace SqlDBManager
             } // Если есть родителей, то отбор данных совершенно иной
             else if (uniqueValueColumnName != null && idLikeColumnName != null && highLevelColumnName == null && parentIdColumn != null)
             {
+                if (tableName == SpecialTablesValues.SpecailTablePair.Item1)
+                    ValuesManager.AddNewTableToSpecialRewrite(foreigns);
+
                 List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
                 List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
 
@@ -813,6 +884,8 @@ namespace SqlDBManager
                             if (foreigns.Count > 0)
                             {
                                 ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(filterFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
+                                if (tableName == SpecialTablesValues.SpecailTablePair.Item1)
+                                    ValuesManager.AddPairKeysToSpecialRewrite(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(filterFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
                             }
                         }
                         else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]))
@@ -829,6 +902,8 @@ namespace SqlDBManager
                             if (foreigns.Count > 0)
                             {
                                 ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
+                                if (tableName == SpecialTablesValues.SpecailTablePair.Item1)
+                                    ValuesManager.AddPairKeysToSpecialRewrite(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
                             }
 
 /*                            if (ValuesManager.ContainsInRewrite(tableName))
@@ -1298,6 +1373,8 @@ namespace SqlDBManager
         // 1. Ищем в словаре по таблице. Если нету, то делаем поиск по уникальности. В итоге след пункт
         // 2. Берем
 
+        static Dictionary<string, Dictionary<string, List<Tuple<string, string>>>> DocStatsRewriteDict { get; set; } = new Dictionary<string, Dictionary<string, List<Tuple<string, string>>>>();
+
         static string InsertRequestInTable { get; set; } = "";
 
         public static Dictionary<string, List<Tuple<string, string>>> ReturnTableValuesReserveDict(string tableName)
@@ -1308,6 +1385,16 @@ namespace SqlDBManager
         public static void DeleteTableFromReserve(string tableName)
         {
             ReserveDict.Remove(tableName);
+        }
+
+        public static Dictionary<string, List<Tuple<string, string>>> ReturnTableValuesSpecialRewriteDict(string tableName)
+        {
+            return DocStatsRewriteDict[tableName]; 
+        }
+
+        public static List<Tuple<string, string>> ReturnTuplesValuesSpecialDict(string tableName, string columnName)
+        {
+            return DocStatsRewriteDict[tableName][columnName];
         }
 
         public static Dictionary<string, List<Tuple<string, string>>> ReturnTableValuesRewriteDict(string tableName)
@@ -1352,7 +1439,11 @@ namespace SqlDBManager
         {
             row = RemoveUnnecessary(row, excludeColumns);
             if (ContainsInRewrite(tableName))
-                row = RepareColumnsValues(row, tableName);       
+                row = RepareColumnsValues(row, tableName);
+
+            if (tableName == SpecialTablesValues.SpecailTablePair.Item2)
+                row = SpecialRepareColumnsValues(row, tableName);
+
             row = EscapeSymbolsInRow(row);
             return row;
         }
@@ -1367,6 +1458,23 @@ namespace SqlDBManager
                 }
             }
             row.Remove("ID");
+            return row;
+        }
+
+        public static Dictionary<string, string> SpecialRepareColumnsValues(Dictionary<string, string> row, string tableName)
+        {
+            Dictionary<string, List<Tuple<string, string>>> rewriteDict = ReturnTableValuesSpecialRewriteDict(tableName);
+            foreach (string columnName in rewriteDict.Keys)
+            {
+                foreach (Tuple<string, string> keysTuple in rewriteDict[columnName])
+                {
+                    if (row[columnName] == keysTuple.Item1)
+                    {
+                        row[columnName] = keysTuple.Item2;
+                        break;
+                    }
+                }
+            }
             return row;
         }
 
@@ -1393,6 +1501,23 @@ namespace SqlDBManager
             foreach (Dictionary<string, string> dataDict in allFromMainData)
                 listData.Add(dataDict[columnName]);
             return listData;
+        }
+
+        public static List<Tuple<string, string>> ReturnFilteredTuples(List<Dictionary<string, string>> allFromTable, string firstParent, string secondParent)
+        {
+            List<Tuple<string, string>> parents = new List<Tuple<string, string>>();
+
+            foreach (Dictionary<string, string> row in allFromTable)
+            {
+                Tuple<string, string> mayAddTuple = new Tuple<string, string>(row[firstParent], row[secondParent]);
+
+                if (parents.Contains(mayAddTuple))
+                {
+                    continue;
+                }
+                parents.Add(new Tuple<string, string>(row[firstParent], row[secondParent]));
+            }
+            return parents;
         }
 
         public static void AddTablesToRewriteDict(Dictionary<string, string> foreigns)
@@ -1422,6 +1547,18 @@ namespace SqlDBManager
             }
         }
 
+        public static void AddNewTableToSpecialRewrite(Dictionary<string, string> foreigns)
+        {
+            foreach (string inTable in foreigns.Keys)
+            {
+                if (!DocStatsRewriteDict.ContainsKey(inTable))
+                {
+                    DocStatsRewriteDict[inTable] = new Dictionary<string, List<Tuple<string, string>>>();
+                }
+                DocStatsRewriteDict[inTable][foreigns[inTable]] = new List<Tuple<string, string>>();
+            }
+        }
+
         /// <summary>
         /// Добавляет в резервный словарь наименование таблицы и наименое столбца на которые используется ссылка переданной таблицы
         /// </summary>
@@ -1434,6 +1571,21 @@ namespace SqlDBManager
                     ReserveDict[inTable] = new Dictionary<string, List<Tuple<string, string>>>();
                 }
                 ReserveDict[inTable][foreigns[inTable]] = new List<Tuple<string, string>>();
+            }
+        }
+
+        public static void AddPairKeysToSpecialRewrite(Dictionary<string, string> foreigns, string idLikeColumnName, Tuple<string, string> pairKeys)
+        {
+            foreach (string inTable in foreigns.Keys)
+            {
+                foreach (string foreignKey in DocStatsRewriteDict[inTable].Keys)
+                {
+                    if (foreignKey == idLikeColumnName)
+                    {
+                        DocStatsRewriteDict[inTable][idLikeColumnName].Add(pairKeys);
+                    }
+                    continue;
+                }
             }
         }
 
@@ -1534,27 +1686,28 @@ namespace SqlDBManager
             worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Каталог '{catalog}' скорректирован.");
         }
 
-        public static List<Dictionary<string, string>> FilterRecordsFrom(List<Dictionary<string, string>> allFromTable, string filterColumn, string filterValue)
+        public static List<Dictionary<string, string>> FilterRecordsFrom(List<Dictionary<string, string>> allFromTable, string filterColumn, string filterValue, string filterColumn2 = null, string filterValue2 = null)
         {
             List<Dictionary<string, string>> filteredData = new List<Dictionary<string, string>>();
 
-            foreach (Dictionary<string, string> row in allFromTable)
+            if (filterColumn2 == null)
             {
-                //if (row.ContainsKey("Deleted") && row["Deleted"] == "'1'")
-                //{
-                //    continue;
-                //}
-                //else
-                //{
-                //    if (row[filterColumn] == filterValue)
-                //    {
-                //        filteredData.Add(row);
-                //    }
-                //}
-
-                if (row[filterColumn] == filterValue)
+                foreach (Dictionary<string, string> row in allFromTable)
                 {
-                    filteredData.Add(row);
+                    if (row[filterColumn] == filterValue)
+                    {
+                        filteredData.Add(row);
+                    }
+                }
+            }
+            else
+            {
+                foreach (Dictionary<string, string> row in allFromTable)
+                {
+                    if (row[filterColumn] == filterValue && row[filterColumn2] == filterValue2)
+                    {
+                        filteredData.Add(row);
+                    }
                 }
             }
             return filteredData;

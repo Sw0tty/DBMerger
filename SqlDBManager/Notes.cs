@@ -9,7 +9,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+
 
 namespace NotesNamespace
 {
@@ -49,6 +51,10 @@ namespace NotesNamespace
 
     public static class SpecialTablesValues
     {
+
+        public static string SPSP = "tblDOCUMENT_STATS";
+        public static Tuple<string, string> SpecailTablePair = new Tuple<string, string>( "tblINVENTORY", "tblDOCUMENT_STATS");
+
         /// <summary>
         /// Наименование таблицы - (дефолтное значение для корректировки, фильтруемая колонка) - ключи дефолтных значений
         /// </summary>
