@@ -28,7 +28,9 @@ namespace SqlDBManager
         /// При истине выбрасывает исключения и прекращает работу с указание места ошибки
         /// </summary>
         public const bool DEBUG_MOD = true;
+        public const bool FAST_REQUEST_MOD = true;
 
+        public const int MAX_COUNT_OF_IMPORTS = 1000;
         public static bool MERGE_WAS_SUCCESS = false;
         public static bool LOG_SAVED = false;
         public static string LAST_MAIN_CATALOG = null;

@@ -74,6 +74,16 @@ namespace SqlDBManager
             return connection;
         }
 
+        public string ReturnInsertRequest(Dictionary<string, string> row, string tableName)
+        {
+            return SQLRequests.InsertDictValueRequst(Catalog, tableName, row);
+        }
+
+        public string ReturnValues(Dictionary<string, string> row)
+        {
+            return $"(NEWID(), {string.Join(", ", row.Values).Replace("'null'", "null")})";
+        }
+
         public int SelectCountTables()
         {
             string request = SQLRequests.CountTablesRequest(Catalog);
@@ -269,12 +279,6 @@ namespace SqlDBManager
             AnotherRequest(request, connection, ReturnTransaction());
         }
 
-        public void MakeBigInsertRequest()
-        {
-            string requests = ValuesManager.ReturnRequestsToTable();
-            InsertAdapter(requests, connection, ReturnTransaction());
-        }
-
         /// <summary>
         /// Вставляет переданные данные в указанную таблицу (ID формируется средствами SQL)
         /// </summary>
@@ -282,6 +286,22 @@ namespace SqlDBManager
         {
             string request = SQLRequests.InsertDictValueRequst(Catalog, tableName, data, withoutID);
             InsertAdapter(request, connection, ReturnTransaction());
+        }
+
+        public void InsertListOfValues(string request)
+        {
+            InsertAdapter(request, connection, ReturnTransaction());
+        }
+
+        public void SpecialInsertListOfValues(string tableName, string values)
+        {
+            string request = SQLRequests.FastFormerInsertValueRequst(SelectColumnsNames(tableName), Catalog, tableName, values);
+            InsertAdapter(request, connection, ReturnTransaction());
+        }
+
+        public string ListOfValues(string tableName, string values)
+        {
+            return SQLRequests.FastFormerInsertValueRequst(SelectColumnsNames(tableName), Catalog, tableName, values);
         }
 
         public void UpdateValue(string tableName, string updateColumn, string updateValue, string filterColumn, string filterValue)
@@ -307,11 +327,18 @@ namespace SqlDBManager
 
         static void InsertAdapter(string request, SqlConnection connection, SqlTransaction transaction)
         {
+            //MessageBox.Show(tableName);
+            
+
             SqlDataAdapter adapter = new SqlDataAdapter();
 
             adapter.InsertCommand = new SqlCommand(request, connection);
             adapter.InsertCommand.Transaction = transaction;
+
+
             adapter.InsertCommand.ExecuteNonQuery();
+
+            
             adapter.Dispose();
         }
 

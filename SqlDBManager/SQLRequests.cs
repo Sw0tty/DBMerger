@@ -94,15 +94,25 @@ namespace SqlDBManager
         /// </summary>
         public static string InsertDictValueRequst(string catalog, string tableName, Dictionary<string, string> data, bool withoutID = false)
         {
-            if (tableName == "")
+/*            if (tableName == "")
             {
                 return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("'null'", "''")});";
-            }
-            else if (withoutID)
+            }*/
+            if (withoutID)
             {
                 return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES ({string.Join(", ", data.Values).Replace("'null'", "null")});";
             }
             return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("'null'", "null")});";
+        }
+
+        public static string FastFormerInsertValueRequst(List<string> columns, string catalog, string tableName, string values)
+        {
+            /*            if (tableName == "")
+                        {
+                            return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("'null'", "''")});";
+                        }*/
+            return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", columns).Replace('\"', '\'')}) VALUES {values};";
+
         }
 
         /// <summary>

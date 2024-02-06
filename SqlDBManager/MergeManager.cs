@@ -658,7 +658,12 @@ namespace SqlDBManager
         {
             // -------- Общий блок инициализации вне зависимости от переданных парпаметров--------
             int countOfImports = 0;
+            int countOfRequests = 0;
 
+            if (Consts.FAST_REQUEST_MOD)
+            {
+                ValuesManager.ClearRequestsToTable();
+            }
             
 
             long lastId = 0;
@@ -706,19 +711,15 @@ namespace SqlDBManager
                 }
             }*/
 
-/*            if (tableName == "tblDOCUMENT_STATS")
-            {
-                
-            }*/
 
             if (tableName == "tblDOCUMENT_STATS")
             {
                 List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
-                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
+                List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
 
-
                 string secondParent = "ISN_INVENTORY";
+
 
                 List<Tuple<string, string>> secondParentTuplesKeys = ValuesManager.ReturnTuplesValuesSpecialDict(tableName, secondParent);
 
@@ -726,17 +727,96 @@ namespace SqlDBManager
 
 
 
-                Consts.AddTaskInBlock(allFromDaughterData.Count);
 
 
 
-                foreach (Tuple<string, string> tuple in tableReservedValues[parentIdColumn])
+                Consts.AddTaskInBlock(allFromDaughterCatalog.Count);
+
+
+                // parentIdTuple = ISN_FUND
+                foreach (Tuple<string, string> parentIdTuple in tableReservedValues[parentIdColumn])
+                {
+                    List<Dictionary<string, string>> allFromMainDataWhere = new List<Dictionary<string, string>>();
+
+                    // Получаем значения по родителю.
+                    allFromMainDataWhere = ValuesManager.FilterRecordsFrom(allFromMainCatalog, parentIdColumn, parentIdTuple.Item2);
+                    if (allFromMainDataWhere.Count > 0)
+                    {
+                        // Возникает, когда добавились только описи.
+                        // доп проверку на вхождения всех записей. Что-то типа чекнуть по второму родителю. Если таких записей нет, то тот же цикл когда нету, но с доп поиском.
+
+                        //allFromMainDataWhere = ValuesManager.FilterRecordsFrom(allFromMainDataWhere, secondParent, parentIdTuple.Item2);
+
+                        continue;
+                    }
+                    else
+                    {
+                        // Если есть новые фонды или фонды и описи в них
+                        foreach (Dictionary<string, string> row in allFromDaughterCatalog)
+                        {
+                            if (row[parentIdColumn] == parentIdTuple.Item1)
+                            {
+                                row[parentIdColumn] = parentIdTuple.Item2;
+                                row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+
+                                if (row[secondParent] != "'null'")
+                                {
+                                    // тут нужно написать некий поиск и замену на актуальный id
+
+                                    foreach (Tuple<string, string> twoParents in oldTwoParents)
+                                    {
+                                        if (parentIdTuple.Item1 == twoParents.Item1)
+                                        {
+                                            foreach (Tuple<string, string> secondPair in secondParentTuplesKeys)
+                                            {
+                                                if (twoParents.Item1 == secondPair.Item1)
+                                                {
+                                                    row[secondParent] = secondPair.Item2;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (Consts.FAST_REQUEST_MOD)
+                                {
+                                    countOfRequests++;
+                                    ValuesManager.AddToRequest(mainCatalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName)));
+                                }
+                                else
+                                {
+                                    mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                                }
+
+                                //mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+
+                                countOfImports++;
+                            }
+                            
+                        }
+                    }
+
+
+                }
+
+
+
+
+
+
+                // Старый не рабочий
+
+                /*Consts.AddTaskInBlock(allFromDaughterCatalog.Count);
+
+
+                // parentIdTuple = ISN_FUND
+                foreach (Tuple<string, string> parentIdTuple in tableReservedValues[parentIdColumn])
                 {
                     List<Dictionary<string, string>> allFromMainDataWhere = new List<Dictionary<string, string>>();
 
                     foreach (Tuple<string, string> pairParants in oldTwoParents)
                     {
-                        if (tuple.Item1 == pairParants.Item1)
+                        if (parentIdTuple.Item1 == pairParants.Item1)
                         {
                             if (pairParants.Item2 != "'null'")
                             {
@@ -744,39 +824,61 @@ namespace SqlDBManager
                                 {
                                     if (pairParants.Item2 == secondParentKeys.Item1)
                                     {
-                                        allFromMainDataWhere = ValuesManager.FilterRecordsFrom(allFromMainCatalog, parentIdColumn, tuple.Item2, secondParent, secondParentKeys.Item2);
+                                        allFromMainDataWhere = ValuesManager.FilterRecordsFrom(allFromMainCatalog, parentIdColumn, parentIdTuple.Item2, secondParent, secondParentKeys.Item2);
+                                        if (allFromMainDataWhere.Count > 0)
+                                        {
+                                            continue;
+                                        }
+                                        else
+                                        {
+                                            foreach (Dictionary<string, string> row in allFromDaughterCatalog)
+                                            {
+                                                if (row[parentIdColumn] == parentIdTuple.Item1)
+                                                {
+                                                    row[parentIdColumn] = parentIdTuple.Item2;
+                                                    row[secondParent] = secondParentKeys.Item2;
+                                                    row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+
+                                                    mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+
+                                                    countOfImports++;
+                                                }
+                                            }
+                                        }
                                         goto exitloop;
                                     }
                                 }
                             }
-                            allFromMainDataWhere = ValuesManager.FilterRecordsFrom(allFromMainCatalog, parentIdColumn, tuple.Item2);
+                            allFromMainDataWhere = ValuesManager.FilterRecordsFrom(allFromMainCatalog, parentIdColumn, parentIdTuple.Item2);
+                            if (allFromMainDataWhere.Count > 0)
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                foreach (Dictionary<string, string> row in allFromDaughterCatalog)
+                                {
+                                    if (row[parentIdColumn] == parentIdTuple.Item1)
+                                    {
+                                        row[parentIdColumn] = parentIdTuple.Item2;
+                                        row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+
+                                        mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+
+                                        countOfImports++;
+                                    }
+                                }
+                            }
                             goto exitloop;
                         }
                     }
 
-                    //List<Dictionary<string, string>> allFromMainDataWhere = ValuesManager.FilterRecordsFrom(allFromMainCatalog, parentIdColumn, tuple.Item2);
-                    exitloop:
-                    if (allFromMainDataWhere.Count > 0)
-                    {
-                        continue;
-                    }
-                    else
-                    {
-                        foreach (Dictionary<string, string> row in allFromDaughterData)
-                        {
-                            if (row[parentIdColumn] == tuple.Item1)
-                            {
-                                row[parentIdColumn] = tuple.Item2;
-                                row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+                //List<Dictionary<string, string>> allFromMainDataWhere = ValuesManager.FilterRecordsFrom(allFromMainCatalog, parentIdColumn, tuple.Item2);
+                exitloop:
+                    continue;
 
-                                mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
-
-                                countOfImports++;
-                            }
-                        }
-                    }
                     //worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
-                }
+                }*/
             }
             else if (tableName == "tblARCHIVE")
             {
@@ -831,18 +933,17 @@ namespace SqlDBManager
                             ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
                         }
 
-/*                        if (ValuesManager.ContainsInRewrite(tableName))
+                        
+
+                        if (Consts.FAST_REQUEST_MOD)
                         {
-                            mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
+                            countOfRequests++;
+                            ValuesManager.AddToRequest(mainCatalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName)));
                         }
                         else
                         {
-                            mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
-                        }*/
-
-                        //ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
-
-                        mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                            mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                        }
 
                         countOfImports++;
                     }
@@ -906,22 +1007,25 @@ namespace SqlDBManager
                                     ValuesManager.AddPairKeysToSpecialRewrite(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
                             }
 
-/*                            if (ValuesManager.ContainsInRewrite(tableName))
+                            if (Consts.FAST_REQUEST_MOD)
                             {
-                                mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
+                                countOfRequests++;
+                                ValuesManager.AddToRequest(mainCatalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName)));
                             }
                             else
                             {
-                                mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
-                            }*/
-
-                            //ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
-
-                            mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                                mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                            }
 
                             countOfImports++;
                         }
                     }
+                    
+                    /*if (Consts.FAST_REQUEST_MOD && ValuesManager.ReturnRequestsToTable() != "")
+                    {
+                        mainCatalog.InsertListOfValues(ValuesManager.ReturnRequestsToTable());
+                        ValuesManager.ClearRequestsToTable();
+                    }*/
                     worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
                 // ValuesManager.DeleteTableFromReserve(tableName);
@@ -953,18 +1057,16 @@ namespace SqlDBManager
                             {
                                 row[parentIdColumn] = tuple.Item2;
 
-/*                                if (ValuesManager.ContainsInRewrite(tableName))
+
+                                if (Consts.FAST_REQUEST_MOD)
                                 {
-                                    mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
+                                    countOfRequests++;
+                                    ValuesManager.AddToRequest(mainCatalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName)));
                                 }
                                 else
                                 {
-                                    mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
-                                }*/
-
-                                //ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
-
-                                mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                                    mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                                }
 
                                 countOfImports++;
                             }
@@ -1003,21 +1105,16 @@ namespace SqlDBManager
 
                             row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
                             ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
-                            //mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
 
-
-/*                            if (ValuesManager.ContainsInRewrite(tableName))
+                            if (Consts.FAST_REQUEST_MOD)
                             {
-                                mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
+                                countOfRequests++;
+                                ValuesManager.AddToRequest(mainCatalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName)));
                             }
                             else
                             {
-                                mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
-                            }*/
-
-                            //ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
-
-                            mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                                mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                            }
 
                             mainCatalogValues.Add(row[uniqueValueColumnName]);
                             countOfImports++;
@@ -1053,7 +1150,15 @@ namespace SqlDBManager
 
                             //ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
 
-                            mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                            if (Consts.FAST_REQUEST_MOD)
+                            {
+                                countOfRequests++;
+                                ValuesManager.AddToRequest(mainCatalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName)));
+                            }
+                            else
+                            {
+                                mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                            }
 
                             mainCatalogValues.Add(row[uniqueValueColumnName]);
                             countOfImports++;
@@ -1064,20 +1169,18 @@ namespace SqlDBManager
                             row[highLevelColumnName] = "'null'";
                             row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
                             ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
-                            //mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
 
-/*                            if (ValuesManager.ContainsInRewrite(tableName))
+                            if (Consts.FAST_REQUEST_MOD)
                             {
-                                mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
+                                countOfRequests++;
+                                ValuesManager.AddToRequest(mainCatalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName)));
                             }
                             else
                             {
-                                mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
-                            }*/
+                                mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                            }
 
-                            //ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
-
-                            mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                            
 
                             mainCatalogValues.Add(row[uniqueValueColumnName]);
                             countOfImports++;
@@ -1099,8 +1202,6 @@ namespace SqlDBManager
 
                 foreach (Tuple<string, string> tuple in tableReservedValues[parentIdColumn])
                 {
-                    // List<Dictionary<string, string>> allFromMainDataWhere = mainCatalog.SelectRecordsWhere(new List<string>(), tableName, parentIdColumn, tuple.Item2);
-
                     List<Dictionary<string, string>> allFromMainDataWhere = ValuesManager.FilterRecordsFrom(allFromMainCatalog, parentIdColumn, tuple.Item2);
 
                     if (allFromMainDataWhere.Count > 0)
@@ -1116,18 +1217,19 @@ namespace SqlDBManager
                                 row[parentIdColumn] = tuple.Item2;
                                 row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
 
-/*                                if (ValuesManager.ContainsInRewrite(tableName))
+
+
+                                if (Consts.FAST_REQUEST_MOD)
                                 {
-                                    mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
+                                    countOfRequests++;
+                                    ValuesManager.AddToRequest(mainCatalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName)));
                                 }
                                 else
                                 {
-                                    mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
-                                }*/
+                                    mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                                }
 
-                                //ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
-
-                                mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                                
 
                                 countOfImports++;
                             }
@@ -1135,6 +1237,7 @@ namespace SqlDBManager
                     }
                     //worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
+
             }
             else if (uniqueValueColumnName == null && idLikeColumnName != null && highLevelColumnName != null && parentIdColumn != null)
             {
@@ -1206,12 +1309,22 @@ namespace SqlDBManager
 
                                 //ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
 
-                                mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                                if (Consts.FAST_REQUEST_MOD)
+                                {
+                                    countOfRequests++;
+                                    ValuesManager.AddToRequest(mainCatalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName)));
+                                }
+                                else
+                                {
+                                    mainCatalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                                }
+                                
 
                                 ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
                                 countOfImports++;
                             }
                         }
+
                     }
                     //worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
@@ -1235,7 +1348,7 @@ namespace SqlDBManager
             //{
             //    ValuesManager.AddTablesToRewriteDict(foreigns);
 
-                
+
 
 
             //    List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
@@ -1251,7 +1364,7 @@ namespace SqlDBManager
 
             //    foreach (Dictionary<string, string> row in allFromDaughterData)
             //    {
-                    
+
             //        foreach (Tuple<string, string> tuple in tableReservedValues[parentIdColumn])
             //        {
             //            if (row[parentIdColumn] == tuple.Item1)
@@ -1288,6 +1401,26 @@ namespace SqlDBManager
             //    }
             //    // ValuesManager.DeleteTableFromReserve(tableName);
             //}
+
+            //MessageBox.Show(tableName + "   " + mainCatalog.SelectCountRowsTable(tableName));
+            if (Consts.FAST_REQUEST_MOD && countOfRequests > 0)
+            {
+                if (ValuesManager.CountOfInsertValues() > Consts.MAX_COUNT_OF_IMPORTS)
+                {
+                    //string requests = "";
+                    while (ValuesManager.CountOfInsertValues() != 0)
+                    {
+                        mainCatalog.SpecialInsertListOfValues(tableName, ValuesManager.ReturnRequestsToTable(Consts.MAX_COUNT_OF_IMPORTS));
+                        //requests += mainCatalog.ListOfValues(tableName, ValuesManager.ReturnRequestsToTable(Consts.MAX_COUNT_OF_IMPORTS));
+                    }
+                    //mainCatalog.InsertListOfValues(requests);
+                }
+                else
+                {
+                    mainCatalog.SpecialInsertListOfValues(tableName, ValuesManager.ReturnRequestsToTable(Consts.MAX_COUNT_OF_IMPORTS));
+                }
+            }
+            //MessageBox.Show(tableName + " "  + ValuesManager.CountOfInsertValues().ToString());
             return countOfImports;
         }
 
@@ -1375,7 +1508,7 @@ namespace SqlDBManager
 
         static Dictionary<string, Dictionary<string, List<Tuple<string, string>>>> DocStatsRewriteDict { get; set; } = new Dictionary<string, Dictionary<string, List<Tuple<string, string>>>>();
 
-        static string InsertRequestInTable { get; set; } = "";
+        static List<string> ListInsertRequestInTable { get; set; } = new List<string>();
 
         public static Dictionary<string, List<Tuple<string, string>>> ReturnTableValuesReserveDict(string tableName)
         {
@@ -1412,14 +1545,50 @@ namespace SqlDBManager
             return RewriteDict.ContainsKey(tableName);
         }
 
-        public static string ReturnRequestsToTable()
+        public static int CountOfInsertValues()
         {
-            return InsertRequestInTable;
+            return ListInsertRequestInTable.Count;
+        }
+
+        public static void ClearRequestsToTable()
+        {
+            ListInsertRequestInTable.Clear();
+        }
+
+        public static string ReturnRequestsToTable(int countOfValues)
+        {
+            
+            List<string> copy = new List<string>(ListInsertRequestInTable);
+
+
+            List<string> s = new List<string>();
+            for (int i = 0; i < countOfValues; i++)
+            {
+                try
+                {
+                    s.Add(copy[i]);
+                    ListInsertRequestInTable.Remove(copy[i]);
+                    
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    
+                    break;
+                }
+            }
+
+            //ListInsertRequestInTable = copy;
+
+
+            return string.Join(", ", s);
         }
 
         public static void AddToRequest(string rowInsertRequest)
         {
-            InsertRequestInTable += rowInsertRequest + "\n";
+            //InsertRequestInTable += rowInsertRequest + "\n";
+
+            ListInsertRequestInTable.Add(rowInsertRequest);
+
         }
 
         public static int CheckDefaultUsers(List<string> usersLogins, int countImports)
@@ -1441,8 +1610,8 @@ namespace SqlDBManager
             if (ContainsInRewrite(tableName))
                 row = RepareColumnsValues(row, tableName);
 
-            if (tableName == SpecialTablesValues.SpecailTablePair.Item2)
-                row = SpecialRepareColumnsValues(row, tableName);
+            /*if (tableName == SpecialTablesValues.SpecailTablePair.Item2)
+                row = SpecialRepareColumnsValues(row, tableName);*/
 
             row = EscapeSymbolsInRow(row);
             return row;
@@ -1683,7 +1852,7 @@ namespace SqlDBManager
                     catalog.DeleteValue(tableName, string.Join("", defaultTables[tableName].Item2.Keys), row[string.Join("", defaultTables[tableName].Item2.Keys)]);
                 }
             }
-            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Каталог '{catalog}' скорректирован.");
+            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Каталог '{catalog.ReturnCatalog()}' скорректирован.");
         }
 
         public static List<Dictionary<string, string>> FilterRecordsFrom(List<Dictionary<string, string>> allFromTable, string filterColumn, string filterValue, string filterColumn2 = null, string filterValue2 = null)
