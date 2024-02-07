@@ -320,7 +320,7 @@ namespace SqlDBManager
         }
 
         /// <summary>
-        /// Ищет в словаре значение и возвращает по переданным параметрам
+        /// (not relevant because of a bug. It will be replaced on RecursionFilterValue ) Ищет в словаре значение и возвращает по переданным параметрам
         /// </summary>
         public static string ReturnValue(List<Dictionary<string, string>> mainRecordsFromTable, string searchColumn, string searchValue, string returnTheColumnValue)
         {
@@ -332,6 +332,30 @@ namespace SqlDBManager
                 }
             }
             return "";
+        }
+
+        public static string RecursionFilterValue(Dictionary<string, string> searchingRow, List<Dictionary<string, string>> filteringRecords, List<string> columnsFilters, string returnColumnValue)
+        {
+            //MessageBox.Show(searchingRow["ACT_DATE"]);
+            if (filteringRecords.Count == 1)
+                return filteringRecords[0][returnColumnValue];
+
+            List<Dictionary<string, string>> newFilteringRecords = new List<Dictionary<string, string>>();
+
+            foreach (Dictionary<string, string> row in filteringRecords)
+            {
+                if (row[columnsFilters[0]] == searchingRow[columnsFilters[0]])
+                {
+/*                    MessageBox.Show(searchingRow["ACT_DATE"] + "  =  " + row[columnsFilters[0]] + " "+ searchingRow[columnsFilters[0]]+(row[columnsFilters[0]] == searchingRow[columnsFilters[0]]).ToString());
+                    MessageBox.Show(row["ACT_DATE"]);*/
+                    newFilteringRecords.Add(row);
+                }
+            }
+            columnsFilters.Remove(columnsFilters[0]);
+
+
+
+            return RecursionFilterValue(searchingRow, newFilteringRecords, columnsFilters, returnColumnValue);
         }
 
         static Dictionary<string, string> EscapeSymbolsInRow(Dictionary<string, string> row)

@@ -135,7 +135,7 @@ namespace SqlDBManager
         public List<Dictionary<string, string>> SelectAllFrom(string tableName, Dictionary<string, List<string>> filter = null, bool filterIN = true, List<string> columns = null)
         {
             string request = SQLRequests.AllRecordsRequest(Catalog, tableName, filter, filterIN, columns);
-            MessageBox.Show(tableName + "       " + request);
+            //MessageBox.Show(tableName + "       " + request);
             if (columns == null)
             {
                 columns = SelectColumnsNames(tableName);

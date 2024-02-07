@@ -87,6 +87,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="MergeManager.cs" />
+    <Compile Include="MergeSettings.cs" />
     <Compile Include="Notes.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProgramConsts.cs" />

@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SqlDBManager.exe" size="96736">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="SqlDBManager.exe" size="97760">
       <assemblyIdentity name="SqlDBManager" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>8f2xnODIdp+xq9RxqRxb7vIwqCTXLA5sSARpARbY6Fg=</dsig:DigestValue>
+        <dsig:DigestValue>4qnLd1JxXNz444+kK/YK3uY3hL/kglBTeKZvyj2G0l4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

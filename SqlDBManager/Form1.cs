@@ -664,11 +664,18 @@ namespace SqlDBManager
             MessageBox.Show("df2");
         }
 
+        public static int MuliplierRecurtion(int multiplierNumber)
+        {
+            if (multiplierNumber == 1)
+                return 1;
+            return multiplierNumber * MuliplierRecurtion(multiplierNumber - 1);
+        }
+
         private void button10_Click(object sender, EventArgs e)
         {
             string sss = "'1111'";
 
-            MessageBox.Show("'" + sss.Substring(1, sss.Length - 2).Replace("'", "\''") + "'");
+            MessageBox.Show(MuliplierRecurtion(4).ToString());
             //tabControl1.SelectedIndex--;
 
 
