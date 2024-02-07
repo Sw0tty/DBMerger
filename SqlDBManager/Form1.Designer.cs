@@ -62,6 +62,7 @@
             this.button8 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.label14 = new System.Windows.Forms.Label();
             this.startMerge = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
@@ -469,6 +470,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.label14);
             this.tabPage3.Controls.Add(this.startMerge);
             this.tabPage3.Controls.Add(this.label13);
             this.tabPage3.Controls.Add(this.label12);
@@ -483,6 +485,15 @@
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Процесс слияния";
             this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // label14
+            // 
+            this.label14.Location = new System.Drawing.Point(19, 473);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(455, 15);
+            this.label14.TabIndex = 9;
+            this.label14.Text = "Записей обработано:";
+            this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // startMerge
             // 
@@ -506,10 +517,9 @@
             // label12
             // 
             this.label12.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(330, 465);
+            this.label12.Location = new System.Drawing.Point(19, 457);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(138, 13);
+            this.label12.Size = new System.Drawing.Size(458, 15);
             this.label12.TabIndex = 6;
             this.label12.Text = "Записей импортировано: ";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -758,6 +768,7 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button startMerge;
+        private System.Windows.Forms.Label label14;
     }
 }
 

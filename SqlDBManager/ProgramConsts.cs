@@ -18,6 +18,8 @@ namespace SqlDBManager
         public const int BLOCK_HEADING = 800;
         public const int MIDDLE_STATUS_CODE = 999;
         public const int ERROR_STATUS_CODE = 500;
+        public const int UPDATE_COUNT_OF_IMPORT = 444;
+        public const int UPDATE_COUNT_OF_CHECK = 454;
         public const string ITS_BLOCK_PROGRESS_BAR = "BLOCK";
         public const string ITS_MAIN_PROGRESS_BAR = "MAIN";
     }
@@ -30,6 +32,8 @@ namespace SqlDBManager
         public const bool DEBUG_MOD = true;
         public const bool FAST_REQUEST_MOD = true;
 
+        public static int ALL_OF_IMPORT = 0;
+        public static int ALL_OF_CHECK = 0;
         public const int MAX_COUNT_OF_IMPORTS = 1000;
         public static bool MERGE_WAS_SUCCESS = false;
         public static bool LOG_SAVED = false;

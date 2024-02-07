@@ -39,7 +39,7 @@ namespace SqlDBManager
 
             //textBox2.Font = new Font(FontFamily.GenericSansSerif, 14);
 
-
+            
 
             textBox2.Text = "sa";
             textBox5.Text = textBox2.Text;
@@ -48,6 +48,8 @@ namespace SqlDBManager
 
             checkConnectionMainCatalog.Text = "Проверить соединение";
             checkConnectionDaughterCatalog.Text = checkConnectionMainCatalog.Text;
+
+            
 
             LoadProperties();
         }
@@ -426,6 +428,14 @@ namespace SqlDBManager
             else if (e.UserState.ToString() == WorkerConsts.ITS_MAIN_PROGRESS_BAR)
             {
                 progressBar2.Value = e.ProgressPercentage;
+            }
+            else if (e.ProgressPercentage == WorkerConsts.UPDATE_COUNT_OF_IMPORT)
+            {
+                label12.Text = $"Записей импортировано: {Consts.ALL_OF_IMPORT}";
+            }
+            else if (e.ProgressPercentage == WorkerConsts.UPDATE_COUNT_OF_CHECK)
+            {
+                label13.Text = "Записей обработано: {}";
             }
         }
 
@@ -985,7 +995,5 @@ namespace SqlDBManager
             Tuple<string, string, string> tr = new Tuple<string, string, string>("1", "2", "3");
 
         }
-
-
     }
 }

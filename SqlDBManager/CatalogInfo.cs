@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace SqlDBManager
 {
-    public class DBCatalog
+    public class DBCatalog : SQLAdapters
     {
         protected string Source;
         protected string Catalog;
@@ -50,6 +50,9 @@ namespace SqlDBManager
             return transaction;
         }
 
+        /// <summary>
+        /// Return catalog name
+        /// </summary>
         public string ReturnCatalog()
         {
             return Catalog;
@@ -96,6 +99,8 @@ namespace SqlDBManager
             reader.Close();
             command.Dispose();
             return count;
+/*            string request = SQLRequests.CountTablesRequest(Catalog);
+            return SelectAdapter(request, connection, ReturnTransaction());*/
         }
 
         public List<string> SelectLastRecord(string columns, string tableName, string orderByColumn)
@@ -107,9 +112,9 @@ namespace SqlDBManager
         /// <summary>
         /// Возвращает количество записей в переданной таблице
         /// </summary>
-        public int SelectCountRowsTable(string table)
+        public int SelectCountRowsTable(string tableName)
         {
-            string request = SQLRequests.CountRowsRequest(Catalog, table);
+            string request = SQLRequests.CountRowsRequest(Catalog, tableName);
             SqlCommand command = new SqlCommand(request, connection);
             command.Transaction = ReturnTransaction();
             SqlDataReader reader = command.ExecuteReader();
@@ -119,6 +124,9 @@ namespace SqlDBManager
             reader.Close();
             command.Dispose();
             return count;
+/*
+            string request = SQLRequests.CountRowsRequest(Catalog, tableName);
+            return SelectAdapter(request, connection, ReturnTransaction());*/
         }
 
         /// <summary>
@@ -127,6 +135,7 @@ namespace SqlDBManager
         public List<Dictionary<string, string>> SelectAllFrom(string tableName, Dictionary<string, List<string>> filter = null, bool filterIN = true, List<string> columns = null)
         {
             string request = SQLRequests.AllRecordsRequest(Catalog, tableName, filter, filterIN, columns);
+            MessageBox.Show(tableName + "       " + request);
             if (columns == null)
             {
                 columns = SelectColumnsNames(tableName);
@@ -136,7 +145,7 @@ namespace SqlDBManager
 
         public List<string> SelectTablesNames(bool likeDBString = false, bool itsRow = false)
         {
-            string request = SQLRequests.AllTablesRequest(Catalog);
+            string request = SQLRequests.AllTablesNamesRequest(Catalog);
             return ReturnListFromDB(request, connection, ReturnTransaction(), likeDBString, itsRow);
         }
 
@@ -193,69 +202,6 @@ namespace SqlDBManager
             string request = SQLRequests.ColumnsNamesRequest(Catalog, tableName);
             return ReturnListFromDB(request, connection, ReturnTransaction(), likeDBString, itsRow);
         }
-
-/*        public List<string> SelectLinksTables()
-        {
-            List<string> linksTables = new List<string>()
-            {
-                "tblORGANIZ_RENAME",
-                "tblARCHIVE",
-                "tblLOCATION",
-                "tblARCHIVE_STORAGE",
-                "tblARCHIVE_PASSPORT",
-                "tblARCHIVE_STATS",
-                "tblFUND",
-                "tblFUND_RENAME",
-                "tblFUND_CHECK",
-                "tblFUND_DOC_TYPE",
-                "tblFUND_INCLUSION",
-                "tblFUND_PAPER_CLS",
-                "tblPUBLICATION_CL",
-                "tblFUND_PUBLICATION",
-                "tblFUND_RECEIPT_REASON",
-                "tblFUND_RECEIPT_SOURCE",
-                "tblFUND_OAF",
-                "tblFUND_OAF_REASON",
-                "tblFUND_COLLECTION_REASONS",
-                "tblFUND_CREATOR",
-                "tblUNDOCUMENTED_PERIOD",
-                "tblDEPOSIT",
-                "tblDEPOSIT_DOC_TYPE",
-                "tblACT",
-                "tblINVENTORY",
-                "tblINVENTORY_CHECK",
-                "tblINVENTORY_DOC_STORAGE",
-                "tblINVENTORY_DOC_TYPE",
-                "tblINVENTORY_CLS_ATTR",
-                "tblINVENTORY_GROUPING_ATTRIBUTE",
-                "tblINVENTORY_PAPER_CLS",
-                "tblINVENTORY_REQUIRED_WORK",
-                "tblINVENTORY_STRUCTURE",
-                "tblDOCUMENT_STATS",
-                "tblREF_ACT",
-                "tblREF_CLS",
-                "tblREF_FEATURE",
-                "tblREF_LANGUAGE",
-                "tblREF_LOCATION",
-                "tblREF_QUESTION",
-                "tblUNIT",
-                "tblUNIT_ELECTRONIC",
-                "tblUNIT_FOTO",
-                "tblUNIT_FOTO_EX",
-                "tblUNIT_MICROFORM",
-                "tblUNIT_MOVIE",
-                "tblUNIT_MOVIE_EX",
-                "tblUNIT_NTD",
-                "tblUNIT_PHONO",
-                "tblUNIT_REQUIRED_WORK",
-                "tblUNIT_STATE",
-                "tblUNIT_VIDEO",
-                "tblUNIT_VIDEO_EX",
-                "tblUNIT_WORK",
-                "tblDOCUMENT"
-            };
-            return linksTables;
-        }*/
 
         /// <summary>
         /// Очищает переданную таблицу
@@ -316,6 +262,10 @@ namespace SqlDBManager
             DeleteAdapter(request, connection, ReturnTransaction());
         }
 
+        /// <summary>
+        /// Makes UPDATE requests
+        /// </summary>
+        /// <returns>Count of affected rows</returns>
         static void AnotherRequest(string request, SqlConnection connection, SqlTransaction transaction)
         {
             SqlCommand cmd = new SqlCommand(request, connection);
@@ -323,45 +273,6 @@ namespace SqlDBManager
             //adapter.DeleteCommand.Transaction = ReturnTransaction();
             cmd.ExecuteNonQuery();
             cmd.Dispose();
-        }
-
-        static void InsertAdapter(string request, SqlConnection connection, SqlTransaction transaction)
-        {
-            //MessageBox.Show(tableName);
-            
-
-            SqlDataAdapter adapter = new SqlDataAdapter();
-
-            adapter.InsertCommand = new SqlCommand(request, connection);
-            adapter.InsertCommand.Transaction = transaction;
-
-
-            adapter.InsertCommand.ExecuteNonQuery();
-
-            
-            adapter.Dispose();
-        }
-
-        static void UpdateAdapter(string request, SqlConnection connection, SqlTransaction transaction)
-        {
-            SqlDataAdapter adapter = new SqlDataAdapter();
-
-            adapter.UpdateCommand = new SqlCommand(request, connection);
-            adapter.UpdateCommand.Transaction = transaction;
-            adapter.UpdateCommand.ExecuteNonQuery();
-            adapter.Dispose();
-        }
-
-        static int DeleteAdapter(string request, SqlConnection connection, SqlTransaction transaction)
-        {
-            SqlDataAdapter adapter = new SqlDataAdapter();
-
-            adapter.DeleteCommand = new SqlCommand(request, connection);
-            adapter.DeleteCommand.Transaction = transaction;
-            int deletedCount = adapter.DeleteCommand.ExecuteNonQuery();
-
-            adapter.Dispose();
-            return deletedCount;
         }
 
         /// <summary>
@@ -450,33 +361,6 @@ namespace SqlDBManager
             reader.Close();
             command.Dispose();
             return listTablesNames;
-        }
-
-        /// <summary>
-        /// Проверяет схождение количества слияемых каталогов
-        /// </summary>
-        /// <returns>Успешность прохождения валидации</returns>
-        public bool ValidateCountTables(int countAnotherCatalogTables)
-        {
-            if (countAnotherCatalogTables == SelectCountTables())
-                return true;
-            return false;
-        }
-
-        /// <summary>
-        /// Проверяет на соответствие наименований таблиц слияемых каталогов
-        /// </summary>
-        /// <returns>Успешность прохождения валидации</returns>
-        public bool ValidateNamesTables(List<string> anotherCatalogNamesTables)
-        {
-            List<string> mainCatalogNamesTables = SelectTablesNames();
-
-            foreach (string anotherTablesName in anotherCatalogNamesTables)
-            {
-                if (!mainCatalogNamesTables.Contains(anotherTablesName))
-                    return false;
-            }
-            return true;
         }
 
         /// <summary>

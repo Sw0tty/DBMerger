@@ -92,8 +92,10 @@
     <Compile Include="ProgramConsts.cs" />
     <Compile Include="ProgramMessages.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SQLAdapters.cs" />
     <Compile Include="SQLRequests.cs" />
     <Compile Include="Validator.cs" />
+    <Compile Include="ValuesManager.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

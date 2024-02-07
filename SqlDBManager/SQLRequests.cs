@@ -1,11 +1,5 @@
-﻿using NotesNamespace;
-using System;
-using System.Collections.Generic;
-using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
+﻿using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace SqlDBManager
 {
@@ -23,67 +17,82 @@ namespace SqlDBManager
             return $"SELECT name FROM [{catalog}].sys.tables WHERE OBJECTPROPERTY(object_id, 'TableHasForeignKey') = 0 and name not like '%log' and name not in ('eqUsers', 'rptFUND_PAPER', 'rptFUND_UNIT_REG_STATS', 'tblACT_TYPE_CL', 'tblAuthorizedDep', 'tblCLS', 'tblDataExport', 'tblDECL_COMMISSION_CL', 'tblConstantsSpec', 'tblGROUPING_ATTRIBUTE_CL', 'tblINV_REQUIRED_WORK_CL', 'tblLANGUAGE_CL', 'tblFEATURE', 'tblCITIZEN_CL', 'tblORGANIZ_CL', 'tblPAPER_CLS', 'tblPAPER_CLS_INV', 'tblPUBLICATION_TYPE_CL', 'tblQUESTION', 'tblRECEIPT_REASON_CL', 'tblRECEIPT_SOURCE_CL', 'tblREF_FILE', 'tblREPRODUCTION_METHOD_CL', 'tblService', 'tblSTATE_CL', 'tblSTORAGE_MEDIUM_CL', 'tblSUBJECT_CL', 'tblTREE_SUPPORT', 'tblWORK_CL', 'tblPUBLICATION_CL', 'tblUNIT_FOTO_EX', 'tblUNIT_MOVIE_EX', 'tblUNIT_VIDEO_EX') or name in ('tblDOC_KIND_CL', 'tblABSENCE_REASON_CL') ORDER BY name;";
         }
 
-        // Запрос количества таблиц в каталоге
+        /// <summary>
+        /// Request of the number of tables in catalog
+        /// </summary>
+        /// <returns>String request</returns>
         public static string CountTablesRequest(string catalog)
         {
             return $"SELECT COUNT(TABLE_NAME) FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE';";
         }
 
-        // Запрос наименований всех таблиц
-        public static string AllTablesRequest(string catalog)
+        /// <summary>
+        /// Request of the names tables in catalog
+        /// </summary>
+        /// <returns>String request</returns>
+        public static string AllTablesNamesRequest(string catalog)
         {
             return $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME;";
         }
 
-        // Запрос таблицы содержащие логи
+        /// <summary>
+        /// Request of the log tables names
+        /// </summary>
+        /// <returns>String request</returns>
         public static string LogTablesRequest(string catalog)
         {
             return $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' and TABLE_NAME like '%log' ORDER BY TABLE_NAME;";
         }
 
         /// <summary>
-        /// Запрос очистики таблицы
+        /// Clear table request
         /// </summary>
+        /// <returns>String request</returns>
         public static string ClearTableRequest(string catalog, string table)
         {
             return $"DELETE [{catalog}].[dbo].[{table}];";
         }
 
         /// <summary>
-        /// Запрос удаления определенной строки
+        /// Delete records request
         /// </summary>
+        /// <returns>String request</returns>
         public static string DeleteRowRequest(string catalog, string tableName, string filterColumn, string filterValue)
         {
             return $"DELETE [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
         }
 
         /// <summary>
-        /// Возвращает значение последней записи в переданной таблице
+        /// Column of last record
         /// </summary>
-        public static string LastInsertRecordRequest(string catalog, string columns, string tableName, string orderByColumn)
+        /// <returns>String request</returns>
+        public static string LastInsertRecordRequest(string catalog, string column, string tableName, string orderByColumn)
         {
-            return $"SELECT TOP 1 {columns} FROM [{catalog}].[dbo].[{tableName}] ORDER BY {orderByColumn} DESC;";
+            return $"SELECT TOP 1 {column} FROM [{catalog}].[dbo].[{tableName}] ORDER BY {orderByColumn} DESC;";
         }
 
         /// <summary>
-        /// Возвращает количество значений в переданной таблице
+        /// Count of records in table request
         /// </summary>
+        /// <returns>String request</returns>
         public static string CountRowsRequest(string catalog, string table)
         {
             return $"SELECT COUNT(*) FROM [{catalog}].[dbo].[{table}];";
         }
 
-        // Запрос на обновление ID
-        public static string UpdateIDRequest(string catalog, string table, string filterColumn, string filterValue)
-        {
-            return $"UPDATE [{catalog}].[dbo].[{table}] SET ID = NEWID() WHERE {filterColumn} = '{filterValue}';";
-        }
-
+        /// <summary>
+        /// Update filtered records request
+        /// </summary>
+        /// <returns>String request</returns>
         public static string UpdateRowRequest(string catalog, string tableName, string updateColumn, string updateValue, string filterColumn, string filterValue)
         {
             return $"UPDATE [{catalog}].[dbo].[{tableName}] SET {updateColumn} = {updateValue} WHERE {filterColumn} = {filterValue};";
         }
 
+        /// <summary>
+        /// Insert from request
+        /// </summary>
+        /// <returns>String request</returns>
         public static string InsertFromRequest(string inCatalog, string inTable, List<string> columns, string fromCatalog, string fromTable, string filterColumn, string filterValue)
         {
             return $"INSERT INTO [{inCatalog}].[dbo].[{inTable}] SELECT {string.Join(", ", columns)} FROM [{fromCatalog}].[dbo].[{fromTable}] WHERE {filterColumn} = '{filterValue}';";
@@ -94,10 +103,6 @@ namespace SqlDBManager
         /// </summary>
         public static string InsertDictValueRequst(string catalog, string tableName, Dictionary<string, string> data, bool withoutID = false)
         {
-/*            if (tableName == "")
-            {
-                return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("'null'", "''")});";
-            }*/
             if (withoutID)
             {
                 return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES ({string.Join(", ", data.Values).Replace("'null'", "null")});";
@@ -107,12 +112,7 @@ namespace SqlDBManager
 
         public static string FastFormerInsertValueRequst(List<string> columns, string catalog, string tableName, string values)
         {
-            /*            if (tableName == "")
-                        {
-                            return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("'null'", "''")});";
-                        }*/
             return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", columns).Replace('\"', '\'')}) VALUES {values};";
-
         }
 
         /// <summary>
@@ -152,6 +152,8 @@ namespace SqlDBManager
                 return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} NOT IN ({string.Join(", ", filter[string.Join("", filter.Keys)])});";
             if (filter != null && !filterIN && strColumns.Contains("Deleted"))
                 return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} NOT IN ({string.Join(", ", filter[string.Join("", filter.Keys)])}) and Deleted = '0';";
+            if (filter == null && filterIN && strColumns.Contains("Deleted"))
+                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE Deleted = '0';";
             return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}];";
         }
 
