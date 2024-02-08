@@ -68,7 +68,7 @@ namespace SqlDBManager
         /// <returns>String request</returns>
         public static string LastInsertRecordRequest(string catalog, string column, string tableName, string orderByColumn)
         {
-            return $"SELECT TOP 1 {column} FROM [{catalog}].[dbo].[{tableName}] ORDER BY {orderByColumn} DESC;";
+            return $"SELECT TOP 1 {column} FROM [{catalog}].[dbo].[{tableName}] ORDER BY {orderByColumn} * 1 DESC;";
         }
 
         /// <summary>
@@ -187,6 +187,16 @@ namespace SqlDBManager
         public static string DeleteBackupRequest(string path)
         {
             return $"EXECUTE master.dbo.xp_delete_file 0, N'{path}';";
+        }
+
+        public static string NewIDRequest(string catalog)
+        {
+            return $"USE [{catalog}] SELECT NEWID();";
+        }
+
+        public static string IDFromRequest(string catalog, string tableName, string filterColumn, string filterValue)
+        {
+            return $"SELECT ID FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
         }
 
         public static string RestoreBackupRequest(string catalog, string path)

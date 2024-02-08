@@ -683,6 +683,10 @@ namespace SqlDBManager
                 lastNumeric = (lastNumricFromDB != "") ? Convert.ToInt32(lastNumricFromDB) : 0;
             }
             
+            if (tableName == "tblFUND")
+            {
+                MessageBox.Show(lastNumeric.ToString());
+            }
 
             // 3. Берем таблицы в дальнейшем используемые
             Dictionary<string, string> foreigns = mainCatalog.SelectTablesAndForeignKeyUsage(tableName);
@@ -719,6 +723,7 @@ namespace SqlDBManager
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
 
                 string secondParent = "ISN_INVENTORY";
+                
 
 
                 List<Tuple<string, string>> secondParentTuplesKeys = ValuesManager.ReturnTuplesValuesSpecialDict(tableName, secondParent);
@@ -751,17 +756,20 @@ namespace SqlDBManager
                     }
                     else
                     {
+                        string docID = null;
                         // Если есть новые фонды или фонды и описи в них
                         foreach (Dictionary<string, string> row in allFromDaughterCatalog)
                         {
+                            ValuesManager.UpdateCheck(worker);
+
                             if (row[parentIdColumn] == parentIdTuple.Item1)
                             {
                                 row[parentIdColumn] = parentIdTuple.Item2;
                                 row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+                                row["DocID"] = mainCatalog.SelectIDFrom("tblFUND", parentIdColumn, parentIdTuple.Item2);
 
                                 if (row[secondParent] != "'null'")
                                 {
-                                    // тут нужно написать некий поиск и замену на актуальный id
 
                                     foreach (Tuple<string, string> twoParents in oldTwoParents)
                                     {
@@ -911,6 +919,8 @@ namespace SqlDBManager
 
                 foreach (Dictionary<string, string> row in allFromDaughterData)
                 {
+                    ValuesManager.UpdateCheck(worker);
+
                     // Если значение ИМЕЕТСЯ в главном каталоге
                     if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
                     {
@@ -1000,6 +1010,8 @@ namespace SqlDBManager
 
                     foreach (Dictionary<string, string> row in filterFromDaughterData)
                     {
+                        ValuesManager.UpdateCheck(worker);
+
                         //MessageBox.Show(mainCatalogValues.Contains(row[uniqueValueColumnName]).ToString() + "   % " + row[uniqueValueColumnName] + " %" + string.Join(" ", mainCatalogValues));
                         if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
                         {
@@ -1097,6 +1109,8 @@ namespace SqlDBManager
                     {
                         foreach (Dictionary<string, string> row in allFromDaughterData)
                         {
+                            ValuesManager.UpdateCheck(worker);
+
                             if (row[parentIdColumn] == tuple.Item1)
                             {
                                 row[parentIdColumn] = tuple.Item2;
@@ -1135,6 +1149,8 @@ namespace SqlDBManager
 
                 foreach (Dictionary<string, string> row in allFromDaughterData)
                 {
+                    ValuesManager.UpdateCheck(worker);
+
                     if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
                     {
                         ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
@@ -1177,6 +1193,8 @@ namespace SqlDBManager
                 {
                     foreach (Dictionary<string, string> row in reservedRows)
                     {
+                        ValuesManager.UpdateCheck(worker);
+
                         if (mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
                         {
                             string oldKey = row[idLikeColumnName];
@@ -1244,7 +1262,7 @@ namespace SqlDBManager
 
                 foreach (Tuple<string, string> tuple in tableReservedValues[parentIdColumn])
                 {
-
+                    
                     /*if (tableName == "tblUNIT_STATE")
                     {
                         MessageBox.Show(tuple.Item1 + "   " + tuple.Item2);
@@ -1259,6 +1277,8 @@ namespace SqlDBManager
                     {
                         foreach (Dictionary<string, string> row in allFromDaughterData)
                         {
+                            ValuesManager.UpdateCheck(worker);
+
                             if (row[parentIdColumn] == tuple.Item1)
                             {
                                 row[parentIdColumn] = tuple.Item2;
@@ -1318,6 +1338,8 @@ namespace SqlDBManager
                     {
                         foreach (Dictionary<string, string> row in allFromDaughterData)
                         {
+                            ValuesManager.UpdateCheck(worker);
+
                             if (row[parentIdColumn] == tuple.Item1)
                             {
                                 string oldKey = row[idLikeColumnName];

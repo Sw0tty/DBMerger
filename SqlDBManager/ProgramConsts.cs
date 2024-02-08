@@ -42,8 +42,8 @@ namespace SqlDBManager
         public static bool TAB_ACCESS = true;
         public static int COUNT_OF_ALL_TASKS = SpecialTablesValues.DefaultTables.Count +
                                                SpecialTablesValues.WithoutKeysTables.Count +
-                                               MergeManager.DefaultTablesParams.Count +
-                                               MergeManager.LinksTablesParams.Count +
+                                               MergeSettings.DefaultTablesParams.Count +
+                                               MergeSettings.LinksTablesParams.Count +
                                                3 +
                                                100;
         public static int MAIN_PROGRESS_NOW_STATUS = 0;

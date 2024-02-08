@@ -109,6 +109,12 @@ namespace SqlDBManager
             return string.Join(", ", s);
         }
 
+        public static void UpdateCheck(BackgroundWorker worker)
+        {
+            Consts.ALL_OF_CHECK++;
+            //worker.ReportProgress(WorkerConsts.UPDATE_COUNT_OF_CHECK);
+        }
+
         public static void AddToRequest(string rowInsertRequest)
         {
             //InsertRequestInTable += rowInsertRequest + "\n";
@@ -336,7 +342,6 @@ namespace SqlDBManager
 
         public static string RecursionFilterValue(Dictionary<string, string> searchingRow, List<Dictionary<string, string>> filteringRecords, List<string> columnsFilters, string returnColumnValue)
         {
-            //MessageBox.Show(searchingRow["ACT_DATE"]);
             if (filteringRecords.Count == 1)
                 return filteringRecords[0][returnColumnValue];
 
@@ -346,14 +351,10 @@ namespace SqlDBManager
             {
                 if (row[columnsFilters[0]] == searchingRow[columnsFilters[0]])
                 {
-/*                    MessageBox.Show(searchingRow["ACT_DATE"] + "  =  " + row[columnsFilters[0]] + " "+ searchingRow[columnsFilters[0]]+(row[columnsFilters[0]] == searchingRow[columnsFilters[0]]).ToString());
-                    MessageBox.Show(row["ACT_DATE"]);*/
                     newFilteringRecords.Add(row);
                 }
             }
             columnsFilters.Remove(columnsFilters[0]);
-
-
 
             return RecursionFilterValue(searchingRow, newFilteringRecords, columnsFilters, returnColumnValue);
         }
@@ -398,7 +399,7 @@ namespace SqlDBManager
             if (Consts.FAST_REQUEST_MOD)
             {
                 ValuesManager.AddToRequest(catalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName)));           
-                //worker.ReportProgress(WorkerConsts.UPDATE_COUNT_OF_CHECK);
+                
             }
             else
             {

@@ -103,10 +103,11 @@ namespace SqlDBManager
             return SelectAdapter(request, connection, ReturnTransaction());*/
         }
 
-        public List<string> SelectLastRecord(string columns, string tableName, string orderByColumn)
+        public string SelectLastRecord(string columns, string tableName, string orderByColumn)
         {
             string request = SQLRequests.LastInsertRecordRequest(Catalog, columns, tableName, orderByColumn);
-            return ReturnListFromDB(request, connection, ReturnTransaction(), itsRow: true);
+            return ReturnStringFromDB(request, connection, ReturnTransaction());
+            //return ReturnListFromDB(request, connection, ReturnTransaction(), itsRow: true);
         }
 
         /// <summary>
@@ -141,6 +142,18 @@ namespace SqlDBManager
                 columns = SelectColumnsNames(tableName);
             }
             return ReturnListDictsFromDB(request, columns, connection, ReturnTransaction());
+        }
+
+        public string SelectNewID()
+        {
+            string request = SQLRequests.NewIDRequest(Catalog);
+            return ReturnStringFromDB(request, connection, ReturnTransaction());
+        }
+
+        public string SelectIDFrom(string tableName, string idLikeColumn, string filterValue)
+        {
+            string request = SQLRequests.IDFromRequest(Catalog, tableName, idLikeColumn, filterValue);
+            return ReturnStringFromDB(request, connection, ReturnTransaction());
         }
 
         public List<string> SelectTablesNames(bool likeDBString = false, bool itsRow = false)
@@ -306,6 +319,23 @@ namespace SqlDBManager
             reader.Close();
             command.Dispose();
             return tableData;
+        }
+
+        static string ReturnStringFromDB(string request, SqlConnection connection, SqlTransaction transaction)
+        {
+            SqlCommand command = new SqlCommand(request, connection);
+            command.Transaction = transaction;
+            SqlDataReader reader = command.ExecuteReader();
+            string valueFromDB = null;
+            
+            while (reader.Read())
+            {
+                valueFromDB = "'" + reader.GetSqlValue(0).ToString() + "'";
+            }
+
+            reader.Close();
+            command.Dispose();
+            return valueFromDB;
         }
 
         /// <summary>

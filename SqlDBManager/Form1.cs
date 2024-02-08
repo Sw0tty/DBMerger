@@ -124,6 +124,8 @@ namespace SqlDBManager
             Consts.ClearAllTasks();
             Consts.MERGE_WAS_SUCCESS = false;
             Consts.LOG_SAVED = false;
+            Consts.ALL_OF_IMPORT = 0;
+            Consts.ALL_OF_CHECK = 0;
             progressBar1.Value = 0;
             progressBar2.Value = 0;
         }
@@ -311,7 +313,7 @@ namespace SqlDBManager
                                                 MessageBox.Show("Break");*/
                             // --------------
 
-
+                            //MessageBox.Show(mainCatalog.SelectNewID());
 
 
                             worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Вносим правки ключей таблиц...");
@@ -420,6 +422,14 @@ namespace SqlDBManager
             {
                 textBoxStatus.AppendText("--- ERROR ---" + "\r\n" + e.UserState.ToString() + "\r\n" + "--- ERROR ---" + "\r\n");
             }
+            else if (e.ProgressPercentage == WorkerConsts.UPDATE_COUNT_OF_IMPORT)
+            {
+                //label12.Text = $"Записей импортировано: {Consts.ALL_OF_IMPORT}";
+            }
+            else if (e.ProgressPercentage == WorkerConsts.UPDATE_COUNT_OF_CHECK)
+            {
+                //label14.Text = $"Записей обработано: {Consts.ALL_OF_CHECK}";
+            }
             else if (e.UserState.ToString() == WorkerConsts.ITS_BLOCK_PROGRESS_BAR)
             {
                 label13.Text = $"{e.ProgressPercentage} %";
@@ -429,14 +439,7 @@ namespace SqlDBManager
             {
                 progressBar2.Value = e.ProgressPercentage;
             }
-            else if (e.ProgressPercentage == WorkerConsts.UPDATE_COUNT_OF_IMPORT)
-            {
-                label12.Text = $"Записей импортировано: {Consts.ALL_OF_IMPORT}";
-            }
-            else if (e.ProgressPercentage == WorkerConsts.UPDATE_COUNT_OF_CHECK)
-            {
-                label13.Text = "Записей обработано: {}";
-            }
+            
         }
 
         private void mergerBackWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
