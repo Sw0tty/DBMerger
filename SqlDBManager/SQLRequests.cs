@@ -199,6 +199,21 @@ namespace SqlDBManager
             return $"SELECT ID FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
         }
 
+        /// <summary>
+        /// Request of taking table name on the foreign key referenced
+        /// </summary>
+        /// <returns>String request</returns>
+        public static string ReferenceTableNameRequest(string catalog, string currentTableName, string foreignColumnName)
+        {
+            return $"USE [{catalog}]; " +
+                   "SELECT OBJECT_NAME (fk.referenced_object_id) " +
+                   "FROM sys.foreign_keys AS fk " +
+                   "INNER JOIN sys.foreign_key_columns AS fk_c " +
+                   "ON fk.object_id = fk_c.constraint_object_id " +
+                   $"WHERE OBJECT_NAME(fk.parent_object_id) = '{currentTableName}' " +
+                   $"and COL_NAME(fk_c.parent_object_id, fk_c.parent_column_id) = '{foreignColumnName}'";
+        }
+
         public static string RestoreBackupRequest(string catalog, string path)
         {
             return $"ALTER DATABASE [{catalog}] SET single_user WITH rollback immediate; DROP DATABASE [{catalog}] RESTORE DATABASE [{catalog}] FROM DISK = '{path}';";

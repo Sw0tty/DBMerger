@@ -39,7 +39,7 @@ namespace SqlDBManager
 
             //textBox2.Font = new Font(FontFamily.GenericSansSerif, 14);
 
-            
+
 
             textBox2.Text = "sa";
             textBox5.Text = textBox2.Text;
@@ -121,7 +121,7 @@ namespace SqlDBManager
 
         public void SetToDefaultStatusBlock()
         {
-            Consts.ClearAllTasks();
+            Consts.MergeProgress.ClearAllTasks();
             Consts.MERGE_WAS_SUCCESS = false;
             Consts.LOG_SAVED = false;
             Consts.ALL_OF_IMPORT = 0;
@@ -272,24 +272,24 @@ namespace SqlDBManager
             SqlTransaction transaction = mainCatalog.StartTransaction();
             SqlTransaction transaction2 = daughterCatalog.StartTransaction();
 
+            Consts.MergeProgress.FormTasks(mainCatalog);
             Consts.WriteLastCatalogs(mainCatalog.ReturnCatalog(), daughterCatalog.ReturnCatalog());
 
             worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Предварительные проверки ---");
             worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидируем каталоги на возможность слияния...");
 
-            if (Validator.ValidateVersions(mainCatalog, daughterCatalog))
+            if (Wrappers.WrapValidator(Validator.ValidateVersions, mainCatalog, daughterCatalog, worker))
             {
-                if (Validator.ValidateCountTables(mainCatalog, daughterCatalog))
-                {
-                    if (Validator.ValidateNamesTables(mainCatalog, daughterCatalog))
+                if (Wrappers.WrapValidator(Validator.ValidateCountTables, mainCatalog, daughterCatalog, worker))
+                {                   
+                    if (Wrappers.WrapValidator(Validator.ValidateNamesTables, mainCatalog, daughterCatalog, worker))
                     {
-                        // daughterCatalog.ValidateDefaultTables(worker)
-                        if (Validator.ValidateDefaultTablesValues(mainCatalog, daughterCatalog, worker))
+                        if (Wrappers.WrapCustomValidator(Validator.ValidateDefaultTablesValues, mainCatalog, daughterCatalog, worker))
                         {
                             worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидация успешно завершена!");
 
                             // после данных запросов создается резервная копия
-
+                           
                             // --------------
                             // Создаем резервную копию для транзакций
                             /*                    BackupManager backupManager = new BackupManager(mainCatalog.SelectCatalogPath()[0], mainCatalog.ReturnCatalog(), text1, textBox2.Text.Trim(' '), textBox3.Text.Trim(' '));
@@ -318,7 +318,7 @@ namespace SqlDBManager
 
                             worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Вносим правки ключей таблиц...");
 
-                            bool successOperation = MergeManager.RepeirDBKeys(mainCatalog, worker);
+                            bool successOperation = Wrappers.WrapSimpleMergeFunc(MergeManager.RepeirDBKeys, mainCatalog, worker);
 
                             //  ALTER TABLE[5307_main].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[5307_main].[dbo].[tblFUND](ISN_FUND);
 
@@ -361,7 +361,7 @@ namespace SqlDBManager
                                 worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Заключение слияния ---");
                                 worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Возвращаем временные изменения...");
                                 transaction2.Rollback();
-                                successOperation = MergeManager.RenameAfterMergeTableColumn(mainCatalog, daughterCatalog, worker);
+                                successOperation = Wrappers.WrapSimpleMergeFunc(MergeManager.RenameAfterMergeTableColumn, mainCatalog, worker);
                             }
 
                             if (successOperation)

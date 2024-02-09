@@ -188,7 +188,7 @@ namespace SqlDBManager
                 new Tuple<string, string, string, string, string, List<string>, List<string>>(null, "ISN_DEPOSIT_DOC_TYPE", null, "ISN_DEPOSIT", null, null, null) },
 
             { "tblACT",
-                new Tuple<string, string, string, string, string, List<string>, List<string>>("ACT_NAME", "ISN_ACT", null, "ISN_FUND", null, new List<string>() { "ACT_DATE", "ACT_NUM", "ACT_OBJ", "ISN_ACT_TYPE", "MOVEMENT_FLAG" }, null) },
+                new Tuple<string, string, string, string, string, List<string>, List<string>>("ACT_NAME", "ISN_ACT", null, "ISN_FUND", null, new List<string>() { "ACT_DATE", "ACT_NUM", "ACT_OBJ", "ISN_ACT_TYPE", "MOVEMENT_FLAG", "DOC_DATES", "UNIT_COUNT" }, null) },
 
             { "tblINVENTORY",
                 new Tuple<string, string, string, string, string, List<string>, List<string>>("INVENTORY_NAME", "ISN_INVENTORY", null, "ISN_FUND", "INVENTORY_NUM_1", null, null) },

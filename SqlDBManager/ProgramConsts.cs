@@ -40,65 +40,69 @@ namespace SqlDBManager
         public static string LAST_MAIN_CATALOG = null;
         public static string LAST_DAUGHTER_CATALOG = null;
         public static bool TAB_ACCESS = true;
-        public static int COUNT_OF_ALL_TASKS = SpecialTablesValues.DefaultTables.Count +
-                                               SpecialTablesValues.WithoutKeysTables.Count +
-                                               MergeSettings.DefaultTablesParams.Count +
-                                               MergeSettings.LinksTablesParams.Count +
-                                               3 +
-                                               100;
-        public static int MAIN_PROGRESS_NOW_STATUS = 0;
-        public static int COUNT_OF_ALL_BLOCK_TASKS = 0;
-        public static int BLOCK_PROGRESS_NOW = 0;
-
-        /// <summary>
-        /// Добавляет 1 исполненную задачу
-        /// </summary>
-        public static int UpdateMainBar()
-        {
-            MAIN_PROGRESS_NOW_STATUS++;
-            return MAIN_PROGRESS_NOW_STATUS * 100 / COUNT_OF_ALL_TASKS;
-        }
-
-        public static void ClearTasksBlock()
-        {
-            COUNT_OF_ALL_BLOCK_TASKS = 0;
-            BLOCK_PROGRESS_NOW = 0;
-        }
-
-        public static void ClearAllTasks()
-        {
-            MAIN_PROGRESS_NOW_STATUS = 0;
-            COUNT_OF_ALL_BLOCK_TASKS = 0;
-            BLOCK_PROGRESS_NOW = 0;
-        }
-
-        public static void AddTaskInBlock(int countTasks = 0)
-        {
-            if (countTasks != 0)
-            {
-                COUNT_OF_ALL_BLOCK_TASKS += countTasks;
-            }
-            else
-            {
-                COUNT_OF_ALL_BLOCK_TASKS++;
-            }
-        }
-
-        public static int UpdateBlockBar()
-        {
-            BLOCK_PROGRESS_NOW++;
-            return BLOCK_PROGRESS_NOW * 100 / COUNT_OF_ALL_BLOCK_TASKS;
-        }
-
-        public static void AddToAllTasks(int countTasks)
-        {
-            COUNT_OF_ALL_TASKS += countTasks;
-        }
 
         public static void WriteLastCatalogs(string mainCatalog, string daughterCatalog)
         {
             LAST_MAIN_CATALOG = mainCatalog;
             LAST_DAUGHTER_CATALOG = daughterCatalog;
+        }
+
+        public static class MergeProgress
+        {
+            public static int COUNT_OF_ALL_TASKS = 0;
+            public static int MAIN_PROGRESS_NOW_STATUS = 0;
+            public static int COUNT_OF_ALL_BLOCK_TASKS = 0;
+            public static int BLOCK_PROGRESS_NOW = 0;
+
+            public static void FormTasks(DBCatalog catalog)
+            {
+                COUNT_OF_ALL_TASKS = catalog.SelectCountTables();
+            }
+
+            /// <summary>
+            /// Adds 1 completed task
+            /// </summary>
+            public static int UpdateMainBar()
+            {
+                MAIN_PROGRESS_NOW_STATUS++;
+                return MAIN_PROGRESS_NOW_STATUS * 100 / COUNT_OF_ALL_TASKS;
+            }
+
+            public static void ClearTasksBlock()
+            {
+                COUNT_OF_ALL_BLOCK_TASKS = 0;
+                BLOCK_PROGRESS_NOW = 0;
+            }
+
+            public static void ClearAllTasks()
+            {
+                MAIN_PROGRESS_NOW_STATUS = 0;
+                COUNT_OF_ALL_BLOCK_TASKS = 0;
+                BLOCK_PROGRESS_NOW = 0;
+            }
+
+            public static void AddTaskInBlock(int countTasks = 0)
+            {
+                if (countTasks != 0)
+                {
+                    COUNT_OF_ALL_BLOCK_TASKS += countTasks;
+                }
+                else
+                {
+                    COUNT_OF_ALL_BLOCK_TASKS++;
+                }
+            }
+
+            public static int UpdateBlockBar()
+            {
+                BLOCK_PROGRESS_NOW++;
+                return BLOCK_PROGRESS_NOW * 100 / COUNT_OF_ALL_BLOCK_TASKS;
+            }
+
+            public static void AddToAllTasks(int countTasks)
+            {
+                COUNT_OF_ALL_TASKS += countTasks;
+            }
         }
     }
 }

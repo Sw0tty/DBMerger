@@ -106,7 +106,7 @@ namespace SqlDBManager
         public string SelectLastRecord(string columns, string tableName, string orderByColumn)
         {
             string request = SQLRequests.LastInsertRecordRequest(Catalog, columns, tableName, orderByColumn);
-            return ReturnStringFromDB(request, connection, ReturnTransaction());
+            return ReturnStringFromDB(request, connection, ReturnTransaction(), itsValue: true);
             //return ReturnListFromDB(request, connection, ReturnTransaction(), itsRow: true);
         }
 
@@ -147,13 +147,19 @@ namespace SqlDBManager
         public string SelectNewID()
         {
             string request = SQLRequests.NewIDRequest(Catalog);
-            return ReturnStringFromDB(request, connection, ReturnTransaction());
+            return ReturnStringFromDB(request, connection, ReturnTransaction(), itsValue: true);
         }
 
         public string SelectIDFrom(string tableName, string idLikeColumn, string filterValue)
         {
             string request = SQLRequests.IDFromRequest(Catalog, tableName, idLikeColumn, filterValue);
-            return ReturnStringFromDB(request, connection, ReturnTransaction());
+            return ReturnStringFromDB(request, connection, ReturnTransaction(), itsValue: true);
+        }
+
+        public string SelectReferenceTableName(string currentTableName, string foreignColumnName)
+        {
+            string request = SQLRequests.ReferenceTableNameRequest(Catalog, currentTableName, foreignColumnName);
+            return ReturnStringFromDB(request, connection, ReturnTransaction(), itsValue: false);
         }
 
         public List<string> SelectTablesNames(bool likeDBString = false, bool itsRow = false)
@@ -321,18 +327,25 @@ namespace SqlDBManager
             return tableData;
         }
 
-        static string ReturnStringFromDB(string request, SqlConnection connection, SqlTransaction transaction)
+        static string ReturnStringFromDB(string request, SqlConnection connection, SqlTransaction transaction, bool itsValue)
         {
             SqlCommand command = new SqlCommand(request, connection);
             command.Transaction = transaction;
             SqlDataReader reader = command.ExecuteReader();
             string valueFromDB = null;
-            
+
             while (reader.Read())
             {
-                valueFromDB = "'" + reader.GetSqlValue(0).ToString() + "'";
+                if (itsValue)
+                {
+                    valueFromDB = "'" + reader.GetSqlValue(0).ToString() + "'";
+                }
+                else
+                {
+                    valueFromDB = reader.GetSqlValue(0).ToString();
+                }
             }
-
+            
             reader.Close();
             command.Dispose();
             return valueFromDB;
