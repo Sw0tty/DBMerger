@@ -61,13 +61,13 @@ namespace SqlDBManager
             Dictionary<string, List<Dictionary<string, string>>> mainProblemTables = ValidateValues(mainCatalog, defaultTables, worker);          
             if (mainProblemTables.Count == 0)
             {
-                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Ошибок не обнаружено.");
+                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Ошибок не обнаружено.");
             }
 
             Dictionary<string, List<Dictionary<string, string>>> daughterProblemTables = ValidateValues(daughterCatalog, defaultTables, worker);
             if (daughterProblemTables.Count == 0)
             {
-                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Ошибок не обнаружено.");
+                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Ошибок не обнаружено.");
             }
 
             if (mainProblemTables.Count > 0 || daughterProblemTables.Count > 0)
@@ -95,7 +95,7 @@ namespace SqlDBManager
         {
             Dictionary<string, List<Dictionary<string, string>>> catalogProblemTables = new Dictionary<string, List<Dictionary<string, string>>>();
 
-            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Проверяем каталог '{catalog.ReturnCatalog()}':");
+            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Проверяем каталог '{catalog.ReturnCatalogName()}':");
             foreach (string tableName in defaultTables.Keys)
             {
                 List<Dictionary<string, string>> catalogInvalidRows = catalog.SelectAllFrom(tableName, defaultTables[tableName].Item2, filterIN: false);
@@ -110,7 +110,7 @@ namespace SqlDBManager
                     {
                         invalidUniqueValues += invalidRow[string.Join("", defaultTables[tableName].Item2.Keys)] + " ";
                     }
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"{invalidUniqueValues}");
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"{invalidUniqueValues}");
                 }
             }
             return catalogProblemTables;

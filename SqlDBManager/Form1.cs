@@ -17,6 +17,7 @@ using NotesNamespace;
 using System.Transactions;
 using System.Windows.Forms.VisualStyles;
 using System.IO;
+using SqlDBManager.DBClasses;
 
 namespace SqlDBManager
 {
@@ -112,11 +113,11 @@ namespace SqlDBManager
 
         public void WrapTabControl(TabControl tabControl, bool nextPage)
         {
-            Consts.TAB_ACCESS = false;
+            Consts.VisualConsts.TAB_ACCESS = false;
             if (nextPage)
                 tabControl.SelectedIndex++;
             else tabControl.SelectedIndex--;
-            Consts.TAB_ACCESS = true;
+            Consts.VisualConsts.TAB_ACCESS = true;
         }
 
         public void SetToDefaultStatusBlock()
@@ -268,12 +269,14 @@ namespace SqlDBManager
             // 2. Открываем соединения с БД
             mainCatalog.OpenConnection();
             daughterCatalog.OpenConnection();
+            mainCatalog.StartTransaction();
+            daughterCatalog.StartTransaction();
 
-            SqlTransaction transaction = mainCatalog.StartTransaction();
-            SqlTransaction transaction2 = daughterCatalog.StartTransaction();
+/*            SqlTransaction transaction = mainCatalog.StartTransaction();
+            SqlTransaction transaction2 = daughterCatalog.StartTransaction();*/
 
             Consts.MergeProgress.FormTasks(mainCatalog);
-            Consts.WriteLastCatalogs(mainCatalog.ReturnCatalog(), daughterCatalog.ReturnCatalog());
+            Consts.WriteLastCatalogs(mainCatalog.ReturnCatalogName(), daughterCatalog.ReturnCatalogName());
 
             worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Предварительные проверки ---");
             worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидируем каталоги на возможность слияния...");
@@ -360,14 +363,15 @@ namespace SqlDBManager
                             {
                                 worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Заключение слияния ---");
                                 worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Возвращаем временные изменения...");
-                                transaction2.Rollback();
+                                //transaction2.Rollback();
                                 successOperation = Wrappers.WrapSimpleMergeFunc(MergeManager.RenameAfterMergeTableColumn, mainCatalog, worker);
                             }
 
                             if (successOperation)
                             {
                                 MessageBox.Show("NEXT STEP COMMIT!");
-                                transaction.Commit();
+                                //transaction.Commit();
+                                mainCatalog.CommitTransaction();
                                 Consts.MERGE_WAS_SUCCESS = true;
 
                                 e.Result = "Слияние успешно завершено!";
@@ -375,8 +379,10 @@ namespace SqlDBManager
                             }
                             else
                             {
-                                transaction.Rollback();
-                                transaction2.Rollback();
+/*                                transaction.Rollback();
+                                transaction2.Rollback();*/
+                                mainCatalog.RollbackTransaction();
+                                daughterCatalog.RollbackTransaction();
                                 ProgramMessages.ErrorMessage();
                             }
                         }
@@ -412,7 +418,7 @@ namespace SqlDBManager
         {
             if (e.ProgressPercentage == WorkerConsts.BLOCK_HEADING)
             {
-                textBoxStatus.AppendText("\r\n" + HelpFunction.CreateSpace(VisualConsts.HEADING_SPACE) + e.UserState.ToString() + "\r\n");
+                textBoxStatus.AppendText("\r\n" + HelpFunction.CreateSpace(Consts.VisualConsts.HEADING_SPACE) + e.UserState.ToString() + "\r\n");
             }
             else if (e.ProgressPercentage == WorkerConsts.MIDDLE_STATUS_CODE)
             {
@@ -530,7 +536,7 @@ namespace SqlDBManager
             }
             else
             {
-                e.Cancel = Consts.TAB_ACCESS;
+                e.Cancel = Consts.VisualConsts.TAB_ACCESS;
             }
         }
 
@@ -594,7 +600,25 @@ namespace SqlDBManager
             Cursor = Cursors.Default;
         }
 
+        private void mergeLog_MouseEnter(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
 
+        private void mergeLog_MouseLeave(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Default;
+        }
+
+        private void startMerge_MouseEnter(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
+
+        private void startMerge_MouseLeave(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Default;
+        }
 
 
 
@@ -621,6 +645,28 @@ namespace SqlDBManager
 
         private void button3_Click(object sender, EventArgs e)
         {
+            TestCatalog testCatalog = new TestCatalog(@"(local)\SQLEXPRESS2022", "TestDB", "sa", "123");
+
+
+            testCatalog.OpenConnection();
+            testCatalog.StartTransaction();
+            string request = $"SELECT * FROM [TestDB].[dbo].[tblFUND];";
+            string request2 = $"SELECT COUNT(*) FROM [TestDB].[dbo].[tblFUND];";
+
+            int count = testCatalog.TestSelectCountAdapter(request2);
+            MessageBox.Show(count.ToString());
+
+            Tuple<int, List<Dictionary<string, string>>> dataFrom = testCatalog.TestSelectAdapter(request);
+            MessageBox.Show(dataFrom.Item1.ToString());
+
+            foreach (Dictionary<string, string> row in dataFrom.Item2)
+            {
+                foreach (string key in row.Keys)
+                {
+                    MessageBox.Show(key + ": " + row[key]);
+                }
+            }
+
             textBoxStatus.AppendText("dfgfdg" + "\r\n");
             textBoxStatus.AppendText("dfgfdg" + "\r\n");
             textBoxStatus.AppendText("dfgfdg" + "\r\n");

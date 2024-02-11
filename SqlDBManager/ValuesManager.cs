@@ -391,7 +391,7 @@ namespace SqlDBManager
                     catalog.DeleteValue(tableName, string.Join("", defaultTables[tableName].Item2.Keys), row[string.Join("", defaultTables[tableName].Item2.Keys)]);
                 }
             }
-            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Каталог '{catalog.ReturnCatalog()}' скорректирован.");
+            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Каталог '{catalog.ReturnCatalogName()}' скорректирован.");
         }
 
         public static void SelectImportMethod(DBCatalog catalog, Dictionary<string, string> row, string tableName, BackgroundWorker worker)

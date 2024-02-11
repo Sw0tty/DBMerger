@@ -504,6 +504,8 @@
             this.startMerge.Text = "Начать слияние";
             this.startMerge.UseVisualStyleBackColor = true;
             this.startMerge.Click += new System.EventHandler(this.startMerge_Click);
+            this.startMerge.MouseEnter += new System.EventHandler(this.startMerge_MouseEnter);
+            this.startMerge.MouseLeave += new System.EventHandler(this.startMerge_MouseLeave);
             // 
             // label13
             // 
@@ -558,6 +560,8 @@
             this.mergeLog.Text = "Сохранить итог слияния";
             this.mergeLog.UseVisualStyleBackColor = true;
             this.mergeLog.Click += new System.EventHandler(this.mergeLog_Click);
+            this.mergeLog.MouseEnter += new System.EventHandler(this.mergeLog_MouseEnter);
+            this.mergeLog.MouseLeave += new System.EventHandler(this.mergeLog_MouseLeave);
             // 
             // button6
             // 

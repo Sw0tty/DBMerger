@@ -64,11 +64,11 @@ namespace SqlDBManager
 
                     if (mainCatalog.SelectCountRowsTable(logTable) == 0)
                     {
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Пустая таблица.");
+                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
                     }
                     else
                     {
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Записей удалено {recordsCount}");
+                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Записей удалено {recordsCount}");
                     }
                     worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), WorkerConsts.ITS_MAIN_PROGRESS_BAR);
                 }
@@ -89,11 +89,11 @@ namespace SqlDBManager
 
                 if (mainCatalog.SelectCountRowsTable(defaultTable) == 0)
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Пустая таблица.");
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
                 }
                 else
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Таблица с дефолтными значениями.");
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Таблица с дефолтными значениями.");
                 }
                 worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), WorkerConsts.ITS_MAIN_PROGRESS_BAR);
             }
@@ -114,7 +114,7 @@ namespace SqlDBManager
 
                 if (daughterCatalog.SelectCountRowsTable(tableName) == 0)
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Пустая таблица.");
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
                 }
                 // Вызывается функция обработчик, которая собирает данные из кортежа
                 else if (DefaultTablesParams.ContainsKey(tableName))
@@ -123,13 +123,13 @@ namespace SqlDBManager
 
                     if (Consts.DEBUG_MOD)
                     {
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, excludeColumns: paramsForProcessing.Item4)}");
+                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, excludeColumns: paramsForProcessing.Item4)}");
                     }
                     else
                     {
                         try
                         {
-                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, excludeColumns: paramsForProcessing.Item4)}");
+                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, excludeColumns: paramsForProcessing.Item4)}");
                         }
                         catch (Exception error)
                         {
@@ -140,7 +140,7 @@ namespace SqlDBManager
                 }
                 else
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
                 }
                 worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), WorkerConsts.ITS_MAIN_PROGRESS_BAR);
             }
@@ -162,7 +162,7 @@ namespace SqlDBManager
 
                 if (daughterCatalog.SelectCountRowsTable(tableName) == 0)
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Пустая таблица.");
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
                 }
                 else if (LinksTablesParams.ContainsKey(tableName))
                 {
@@ -171,13 +171,13 @@ namespace SqlDBManager
 
                     if (Consts.DEBUG_MOD)
                     {
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, parentIdColumn: paramsForProcessing.Item4, numerateColumn: paramsForProcessing.Item5, extraFilterColumns: paramsForProcessing.Item6, excludeColumns: paramsForProcessing.Item7)}");
+                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, parentIdColumn: paramsForProcessing.Item4, numerateColumn: paramsForProcessing.Item5, extraFilterColumns: paramsForProcessing.Item6, excludeColumns: paramsForProcessing.Item7)}");
                     }
                     else
                     {
                         try
                         {
-                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, parentIdColumn: paramsForProcessing.Item4, numerateColumn: paramsForProcessing.Item5, extraFilterColumns: paramsForProcessing.Item6, excludeColumns: paramsForProcessing.Item7)}");
+                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, parentIdColumn: paramsForProcessing.Item4, numerateColumn: paramsForProcessing.Item5, extraFilterColumns: paramsForProcessing.Item6, excludeColumns: paramsForProcessing.Item7)}");
                         }
                         catch (Exception error)
                         {
@@ -188,7 +188,7 @@ namespace SqlDBManager
                 }
                 else
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
                 }
                 worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), WorkerConsts.ITS_MAIN_PROGRESS_BAR);
             }
@@ -213,15 +213,15 @@ namespace SqlDBManager
 
                 if (checkEmpty == 0)
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Пустая таблица.");
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
                 }
                 else if (functionsDict.ContainsKey(tableName))
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + $"Импортировано значений {functionsDict[tableName](mainCatalog, daughterCatalog, tableName)}");
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {functionsDict[tableName](mainCatalog, daughterCatalog, tableName)}");
                 }
                 else
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
+                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
                 }
             }
         }

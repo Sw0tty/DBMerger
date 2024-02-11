@@ -7,11 +7,7 @@ using System.Threading.Tasks;
 
 namespace SqlDBManager
 {
-    public static class VisualConsts
-    {
-        public const int SPACE_SIZE = 4;
-        public const int HEADING_SPACE = 40;
-    }
+    
 
     public static class WorkerConsts
     {
@@ -38,13 +34,19 @@ namespace SqlDBManager
         public static bool MERGE_WAS_SUCCESS = false;
         public static bool LOG_SAVED = false;
         public static string LAST_MAIN_CATALOG = null;
-        public static string LAST_DAUGHTER_CATALOG = null;
-        public static bool TAB_ACCESS = true;
+        public static string LAST_DAUGHTER_CATALOG = null;       
 
         public static void WriteLastCatalogs(string mainCatalog, string daughterCatalog)
         {
             LAST_MAIN_CATALOG = mainCatalog;
             LAST_DAUGHTER_CATALOG = daughterCatalog;
+        }
+
+        public static class VisualConsts
+        {
+            public const int SPACE_SIZE = 4;
+            public const int HEADING_SPACE = 40;
+            public static bool TAB_ACCESS = true;
         }
 
         public static class MergeProgress

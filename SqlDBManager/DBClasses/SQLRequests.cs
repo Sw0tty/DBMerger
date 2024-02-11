@@ -1,10 +1,96 @@
 ﻿using System.Collections.Generic;
-using System.Windows.Forms;
+
 
 namespace SqlDBManager
 {
     public static class SQLRequests
     {
+        public static class SelectRequests
+        {
+
+        }
+
+        public static class InsertRequests
+        {
+            /// <summary>
+            /// Request on insert row
+            /// </summary>
+            /// <returns>String request</returns>
+            public static string InsertDictValueRequst(string catalog, string tableName, Dictionary<string, string> data, bool withoutID = false)
+            {
+                if (withoutID)
+                {
+                    return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES ({string.Join(", ", data.Values).Replace("'null'", "null")});";
+                }
+                return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("'null'", "null")});";
+            }
+
+            /// <summary>
+            /// Form big request to table
+            /// </summary>
+            /// <returns>String request</returns>
+            public static string FastFormerInsertValueRequst(List<string> columns, string catalog, string tableName, string values)
+            {
+                return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", columns).Replace('\"', '\'')}) VALUES {values};";
+            }
+        }
+
+        public static class UpdateRequests
+        {
+            /// <summary>
+            /// Update filtered records request
+            /// </summary>
+            /// <returns>String request</returns>
+            public static string UpdateRowRequest(string catalog, string tableName, string updateColumn, string updateValue, string filterColumn, string filterValue)
+            {
+                return $"UPDATE [{catalog}].[dbo].[{tableName}] SET {updateColumn} = {updateValue} WHERE {filterColumn} = {filterValue};";
+            }
+
+            /// <summary>
+            /// Request to renames same column
+            /// </summary>
+            /// <returns>String request</returns>
+            public static string RenameTableColumnRequest(string catalog, string tableName, string oldColumnName, string newColumnName)
+            {
+                return $"EXEC [{catalog}].[dbo].sp_rename '{tableName}.{oldColumnName}', '{newColumnName}', 'COLUMN';";
+            }
+
+            /// <summary>
+            /// Request to add missing foreign keys
+            /// </summary>
+            /// <returns>String request</returns>
+            public static string AddForeignKeyOnTable(string catalog, string repairTableName, string referenceTableName, string linkColumn)
+            {
+                return $"IF NOT EXISTS (SELECT t.name AS TableWithForeignKey " +
+                       $"FROM [{catalog}].sys.foreign_key_columns AS fk " +
+                       $"JOIN [{catalog}].sys.tables AS t ON fk.parent_object_id = t.object_id " +
+                       $"JOIN [{catalog}].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id " +
+                       $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalog}].sys.tables WHERE name = '{referenceTableName}') and c.name != 'ID' and t.name = '{repairTableName}') " +
+                       $"ALTER TABLE[{catalog}].[dbo].[{repairTableName}] ADD FOREIGN KEY({linkColumn}) REFERENCES[{catalog}].[dbo].[{referenceTableName}]({linkColumn});";
+            }
+        }
+
+        public static class DeleteRequests
+        {
+            /// <summary>
+            /// Clear table request
+            /// </summary>
+            /// <returns>String request</returns>
+            public static string ClearTableRequest(string catalog, string table)
+            {
+                return $"DELETE [{catalog}].[dbo].[{table}];";
+            }
+
+            /// <summary>
+            /// Delete records request
+            /// </summary>
+            /// <returns>String request</returns>
+            public static string DeleteRowRequest(string catalog, string tableName, string filterColumn, string filterValue)
+            {
+                return $"DELETE [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
+            }
+        }
+
         // таблицы на обработку
         public static string ProcessingRequest(string catalog)
         {
@@ -44,23 +130,7 @@ namespace SqlDBManager
             return $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' and TABLE_NAME like '%log' ORDER BY TABLE_NAME;";
         }
 
-        /// <summary>
-        /// Clear table request
-        /// </summary>
-        /// <returns>String request</returns>
-        public static string ClearTableRequest(string catalog, string table)
-        {
-            return $"DELETE [{catalog}].[dbo].[{table}];";
-        }
 
-        /// <summary>
-        /// Delete records request
-        /// </summary>
-        /// <returns>String request</returns>
-        public static string DeleteRowRequest(string catalog, string tableName, string filterColumn, string filterValue)
-        {
-            return $"DELETE [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
-        }
 
         /// <summary>
         /// Column of last record
@@ -81,39 +151,15 @@ namespace SqlDBManager
         }
 
         /// <summary>
-        /// Update filtered records request
-        /// </summary>
-        /// <returns>String request</returns>
-        public static string UpdateRowRequest(string catalog, string tableName, string updateColumn, string updateValue, string filterColumn, string filterValue)
-        {
-            return $"UPDATE [{catalog}].[dbo].[{tableName}] SET {updateColumn} = {updateValue} WHERE {filterColumn} = {filterValue};";
-        }
-
-        /// <summary>
         /// Insert from request
         /// </summary>
         /// <returns>String request</returns>
-        public static string InsertFromRequest(string inCatalog, string inTable, List<string> columns, string fromCatalog, string fromTable, string filterColumn, string filterValue)
+/*        public static string InsertFromRequest(string inCatalog, string inTable, List<string> columns, string fromCatalog, string fromTable, string filterColumn, string filterValue)
         {
             return $"INSERT INTO [{inCatalog}].[dbo].[{inTable}] SELECT {string.Join(", ", columns)} FROM [{fromCatalog}].[dbo].[{fromTable}] WHERE {filterColumn} = '{filterValue}';";
-        }
+        }*/
 
-        /// <summary>
-        /// Запрос на вставку записи в таблицу
-        /// </summary>
-        public static string InsertDictValueRequst(string catalog, string tableName, Dictionary<string, string> data, bool withoutID = false)
-        {
-            if (withoutID)
-            {
-                return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES ({string.Join(", ", data.Values).Replace("'null'", "null")});";
-            }
-            return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("'null'", "null")});";
-        }
 
-        public static string FastFormerInsertValueRequst(List<string> columns, string catalog, string tableName, string values)
-        {
-            return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", columns).Replace('\"', '\'')}) VALUES {values};";
-        }
 
         /// <summary>
         /// Запрос получения записей по переданному фильтру
@@ -166,28 +212,14 @@ namespace SqlDBManager
         /// <summary>
         /// Запрос получения списока значений по одной колонке
         /// </summary>
-        public static string OneColumnRequest(string column, string catalog, string tableName)
+/*        public static string OneColumnRequest(string column, string catalog, string tableName)
         {
             return $"SELECT {column} FROM [{catalog}].[dbo].[{tableName}];";
-        }
+        }*/
 
-        /// <summary>
-        /// Запрос расположения каталога
-        /// </summary>
-        public static string CatalogPathRequest(string catalog)
-        {
-            return $"SELECT TOP 1 physical_name FROM [{catalog}].sys.database_files;";
-        }
+
         
-        public static string CreateBackupRequest(string catalog, string path)
-        {
-            return $"BACKUP DATABASE [{catalog}] TO DISK = '{path}';";
-        }
 
-        public static string DeleteBackupRequest(string path)
-        {
-            return $"EXECUTE master.dbo.xp_delete_file 0, N'{path}';";
-        }
 
         public static string NewIDRequest(string catalog)
         {
@@ -214,10 +246,7 @@ namespace SqlDBManager
                    $"and COL_NAME(fk_c.parent_object_id, fk_c.parent_column_id) = '{foreignColumnName}'";
         }
 
-        public static string RestoreBackupRequest(string catalog, string path)
-        {
-            return $"ALTER DATABASE [{catalog}] SET single_user WITH rollback immediate; DROP DATABASE [{catalog}] RESTORE DATABASE [{catalog}] FROM DISK = '{path}';";
-        }
+
 
         /// <summary>
         /// Запрос таблиц в которых используется ссылка на переданную таблицу
@@ -231,35 +260,33 @@ namespace SqlDBManager
                    $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalog}].sys.tables WHERE name = '{tableName}') and c.name != 'ID' and t.name != '{tableName}';";
         }
 
-        public static string RenameTableColumnRequest(string catalog, string tableName, string oldColumnName, string newColumnName)
-        {
-            // EXEC [5572_verh].[dbo].sp_rename 'tblINVENTORY.ISN_INVENTORY_STORAGE', 'ISN_STORAGE_MEDIUM', 'COLUMN';
-            return $"EXEC [{catalog}].[dbo].sp_rename '{tableName}.{oldColumnName}', '{newColumnName}', 'COLUMN';";
-        }
 
-        public static string AddForeignKeyOnTable_old(string catalog, string repairTableName, string referenceTableName, string linkColumn)
-        {
-            return $"ALTER TABLE[{catalog}].[dbo].[{repairTableName}] ADD FOREIGN KEY({linkColumn}) REFERENCES[{catalog}].[dbo].[{referenceTableName}]({linkColumn});";
-        }
-
-        public static string AddForeignKeyOnTable(string catalog, string repairTableName, string referenceTableName, string linkColumn)
-        {
-            return $"IF NOT EXISTS (SELECT t.name AS TableWithForeignKey " +
-                $"FROM [{catalog}].sys.foreign_key_columns AS fk " +
-                $"JOIN [{catalog}].sys.tables AS t ON fk.parent_object_id = t.object_id " +
-                $"JOIN [{catalog}].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id " +
-                $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalog}].sys.tables WHERE name = '{referenceTableName}') and c.name != 'ID' and t.name = '{repairTableName}') " +
-                $"ALTER TABLE[{catalog}].[dbo].[{repairTableName}] ADD FOREIGN KEY({linkColumn}) REFERENCES[{catalog}].[dbo].[{referenceTableName}]({linkColumn});";
-        }
-
-/*        IF NOT EXISTS(SELECT t.name AS TableWithForeignKey
-                FROM [TestDB].sys.foreign_key_columns AS fk
-                JOIN [TestDB].sys.tables AS t ON fk.parent_object_id = t.object_id
-                JOIN[TestDB].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id
-                WHERE fk.referenced_object_id = (SELECT object_id FROM [TestDB].sys.tables WHERE name = 'tblFUND') and c.name != 'ID' and t.name = 'tblACT')
-  ALTER TABLE[TestDB].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[TestDB].[dbo].[tblFUND] (ISN_FUND);*/
     
+        public static class BackUpRequests
+        {
+            /// <summary>
+            /// Запрос расположения каталога
+            /// </summary>
+            public static string CatalogPathRequest(string catalog)
+            {
+                return $"SELECT TOP 1 physical_name FROM [{catalog}].sys.database_files;";
+            }
 
+            public static string RestoreBackupRequest(string catalog, string path)
+            {
+                return $"ALTER DATABASE [{catalog}] SET single_user WITH rollback immediate; DROP DATABASE [{catalog}] RESTORE DATABASE [{catalog}] FROM DISK = '{path}';";
+            }
+
+            public static string CreateBackupRequest(string catalog, string path)
+            {
+                return $"BACKUP DATABASE [{catalog}] TO DISK = '{path}';";
+            }
+
+            public static string DeleteBackupRequest(string path)
+            {
+                return $"EXECUTE master.dbo.xp_delete_file 0, N'{path}';";
+            }
+        }
 
         public static class RecalculationRequests
         {

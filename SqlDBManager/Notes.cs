@@ -1,13 +1,17 @@
 ﻿using SqlDBManager;
+using SqlDBManager.DBClasses;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Runtime.Remoting.Messaging;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Web;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -25,6 +29,13 @@ namespace NotesNamespace
                 space += " ";
             return space;
         }
+    }
+
+    
+
+    public class S : BaseDBConnector
+    {
+        public S(string source, string catalog, string login, string password) : base(source, catalog, login, password){}
     }
 
     public static class Wrappers
@@ -48,6 +59,9 @@ namespace NotesNamespace
         public static bool WrapSimpleMergeFunc(Func<DBCatalog, BackgroundWorker, bool> function, DBCatalog catalog, BackgroundWorker worker)
         {
             Consts.MergeProgress.AddToAllTasks(1);
+            S baseDB = new S("", "", "", "");
+
+
             bool status = function(catalog, worker);
             worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), WorkerConsts.ITS_MAIN_PROGRESS_BAR);
             return status;

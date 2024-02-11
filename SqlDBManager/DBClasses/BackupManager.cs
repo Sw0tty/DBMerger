@@ -30,7 +30,7 @@ namespace SqlDBManager
 
         public void CreateReserveBackup(string catalog)
         {
-            string request = SQLRequests.CreateBackupRequest(catalog, backupPath);
+            string request = SQLRequests.BackUpRequests.CreateBackupRequest(catalog, backupPath);
             SqlCommand command = new SqlCommand(request, masterСonnection);
 
             command.ExecuteNonQuery();
@@ -39,7 +39,7 @@ namespace SqlDBManager
 
         public void DeleteReserveBackup()
         {
-            string request = SQLRequests.DeleteBackupRequest(backupPath);
+            string request = SQLRequests.BackUpRequests.DeleteBackupRequest(backupPath);
             SqlCommand command = new SqlCommand(request, masterСonnection);
 
             command.ExecuteNonQuery();
@@ -48,7 +48,7 @@ namespace SqlDBManager
 
         public void RestoreFromBackup(string catalog)
         {
-            string request = SQLRequests.RestoreBackupRequest(catalog, backupPath);
+            string request = SQLRequests.BackUpRequests.RestoreBackupRequest(catalog, backupPath);
             SqlCommand command = new SqlCommand(request, masterСonnection);
 
             command.ExecuteNonQuery();
