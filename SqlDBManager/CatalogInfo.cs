@@ -94,7 +94,7 @@ namespace SqlDBManager
 
         public int SelectCountTables()
         {
-            string request = SQLRequests.CountTablesRequest(Catalog);
+            string request = SQLRequests.SelectRequests.CountTablesRequest(Catalog);
             SqlCommand command = new SqlCommand(request, ReturnConnection());
             command.Transaction = ReturnTransaction();
             SqlDataReader reader = command.ExecuteReader();
@@ -110,7 +110,7 @@ namespace SqlDBManager
 
         public string SelectLastRecord(string columns, string tableName, string orderByColumn)
         {
-            string request = SQLRequests.LastInsertRecordRequest(Catalog, columns, tableName, orderByColumn);
+            string request = SQLRequests.SelectRequests.LastInsertRecordRequest(Catalog, columns, tableName, orderByColumn);
             return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: true);
             //return ReturnListFromDB(request, connection, ReturnTransaction(), itsRow: true);
         }
@@ -121,7 +121,7 @@ namespace SqlDBManager
         public int SelectCountRowsTable(string tableName)
         {
             // On SelectCountAdapter
-            string request = SQLRequests.CountRowsRequest(Catalog, tableName);
+            string request = SQLRequests.SelectRequests.CountRowsRequest(Catalog, tableName);
             SqlCommand command = new SqlCommand(request, ReturnConnection());
             command.Transaction = ReturnTransaction();
             SqlDataReader reader = command.ExecuteReader();
@@ -141,7 +141,7 @@ namespace SqlDBManager
         /// </summary>
         public List<Dictionary<string, string>> SelectAllFrom(string tableName, Dictionary<string, List<string>> filter = null, bool filterIN = true, List<string> columns = null)
         {
-            string request = SQLRequests.AllRecordsRequest(Catalog, tableName, filter, filterIN, columns);
+            string request = SQLRequests.SelectRequests.AllRecordsRequest(Catalog, tableName, filter, filterIN, columns);
             //MessageBox.Show(tableName + "       " + request);
             if (columns == null)
             {
@@ -158,19 +158,19 @@ namespace SqlDBManager
 
         public string SelectIDFrom(string tableName, string idLikeColumn, string filterValue)
         {
-            string request = SQLRequests.IDFromRequest(Catalog, tableName, idLikeColumn, filterValue);
+            string request = SQLRequests.SelectRequests.IDFromRequest(Catalog, tableName, idLikeColumn, filterValue);
             return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: true);
         }
 
         public string SelectReferenceTableName(string currentTableName, string foreignColumnName)
         {
-            string request = SQLRequests.ReferenceTableNameRequest(Catalog, currentTableName, foreignColumnName);
+            string request = SQLRequests.SelectRequests.ReferenceTableNameRequest(Catalog, currentTableName, foreignColumnName);
             return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: false);
         }
 
         public List<string> SelectTablesNames(bool likeDBString = false, bool itsRow = false)
         {
-            string request = SQLRequests.AllTablesNamesRequest(Catalog);
+            string request = SQLRequests.SelectRequests.AllTablesNamesRequest(Catalog);
             return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction(), likeDBString, itsRow);
         }
 
@@ -179,31 +179,31 @@ namespace SqlDBManager
         /// </summary>
         public List<string> SelectLogTables(bool likeDBString = false, bool itsRow = false)
         {
-            string request = SQLRequests.LogTablesRequest(Catalog);
+            string request = SQLRequests.SelectRequests.LogTablesRequest(Catalog);
             return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction(), likeDBString, itsRow);
         }
 
         public List<string> SelectDefaultSkipTables()
         {
-            string request = SQLRequests.SkipRequest(Catalog);
+            string request = SQLRequests.SelectRequests.SkipRequest(Catalog);
             return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction());
         }
 
         public List<string> SelectDefaultProcessingTables()
         {
             // Дефолтные таблицы на обработку
-            string request = SQLRequests.ProcessingRequest(Catalog);
+            string request = SQLRequests.SelectRequests.ProcessingRequest(Catalog);
             return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction());
         }
 
         /// <summary>
         /// Возвращает список полученных значений по фильтру
         /// </summary>
-        public List<Dictionary<string, string>> SelectRecordsWhere(List<string> columns, string tableName, string filterColumn, string filterData)
+/*        public List<Dictionary<string, string>> SelectRecordsWhere(List<string> columns, string tableName, string filterColumn, string filterData)
         {
-            string request = SQLRequests.SelectWhereRequest(columns, Catalog, tableName, filterColumn, filterData);
+            string request = SQLRequests.SelectRequests.SelectWhereRequest(columns, Catalog, tableName, filterColumn, filterData);
             return ReturnListDictsFromDB(request, SelectColumnsNames(tableName), ReturnConnection(), ReturnTransaction());
-        }
+        }*/
 
         /// <summary>
         /// Возвращает словарь значений где ключ - таблица в которой используются значения из переданной таблицы.
@@ -211,13 +211,13 @@ namespace SqlDBManager
         /// </summary>
         public Dictionary<string, string> SelectTablesAndForeignKeyUsage(string tableName)
         {
-            string request = SQLRequests.RecordsUsingAsForeignKeyRequest(Catalog, tableName);
+            string request = SQLRequests.SelectRequests.RecordsUsingAsForeignKeyRequest(Catalog, tableName);
             return ReturnDictFromDB(request, ReturnConnection(), ReturnTransaction());
         }
 
         public Dictionary<string, string> SelectCatalogVersion()
         {
-            string request = SQLRequests.SelectVersionRequest(Catalog);
+            string request = SQLRequests.SelectRequests.SelectVersionRequest(Catalog);
             return ReturnDictFromDB(request, ReturnConnection(), ReturnTransaction());
         }
 
@@ -226,7 +226,7 @@ namespace SqlDBManager
         /// </summary>
         public List<string> SelectColumnsNames(string tableName, bool likeDBString = false, bool itsRow = false)
         {
-            string request = SQLRequests.ColumnsNamesRequest(Catalog, tableName);
+            string request = SQLRequests.SelectRequests.ColumnsNamesRequest(Catalog, tableName);
             return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction(), likeDBString, itsRow);
         }
 
@@ -243,12 +243,14 @@ namespace SqlDBManager
         public void AddReference(string repairTableName, string referenceTableName, string linkColumn)
         {
             string request = SQLRequests.UpdateRequests.AddForeignKeyOnTable(Catalog, repairTableName, referenceTableName, linkColumn);
+            // on AlterAdapter
             AnotherRequest(request, ReturnConnection(), ReturnTransaction());
         }
 
         public void RenameColumn(string tableName, string oldColumnName, string newColumnName)
         {
             string request = SQLRequests.UpdateRequests.RenameTableColumnRequest(Catalog, tableName, oldColumnName, newColumnName);
+            // on AlterAdapter
             AnotherRequest(request, ReturnConnection(), ReturnTransaction());
         }
 
@@ -261,10 +263,10 @@ namespace SqlDBManager
             InsertAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
-        public void InsertListOfValues(string request)
+/*        public void InsertListOfValues(string request)
         {
             InsertAdapter(request, ReturnConnection(), ReturnTransaction());
-        }
+        }*/
 
         public void SpecialInsertListOfValues(string tableName, string values)
         {
@@ -307,6 +309,7 @@ namespace SqlDBManager
         /// </summary>
         static List<Dictionary<string, string>> ReturnListDictsFromDB(string request, List<string> columnsNames, SqlConnection connection, SqlTransaction transaction)
         {
+            // on SELECT Adapter
             SqlCommand command = new SqlCommand(request, connection);
             command.Transaction = transaction;
             SqlDataReader reader = command.ExecuteReader();
@@ -418,7 +421,7 @@ namespace SqlDBManager
         /// Проверяет на валидность данные дефолтных таблиц
         /// </summary>
         /// <returns>Успешность прохождения валидации</returns>
-        public bool ValidateDefaultTables(BackgroundWorker worker)
+        /*public bool ValidateDefaultTables(BackgroundWorker worker)
         {
             Dictionary<string, Tuple<string, Dictionary<string, List<string>>>> defaultTables = SpecialTablesValues.DefaultTables;
             Dictionary<string, List<Dictionary<string, string>>> problemTables = new Dictionary<string, List<Dictionary<string, string>>>();
@@ -453,12 +456,12 @@ namespace SqlDBManager
                 return false;
             }
             return true;
-        }
+        }*/
 
         /// <summary>
         /// Вносит изменения в БД. Корректирует невалидные данные дефолтных таблиц
         /// </summary>
-        public void RebuildDefaultTables(BackgroundWorker worker, Dictionary<string, List<Dictionary<string, string>>> problemTables, Dictionary<string, Tuple<string, Dictionary<string, List<string>>>> defaultTables)
+        /*public void RebuildDefaultTables(BackgroundWorker worker, Dictionary<string, List<Dictionary<string, string>>> problemTables, Dictionary<string, Tuple<string, Dictionary<string, List<string>>>> defaultTables)
         {
             foreach (string tableName in problemTables.Keys)
             {
@@ -474,6 +477,6 @@ namespace SqlDBManager
                 }
             }
             worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Данные скорректированы.");
-        }
+        }*/
     }
 }

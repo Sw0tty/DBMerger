@@ -7,7 +7,142 @@ namespace SqlDBManager
     {
         public static class SelectRequests
         {
+            public static string IDFromRequest(string catalog, string tableName, string filterColumn, string filterValue)
+            {
+                return $"SELECT ID FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
+            }
 
+            /// <summary>
+            /// Request of taking table name on the foreign key referenced
+            /// </summary>
+            /// <returns>String request</returns>
+            public static string ReferenceTableNameRequest(string catalog, string currentTableName, string foreignColumnName)
+            {
+                return $"USE [{catalog}]; " +
+                       "SELECT OBJECT_NAME (fk.referenced_object_id) " +
+                       "FROM sys.foreign_keys AS fk " +
+                       "INNER JOIN sys.foreign_key_columns AS fk_c " +
+                       "ON fk.object_id = fk_c.constraint_object_id " +
+                       $"WHERE OBJECT_NAME(fk.parent_object_id) = '{currentTableName}' " +
+                       $"and COL_NAME(fk_c.parent_object_id, fk_c.parent_column_id) = '{foreignColumnName}'";
+            }
+
+            /// <summary>
+            /// Запрос таблиц в которых используется ссылка на переданную таблицу
+            /// </summary>
+            public static string RecordsUsingAsForeignKeyRequest(string catalog, string tableName)
+            {
+                return "SELECT t.name AS TableWithForeignKey, c.name AS ForeignKeyColumnName " +
+                       $"FROM [{catalog}].sys.foreign_key_columns AS fk " +
+                       $"JOIN [{catalog}].sys.tables AS t ON fk.parent_object_id = t.object_id " +
+                       $"JOIN [{catalog}].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id " +
+                       $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalog}].sys.tables WHERE name = '{tableName}') and c.name != 'ID' and t.name != '{tableName}';";
+            }
+
+            // таблицы на обработку
+            public static string ProcessingRequest(string catalog)
+            {
+                return $"SELECT name FROM [{catalog}].sys.tables WHERE name in ('eqUsers', 'rptFUND_PAPER', 'rptFUND_UNIT_REG_STATS', 'tblACT_TYPE_CL', 'tblAuthorizedDep', 'tblCLS', 'tblDataExport', 'tblDECL_COMMISSION_CL', 'tblConstantsSpec', 'tblGROUPING_ATTRIBUTE_CL', 'tblINV_REQUIRED_WORK_CL', 'tblLANGUAGE_CL', 'tblFEATURE', 'tblCITIZEN_CL', 'tblORGANIZ_CL', 'tblPAPER_CLS', 'tblPAPER_CLS_INV', 'tblPUBLICATION_TYPE_CL', 'tblQUESTION', 'tblRECEIPT_REASON_CL', 'tblRECEIPT_SOURCE_CL', 'tblREF_FILE', 'tblREPRODUCTION_METHOD_CL', 'tblService', 'tblSTATE_CL', 'tblSTORAGE_MEDIUM_CL', 'tblSUBJECT_CL', 'tblTREE_SUPPORT', 'tblWORK_CL') ORDER BY name;";
+            }
+
+            // Таблицы на скип
+            public static string SkipRequest(string catalog)
+            {
+                return $"SELECT name FROM [{catalog}].sys.tables WHERE OBJECTPROPERTY(object_id, 'TableHasForeignKey') = 0 and name not like '%log' and name not in ('eqUsers', 'rptFUND_PAPER', 'rptFUND_UNIT_REG_STATS', 'tblACT_TYPE_CL', 'tblAuthorizedDep', 'tblCLS', 'tblDataExport', 'tblDECL_COMMISSION_CL', 'tblConstantsSpec', 'tblGROUPING_ATTRIBUTE_CL', 'tblINV_REQUIRED_WORK_CL', 'tblLANGUAGE_CL', 'tblFEATURE', 'tblCITIZEN_CL', 'tblORGANIZ_CL', 'tblPAPER_CLS', 'tblPAPER_CLS_INV', 'tblPUBLICATION_TYPE_CL', 'tblQUESTION', 'tblRECEIPT_REASON_CL', 'tblRECEIPT_SOURCE_CL', 'tblREF_FILE', 'tblREPRODUCTION_METHOD_CL', 'tblService', 'tblSTATE_CL', 'tblSTORAGE_MEDIUM_CL', 'tblSUBJECT_CL', 'tblTREE_SUPPORT', 'tblWORK_CL', 'tblPUBLICATION_CL', 'tblUNIT_FOTO_EX', 'tblUNIT_MOVIE_EX', 'tblUNIT_VIDEO_EX') or name in ('tblDOC_KIND_CL', 'tblABSENCE_REASON_CL') ORDER BY name;";
+            }
+
+            /// <summary>
+            /// Request of the number of tables in catalog
+            /// </summary>
+            /// <returns>String request</returns>
+            public static string CountTablesRequest(string catalog)
+            {
+                return $"SELECT COUNT(TABLE_NAME) FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE';";
+            }
+
+            /// <summary>
+            /// Request of the names tables in catalog
+            /// </summary>
+            /// <returns>String request</returns>
+            public static string AllTablesNamesRequest(string catalog)
+            {
+                return $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME;";
+            }
+
+            /// <summary>
+            /// Request of the log tables names
+            /// </summary>
+            /// <returns>String request</returns>
+            public static string LogTablesRequest(string catalog)
+            {
+                return $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' and TABLE_NAME like '%log' ORDER BY TABLE_NAME;";
+            }
+
+            /// <summary>
+            /// Column of last record
+            /// </summary>
+            /// <returns>String request</returns>
+            public static string LastInsertRecordRequest(string catalog, string column, string tableName, string orderByColumn)
+            {
+                return $"SELECT TOP 1 {column} FROM [{catalog}].[dbo].[{tableName}] ORDER BY {orderByColumn} * 1 DESC;";
+            }
+
+            /// <summary>
+            /// Count of records in table request
+            /// </summary>
+            /// <returns>String request</returns>
+            public static string CountRowsRequest(string catalog, string table)
+            {
+                return $"SELECT COUNT(*) FROM [{catalog}].[dbo].[{table}];";
+            }
+
+            /// <summary>
+            /// Запрос получения записей по переданному фильтру
+            /// Фильтрация по одному параметру WHERE key = value
+            /// </summary>
+            public static string SelectWhereRequest(List<string> columns, string catalog, string tableName, string filterColumn, string filterValue)
+            {
+                if (columns.Count > 0 && !columns.Contains("Deleted"))
+                    return $"SELECT {string.Join(", ", columns).Replace('\"', ' ')} FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
+                if (columns.Count > 0 && columns.Contains("Deleted"))
+                    return $"SELECT {string.Join(", ", columns).Replace('\"', ' ')} FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue} and Deleted = '0';";
+                if (columns.Count == 0 && columns.Contains("Deleted"))
+                    return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue} and Deleted = '0';";
+                return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
+            }
+
+            public static string SelectVersionRequest(string catalog)
+            {
+                return $"SELECT [Value], [Text] FROM [{catalog}].[dbo].[tblConstantsSpec] WHERE Value = 'Version'";
+            }
+
+            /// <summary>
+            /// Запрос на получение всех записей переданной таблицы
+            /// Содержит фильтрацию WHERE key IN (value, value, ...) и фильтрацию WHERE key NOT IN (value, value, ...) в зависимости от переданных параметров
+            /// Опционально принимает список необходимых столбцов
+            /// </summary>
+            public static string AllRecordsRequest(string catalog, string tableName, Dictionary<string, List<string>> filter = null, bool filterIN = true, List<string> columns = null)
+            {
+                string strColumns = (columns == null) ? "*" : string.Join(", ", columns);
+
+                if (filter != null && filterIN && !strColumns.Contains("Deleted"))
+                    return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} IN ({string.Join(", ", filter[string.Join("", filter.Keys)])});";
+                if (filter != null && filterIN && strColumns.Contains("Deleted"))
+                    return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} IN ({string.Join(", ", filter[string.Join("", filter.Keys)])}) and Deleted = '0';";
+                if (filter != null && !filterIN && !strColumns.Contains("Deleted"))
+                    return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} NOT IN ({string.Join(", ", filter[string.Join("", filter.Keys)])});";
+                if (filter != null && !filterIN && strColumns.Contains("Deleted"))
+                    return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} NOT IN ({string.Join(", ", filter[string.Join("", filter.Keys)])}) and Deleted = '0';";
+                if (filter == null && filterIN && strColumns.Contains("Deleted"))
+                    return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE Deleted = '0';";
+                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}];";
+            }
+
+            // Получение наименований столбцов переданной таблицы
+            public static string ColumnsNamesRequest(string catalog, string tableName)
+            {
+                return $"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG = '{catalog}' and TABLE_SCHEMA = 'dbo' and TABLE_NAME = '{tableName}';";
+            }
         }
 
         public static class InsertRequests
@@ -90,178 +225,7 @@ namespace SqlDBManager
                 return $"DELETE [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
             }
         }
-
-        // таблицы на обработку
-        public static string ProcessingRequest(string catalog)
-        {
-            return $"SELECT name FROM [{catalog}].sys.tables WHERE name in ('eqUsers', 'rptFUND_PAPER', 'rptFUND_UNIT_REG_STATS', 'tblACT_TYPE_CL', 'tblAuthorizedDep', 'tblCLS', 'tblDataExport', 'tblDECL_COMMISSION_CL', 'tblConstantsSpec', 'tblGROUPING_ATTRIBUTE_CL', 'tblINV_REQUIRED_WORK_CL', 'tblLANGUAGE_CL', 'tblFEATURE', 'tblCITIZEN_CL', 'tblORGANIZ_CL', 'tblPAPER_CLS', 'tblPAPER_CLS_INV', 'tblPUBLICATION_TYPE_CL', 'tblQUESTION', 'tblRECEIPT_REASON_CL', 'tblRECEIPT_SOURCE_CL', 'tblREF_FILE', 'tblREPRODUCTION_METHOD_CL', 'tblService', 'tblSTATE_CL', 'tblSTORAGE_MEDIUM_CL', 'tblSUBJECT_CL', 'tblTREE_SUPPORT', 'tblWORK_CL') ORDER BY name;";
-        }
-
-        // Таблицы на скип
-        public static string SkipRequest(string catalog)
-        {
-            return $"SELECT name FROM [{catalog}].sys.tables WHERE OBJECTPROPERTY(object_id, 'TableHasForeignKey') = 0 and name not like '%log' and name not in ('eqUsers', 'rptFUND_PAPER', 'rptFUND_UNIT_REG_STATS', 'tblACT_TYPE_CL', 'tblAuthorizedDep', 'tblCLS', 'tblDataExport', 'tblDECL_COMMISSION_CL', 'tblConstantsSpec', 'tblGROUPING_ATTRIBUTE_CL', 'tblINV_REQUIRED_WORK_CL', 'tblLANGUAGE_CL', 'tblFEATURE', 'tblCITIZEN_CL', 'tblORGANIZ_CL', 'tblPAPER_CLS', 'tblPAPER_CLS_INV', 'tblPUBLICATION_TYPE_CL', 'tblQUESTION', 'tblRECEIPT_REASON_CL', 'tblRECEIPT_SOURCE_CL', 'tblREF_FILE', 'tblREPRODUCTION_METHOD_CL', 'tblService', 'tblSTATE_CL', 'tblSTORAGE_MEDIUM_CL', 'tblSUBJECT_CL', 'tblTREE_SUPPORT', 'tblWORK_CL', 'tblPUBLICATION_CL', 'tblUNIT_FOTO_EX', 'tblUNIT_MOVIE_EX', 'tblUNIT_VIDEO_EX') or name in ('tblDOC_KIND_CL', 'tblABSENCE_REASON_CL') ORDER BY name;";
-        }
-
-        /// <summary>
-        /// Request of the number of tables in catalog
-        /// </summary>
-        /// <returns>String request</returns>
-        public static string CountTablesRequest(string catalog)
-        {
-            return $"SELECT COUNT(TABLE_NAME) FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE';";
-        }
-
-        /// <summary>
-        /// Request of the names tables in catalog
-        /// </summary>
-        /// <returns>String request</returns>
-        public static string AllTablesNamesRequest(string catalog)
-        {
-            return $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' ORDER BY TABLE_NAME;";
-        }
-
-        /// <summary>
-        /// Request of the log tables names
-        /// </summary>
-        /// <returns>String request</returns>
-        public static string LogTablesRequest(string catalog)
-        {
-            return $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' and TABLE_NAME like '%log' ORDER BY TABLE_NAME;";
-        }
-
-
-
-        /// <summary>
-        /// Column of last record
-        /// </summary>
-        /// <returns>String request</returns>
-        public static string LastInsertRecordRequest(string catalog, string column, string tableName, string orderByColumn)
-        {
-            return $"SELECT TOP 1 {column} FROM [{catalog}].[dbo].[{tableName}] ORDER BY {orderByColumn} * 1 DESC;";
-        }
-
-        /// <summary>
-        /// Count of records in table request
-        /// </summary>
-        /// <returns>String request</returns>
-        public static string CountRowsRequest(string catalog, string table)
-        {
-            return $"SELECT COUNT(*) FROM [{catalog}].[dbo].[{table}];";
-        }
-
-        /// <summary>
-        /// Insert from request
-        /// </summary>
-        /// <returns>String request</returns>
-/*        public static string InsertFromRequest(string inCatalog, string inTable, List<string> columns, string fromCatalog, string fromTable, string filterColumn, string filterValue)
-        {
-            return $"INSERT INTO [{inCatalog}].[dbo].[{inTable}] SELECT {string.Join(", ", columns)} FROM [{fromCatalog}].[dbo].[{fromTable}] WHERE {filterColumn} = '{filterValue}';";
-        }*/
-
-
-
-        /// <summary>
-        /// Запрос получения записей по переданному фильтру
-        /// Фильтрация по одному параметру WHERE key = value
-        /// </summary>
-        public static string SelectWhereRequest(List<string> columns, string catalog, string tableName, string filterColumn, string filterValue)
-        {
-            if (columns.Count > 0 && !columns.Contains("Deleted"))
-                return $"SELECT {string.Join(", ", columns).Replace('\"', ' ')} FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
-            if (columns.Count > 0 && columns.Contains("Deleted"))
-                return $"SELECT {string.Join(", ", columns).Replace('\"', ' ')} FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue} and Deleted = '0';";
-            if (columns.Count == 0 && columns.Contains("Deleted"))
-                return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue} and Deleted = '0';";
-            return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
-        }
-
-        public static string SelectVersionRequest(string catalog)
-        {
-            return $"SELECT [Value], [Text] FROM [{catalog}].[dbo].[tblConstantsSpec] WHERE Value = 'Version'";
-        }
-
-        /// <summary>
-        /// Запрос на получение всех записей переданной таблицы
-        /// Содержит фильтрацию WHERE key IN (value, value, ...) и фильтрацию WHERE key NOT IN (value, value, ...) в зависимости от переданных параметров
-        /// Опционально принимает список необходимых столбцов
-        /// </summary>
-        public static string AllRecordsRequest(string catalog, string tableName, Dictionary<string, List<string>> filter = null, bool filterIN = true, List<string> columns = null)
-        {
-            string strColumns = (columns == null) ? "*" : string.Join(", ", columns);
-
-            if (filter != null && filterIN && !strColumns.Contains("Deleted"))
-                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} IN ({string.Join(", ", filter[string.Join("", filter.Keys)])});";
-            if (filter != null && filterIN && strColumns.Contains("Deleted"))
-                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} IN ({string.Join(", ", filter[string.Join("", filter.Keys)])}) and Deleted = '0';";
-            if (filter != null && !filterIN && !strColumns.Contains("Deleted"))
-                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} NOT IN ({string.Join(", ", filter[string.Join("", filter.Keys)])});";
-            if (filter != null && !filterIN && strColumns.Contains("Deleted"))
-                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE {string.Join("", filter.Keys)} NOT IN ({string.Join(", ", filter[string.Join("", filter.Keys)])}) and Deleted = '0';";
-            if (filter == null && filterIN && strColumns.Contains("Deleted"))
-                return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}] WHERE Deleted = '0';";
-            return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}];";
-        }
-
-        // Получение наименований столбцов переданной таблицы
-        public static string ColumnsNamesRequest(string catalog, string tableName)
-        {
-            return $"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG = '{catalog}' and TABLE_SCHEMA = 'dbo' and TABLE_NAME = '{tableName}';";
-        }
-
-        /// <summary>
-        /// Запрос получения списока значений по одной колонке
-        /// </summary>
-/*        public static string OneColumnRequest(string column, string catalog, string tableName)
-        {
-            return $"SELECT {column} FROM [{catalog}].[dbo].[{tableName}];";
-        }*/
-
-
-        
-
-
-        public static string NewIDRequest(string catalog)
-        {
-            return $"USE [{catalog}] SELECT NEWID();";
-        }
-
-        public static string IDFromRequest(string catalog, string tableName, string filterColumn, string filterValue)
-        {
-            return $"SELECT ID FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
-        }
-
-        /// <summary>
-        /// Request of taking table name on the foreign key referenced
-        /// </summary>
-        /// <returns>String request</returns>
-        public static string ReferenceTableNameRequest(string catalog, string currentTableName, string foreignColumnName)
-        {
-            return $"USE [{catalog}]; " +
-                   "SELECT OBJECT_NAME (fk.referenced_object_id) " +
-                   "FROM sys.foreign_keys AS fk " +
-                   "INNER JOIN sys.foreign_key_columns AS fk_c " +
-                   "ON fk.object_id = fk_c.constraint_object_id " +
-                   $"WHERE OBJECT_NAME(fk.parent_object_id) = '{currentTableName}' " +
-                   $"and COL_NAME(fk_c.parent_object_id, fk_c.parent_column_id) = '{foreignColumnName}'";
-        }
-
-
-
-        /// <summary>
-        /// Запрос таблиц в которых используется ссылка на переданную таблицу
-        /// </summary>
-        public static string RecordsUsingAsForeignKeyRequest(string catalog, string tableName)
-        {
-            return "SELECT t.name AS TableWithForeignKey, c.name AS ForeignKeyColumnName " +
-                   $"FROM [{catalog}].sys.foreign_key_columns AS fk " +
-                   $"JOIN [{catalog}].sys.tables AS t ON fk.parent_object_id = t.object_id " +
-                   $"JOIN [{catalog}].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id " +
-                   $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalog}].sys.tables WHERE name = '{tableName}') and c.name != 'ID' and t.name != '{tableName}';";
-        }
-
-
-    
+  
         public static class BackUpRequests
         {
             /// <summary>
@@ -310,5 +274,35 @@ namespace SqlDBManager
                 return $"SELECT COUNT(ISN_INVENTORY) FROM [{catalog}].[dbo].[tblINVENTORY] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and ISN_DOC_TYPE in ({string.Join(", ", docsFundTypes)}) and CARRIER_TYPE = '{fundType}' and Deleted = '0';";
             }
         }
+
+        /// <summary>
+        /// Insert from request
+        /// </summary>
+        /// <returns>String request</returns>
+        /*        public static string InsertFromRequest(string inCatalog, string inTable, List<string> columns, string fromCatalog, string fromTable, string filterColumn, string filterValue)
+                {
+                    return $"INSERT INTO [{inCatalog}].[dbo].[{inTable}] SELECT {string.Join(", ", columns)} FROM [{fromCatalog}].[dbo].[{fromTable}] WHERE {filterColumn} = '{filterValue}';";
+                }*/
+
+
+
+
+
+        /// <summary>
+        /// Запрос получения списока значений по одной колонке
+        /// </summary>
+        /*        public static string OneColumnRequest(string column, string catalog, string tableName)
+                {
+                    return $"SELECT {column} FROM [{catalog}].[dbo].[{tableName}];";
+                }*/
+
+
+
+
+
+        /*        public static string NewIDRequest(string catalog)
+                {
+                    return $"USE [{catalog}] SELECT NEWID();";
+                }*/
     }
 }

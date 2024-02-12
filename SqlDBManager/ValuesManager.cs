@@ -359,6 +359,48 @@ namespace SqlDBManager
             return RecursionFilterValue(searchingRow, newFilteringRecords, columnsFilters, returnColumnValue);
         }
 
+        public static List<Dictionary<string, string>> RecursHighValues(int countOfTry, string uniqueValueColumnName, string idLikeColumnName, string highLevelColumnName, List<Dictionary<string, string>> tableData, List<string> mainCatalogValues)
+        {
+            if (tableData.Count == 0 || countOfTry == 0)
+                return tableData;
+
+            List<Dictionary<string, string>> onNextTry = new List<Dictionary<string, string>>(tableData);
+
+            foreach (Dictionary<string, string> row in tableData)
+            {
+
+
+               /* if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
+                {
+                    ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
+                }
+
+                else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]))
+                {
+                    if (mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
+                    {
+                        string oldKey = row[idLikeColumnName];
+                        row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
+                        row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+                        ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
+                        mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                        mainCatalogValues.Add(row[uniqueValueColumnName]);
+                        countOfImports++;
+                    }// Если значения по ключу High нет в записях главного каталога
+                    else if (!mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
+                    {
+                        Consts.MergeProgress.AddTaskInBlock();
+                    }
+                }
+                worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);*/
+
+
+
+            }
+            countOfTry--;
+            return RecursHighValues(countOfTry, uniqueValueColumnName, idLikeColumnName, highLevelColumnName, onNextTry, mainCatalogValues);
+        }
+
         static Dictionary<string, string> EscapeSymbolsInRow(Dictionary<string, string> row)
         {
             Dictionary<string, string> escapedRow = new Dictionary<string, string>(row);

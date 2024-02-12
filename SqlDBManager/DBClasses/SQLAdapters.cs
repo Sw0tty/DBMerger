@@ -41,7 +41,7 @@ namespace SqlDBManager
 
                     foreach (object cell in cells)
                     {
-                        if (cell.ToString() == "")
+                        if (cell.ToString().Trim(' ') == "")
                         {
                             valueFromTable[columns[columnNum]] = "'null'";
                         }
