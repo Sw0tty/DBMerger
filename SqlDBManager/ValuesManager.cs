@@ -331,7 +331,7 @@ namespace SqlDBManager
         public static string ReturnValue(List<Dictionary<string, string>> mainRecordsFromTable, string searchColumn, string searchValue, string returnTheColumnValue)
         {
             foreach (Dictionary<string, string> rowData in mainRecordsFromTable)
-            {
+            {              
                 if (rowData[searchColumn] == searchValue)
                 {
                     return rowData[returnTheColumnValue];
@@ -359,21 +359,21 @@ namespace SqlDBManager
             return RecursionFilterValue(searchingRow, newFilteringRecords, columnsFilters, returnColumnValue);
         }
 
-        public static List<Dictionary<string, string>> RecursHighValues(int countOfTry, string uniqueValueColumnName, string idLikeColumnName, string highLevelColumnName, List<Dictionary<string, string>> tableData, List<string> mainCatalogValues)
+        public static List<Dictionary<string, string>> RecursHighValues(int countOfTry, List<Dictionary<string, string>> tableData, List<string> mainCatalogValues, string uniqueValueColumnName, string idLikeColumnName, string highLevelColumnName, Dictionary<string, string> foreigns, List<Dictionary<string, string>> allFromMainData)
         {
             if (tableData.Count == 0 || countOfTry == 0)
                 return tableData;
 
             List<Dictionary<string, string>> onNextTry = new List<Dictionary<string, string>>(tableData);
 
-            foreach (Dictionary<string, string> row in tableData)
+            /*foreach (Dictionary<string, string> row in tableData)
             {
-
-
-               /* if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
+                if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
                 {
                     ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
                 }
+
+
 
                 else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]))
                 {
@@ -392,13 +392,13 @@ namespace SqlDBManager
                         Consts.MergeProgress.AddTaskInBlock();
                     }
                 }
-                worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);*/
+                worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
 
 
 
-            }
+            }*/
             countOfTry--;
-            return RecursHighValues(countOfTry, uniqueValueColumnName, idLikeColumnName, highLevelColumnName, onNextTry, mainCatalogValues);
+            return RecursHighValues(countOfTry, onNextTry, mainCatalogValues, uniqueValueColumnName, idLikeColumnName, highLevelColumnName, foreigns, allFromMainData);
         }
 
         static Dictionary<string, string> EscapeSymbolsInRow(Dictionary<string, string> row)

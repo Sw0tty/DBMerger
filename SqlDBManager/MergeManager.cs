@@ -270,6 +270,9 @@ namespace SqlDBManager
                 int countOfTry = 50;
                 //ValuesManager.RecursHighValues(countOfTry, uniqueValueColumnName, idLikeColumnName, highLevelColumnName, new List<Dictionary<string, string>>(allFromDaughterData), new List<string>(mainCatalogValues));
 
+                
+
+
                 /*while (copyOfAll.Count != 0)
                 {
                     foreach (Dictionary<string, string> row in allFromDaughterData)
@@ -307,7 +310,7 @@ namespace SqlDBManager
 
                 // Если есть highLevelColumnName значит есть и idLikeColumnName
                 foreach (Dictionary<string, string> row in allFromDaughterData)
-                {
+                {                    
                     // Если значение присутствует в главной таблице
                     if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
                     {
@@ -319,18 +322,22 @@ namespace SqlDBManager
                         // ------- new_block ----
                         // Первым делом взять high и проверить его значение в дочерней с главной
                         //string s = ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName);
-                        if (mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
+                        string valueOnHighID = ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName);
+                        if (mainCatalogValues.Contains(valueOnHighID))
                         {
                             string oldKey = row[idLikeColumnName];
-                            row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
+                            //row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
+                            row[highLevelColumnName] = ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, valueOnHighID, idLikeColumnName);                         
                             row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
                             ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
                             mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                            allFromMainData.Add(row);
                             mainCatalogValues.Add(row[uniqueValueColumnName]);
                             countOfImports++;
                         }// Если значения по ключу High нет в записях главного каталога
                         else if (!mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
                         {
+                            MessageBox.Show(row[uniqueValueColumnName]);
                             reservedRows.Add(row);
                             Consts.MergeProgress.AddTaskInBlock();
                         }
