@@ -32,7 +32,7 @@ namespace SqlDBManager
                 }
                 catch (Exception error)
                 {
-                    worker.ReportProgress(WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                    worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
                     return false;
                 }
             }
@@ -56,7 +56,7 @@ namespace SqlDBManager
         {   
             foreach (string logTable in mainCatalog.SelectLogTables())
             {
-                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Очистка {logTable}:");
+                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, $"Очистка {logTable}:");
 
                 try
                 {
@@ -64,13 +64,13 @@ namespace SqlDBManager
 
                     if (mainCatalog.SelectCountRowsTable(logTable) == 0)
                     {
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
+                        worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
                     }
                     else
                     {
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Записей удалено {recordsCount}");
+                        worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Записей удалено {recordsCount}");
                     }
-                    worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), WorkerConsts.ITS_MAIN_PROGRESS_BAR);
+                    worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
                 }
                 catch {
                     return false;
@@ -85,17 +85,17 @@ namespace SqlDBManager
 
             foreach (string defaultTable in mainCatalog.SelectDefaultSkipTables())
             {
-                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {defaultTable}:");
+                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {defaultTable}:");
 
                 if (mainCatalog.SelectCountRowsTable(defaultTable) == 0)
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
                 }
                 else
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Таблица с дефолтными значениями.");
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Таблица с дефолтными значениями.");
                 }
-                worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), WorkerConsts.ITS_MAIN_PROGRESS_BAR);
+                worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
             }
         }
 
@@ -110,39 +110,39 @@ namespace SqlDBManager
                 int daughterCount = daughterCatalog.SelectCountRowsTable(tableName);
 
 
-                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {tableName}:");
+                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {tableName}:");
 
                 if (daughterCatalog.SelectCountRowsTable(tableName) == 0)
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
                 }
                 // Вызывается функция обработчик, которая собирает данные из кортежа
                 else if (DefaultTablesParams.ContainsKey(tableName))
                 {
-                    Tuple<string, string, string, List<string>> paramsForProcessing = DefaultTablesParams[tableName];
+                    Tuple<string, string, string, List<string>, bool> paramsForProcessing = DefaultTablesParams[tableName];
 
                     if (Consts.DEBUG_MOD)
                     {
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, excludeColumns: paramsForProcessing.Item4)}");
+                        worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, excludeColumns: paramsForProcessing.Item4, allowsNull: paramsForProcessing.Item5)}");
                     }
                     else
                     {
                         try
                         {
-                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, excludeColumns: paramsForProcessing.Item4)}");
+                            worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, excludeColumns: paramsForProcessing.Item4, allowsNull: paramsForProcessing.Item5)}");
                         }
                         catch (Exception error)
                         {
-                            worker.ReportProgress(WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                            worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
                             return false;
                         }
                     }
                 }
                 else
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
                 }
-                worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), WorkerConsts.ITS_MAIN_PROGRESS_BAR);
+                worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
             }
             return true;
         }
@@ -158,39 +158,39 @@ namespace SqlDBManager
                 int daughterCount = daughterCatalog.SelectCountRowsTable(tableName);
 
 
-                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {tableName}:");
+                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {tableName}:");
 
                 if (daughterCatalog.SelectCountRowsTable(tableName) == 0)
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
                 }
                 else if (LinksTablesParams.ContainsKey(tableName))
                 {
-                    Tuple<string, string, string, string, string, List<string>, List<string>> paramsForProcessing = LinksTablesParams[tableName];
+                    Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>> paramsForProcessing = LinksTablesParams[tableName];
                     // 1. string uniqueValueColumnName         2. string idLikeColumnName         3. List<string> excludeColumns    4. string highLevelColumnName     5. string parentIdColumn         6. string numerateColumn                          bool usedFurther, string foreignIdColumn = null
 
                     if (Consts.DEBUG_MOD)
                     {
-                        worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, parentIdColumn: paramsForProcessing.Item4, numerateColumn: paramsForProcessing.Item5, extraFilterColumns: paramsForProcessing.Item6, excludeColumns: paramsForProcessing.Item7)}");
+                        worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, parentIdColumn: paramsForProcessing.Item4, numerateColumn: paramsForProcessing.Item5, extraFilterColumns: paramsForProcessing.Item6, excludeColumns: paramsForProcessing.Item7, allowsNull: paramsForProcessing.Rest.Item1)}");
                     }
                     else
                     {
                         try
                         {
-                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, parentIdColumn: paramsForProcessing.Item4, numerateColumn: paramsForProcessing.Item5, extraFilterColumns: paramsForProcessing.Item6, excludeColumns: paramsForProcessing.Item7)}");
+                            worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, parentIdColumn: paramsForProcessing.Item4, numerateColumn: paramsForProcessing.Item5, extraFilterColumns: paramsForProcessing.Item6, excludeColumns: paramsForProcessing.Item7, allowsNull: paramsForProcessing.Rest.Item1)}");
                         }
                         catch (Exception error)
                         {
-                            worker.ReportProgress(WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                            worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
                             return false;
                         }
                     }                    
                 }
                 else
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
                 }
-                worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), WorkerConsts.ITS_MAIN_PROGRESS_BAR);
+                worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
             }
             return true;
         }
@@ -209,26 +209,26 @@ namespace SqlDBManager
                     checkEmpty = mainCatalog.SelectCountRowsTable(tableName);
                 }
 
-                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {tableName}:");
+                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {tableName}:");
 
                 if (checkEmpty == 0)
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
                 }
                 else if (functionsDict.ContainsKey(tableName))
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {functionsDict[tableName](mainCatalog, daughterCatalog, tableName)}");
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {functionsDict[tableName](mainCatalog, daughterCatalog, tableName)}");
                 }
                 else
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
                 }
             }
         }
 
         // --- Master merge process table ---
         // Для обработки дефолтных таблиц
-        static int ProcessDefaultTable(BackgroundWorker worker, DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName, string uniqueValueColumnName, string idLikeColumnName, string highLevelColumnName = null, List<string> excludeColumns = null)
+        static int ProcessDefaultTable(BackgroundWorker worker, DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName, string uniqueValueColumnName, string idLikeColumnName, string highLevelColumnName, List<string> excludeColumns, bool allowsNull)
         {
             // -------- Общий блок инициализации вне зависимости от переданных парпаметров--------
             int countOfImports = 0;
@@ -239,10 +239,10 @@ namespace SqlDBManager
                 string lastIDFromDB = string.Join("", mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)).Replace("\'", "");
                 lastId = (lastIDFromDB != "") ? Convert.ToInt64(lastIDFromDB) : 0;
             }
-            //long lastId = Convert.ToInt64(string.Join("", mainCatalog.SelectLastRecord(idLikeColumnName, tableName, idLikeColumnName)).Replace("\'", ""));
+
             // 1. Берем все записи двух каталогов в виде словарей
-            List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
-            List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
+            List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName, mainCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
+            List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName, daughterCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
             List<Dictionary<string, string>> reservedRows = new List<Dictionary<string, string>>();
 
             // 2. Берем список значений по уникальному полю из главного каталога
@@ -250,8 +250,6 @@ namespace SqlDBManager
 
             // 3. Берем таблицы в дальнейшем используемые
             Dictionary<string, string> foreigns = mainCatalog.SelectTablesAndForeignKeyUsage(tableName);
-
-
 
             // 4. Проверяем foreigns на наличие использования. Если True, то добавляем все в RealoadDict
             if (foreigns.Count > 0)
@@ -389,7 +387,7 @@ namespace SqlDBManager
                     // ------- old_block ----
 
 
-                    worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
+                    worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
             }
             else // Готовый блок
@@ -427,7 +425,7 @@ namespace SqlDBManager
                         countOfImports++;
                     }
                 }
-                worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
+                worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
             }
             // Обработка отложенных записей
             if (reservedRows.Count > 0)
@@ -455,14 +453,14 @@ namespace SqlDBManager
                         countOfImports++;
                     }
                 }
-                worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
+                worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
             }
             return countOfImports;
         }
 
         // 1. string uniqueValueColumnName         2. string idLikeColumnName         3. List<string> excludeColumns    4. string highLevelColumnName     5. string parentIdColumn         6. string numerateColumn
         // Для обработки таблиц с внешними ключами mainCatalog, daughterCatalog, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, tableName: tableName, excludeColumns: paramsForProcessing.Item3, highLevelColumnName: paramsForProcessing.Item4, parentIdColumn: paramsForProcessing.Item5, numerateColumn: paramsForProcessing.Item6
-        static int ProcessLinksTable(BackgroundWorker worker, DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName, string uniqueValueColumnName, string idLikeColumnName, string highLevelColumnName, string parentIdColumn, string numerateColumn, List<string> excludeColumns, List<string> extraFilterColumns = null)
+        static int ProcessLinksTable(BackgroundWorker worker, DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName, string uniqueValueColumnName, string idLikeColumnName, string highLevelColumnName, string parentIdColumn, string numerateColumn, List<string> extraFilterColumns, List<string> excludeColumns, bool allowsNull)
         {
             // -------- Общий блок инициализации вне зависимости от переданных парпаметров--------
             int countOfImports = 0;
@@ -523,11 +521,15 @@ namespace SqlDBManager
                 }
             }*/
 
+            List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, mainCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
+            List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, daughterCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
+
+
 
             if (tableName == "tblDOCUMENT_STATS")
             {
-                List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
-                List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
+                //List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, mainCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
+                //List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, daughterCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
 
                 string secondParent = "ISN_INVENTORY";
@@ -596,6 +598,9 @@ namespace SqlDBManager
                                                     row[secondParent] = secondPair.Item2;
 
                                                     row["DocID"] = mainCatalog.SelectIDFrom(mainCatalog.SelectReferenceTableName(tableName, secondParent), secondParent, parentIdTuple.Item2);
+
+                                                    if (row["DocID"] == null)
+                                                        MessageBox.Show(row["DocID"].ToString());
                                                     //row["DocID"] = mainCatalog.SelectIDFrom("tblINVENTORY", "ISN_INVENTORY", secondPair.Item2);
                                                     //MessageBox.Show("INV   " + row["DocID"]);
                                                 }
@@ -718,11 +723,11 @@ namespace SqlDBManager
             }
             else if (tableName == "tblARCHIVE")
             {
-                List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
-                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
+                //List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, mainCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
+                //List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, daughterCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
 
                 ValuesManager.AddTablesToRewriteDict(foreigns);
-                ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(allFromDaughterData[0][idLikeColumnName], allFromMainData[0][idLikeColumnName]));
+                ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(allFromDaughterCatalog[0][idLikeColumnName], allFromMainCatalog[0][idLikeColumnName]));
 
             }
             // Если нет родителя к которому цепляются записи, то обработка по всем значениям таблицы
@@ -730,18 +735,18 @@ namespace SqlDBManager
             else if (uniqueValueColumnName != null && idLikeColumnName != null && highLevelColumnName == null && parentIdColumn == null)
             {
                 // 1. Берем все записи двух каталогов в виде словарей
-                List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
-                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
+                //List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, mainCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
+                //List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, daughterCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
                 List<Dictionary<string, string>> reservedRows = new List<Dictionary<string, string>>();
 
 
 
                 // 2. Берем список значений по уникальному полю из главного каталога
-                List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainData, uniqueValueColumnName);
+                List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainCatalog, uniqueValueColumnName);
 
-                Consts.MergeProgress.AddTaskInBlock(allFromDaughterData.Count);
+                Consts.MergeProgress.AddTaskInBlock(allFromDaughterCatalog.Count);
 
-                foreach (Dictionary<string, string> row in allFromDaughterData)
+                foreach (Dictionary<string, string> row in allFromDaughterCatalog)
                 {
                     ValuesManager.UpdateCheck(worker);
 
@@ -753,11 +758,11 @@ namespace SqlDBManager
                         {
                             if (extraFilterColumns != null)
                             {
-                                ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.RecursionFilterValue(row, allFromMainData, new List<string>(extraFilterColumns), idLikeColumnName)));
+                                ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.RecursionFilterValue(row, allFromMainCatalog, new List<string>(extraFilterColumns), idLikeColumnName)));
                             }
                             else
                             {
-                                ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
+                                ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainCatalog, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
                             }
                             // MessageBox.Show("old: " + row[idLikeColumnName] + "   new: " + ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName));
                             //ValuesManager.AddPairKeysToReserve(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
@@ -796,16 +801,16 @@ namespace SqlDBManager
 
                         countOfImports++;
                     }
-                    worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
+                    worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
             } // Если есть родителей, то отбор данных совершенно иной
             else if (uniqueValueColumnName != null && idLikeColumnName != null && highLevelColumnName == null && parentIdColumn != null)
             {
-                if (tableName == SpecialTablesValues.SpecailTablePair.Item1)
+                if (tableName == SpecialTablesValues.SpecialTablePair.Item1)
                     ValuesManager.AddNewTableToSpecialRewrite(foreigns);
 
-                List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
-                List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
+                //List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, mainCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
+                //List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, daughterCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
 
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
                 // List<Dictionary<string, string>> reservedRows = new List<Dictionary<string, string>>();
@@ -857,7 +862,7 @@ namespace SqlDBManager
                                     MessageBox.Show((row[idLikeColumnName] == ValuesManager.ReturnValue(filterFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)).ToString() + " " + row[idLikeColumnName] + "    " + ValuesManager.ReturnValue(filterFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName));
                                 }*/
 
-                                if (tableName == SpecialTablesValues.SpecailTablePair.Item1)
+                                if (tableName == SpecialTablesValues.SpecialTablePair.Item1)
                                     ValuesManager.AddPairKeysToSpecialRewrite(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(filterFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
                             }
                         }
@@ -881,7 +886,7 @@ namespace SqlDBManager
 
 
 
-                                if (tableName == SpecialTablesValues.SpecailTablePair.Item1)
+                                if (tableName == SpecialTablesValues.SpecialTablePair.Item1)
                                     ValuesManager.AddPairKeysToSpecialRewrite(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
                             }
 
@@ -906,17 +911,17 @@ namespace SqlDBManager
                         mainCatalog.InsertListOfValues(ValuesManager.ReturnRequestsToTable());
                         ValuesManager.ClearRequestsToTable();
                     }*/
-                    worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
+                    worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
                 // ValuesManager.DeleteTableFromReserve(tableName);
             } // Если из параметров только родитель
             else if (uniqueValueColumnName == null && idLikeColumnName == null && highLevelColumnName == null && parentIdColumn != null)
             {
-                List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
-                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
+                //List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, mainCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
+                //List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, daughterCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
 
-                Consts.MergeProgress.AddTaskInBlock(allFromDaughterData.Count);
+                Consts.MergeProgress.AddTaskInBlock(allFromDaughterCatalog.Count);
 
 /*                if (tableName == "tblFUND_CHECK")
                 {
@@ -933,14 +938,14 @@ namespace SqlDBManager
                     }
                     else
                     {
-                        foreach (Dictionary<string, string> row in allFromDaughterData)
+                        foreach (Dictionary<string, string> row in allFromDaughterCatalog)
                         {
                             ValuesManager.UpdateCheck(worker);
 
                             if (row[parentIdColumn] == tuple.Item1)
                             {
                                 row[parentIdColumn] = tuple.Item2;
-                                row["DocID"] = mainCatalog.SelectIDFrom(mainCatalog.SelectReferenceTableName(tableName, parentIdColumn), parentIdColumn, tuple.Item2); ;
+                                row["DocID"] = mainCatalog.SelectIDFrom(mainCatalog.SelectReferenceTableName(tableName, parentIdColumn), parentIdColumn, tuple.Item2);
 
                                 /*if (Consts.FAST_REQUEST_MOD)
                                 {
@@ -963,9 +968,9 @@ namespace SqlDBManager
             }
             else if (uniqueValueColumnName != null && idLikeColumnName != null && highLevelColumnName != null && parentIdColumn == null)
             {
-                List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
-                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
-                List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainData, uniqueValueColumnName);
+                //List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, mainCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
+                //List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, daughterCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
+                List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainCatalog, uniqueValueColumnName);
                 List<Dictionary<string, string>> reservedRows = new List<Dictionary<string, string>>();
 
                 if (foreigns.Count > 0)
@@ -973,23 +978,23 @@ namespace SqlDBManager
                     ValuesManager.AddTablesToRewriteDict(foreigns);
                 }
 
-                foreach (Dictionary<string, string> row in allFromDaughterData)
+                foreach (Dictionary<string, string> row in allFromDaughterCatalog)
                 {
                     ValuesManager.UpdateCheck(worker);
 
                     if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
                     {
-                        ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
+                        ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainCatalog, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
                     }
                     // Если значения в главной нет и idLikeColumnName БОЛЬШЕ чем highLevelColumnName 
                     else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]))
                     {
                         // Первым делом взять high и проверить его значение в дочерней с главной
                         //string s = ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName);
-                        if (mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
+                        if (mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterCatalog, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
                         {
                             string oldKey = row[idLikeColumnName];
-                            row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
+                            row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainCatalog, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainCatalog, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
                             row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
                             ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
 
@@ -1008,7 +1013,7 @@ namespace SqlDBManager
                             mainCatalogValues.Add(row[uniqueValueColumnName]);
                             countOfImports++;
                         }// Если значения по ключу High нет в записях главного каталога
-                        else if (!mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
+                        else if (!mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterCatalog, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
                         {
                             reservedRows.Add(row);
                             Consts.MergeProgress.AddTaskInBlock();
@@ -1021,10 +1026,10 @@ namespace SqlDBManager
                     {
                         ValuesManager.UpdateCheck(worker);
 
-                        if (mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
+                        if (mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterCatalog, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
                         {
                             string oldKey = row[idLikeColumnName];
-                            row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
+                            row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainCatalog, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainCatalog, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
                             MessageBox.Show(row[highLevelColumnName]);
                             row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
                             ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
@@ -1072,17 +1077,17 @@ namespace SqlDBManager
                             countOfImports++;
                         }
                     }
-                    worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
+                    worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
             }
             else if (uniqueValueColumnName == null && idLikeColumnName != null && highLevelColumnName == null && parentIdColumn != null)
             {
-                List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
-                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
+                //List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, mainCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
+                //List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, daughterCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
 
 
-                Consts.MergeProgress.AddTaskInBlock(allFromDaughterData.Count);
+                Consts.MergeProgress.AddTaskInBlock(allFromDaughterCatalog.Count);
 
                 //MessageBox.Show(tableName);
 
@@ -1101,7 +1106,7 @@ namespace SqlDBManager
                     }
                     else
                     {
-                        foreach (Dictionary<string, string> row in allFromDaughterData)
+                        foreach (Dictionary<string, string> row in allFromDaughterCatalog)
                         {
                             ValuesManager.UpdateCheck(worker);
 
@@ -1134,15 +1139,15 @@ namespace SqlDBManager
             }
             else if (uniqueValueColumnName == null && idLikeColumnName != null && highLevelColumnName != null && parentIdColumn != null)
             {
-                List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, columns: mainCatalog.SelectColumnsNames(tableName));
-                List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName, columns: daughterCatalog.SelectColumnsNames(tableName));
+                //List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, mainCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
+                //List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, daughterCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
 
                 Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
                 List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainCatalog, highLevelColumnName);
 
                 // List<Dictionary<string, string>> allFromDaughterDataWhere = daughterCatalog.SelectRecordsWhere(new List<string>, tableName, parentIdColumn, );
 
-                Consts.MergeProgress.AddTaskInBlock(allFromDaughterData.Count);
+                Consts.MergeProgress.AddTaskInBlock(allFromDaughterCatalog.Count);
 
                 if (foreigns.Count > 0)
                 {
@@ -1162,7 +1167,7 @@ namespace SqlDBManager
                     }
                     else
                     {
-                        foreach (Dictionary<string, string> row in allFromDaughterData)
+                        foreach (Dictionary<string, string> row in allFromDaughterCatalog)
                         {
                             ValuesManager.UpdateCheck(worker);
 
@@ -1310,14 +1315,14 @@ namespace SqlDBManager
                     //string requests = "";
                     while (ValuesManager.CountOfInsertValues() != 0)
                     {
-                        mainCatalog.SpecialInsertListOfValues(tableName, ValuesManager.ReturnRequestsToTable(Consts.MAX_COUNT_OF_IMPORTS));
+                        mainCatalog.SpecialInsertListOfValues(tableName, ValuesManager.ReturnRequestsToTable(Consts.MAX_COUNT_OF_IMPORTS), excludeColumns);
                         //requests += mainCatalog.ListOfValues(tableName, ValuesManager.ReturnRequestsToTable(Consts.MAX_COUNT_OF_IMPORTS));
                     }
                     //mainCatalog.InsertListOfValues(requests);
                 }
                 else
                 {
-                    mainCatalog.SpecialInsertListOfValues(tableName, ValuesManager.ReturnRequestsToTable(Consts.MAX_COUNT_OF_IMPORTS));
+                    mainCatalog.SpecialInsertListOfValues(tableName, ValuesManager.ReturnRequestsToTable(Consts.MAX_COUNT_OF_IMPORTS), excludeColumns);
                 }
             }
             //MessageBox.Show(tableName + " "  + ValuesManager.CountOfInsertValues().ToString());
@@ -1346,7 +1351,7 @@ namespace SqlDBManager
                 }
                 catch (Exception error)
                 {
-                    worker.ReportProgress(WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                    worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
                     return false;
                 }
             }
@@ -1373,7 +1378,7 @@ namespace SqlDBManager
                 }
                 catch (Exception error)
                 {
-                    worker.ReportProgress(WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                    worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
                     return false;
                 }
             }

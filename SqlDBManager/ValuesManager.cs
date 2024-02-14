@@ -149,6 +149,10 @@ namespace SqlDBManager
             return row;
         }
 
+        /// <summary>
+        /// -!- be removed -!-
+        /// </summary>
+        /// <returns></returns>
         public static Dictionary<string, string> RemoveUnnecessary(Dictionary<string, string> row, List<string> excludeColumns)
         {
             if (excludeColumns != null)
@@ -433,7 +437,7 @@ namespace SqlDBManager
                     catalog.DeleteValue(tableName, string.Join("", defaultTables[tableName].Item2.Keys), row[string.Join("", defaultTables[tableName].Item2.Keys)]);
                 }
             }
-            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Каталог '{catalog.ReturnCatalogName()}' скорректирован.");
+            worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, $"Каталог '{catalog.ReturnCatalogName()}' скорректирован.");
         }
 
         public static void SelectImportMethod(DBCatalog catalog, Dictionary<string, string> row, string tableName, BackgroundWorker worker)
@@ -446,7 +450,7 @@ namespace SqlDBManager
             else
             {
                 catalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
-                worker.ReportProgress(WorkerConsts.UPDATE_COUNT_OF_IMPORT);
+                worker.ReportProgress(Consts.WorkerConsts.UPDATE_COUNT_OF_IMPORT);
             }
             Consts.ALL_OF_IMPORT++;
         }

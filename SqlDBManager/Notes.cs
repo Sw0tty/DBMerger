@@ -3,25 +3,21 @@ using SqlDBManager.DBClasses;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Runtime.Remoting.Messaging;
-using System.Runtime.Serialization.Formatters;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
-using System.Web;
-using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 
 namespace NotesNamespace
 {
     public static class HelpFunction
     {
+        public static List<string> Exclude(List<string> columns, List<string> excludeClumns)
+        {
+            foreach (string excludeColumn in excludeClumns)
+            {
+                columns.Remove(excludeColumn);
+            }
+            return columns;
+        }
+
         public static string CreateSpace(int spaceSize)
         {
             string space = "";
@@ -36,36 +32,6 @@ namespace NotesNamespace
     public class S : BaseDBConnector
     {
         public S(string source, string catalog, string login, string password) : base(source, catalog, login, password){}
-    }
-
-    public static class Wrappers
-    {
-        public static bool WrapValidator(Func<DBCatalog, DBCatalog, bool> function, DBCatalog mainCatalog, DBCatalog daughterCatalog, BackgroundWorker worker)
-        {
-            Consts.MergeProgress.AddToAllTasks(1);
-            bool status = function(mainCatalog, daughterCatalog);
-            worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), WorkerConsts.ITS_MAIN_PROGRESS_BAR);
-            return status;
-        }
-
-        public static bool WrapCustomValidator(Func<DBCatalog, DBCatalog, BackgroundWorker, bool> function, DBCatalog mainCatalog, DBCatalog daughterCatalog, BackgroundWorker worker)
-        {
-            Consts.MergeProgress.AddToAllTasks(1);
-            bool status = function(mainCatalog, daughterCatalog, worker);
-            worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), WorkerConsts.ITS_MAIN_PROGRESS_BAR);
-            return status;
-        }
-
-        public static bool WrapSimpleMergeFunc(Func<DBCatalog, BackgroundWorker, bool> function, DBCatalog catalog, BackgroundWorker worker)
-        {
-            Consts.MergeProgress.AddToAllTasks(1);
-            S baseDB = new S("", "", "", "");
-
-
-            bool status = function(catalog, worker);
-            worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), WorkerConsts.ITS_MAIN_PROGRESS_BAR);
-            return status;
-        }
     }
     
     public static class RecalculationConsts
@@ -92,9 +58,7 @@ namespace NotesNamespace
 
     public static class SpecialTablesValues
     {
-
-        public static string SPSP = "tblDOCUMENT_STATS";
-        public static Tuple<string, string> SpecailTablePair = new Tuple<string, string>( "tblINVENTORY", "tblDOCUMENT_STATS");
+        public static Tuple<string, string> SpecialTablePair = new Tuple<string, string>("tblINVENTORY", "tblDOCUMENT_STATS");
 
         /// <summary>
         /// Наименование таблицы - (дефолтное значение для корректировки, фильтруемая колонка) - ключи дефолтных значений
@@ -118,11 +82,6 @@ namespace NotesNamespace
         };
 
         public static List<string> DefaultUsers { get; } = new List<string>() { "sa", "anonymous", "admin", "reader", "arch", "tech" };
-
-/*        public static List<string> ReturnDefaultUsers()
-        {
-            return defaultUsers;
-        }*/
     }
 
 

@@ -99,6 +99,7 @@
     <Compile Include="DBClasses\SQLRequests.cs" />
     <Compile Include="Validator.cs" />
     <Compile Include="ValuesManager.cs" />
+    <Compile Include="Wrapperscs.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

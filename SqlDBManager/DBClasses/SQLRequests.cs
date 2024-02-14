@@ -138,7 +138,10 @@ namespace SqlDBManager
                 return $"SELECT {strColumns} FROM [{catalog}].[dbo].[{tableName}];";
             }
 
-            // Получение наименований столбцов переданной таблицы
+            /// <summary>
+            /// Request for table column names
+            /// </summary>
+            /// <returns>String request</returns>
             public static string ColumnsNamesRequest(string catalog, string tableName)
             {
                 return $"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG = '{catalog}' and TABLE_SCHEMA = 'dbo' and TABLE_NAME = '{tableName}';";

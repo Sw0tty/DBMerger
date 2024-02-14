@@ -61,13 +61,13 @@ namespace SqlDBManager
             Dictionary<string, List<Dictionary<string, string>>> mainProblemTables = ValidateValues(mainCatalog, defaultTables, worker);          
             if (mainProblemTables.Count == 0)
             {
-                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Ошибок не обнаружено.");
+                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Ошибок не обнаружено.");
             }
 
             Dictionary<string, List<Dictionary<string, string>>> daughterProblemTables = ValidateValues(daughterCatalog, defaultTables, worker);
             if (daughterProblemTables.Count == 0)
             {
-                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Ошибок не обнаружено.");
+                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Ошибок не обнаружено.");
             }
 
             if (mainProblemTables.Count > 0 || daughterProblemTables.Count > 0)
@@ -75,7 +75,7 @@ namespace SqlDBManager
                 Thread.Sleep(2000);
                 if (MessageBox.Show("Внести правки для продолжения слияния?", "Системное сообщение", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Приступаем к корректировке данных...");
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Приступаем к корректировке данных...");
                     if (mainProblemTables.Count > 0)
                     {
                         ValuesManager.RebuildCatalog(mainCatalog, worker, mainProblemTables, defaultTables);
@@ -95,22 +95,22 @@ namespace SqlDBManager
         {
             Dictionary<string, List<Dictionary<string, string>>> catalogProblemTables = new Dictionary<string, List<Dictionary<string, string>>>();
 
-            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Проверяем каталог '{catalog.ReturnCatalogName()}':");
+            worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, $"Проверяем каталог '{catalog.ReturnCatalogName()}':");
             foreach (string tableName in defaultTables.Keys)
             {
-                List<Dictionary<string, string>> catalogInvalidRows = catalog.SelectAllFrom(tableName, defaultTables[tableName].Item2, filterIN: false);
+                List<Dictionary<string, string>> catalogInvalidRows = catalog.SelectAllFrom(tableName, catalog.SelectColumnsNames(tableName, null), true, filter: defaultTables[tableName].Item2, filterIN: false);;
 
                 if (catalogInvalidRows.Count > 0)
                 {
                     catalogProblemTables.Add(tableName, new List<Dictionary<string, string>>(catalogInvalidRows));
 
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Недопустимые значения в {tableName}, в колонке {string.Join("", defaultTables[tableName].Item2.Keys)}:");
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, $"Недопустимые значения в {tableName}, в колонке {string.Join("", defaultTables[tableName].Item2.Keys)}:");
                     string invalidUniqueValues = "";
                     foreach (Dictionary<string, string> invalidRow in catalogInvalidRows)
                     {
                         invalidUniqueValues += invalidRow[string.Join("", defaultTables[tableName].Item2.Keys)] + " ";
                     }
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"{invalidUniqueValues}");
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"{invalidUniqueValues}");
                 }
             }
             return catalogProblemTables;

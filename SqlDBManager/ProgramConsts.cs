@@ -7,19 +7,6 @@ using System.Threading.Tasks;
 
 namespace SqlDBManager
 {
-    
-
-    public static class WorkerConsts
-    {
-        public const int BLOCK_HEADING = 800;
-        public const int MIDDLE_STATUS_CODE = 999;
-        public const int ERROR_STATUS_CODE = 500;
-        public const int UPDATE_COUNT_OF_IMPORT = 444;
-        public const int UPDATE_COUNT_OF_CHECK = 454;
-        public const string ITS_BLOCK_PROGRESS_BAR = "BLOCK";
-        public const string ITS_MAIN_PROGRESS_BAR = "MAIN";
-    }
-
     public static class Consts
     {
         /// <summary>
@@ -40,6 +27,17 @@ namespace SqlDBManager
         {
             LAST_MAIN_CATALOG = mainCatalog;
             LAST_DAUGHTER_CATALOG = daughterCatalog;
+        }
+
+        public static class WorkerConsts
+        {
+            public const int BLOCK_HEADING = 800;
+            public const int MIDDLE_STATUS_CODE = 999;
+            public const int ERROR_STATUS_CODE = 500;
+            public const int UPDATE_COUNT_OF_IMPORT = 444;
+            public const int UPDATE_COUNT_OF_CHECK = 454;
+            public const string ITS_BLOCK_PROGRESS_BAR = "BLOCK";
+            public const string ITS_MAIN_PROGRESS_BAR = "MAIN";
         }
 
         public static class VisualConsts

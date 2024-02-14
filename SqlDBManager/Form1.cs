@@ -278,8 +278,8 @@ namespace SqlDBManager
             Consts.MergeProgress.FormTasks(mainCatalog);
             Consts.WriteLastCatalogs(mainCatalog.ReturnCatalogName(), daughterCatalog.ReturnCatalogName());
 
-            worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Предварительные проверки ---");
-            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидируем каталоги на возможность слияния...");
+            worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Предварительные проверки ---");
+            worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Валидируем каталоги на возможность слияния...");
 
             if (Wrappers.WrapValidator(Validator.ValidateVersions, mainCatalog, daughterCatalog, worker))
             {
@@ -289,7 +289,7 @@ namespace SqlDBManager
                     {
                         if (Wrappers.WrapCustomValidator(Validator.ValidateDefaultTablesValues, mainCatalog, daughterCatalog, worker))
                         {
-                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Валидация успешно завершена!");
+                            worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Валидация успешно завершена!");
 
                             // после данных запросов создается резервная копия
                            
@@ -319,7 +319,7 @@ namespace SqlDBManager
                             //MessageBox.Show(mainCatalog.SelectNewID());
 
 
-                            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Вносим правки ключей таблиц...");
+                            worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Вносим правки ключей таблиц...");
 
                             bool successOperation = Wrappers.WrapSimpleMergeFunc(MergeManager.RepeirDBKeys, mainCatalog, worker);
 
@@ -327,25 +327,25 @@ namespace SqlDBManager
 
                             if (successOperation)
                             {
-                                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Вносим временные изменения в таблицы...");
+                                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Вносим временные изменения в таблицы...");
 
                                 successOperation = MergeManager.RenameBeforeMergeTableColumn(mainCatalog, daughterCatalog, worker);
                             }
 
                             if (successOperation)
                             {
-                                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Необходимые правки успешно применены!");
+                                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Необходимые правки успешно применены!");
 
 
                                 // Очищаем логи
-                                worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Очистка логов ---");
+                                worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Очистка логов ---");
                                 successOperation = MergeManager.ClearLogs(mainCatalog, worker);
                             }
 
                             if (successOperation)
                             {
                                 // Проходим по дефолтным таблицам
-                                worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Обработка дефолтных таблиц ---");
+                                worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Обработка дефолтных таблиц ---");
                                 MergeManager.ProcessSkipTables(mainCatalog, daughterCatalog, worker);
                                 successOperation = MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, worker);
                             }
@@ -355,14 +355,14 @@ namespace SqlDBManager
                             if (successOperation)
                             {
                                 // Проходим по таблицам с ключами (провряем на уникальность)
-                                worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Обработка таблиц с внешними ключами ---");
+                                worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Обработка таблиц с внешними ключами ---");
                                 successOperation = MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, worker);
                             }
 
                             if (successOperation)
                             {
-                                worker.ReportProgress(WorkerConsts.BLOCK_HEADING, "--- Заключение слияния ---");
-                                worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Возвращаем временные изменения...");
+                                worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Заключение слияния ---");
+                                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Возвращаем временные изменения...");
                                 //transaction2.Rollback();
                                 successOperation = Wrappers.WrapSimpleMergeFunc(MergeManager.RenameAfterMergeTableColumn, mainCatalog, worker);
                             }
@@ -416,32 +416,32 @@ namespace SqlDBManager
 
         private void mergerBackWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if (e.ProgressPercentage == WorkerConsts.BLOCK_HEADING)
+            if (e.ProgressPercentage == Consts.WorkerConsts.BLOCK_HEADING)
             {
                 textBoxStatus.AppendText("\r\n" + HelpFunction.CreateSpace(Consts.VisualConsts.HEADING_SPACE) + e.UserState.ToString() + "\r\n");
             }
-            else if (e.ProgressPercentage == WorkerConsts.MIDDLE_STATUS_CODE)
+            else if (e.ProgressPercentage == Consts.WorkerConsts.MIDDLE_STATUS_CODE)
             {
                 textBoxStatus.AppendText(e.UserState.ToString() + "\r\n");
             }
-            else if (e.ProgressPercentage == WorkerConsts.ERROR_STATUS_CODE)
+            else if (e.ProgressPercentage == Consts.WorkerConsts.ERROR_STATUS_CODE)
             {
                 textBoxStatus.AppendText("--- ERROR ---" + "\r\n" + e.UserState.ToString() + "\r\n" + "--- ERROR ---" + "\r\n");
             }
-            else if (e.ProgressPercentage == WorkerConsts.UPDATE_COUNT_OF_IMPORT)
+            else if (e.ProgressPercentage == Consts.WorkerConsts.UPDATE_COUNT_OF_IMPORT)
             {
                 //label12.Text = $"Записей импортировано: {Consts.ALL_OF_IMPORT}";
             }
-            else if (e.ProgressPercentage == WorkerConsts.UPDATE_COUNT_OF_CHECK)
+            else if (e.ProgressPercentage == Consts.WorkerConsts.UPDATE_COUNT_OF_CHECK)
             {
                 //label14.Text = $"Записей обработано: {Consts.ALL_OF_CHECK}";
             }
-            else if (e.UserState.ToString() == WorkerConsts.ITS_BLOCK_PROGRESS_BAR)
+            else if (e.UserState.ToString() == Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR)
             {
                 label13.Text = $"{e.ProgressPercentage} %";
                 // progressBar1.Value = e.ProgressPercentage;
             }
-            else if (e.UserState.ToString() == WorkerConsts.ITS_MAIN_PROGRESS_BAR)
+            else if (e.UserState.ToString() == Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR)
             {
                 progressBar2.Value = e.ProgressPercentage;
             }
@@ -980,7 +980,7 @@ namespace SqlDBManager
 
             // ----------------------
             Dictionary<string, string> reserveRocords = new Dictionary<string, string>();
-            List<string> keys = testCatalog.SelectColumnsNames("tblCITIZEN_CL");
+            //List<string> keys = testCatalog.SelectColumnsNames("tblCITIZEN_CL");
             //List<string> values = testCatalog.SelectRecordsWhere(keys, "tblCITIZEN_CL", "ISN_CITIZEN", "1");
 
             /*for (int i = 0; i < keys.Count; i++)

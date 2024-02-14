@@ -81,10 +81,10 @@ namespace SqlDBManager
         /// <summary>
         /// Возвращает путь расположения каталога
         /// </summary>
-        public List<string> SelectCatalogPath()
+        public string SelectCatalogPath()
         {
             string request = SQLRequests.BackUpRequests.CatalogPathRequest(Catalog);
-            return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction());
+            return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: true);
         }
 
         public string ReturnValues(Dictionary<string, string> row)
@@ -139,15 +139,15 @@ namespace SqlDBManager
         /// <summary>
         /// Возвращает список найденых записей в виде словаря (колонка - значение)
         /// </summary>
-        public List<Dictionary<string, string>> SelectAllFrom(string tableName, Dictionary<string, List<string>> filter = null, bool filterIN = true, List<string> columns = null)
+        public List<Dictionary<string, string>> SelectAllFrom(string tableName, List<string> columns, bool allowsNull, Dictionary<string, List<string>> filter = null, bool filterIN = true)
         {
             string request = SQLRequests.SelectRequests.AllRecordsRequest(Catalog, tableName, filter, filterIN, columns);
             //MessageBox.Show(tableName + "       " + request);
-            if (columns == null)
+/*            if (columns == null)
             {
                 columns = SelectColumnsNames(tableName);
-            }
-            return ReturnListDictsFromDB(request, columns, ReturnConnection(), ReturnTransaction());
+            }*/
+            return ReturnListDictsFromDB(request, columns, allowsNull, ReturnConnection(), ReturnTransaction());
         }
 
 /*        public string SelectNewID()
@@ -168,19 +168,19 @@ namespace SqlDBManager
             return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: false);
         }
 
-        public List<string> SelectTablesNames(bool likeDBString = false, bool itsRow = false)
+        public List<string> SelectTablesNames()
         {
             string request = SQLRequests.SelectRequests.AllTablesNamesRequest(Catalog);
-            return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction(), likeDBString, itsRow);
+            return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction());
         }
 
         /// <summary>
         /// Returning list of tables with logs data
         /// </summary>
-        public List<string> SelectLogTables(bool likeDBString = false, bool itsRow = false)
+        public List<string> SelectLogTables()
         {
             string request = SQLRequests.SelectRequests.LogTablesRequest(Catalog);
-            return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction(), likeDBString, itsRow);
+            return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction());
         }
 
         public List<string> SelectDefaultSkipTables()
@@ -224,10 +224,10 @@ namespace SqlDBManager
         /// <summary>
         /// Возвращает список наименований столбцов переданной таблицы
         /// </summary>
-        public List<string> SelectColumnsNames(string tableName, bool likeDBString = false, bool itsRow = false)
+        public List<string> SelectColumnsNames(string tableName, List<string> excludeColumns)
         {
             string request = SQLRequests.SelectRequests.ColumnsNamesRequest(Catalog, tableName);
-            return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction(), likeDBString, itsRow);
+            return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction(), excludeColumns);
         }
 
         /// <summary>
@@ -268,9 +268,9 @@ namespace SqlDBManager
             InsertAdapter(request, ReturnConnection(), ReturnTransaction());
         }*/
 
-        public void SpecialInsertListOfValues(string tableName, string values)
+        public void SpecialInsertListOfValues(string tableName, string values, List<string> excludeColumns)
         {
-            string request = SQLRequests.InsertRequests.FastFormerInsertValueRequst(SelectColumnsNames(tableName), Catalog, tableName, values);
+            string request = SQLRequests.InsertRequests.FastFormerInsertValueRequst(SelectColumnsNames(tableName, excludeColumns), Catalog, tableName, values);
             InsertAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
@@ -307,7 +307,7 @@ namespace SqlDBManager
         /// <summary>
         /// Возвращает список словарей значений таблицы
         /// </summary>
-        static List<Dictionary<string, string>> ReturnListDictsFromDB(string request, List<string> columnsNames, SqlConnection connection, SqlTransaction transaction)
+        static List<Dictionary<string, string>> ReturnListDictsFromDB(string request, List<string> columnsNames, bool allowsNull, SqlConnection connection, SqlTransaction transaction)
         {
             // on SELECT Adapter
             SqlCommand command = new SqlCommand(request, connection);
@@ -323,7 +323,14 @@ namespace SqlDBManager
                 {
                     if (reader[i].ToString().Trim(' ') == "")
                     {
-                        rowData[columnsNames[i]] = "'null'";
+                        if (allowsNull)
+                        {
+                            rowData[columnsNames[i]] = "'null'";
+                        }
+                        else
+                        {
+                            rowData[columnsNames[i]] = "''";
+                        }
                     }
                     else
                     {
@@ -382,7 +389,7 @@ namespace SqlDBManager
             return dictTableData;
         }
 
-        static List<string> ReturnListFromDB(string request, SqlConnection connection, SqlTransaction transaction, bool likeDBString = false, bool itsRow = false)
+        static List<string> ReturnListFromDB(string request, SqlConnection connection, SqlTransaction transaction, List<string> excludeColumns = null, bool likeDBString = false)
         {
             SqlCommand command = new SqlCommand(request, connection);
             command.Transaction = transaction;
@@ -396,14 +403,15 @@ namespace SqlDBManager
                     listTablesNames.Add("'" + reader.GetValue(0).ToString() + "'");
                 }
             }
-            else if (itsRow)
+/*            else if (itsRow)
             {
+                MessageBox.Show("row");
                 while (reader.Read())
                 {
                     for (int i = 0; i < reader.FieldCount; i++)
                         listTablesNames.Add("'" + reader.GetValue(i).ToString() + "'");
                 }
-            }
+            }*/
             else
             {
                 while (reader.Read())
@@ -411,6 +419,9 @@ namespace SqlDBManager
                     listTablesNames.Add(reader.GetValue(0).ToString());
                 }
             }
+
+            if (excludeColumns != null)
+                listTablesNames = HelpFunction.Exclude(listTablesNames, excludeColumns);
             
             reader.Close();
             command.Dispose();
