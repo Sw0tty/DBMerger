@@ -87,8 +87,10 @@ namespace SqlDBManager
             return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: true);
         }
 
-        public string ReturnValues(Dictionary<string, string> row)
+        public string ReturnValues(Dictionary<string, string> row, bool withoutID = false)
         {
+            if (withoutID)
+                return $"({string.Join(", ", row.Values).Replace("'null'", "null")})";
             return $"(NEWID(), {string.Join(", ", row.Values).Replace("'null'", "null")})";
         }
 

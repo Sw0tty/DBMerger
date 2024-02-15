@@ -155,13 +155,15 @@ namespace SqlDBManager
         /// <returns></returns>
         public static Dictionary<string, string> RemoveUnnecessary(Dictionary<string, string> row, List<string> excludeColumns)
         {
-            if (excludeColumns != null)
+/*            if (excludeColumns != null)
             {
                 foreach (string excludeColumnName in excludeColumns)
                 {
                     row.Remove(excludeColumnName);
                 }
-            }
+            }*/
+/*            if (row.ContainsKey("ISN_FUND_RENAME")) { }
+            else {  }*/
             row.Remove("ID");
             return row;
         }
@@ -363,14 +365,14 @@ namespace SqlDBManager
             return RecursionFilterValue(searchingRow, newFilteringRecords, columnsFilters, returnColumnValue);
         }
 
-        public static List<Dictionary<string, string>> RecursHighValues(int countOfTry, List<Dictionary<string, string>> tableData, List<string> mainCatalogValues, string uniqueValueColumnName, string idLikeColumnName, string highLevelColumnName, Dictionary<string, string> foreigns, List<Dictionary<string, string>> allFromMainData)
+        public static Tuple<int, List<Dictionary<string, string>>> RecursHighValues(int countOfTry, List<Dictionary<string, string>> tableData, string tableName, long lastId, int countOfImports, List<string> mainCatalogValues, string uniqueValueColumnName, string idLikeColumnName, string highLevelColumnName, Dictionary<string, string> foreigns, List<Dictionary<string, string>> allFromMainData, List<Dictionary<string, string>> allFromDaughterData, DBCatalog mainCatalog, BackgroundWorker worker)
         {
             if (tableData.Count == 0 || countOfTry == 0)
-                return tableData;
+                return new Tuple<int, List<Dictionary<string, string>>>(countOfImports, tableData);
 
             List<Dictionary<string, string>> onNextTry = new List<Dictionary<string, string>>(tableData);
 
-            /*foreach (Dictionary<string, string> row in tableData)
+            foreach (Dictionary<string, string> row in tableData)
             {
                 if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
                 {
@@ -387,7 +389,8 @@ namespace SqlDBManager
                         row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
                         row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
                         ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
-                        mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                        mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, null));
+                        SelectImportMethod(mainCatalog, new Dictionary<string, string>(row), tableName, worker);
                         mainCatalogValues.Add(row[uniqueValueColumnName]);
                         countOfImports++;
                     }// Если значения по ключу High нет в записях главного каталога
@@ -396,13 +399,13 @@ namespace SqlDBManager
                         Consts.MergeProgress.AddTaskInBlock();
                     }
                 }
-                worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
+                worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
+            }
 
 
 
-            }*/
             countOfTry--;
-            return RecursHighValues(countOfTry, onNextTry, mainCatalogValues, uniqueValueColumnName, idLikeColumnName, highLevelColumnName, foreigns, allFromMainData);
+            return RecursHighValues(countOfTry, onNextTry, tableName, lastId, countOfImports, mainCatalogValues, uniqueValueColumnName, idLikeColumnName, highLevelColumnName, foreigns, allFromMainData, allFromDaughterData, mainCatalog, worker);
         }
 
         static Dictionary<string, string> EscapeSymbolsInRow(Dictionary<string, string> row)
@@ -444,12 +447,32 @@ namespace SqlDBManager
         {
             if (Consts.FAST_REQUEST_MOD)
             {
-                ValuesManager.AddToRequest(catalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName)));           
+                if (row.ContainsKey("ID"))
+                {
+                    //mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                    ValuesManager.AddToRequest(catalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName)));
+                }
+                else
+                {
+                    ValuesManager.AddToRequest(catalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName), withoutID: true));
+                }
+                           
                 
             }
             else
             {
-                catalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                if (row.ContainsKey("ID"))
+                {
+                    //mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
+                    catalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                }
+                else
+                {
+                    catalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName), withoutID: true);
+                }
+
+
+                //catalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
                 worker.ReportProgress(Consts.WorkerConsts.UPDATE_COUNT_OF_IMPORT);
             }
             Consts.ALL_OF_IMPORT++;

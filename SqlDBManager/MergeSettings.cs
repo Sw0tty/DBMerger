@@ -8,6 +8,8 @@ namespace SqlDBManager
 {
     abstract public class MergeSettings
     {
+        public static string ExtraIDColumn = "DocID";
+
         /// <summary>
         /// Params (columns name in DB) for processing simple tables <para/>
         /// 1. (string) uniqueValueColumnName <br/>

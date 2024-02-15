@@ -79,6 +79,7 @@ namespace NotesNamespace
         public static Dictionary<string, Tuple<Tuple<string, string>, Tuple<string, string>>> RenamedColumns { get; } = new Dictionary<string, Tuple<Tuple<string, string>, Tuple<string, string>>>()
         { // Before Merge, After Merge
             { "tblINVENTORY", new Tuple<Tuple<string, string>, Tuple<string, string>>(new Tuple<string, string>("ISN_INVENTORY_STORAGE", "ISN_STORAGE_MEDIUM"), new Tuple<string, string>("ISN_STORAGE_MEDIUM", "ISN_INVENTORY_STORAGE")) },
+            //{ "tblREF_FILE", new Tuple<Tuple<string, string>, Tuple<string, string>>(new Tuple<string, string>("ISN_OBJ", "ISN_FUND"), new Tuple<string, string>("ISN_FUND", "ISN_OBJ")) },
         };
 
         public static List<string> DefaultUsers { get; } = new List<string>() { "sa", "anonymous", "admin", "reader", "arch", "tech" };
