@@ -13,7 +13,7 @@ namespace SqlDBManager
         /// При истине выбрасывает исключения и прекращает работу с указание места ошибки
         /// </summary>
         public const bool DEBUG_MOD = true;
-        public const bool FAST_REQUEST_MOD = true;
+        public const bool FAST_REQUEST_MOD = false;
 
         public static int ALL_OF_IMPORT = 0;
         public static int ALL_OF_CHECK = 0;

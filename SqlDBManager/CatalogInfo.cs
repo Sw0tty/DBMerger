@@ -265,21 +265,11 @@ namespace SqlDBManager
             InsertAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
-/*        public void InsertListOfValues(string request)
-        {
-            InsertAdapter(request, ReturnConnection(), ReturnTransaction());
-        }*/
-
         public void SpecialInsertListOfValues(string tableName, string values, List<string> excludeColumns)
         {
             string request = SQLRequests.InsertRequests.FastFormerInsertValueRequst(SelectColumnsNames(tableName, excludeColumns), Catalog, tableName, values);
             InsertAdapter(request, ReturnConnection(), ReturnTransaction());
         }
-
-/*        public string ListOfValues(string tableName, string values)
-        {
-            return SQLRequests.FastFormerInsertValueRequst(SelectColumnsNames(tableName), Catalog, tableName, values);
-        }*/
 
         public void UpdateValue(string tableName, string updateColumn, string updateValue, string filterColumn, string filterValue)
         {
@@ -429,67 +419,5 @@ namespace SqlDBManager
             command.Dispose();
             return listTablesNames;
         }
-
-        /// <summary>
-        /// Проверяет на валидность данные дефолтных таблиц
-        /// </summary>
-        /// <returns>Успешность прохождения валидации</returns>
-        /*public bool ValidateDefaultTables(BackgroundWorker worker)
-        {
-            Dictionary<string, Tuple<string, Dictionary<string, List<string>>>> defaultTables = SpecialTablesValues.DefaultTables;
-            Dictionary<string, List<Dictionary<string, string>>> problemTables = new Dictionary<string, List<Dictionary<string, string>>>();
-
-            foreach (string tableName in defaultTables.Keys)
-            {
-                List<Dictionary<string, string>> invalidRows = SelectAllFrom(tableName, defaultTables[tableName].Item2, filterIN: false);
-
-                if (invalidRows.Count > 0)
-                {
-                    problemTables.Add(tableName, new List<Dictionary<string, string>>(invalidRows));
-
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Недопустимые значения в {tableName}, в колонке {string.Join("", defaultTables[tableName].Item2.Keys)}:");
-                    string invalidUniqueValues = "";
-                    foreach (Dictionary<string, string> invalidRow in invalidRows)
-                    {
-                        invalidUniqueValues += invalidRow[string.Join("", defaultTables[tableName].Item2.Keys)] + " ";
-                    }
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"{invalidUniqueValues}");
-                }
-            }
-
-            if (problemTables.Count > 0)
-            {
-                Thread.Sleep(2000);
-                if (MessageBox.Show("Исправить дочернюю базу данных?", "Системное сообщение", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-                {
-                    worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Приступаем к корректировке данных...");
-                    RebuildDefaultTables(worker, problemTables, defaultTables);
-                    return true;
-                }
-                return false;
-            }
-            return true;
-        }*/
-
-        /// <summary>
-        /// Вносит изменения в БД. Корректирует невалидные данные дефолтных таблиц
-        /// </summary>
-        /*public void RebuildDefaultTables(BackgroundWorker worker, Dictionary<string, List<Dictionary<string, string>>> problemTables, Dictionary<string, Tuple<string, Dictionary<string, List<string>>>> defaultTables)
-        {
-            foreach (string tableName in problemTables.Keys)
-            {
-                foreach (Dictionary<string, string> row in problemTables[tableName])
-                {
-                    Dictionary<string, string> foreignsDict = SelectTablesAndForeignKeyUsage(tableName);
-
-                    foreach (string updateTable in foreignsDict.Keys)
-                    {
-                        UpdateValue(updateTable, foreignsDict[updateTable], defaultTables[tableName].Item1, foreignsDict[updateTable], row[foreignsDict[updateTable]]);
-                    }
-                    DeleteValue(tableName, string.Join("", defaultTables[tableName].Item2.Keys), row[string.Join("", defaultTables[tableName].Item2.Keys)]);
-                }
-            }
-            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, "Данные скорректированы.");
-        }*/
     }
 }

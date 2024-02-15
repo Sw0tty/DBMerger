@@ -2,10 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+
 
 namespace SqlDBManager
 {
@@ -402,8 +399,6 @@ namespace SqlDBManager
                 worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
             }
 
-
-
             countOfTry--;
             return RecursHighValues(countOfTry, onNextTry, tableName, lastId, countOfImports, mainCatalogValues, uniqueValueColumnName, idLikeColumnName, highLevelColumnName, foreigns, allFromMainData, allFromDaughterData, mainCatalog, worker);
         }
@@ -415,9 +410,7 @@ namespace SqlDBManager
             foreach (string key in row.Keys)
             {
                 if (escapedRow[key].Contains("'"))
-                {
                     escapedRow[key] = $"'{row[key].Substring(1, row[key].Length - 2).Replace("'", "\''")}'";
-                }
             }
             return escapedRow;
         }
@@ -449,30 +442,23 @@ namespace SqlDBManager
             {
                 if (row.ContainsKey("ID"))
                 {
-                    //mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                     ValuesManager.AddToRequest(catalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName)));
                 }
                 else
                 {
                     ValuesManager.AddToRequest(catalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName), withoutID: true));
                 }
-                           
-                
             }
             else
             {
                 if (row.ContainsKey("ID"))
                 {
-                    //mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
                     catalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
                 }
                 else
                 {
                     catalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName), withoutID: true);
                 }
-
-
-                //catalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
                 worker.ReportProgress(Consts.WorkerConsts.UPDATE_COUNT_OF_IMPORT);
             }
             Consts.ALL_OF_IMPORT++;

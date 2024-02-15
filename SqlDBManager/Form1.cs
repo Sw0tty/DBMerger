@@ -439,7 +439,7 @@ namespace SqlDBManager
             else if (e.UserState.ToString() == Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR)
             {
                 label13.Text = $"{e.ProgressPercentage} %";
-                // progressBar1.Value = e.ProgressPercentage;
+                progressBar1.Value = e.ProgressPercentage;
             }
             else if (e.UserState.ToString() == Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR)
             {
@@ -725,20 +725,6 @@ namespace SqlDBManager
             string sss = "'1111'";
 
             MessageBox.Show(MuliplierRecurtion(4).ToString());
-            //tabControl1.SelectedIndex--;
-
-
-
-
-            //for (int i = 10; i <= 100; i += 10)
-            //{
-            //    for (int j = 10; j <= 100; j += 10)
-            //    {
-            //        progressBar1.Value = j;
-            //        Thread.Sleep(1000);
-            //    }
-            //    progressBar2.Value = i;
-            //}
 
 
 
@@ -803,105 +789,6 @@ namespace SqlDBManager
                 else
                     listBox2.Items.Add(row["ServerName"] + "\\" + row["InstanceName"]);
             }
-            /* string baseNum = "10000315523";
-
-             long baseToInt = Convert.ToInt64(baseNum);
-
-
-             Dictionary<string, List<string>> filter = new Dictionary<string, List<string>>() { { "1", new List<string>() { "1", "2", "3", "4", "5", "6" } } };
-
-
-
-             string req = $"SELECT * FROM [].[dbo].[] WHERE {string.Join("", filter.Keys)} in ({string.Join(", ", filter[string.Join("", filter.Keys)])})";
-
-
-
-
-
-
-
-             //Dictionary<string, string> filter = new Dictionary<string, string>() { { "some_key", "some_value" } };
-
-             MessageBox.Show(req);
-
-             *//*List<Dictionary<string, string>> lst = new List<Dictionary<string, string>>();
-
-             for (int k = 0; k < 5; k++)
-             {
-                 Dictionary<string, string> dictTableData = new Dictionary<string, string>();
-                 for (int i = 0; i < 5; i++)
-                 {
-                     dictTableData[i.ToString()] = i.ToString();
-                 }
-                 lst.Add(new Dictionary<string, string>(dictTableData));
-             }
-
-             for (int i = 0; i < lst.Count; i++)
-             {
-                 MessageBox.Show(lst[i]["1"]);
-             }*//*
-             Tuple<string, string> s = new Tuple<string, string>("dffdg", "sdfsd");
-
-             MessageBox.Show(s.Item1 + "---" + s.Item2);
-
-             Dictionary<string, string> f = new Dictionary<string, string>();
-
-             f["1"] = "Apple";
-
-             Dictionary<string, string> ddd = new Dictionary<string, string>(f);
-
-             ddd["1"] = "Melone";
-             f["1"] = "dsf";
-
-
-             MessageBox.Show(f["1"]);
-             MessageBox.Show(ddd["1"]);
-
-
-
-             string usageName = "";
-
-             // Пример пришедших данных
-             // "FUND" -> "ISN_FUND"
-             for (int i = 0; i < 10; i++)
-             {
-                 usageName = $"{i}";
-             }
-             MessageBox.Show(usageName);
-
-
-
-             string catalog = "ArchiveFund";
-             string sss = $"C:\\Program Files\\Microsoft SQL Server\\MSSQL16.SQLEXPRESS2022\\MSSQL\\DATA\\{catalog}.mdf";
-             sss = sss.Replace($"DATA\\{catalog}.mdf", $"Backup\\{catalog}_reserv.bak");
-
-             MessageBox.Show(sss);
-
-
-             Dictionary<string, Func< List<string>, string>> trest = new Dictionary<string, Func<List<string>, string>> { { "eqUsers", Some } };
-             // test button
-             string value = "Nothing";
-             Dictionary<int, string> dict = new Dictionary<int, string>() { { 1, "1"}, { 2, "2" }, { 3, "3" } };
-
-             for (int i = 1; i <= dict.Count; i++)
-             {
-                 MessageBox.Show(dict[i]);
-             }
-             //string element = dict.TryGetValue("5", out value);
-             string dictStr = "";
-             //dict.Remove(element);
-
-             //label9.Text = element;
-
-             foreach(string item in dict.Values)
-             {
-                 if (trest.ContainsKey("eqUsers"))
-                 {
-                     MessageBox.Show(trest["eqUsers"](new List<string> { "login" }));
-                 }
-                 dictStr += item;
-             }
-             label10.Text = dictStr;*/
         }
 
         public string Some(List<string> columns)
@@ -915,12 +802,6 @@ namespace SqlDBManager
 
         private void button1_Click(object sender, EventArgs e)
         {
-            /*
-             На данный момент служит тестовой вкладкой
-             */
-            /*
-             Проверяет соединения с основной БД
-             */
 
             SqlConnection cnn, cnn2;
             SqlCommand command;
@@ -937,20 +818,6 @@ namespace SqlDBManager
                    output = "";
             List<string> db_tables = new List<string>();
 
-            /*Dictionary<string, string> reserveRocords = new Dictionary<string, string>();
-            List<string> keys = new List<string>() { "1", "2", "3" };
-            List<string> values = new List<string>() { "app", "store", "some" };
-
-            for (int i = 0; i < keys.Count; i++)
-            {
-                reserveRocords[keys[i]] = values[i];
-                MessageBox.Show(keys[i] + "  " + values[i]);
-            }
-
-            foreach (string key in reserveRocords.Values)
-            {
-                MessageBox.Show(key);
-            }*/
 
 
 
@@ -980,13 +847,6 @@ namespace SqlDBManager
 
             // ----------------------
             Dictionary<string, string> reserveRocords = new Dictionary<string, string>();
-            //List<string> keys = testCatalog.SelectColumnsNames("tblCITIZEN_CL");
-            //List<string> values = testCatalog.SelectRecordsWhere(keys, "tblCITIZEN_CL", "ISN_CITIZEN", "1");
-
-            /*for (int i = 0; i < keys.Count; i++)
-            {
-                reserveRocords[keys[i]] = values[i];
-            }*/
 
             reserveRocords["ISN_CITIZEN"] = "'3'";
             reserveRocords.Remove("ID"); // Обязательно удаляем ID. Он формируется новый в запросе
