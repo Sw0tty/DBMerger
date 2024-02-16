@@ -38,6 +38,7 @@ namespace SqlDBManager
             public const int UPDATE_COUNT_OF_CHECK = 454;
             public const string ITS_BLOCK_PROGRESS_BAR = "BLOCK";
             public const string ITS_MAIN_PROGRESS_BAR = "MAIN";
+            public const string CLEAN_PROGRESS_BAR = "CLEAN_BLOCK";
         }
 
         public static class VisualConsts

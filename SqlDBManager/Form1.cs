@@ -436,6 +436,11 @@ namespace SqlDBManager
             {
                 //label14.Text = $"Записей обработано: {Consts.ALL_OF_CHECK}";
             }
+            else if (e.UserState.ToString() == Consts.WorkerConsts.CLEAN_PROGRESS_BAR)
+            {
+                label13.Text = $"{0} %";
+                progressBar1.Value = 0;
+            }
             else if (e.UserState.ToString() == Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR)
             {
                 label13.Text = $"{e.ProgressPercentage} %";
