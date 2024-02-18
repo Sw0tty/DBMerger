@@ -199,10 +199,14 @@ namespace SqlDBManager
             return row;
         }
 
-        public static List<string> SelectDataFromColumn(List<Dictionary<string, string>> allFromMainData, string columnName)
+        /// <summary>
+        /// Selects values by column
+        /// </summary>
+        /// <returns>List of string values</returns>
+        public static List<string> SelectDataFromColumn(List<Dictionary<string, string>> allDataSomeTable, string columnName)
         {
             List<string> listData = new List<string>();
-            foreach (Dictionary<string, string> dataDict in allFromMainData)
+            foreach (Dictionary<string, string> dataDict in allDataSomeTable)
                 listData.Add(dataDict[columnName]);
             return listData;
         }
@@ -312,33 +316,14 @@ namespace SqlDBManager
         }
 
         /// <summary>
-        /// Возвращает список разницы между двумя списками
+        /// Seraching value in all table data
         /// </summary>
-        public static List<string> CheckUniqueValue(List<string> mainList, List<string> daughterList)
+        public static string ReturnValue(List<Dictionary<string, string>> tableDataCatalog, string searchByColumn, string searchValue, string returnTheColumnValue)
         {
-            List<string> uniqueValues = new List<string>();
-
-            foreach (string value in daughterList)
-            {
-                if (!mainList.Contains(value))
-                {
-                    uniqueValues.Add(value);
-                }
-            }
-            return uniqueValues;
-        }
-
-        /// <summary>
-        /// (not relevant because of a bug. It will be replaced on RecursionFilterValue ) Ищет в словаре значение и возвращает по переданным параметрам
-        /// </summary>
-        public static string ReturnValue(List<Dictionary<string, string>> mainRecordsFromTable, string searchColumn, string searchValue, string returnTheColumnValue)
-        {
-            foreach (Dictionary<string, string> rowData in mainRecordsFromTable)
+            foreach (Dictionary<string, string> rowData in tableDataCatalog)
             {              
-                if (rowData[searchColumn] == searchValue)
-                {
+                if (rowData[searchByColumn] == searchValue)
                     return rowData[returnTheColumnValue];
-                }
             }
             return "";
         }
@@ -360,47 +345,6 @@ namespace SqlDBManager
             columnsFilters.Remove(columnsFilters[0]);
 
             return RecursionFilterValue(searchingRow, newFilteringRecords, columnsFilters, returnColumnValue);
-        }
-
-        public static Tuple<int, List<Dictionary<string, string>>> RecursHighValues(int countOfTry, List<Dictionary<string, string>> tableData, string tableName, long lastId, int countOfImports, List<string> mainCatalogValues, string uniqueValueColumnName, string idLikeColumnName, string highLevelColumnName, Dictionary<string, string> foreigns, List<Dictionary<string, string>> allFromMainData, List<Dictionary<string, string>> allFromDaughterData, DBCatalog mainCatalog, BackgroundWorker worker)
-        {
-            if (tableData.Count == 0 || countOfTry == 0)
-                return new Tuple<int, List<Dictionary<string, string>>>(countOfImports, tableData);
-
-            List<Dictionary<string, string>> onNextTry = new List<Dictionary<string, string>>(tableData);
-
-            foreach (Dictionary<string, string> row in tableData)
-            {
-                if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
-                {
-                    ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
-                }
-
-
-
-                else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]))
-                {
-                    if (mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
-                    {
-                        string oldKey = row[idLikeColumnName];
-                        row[highLevelColumnName] = (ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) != "") ? ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName) : "'null'";
-                        row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
-                        ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
-                        mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, null));
-                        SelectImportMethod(mainCatalog, new Dictionary<string, string>(row), tableName, worker);
-                        mainCatalogValues.Add(row[uniqueValueColumnName]);
-                        countOfImports++;
-                    }// Если значения по ключу High нет в записях главного каталога
-                    else if (!mainCatalogValues.Contains(ValuesManager.ReturnValue(allFromDaughterData, highLevelColumnName, row[highLevelColumnName], uniqueValueColumnName)))
-                    {
-                        Consts.MergeProgress.AddTaskInBlock();
-                    }
-                }
-                worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
-            }
-
-            countOfTry--;
-            return RecursHighValues(countOfTry, onNextTry, tableName, lastId, countOfImports, mainCatalogValues, uniqueValueColumnName, idLikeColumnName, highLevelColumnName, foreigns, allFromMainData, allFromDaughterData, mainCatalog, worker);
         }
 
         static Dictionary<string, string> EscapeSymbolsInRow(Dictionary<string, string> row)
@@ -459,9 +403,10 @@ namespace SqlDBManager
                 {
                     catalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName), withoutID: true);
                 }
-                worker.ReportProgress(Consts.WorkerConsts.UPDATE_COUNT_OF_IMPORT);
+                //worker.ReportProgress(Consts.WorkerConsts.UPDATE_COUNT_OF_IMPORT);
             }
             Consts.ALL_OF_IMPORT++;
+            worker.ReportProgress(Consts.WorkerConsts.UPDATE_COUNT_OF_IMPORT);
         }
 
         public static List<Dictionary<string, string>> FilterRecordsFrom(List<Dictionary<string, string>> allFromTable, string filterColumn, string filterValue, string filterColumn2 = null, string filterValue2 = null)

@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.SqlClient;
 
 
 namespace SqlDBManager.DBClasses
 {
     abstract public class BaseDBConnector : SQLAdapters
     {
-        protected string Source;
-        protected string Catalog;
-        protected string Login;
-        protected string Password;
-        protected string connectionString;
-        protected SqlConnection connection;
-        protected SqlTransaction transaction;
+        private string Source { get; }
+        private string Catalog { get; }
+        private string Login { get; }
+        private string Password { get; }
+        private string ConnectionString { get; }
+        private SqlConnection Connection { get; }
+        private SqlTransaction Transaction { get; set; }
 
         public BaseDBConnector(string source, string catalog, string login, string password)
         {
@@ -24,44 +19,44 @@ namespace SqlDBManager.DBClasses
             Catalog = catalog;
             Login = login;
             Password = password;
-            connectionString = $@"Data Source={Source};Initial Catalog={Catalog};User ID={Login};Password={Password};Connect Timeout=30";
-            connection = new SqlConnection(connectionString);
-            transaction = null;
+            ConnectionString = $@"Data Source={Source};Initial Catalog={Catalog};User ID={Login};Password={Password};Connect Timeout=30";
+            Connection = new SqlConnection(ConnectionString);
+            Transaction = null;
         }
 
         public void OpenConnection()
         {
-            connection.Open();
+            Connection.Open();
         }
 
         public void CloseConnection()
         {
-            connection.Close();
+            Connection.Close();
         }
 
         protected SqlConnection ReturnConnection()
         {
-            return connection;
+            return Connection;
         }
 
         public void StartTransaction()
         {
-            transaction = connection.BeginTransaction();
+            Transaction = Connection.BeginTransaction();
         }
 
         protected SqlTransaction ReturnTransaction()
         {
-            return transaction;
+            return Transaction;
         }
 
         public void CommitTransaction()
         {
-           transaction.Commit();
+           Transaction.Commit();
         }
 
         public void RollbackTransaction()
         {
-            transaction.Rollback();
+            Transaction.Rollback();
         }
 
         public string ReturnCatalogName()

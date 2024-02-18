@@ -430,6 +430,7 @@ namespace SqlDBManager
             }
             else if (e.ProgressPercentage == Consts.WorkerConsts.UPDATE_COUNT_OF_IMPORT)
             {
+                Invoke(new Action(() => label12.Text = $"Записей импортировано: {Consts.ALL_OF_IMPORT}"));
                 //label12.Text = $"Записей импортировано: {Consts.ALL_OF_IMPORT}";
             }
             else if (e.ProgressPercentage == Consts.WorkerConsts.UPDATE_COUNT_OF_CHECK)
@@ -655,16 +656,16 @@ namespace SqlDBManager
 
             testCatalog.OpenConnection();
             testCatalog.StartTransaction();
-            string request = $"SELECT * FROM [TestDB].[dbo].[tblFUND];";
-            string request2 = $"SELECT COUNT(*) FROM [TestDB].[dbo].[tblFUND];";
+            string request = $"SELECT * FROM [TestDB].[dbo].[eqUsers];";
+            string request2 = $"SELECT COUNT(*) FROM [TestDB].[dbo].[eqUsers];";
 
             int count = testCatalog.TestSelectCountAdapter(request2);
-            MessageBox.Show(count.ToString());
+            //MessageBox.Show(count.ToString());
 
-            Tuple<int, List<Dictionary<string, string>>> dataFrom = testCatalog.TestSelectAdapter(request);
-            MessageBox.Show(dataFrom.Item1.ToString());
+            List<Dictionary<string, string>> dataFrom = testCatalog.TestSelectAdapter(request);
+            //MessageBox.Show(dataFrom.Item1.ToString());
 
-            foreach (Dictionary<string, string> row in dataFrom.Item2)
+            foreach (Dictionary<string, string> row in dataFrom)
             {
                 foreach (string key in row.Keys)
                 {

@@ -83,8 +83,9 @@ namespace SqlDBManager
         /// </summary>
         public string SelectCatalogPath()
         {
-            string request = SQLRequests.BackUpRequests.CatalogPathRequest(Catalog);
-            return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: true);
+            string request = SQLRequests.BackUpRequests.CatalogPathRequest(ReturnCatalogName());
+            return SelectSingleValueAdapter(request, likeValue: true, ReturnConnection(), ReturnTransaction());
+            //return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: true);
         }
 
         public string ReturnValues(Dictionary<string, string> row, bool withoutID = false)
@@ -96,7 +97,7 @@ namespace SqlDBManager
 
         public int SelectCountTables()
         {
-            string request = SQLRequests.SelectRequests.CountTablesRequest(Catalog);
+            string request = SQLRequests.SelectRequests.CountTablesRequest(ReturnCatalogName());
             SqlCommand command = new SqlCommand(request, ReturnConnection());
             command.Transaction = ReturnTransaction();
             SqlDataReader reader = command.ExecuteReader();
@@ -112,9 +113,8 @@ namespace SqlDBManager
 
         public string SelectLastRecord(string columns, string tableName, string orderByColumn)
         {
-            string request = SQLRequests.SelectRequests.LastInsertRecordRequest(Catalog, columns, tableName, orderByColumn);
-            return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: true);
-            //return ReturnListFromDB(request, connection, ReturnTransaction(), itsRow: true);
+            string request = SQLRequests.SelectRequests.LastInsertRecordRequest(ReturnCatalogName(), columns, tableName, orderByColumn);
+            return SelectSingleValueAdapter(request, likeValue: true, ReturnConnection(), ReturnTransaction());
         }
 
         /// <summary>
@@ -122,9 +122,9 @@ namespace SqlDBManager
         /// </summary>
         public int SelectCountRowsTable(string tableName)
         {
-            // On SelectCountAdapter
-            string request = SQLRequests.SelectRequests.CountRowsRequest(Catalog, tableName);
-            SqlCommand command = new SqlCommand(request, ReturnConnection());
+            string request = SQLRequests.SelectRequests.CountRowsRequest(ReturnCatalogName(), tableName);
+            return SelectCountAdapter(request, ReturnConnection(), ReturnTransaction());
+/*            SqlCommand command = new SqlCommand(request, ReturnConnection());
             command.Transaction = ReturnTransaction();
             SqlDataReader reader = command.ExecuteReader();
 
@@ -132,10 +132,7 @@ namespace SqlDBManager
             int count = Convert.ToInt32(reader.GetValue(0));
             reader.Close();
             command.Dispose();
-            return count;
-/*
-            string request = SQLRequests.CountRowsRequest(Catalog, tableName);
-            return SelectAdapter(request, connection, ReturnTransaction());*/
+            return count;*/
         }
 
         /// <summary>
@@ -143,12 +140,7 @@ namespace SqlDBManager
         /// </summary>
         public List<Dictionary<string, string>> SelectAllFrom(string tableName, List<string> columns, bool allowsNull, Dictionary<string, List<string>> filter = null, bool filterIN = true)
         {
-            string request = SQLRequests.SelectRequests.AllRecordsRequest(Catalog, tableName, filter, filterIN, columns);
-            //MessageBox.Show(tableName + "       " + request);
-/*            if (columns == null)
-            {
-                columns = SelectColumnsNames(tableName);
-            }*/
+            string request = SQLRequests.SelectRequests.AllRecordsRequest(ReturnCatalogName(), tableName, filter, filterIN, columns);
             return ReturnListDictsFromDB(request, columns, allowsNull, ReturnConnection(), ReturnTransaction());
         }
 
@@ -160,19 +152,21 @@ namespace SqlDBManager
 
         public string SelectIDFrom(string tableName, string idLikeColumn, string filterValue)
         {
-            string request = SQLRequests.SelectRequests.IDFromRequest(Catalog, tableName, idLikeColumn, filterValue);
-            return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: true);
+            string request = SQLRequests.SelectRequests.IDFromRequest(ReturnCatalogName(), tableName, idLikeColumn, filterValue);
+            return SelectSingleValueAdapter(request, likeValue: true, ReturnConnection(), ReturnTransaction());
+            //return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: true);
         }
 
         public string SelectReferenceTableName(string currentTableName, string foreignColumnName)
         {
-            string request = SQLRequests.SelectRequests.ReferenceTableNameRequest(Catalog, currentTableName, foreignColumnName);
-            return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: false);
+            string request = SQLRequests.SelectRequests.ReferenceTableNameRequest(ReturnCatalogName(), currentTableName, foreignColumnName);
+            return SelectSingleValueAdapter(request, likeValue: false, ReturnConnection(), ReturnTransaction());
+            //return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: false);
         }
 
         public List<string> SelectTablesNames()
         {
-            string request = SQLRequests.SelectRequests.AllTablesNamesRequest(Catalog);
+            string request = SQLRequests.SelectRequests.AllTablesNamesRequest(ReturnCatalogName());
             return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction());
         }
 
@@ -181,20 +175,20 @@ namespace SqlDBManager
         /// </summary>
         public List<string> SelectLogTables()
         {
-            string request = SQLRequests.SelectRequests.LogTablesRequest(Catalog);
+            string request = SQLRequests.SelectRequests.LogTablesRequest(ReturnCatalogName());
             return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction());
         }
 
         public List<string> SelectDefaultSkipTables()
         {
-            string request = SQLRequests.SelectRequests.SkipRequest(Catalog);
+            string request = SQLRequests.SelectRequests.SkipRequest(ReturnCatalogName());
             return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction());
         }
 
         public List<string> SelectDefaultProcessingTables()
         {
             // Дефолтные таблицы на обработку
-            string request = SQLRequests.SelectRequests.ProcessingRequest(Catalog);
+            string request = SQLRequests.SelectRequests.ProcessingRequest(ReturnCatalogName());
             return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction());
         }
 
@@ -213,13 +207,13 @@ namespace SqlDBManager
         /// </summary>
         public Dictionary<string, string> SelectTablesAndForeignKeyUsage(string tableName)
         {
-            string request = SQLRequests.SelectRequests.RecordsUsingAsForeignKeyRequest(Catalog, tableName);
+            string request = SQLRequests.SelectRequests.RecordsUsingAsForeignKeyRequest(ReturnCatalogName(), tableName);
             return ReturnDictFromDB(request, ReturnConnection(), ReturnTransaction());
         }
 
         public Dictionary<string, string> SelectCatalogVersion()
         {
-            string request = SQLRequests.SelectRequests.SelectVersionRequest(Catalog);
+            string request = SQLRequests.SelectRequests.SelectVersionRequest(ReturnCatalogName());
             return ReturnDictFromDB(request, ReturnConnection(), ReturnTransaction());
         }
 
@@ -228,7 +222,7 @@ namespace SqlDBManager
         /// </summary>
         public List<string> SelectColumnsNames(string tableName, List<string> excludeColumns)
         {
-            string request = SQLRequests.SelectRequests.ColumnsNamesRequest(Catalog, tableName);
+            string request = SQLRequests.SelectRequests.ColumnsNamesRequest(ReturnCatalogName(), tableName);
             return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction(), excludeColumns);
         }
 
@@ -238,22 +232,20 @@ namespace SqlDBManager
         /// <returns>Количество удаленных записей</returns>
         public int ClearTable(string tableName)
         {
-            string request = SQLRequests.DeleteRequests.ClearTableRequest(Catalog, tableName);
+            string request = SQLRequests.DeleteRequests.ClearTableRequest(ReturnCatalogName(), tableName);
             return DeleteAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
         public void AddReference(string repairTableName, string referenceTableName, string linkColumn)
         {
-            string request = SQLRequests.UpdateRequests.AddForeignKeyOnTable(Catalog, repairTableName, referenceTableName, linkColumn);
-            // on AlterAdapter
-            AnotherRequest(request, ReturnConnection(), ReturnTransaction());
+            string request = SQLRequests.UpdateRequests.AddForeignKeyOnTable(ReturnCatalogName(), repairTableName, referenceTableName, linkColumn);
+            AlterAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
         public void RenameColumn(string tableName, string oldColumnName, string newColumnName)
         {
-            string request = SQLRequests.UpdateRequests.RenameTableColumnRequest(Catalog, tableName, oldColumnName, newColumnName);
-            // on AlterAdapter
-            AnotherRequest(request, ReturnConnection(), ReturnTransaction());
+            string request = SQLRequests.UpdateRequests.RenameTableColumnRequest(ReturnCatalogName(), tableName, oldColumnName, newColumnName);
+            AlterAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
         /// <summary>
@@ -261,39 +253,26 @@ namespace SqlDBManager
         /// </summary>
         public void InsertValue(string tableName, Dictionary<string, string> data, bool withoutID = false)
         {
-            string request = SQLRequests.InsertRequests.InsertDictValueRequst(Catalog, tableName, data, withoutID);
+            string request = SQLRequests.InsertRequests.InsertDictValueRequst(ReturnCatalogName(), tableName, data, withoutID);
             InsertAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
         public void SpecialInsertListOfValues(string tableName, string values, List<string> excludeColumns)
         {
-            string request = SQLRequests.InsertRequests.FastFormerInsertValueRequst(SelectColumnsNames(tableName, excludeColumns), Catalog, tableName, values);
+            string request = SQLRequests.InsertRequests.FastFormerInsertValueRequst(SelectColumnsNames(tableName, excludeColumns), ReturnCatalogName(), tableName, values);
             InsertAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
         public void UpdateValue(string tableName, string updateColumn, string updateValue, string filterColumn, string filterValue)
         {
-            string request = SQLRequests.UpdateRequests.UpdateRowRequest(Catalog, tableName, updateColumn, updateValue, filterColumn, filterValue);
+            string request = SQLRequests.UpdateRequests.UpdateRowRequest(ReturnCatalogName(), tableName, updateColumn, updateValue, filterColumn, filterValue);
             UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
         public void DeleteValue(string tableName, string filterColumn, string filterValue)
         {
-            string request = SQLRequests.DeleteRequests.DeleteRowRequest(Catalog, tableName, filterColumn, filterValue);
+            string request = SQLRequests.DeleteRequests.DeleteRowRequest(ReturnCatalogName(), tableName, filterColumn, filterValue);
             DeleteAdapter(request, ReturnConnection(), ReturnTransaction());
-        }
-
-        /// <summary>
-        /// Makes UPDATE requests
-        /// </summary>
-        /// <returns>Count of affected rows</returns>
-        static void AnotherRequest(string request, SqlConnection connection, SqlTransaction transaction)
-        {
-            SqlCommand cmd = new SqlCommand(request, connection);
-            cmd.Transaction = transaction;
-            //adapter.DeleteCommand.Transaction = ReturnTransaction();
-            cmd.ExecuteNonQuery();
-            cmd.Dispose();
         }
 
         /// <summary>
@@ -335,30 +314,6 @@ namespace SqlDBManager
             reader.Close();
             command.Dispose();
             return tableData;
-        }
-
-        static string ReturnStringFromDB(string request, SqlConnection connection, SqlTransaction transaction, bool itsValue)
-        {
-            SqlCommand command = new SqlCommand(request, connection);
-            command.Transaction = transaction;
-            SqlDataReader reader = command.ExecuteReader();
-            string valueFromDB = null;
-
-            while (reader.Read())
-            {
-                if (itsValue)
-                {
-                    valueFromDB = "'" + reader.GetSqlValue(0).ToString() + "'";
-                }
-                else
-                {
-                    valueFromDB = reader.GetSqlValue(0).ToString();
-                }
-            }
-            
-            reader.Close();
-            command.Dispose();
-            return valueFromDB;
         }
 
         /// <summary>

@@ -13,7 +13,7 @@ namespace SqlDBManager
         /// При истине выбрасывает исключения и прекращает работу с указание места ошибки
         /// </summary>
         public const bool DEBUG_MOD = true;
-        public const bool FAST_REQUEST_MOD = false;
+        public const bool FAST_REQUEST_MOD = true;
 
         public static int ALL_OF_IMPORT = 0;
         public static int ALL_OF_CHECK = 0;
@@ -33,7 +33,7 @@ namespace SqlDBManager
         {
             public const int BLOCK_HEADING = 800;
             public const int MIDDLE_STATUS_CODE = 999;
-            public const int ERROR_STATUS_CODE = 500;
+            public const int ERROR_STATUS_CODE = 505;
             public const int UPDATE_COUNT_OF_IMPORT = 444;
             public const int UPDATE_COUNT_OF_CHECK = 454;
             public const string ITS_BLOCK_PROGRESS_BAR = "BLOCK";

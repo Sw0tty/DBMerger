@@ -15,8 +15,8 @@ namespace SqlDBManager
         /// <summary>
         /// Makes SELECT requests
         /// </summary>
-        /// <returns>Tuple of: Count of affected rows - Selected data</returns>
-        protected Tuple<int, List<Dictionary<string, string>>> SelectAdapter(string request, SqlConnection connection, SqlTransaction transaction)
+        /// <returns>List of Dictionarys Selected data</returns>
+        protected List<Dictionary<string, string>> SelectAdapter(string request, bool allowsNull, SqlConnection connection, SqlTransaction transaction)
         {
             SqlDataAdapter adapter = new SqlDataAdapter();
             DataSet dataSet = new DataSet();
@@ -43,7 +43,14 @@ namespace SqlDBManager
                     {
                         if (cell.ToString().Trim(' ') == "")
                         {
-                            valueFromTable[columns[columnNum]] = "'null'";
+                            if (allowsNull)
+                            {
+                                valueFromTable[columns[columnNum]] = "'null'";
+                            }
+                            else
+                            {
+                                valueFromTable[columns[columnNum]] = "''";
+                            }
                         }
                         else
                         {
@@ -55,7 +62,7 @@ namespace SqlDBManager
                 }
             }
             adapter.Dispose();
-            return new Tuple<int, List<Dictionary<string, string>>>(selectedData.Count, selectedData);
+            return selectedData;
         }
 
         /// <summary>
@@ -73,6 +80,34 @@ namespace SqlDBManager
             reader.Close();
             adapter.Dispose();
             return count;
+        }
+
+        /// <summary>
+        /// Makes SELECT SINGLE VALUE requests
+        /// </summary>
+        /// <param name="likeValue">Escapes the string if true</param>
+        /// <returns>String value</returns>
+        protected string SelectSingleValueAdapter(string request, bool likeValue, SqlConnection connection, SqlTransaction transaction)
+        {
+            SqlCommand command = new SqlCommand(request, connection);
+            command.Transaction = transaction;
+            SqlDataReader reader = command.ExecuteReader();
+            string valueFromDB = null;
+
+            while (reader.Read())
+            {
+                if (likeValue)
+                {
+                    valueFromDB = "'" + reader.GetSqlValue(0).ToString() + "'";
+                }
+                else
+                {
+                    valueFromDB = reader.GetSqlValue(0).ToString();
+                }
+            }
+            reader.Close();
+            command.Dispose();
+            return valueFromDB;
         }
 
         /// <summary>

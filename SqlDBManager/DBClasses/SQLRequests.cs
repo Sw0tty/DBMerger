@@ -96,11 +96,7 @@ namespace SqlDBManager
                 return $"SELECT COUNT(*) FROM [{catalog}].[dbo].[{table}];";
             }
 
-            /// <summary>
-            /// Запрос получения записей по переданному фильтру
-            /// Фильтрация по одному параметру WHERE key = value
-            /// </summary>
-            public static string SelectWhereRequest(List<string> columns, string catalog, string tableName, string filterColumn, string filterValue)
+/*            public static string SelectWhereRequest(List<string> columns, string catalog, string tableName, string filterColumn, string filterValue)
             {
                 if (columns.Count > 0 && !columns.Contains("Deleted"))
                     return $"SELECT {string.Join(", ", columns).Replace('\"', ' ')} FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
@@ -109,7 +105,7 @@ namespace SqlDBManager
                 if (columns.Count == 0 && columns.Contains("Deleted"))
                     return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue} and Deleted = '0';";
                 return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
-            }
+            }*/
 
             public static string SelectVersionRequest(string catalog)
             {
@@ -144,7 +140,8 @@ namespace SqlDBManager
             /// <returns>String request</returns>
             public static string ColumnsNamesRequest(string catalog, string tableName)
             {
-                return $"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_CATALOG = '{catalog}' and TABLE_SCHEMA = 'dbo' and TABLE_NAME = '{tableName}';";
+                return $"USE [{catalog}]; " +
+                       $"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = 'dbo' and TABLE_NAME = '{tableName}';";
             }
         }
 

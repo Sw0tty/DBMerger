@@ -11,9 +11,9 @@ namespace SqlDBManager.DBClasses
         public TestCatalog(string source, string catalog, string login, string password) : base(source, catalog, login, password) { }
 
 
-        public Tuple<int, List<Dictionary<string, string>>> TestSelectAdapter(string request)
+        public List<Dictionary<string, string>> TestSelectAdapter(string request)
         {
-            return SelectAdapter(request, ReturnConnection(), ReturnTransaction());
+            return SelectAdapter(request, allowsNull: false, ReturnConnection(), ReturnTransaction());
         }
 
         public int TestSelectCountAdapter(string request)
