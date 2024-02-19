@@ -243,7 +243,7 @@ namespace SqlDBManager
                 new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>(null, "ISN_REF_QUESTION", null, "ISN_QUESTION", null, null, null, new Tuple<bool>(true)) },
 
             { "tblUNIT", // "ISN_HIGH_UNIT"
-                new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>("NAME", "ISN_UNIT", null, "ISN_INVENTORY", null, new List<string>() { "UNIT_NUM_1", "UNIT_NUM_2", "WEIGHT", "PAGE_COUNT", "ALL_DATE" }, null, new Tuple<bool>(true)) },
+                new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>("NAME", "ISN_UNIT", null, "ISN_INVENTORY", null, new List<string>() { "UNIT_NUM_1", "UNIT_NUM_2", "WEIGHT", "PAGE_COUNT", "ALL_DATE", "START_YEAR", "END_YEAR" }, null, new Tuple<bool>(true)) },
 
             { "tblUNIT_ELECTRONIC",
                 new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>(null, null, null, "ISN_UNIT", null, null, null, new Tuple<bool>(true)) },

@@ -27,7 +27,21 @@ namespace NotesNamespace
         }
     }
 
-    
+    public class MergerPreSetting
+    {
+        private string ShortArchiveName { get; }
+        private string FullArchiveName { get; }
+        private string ArchiveAddress { get; }
+        private string Description { get; }
+
+        public MergerPreSetting(string shortArchiveName, string fullArchiveName, string archiveAddress, string description)
+        {
+            ShortArchiveName = shortArchiveName;
+            FullArchiveName = fullArchiveName;
+            ArchiveAddress = archiveAddress;
+            Description = description;
+        }
+    }
 
     public class S : BaseDBConnector
     {

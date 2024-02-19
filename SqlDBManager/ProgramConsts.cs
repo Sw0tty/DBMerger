@@ -1,6 +1,7 @@
 ﻿using NotesNamespace;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +22,9 @@ namespace SqlDBManager
         public static bool MERGE_WAS_SUCCESS = false;
         public static bool LOG_SAVED = false;
         public static string LAST_MAIN_CATALOG = null;
-        public static string LAST_DAUGHTER_CATALOG = null;       
+        public static string LAST_DAUGHTER_CATALOG = null;
+        public static bool MAKE_EDITS = false;
+        public static Tuple<string, string, string, string> PRE_SETTINGS = null;
 
         public static void WriteLastCatalogs(string mainCatalog, string daughterCatalog)
         {
@@ -46,6 +49,7 @@ namespace SqlDBManager
             public const int SPACE_SIZE = 4;
             public const int HEADING_SPACE = 40;
             public static bool TAB_ACCESS = true;
+            public static Font BUTTON_FONT = new Font("Microsoft Sans Serif", 9, FontStyle.Regular);
         }
 
         public static class MergeProgress

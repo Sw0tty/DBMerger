@@ -83,6 +83,14 @@
             this.listBox2 = new System.Windows.Forms.ListBox();
             this.mergerBackWorker = new System.ComponentModel.BackgroundWorker();
             this.dirtyJobBackWorker = new System.ComponentModel.BackgroundWorker();
+            this.textBox8 = new System.Windows.Forms.TextBox();
+            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.label15 = new System.Windows.Forms.Label();
+            this.textBox10 = new System.Windows.Forms.TextBox();
+            this.label16 = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.textBox11 = new System.Windows.Forms.TextBox();
+            this.label17 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -91,6 +99,7 @@
             this.groupBox3.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -145,6 +154,7 @@
             // button4
             // 
             this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.button4.Location = new System.Drawing.Point(342, 561);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(148, 34);
@@ -378,7 +388,7 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Location = new System.Drawing.Point(8, 215);
+            this.groupBox1.Location = new System.Drawing.Point(8, 397);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(482, 146);
             this.groupBox1.TabIndex = 7;
@@ -389,44 +399,43 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.panel1);
             this.groupBox3.Controls.Add(this.radioButton2);
             this.groupBox3.Controls.Add(this.radioButton1);
-            this.groupBox3.Controls.Add(this.textBox7);
-            this.groupBox3.Controls.Add(this.label11);
             this.groupBox3.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox3.Location = new System.Drawing.Point(8, 6);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(482, 167);
+            this.groupBox3.Size = new System.Drawing.Size(482, 360);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Объединения архивов";
+            this.groupBox3.Text = "Объединение архивов";
             // 
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
-            this.radioButton2.Checked = true;
-            this.radioButton2.Location = new System.Drawing.Point(176, 35);
+            this.radioButton2.Location = new System.Drawing.Point(19, 59);
             this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(101, 21);
+            this.radioButton2.Size = new System.Drawing.Size(90, 21);
             this.radioButton2.TabIndex = 5;
-            this.radioButton2.TabStop = true;
-            this.radioButton2.Text = "radioButton2";
+            this.radioButton2.Text = "Поменять";
             this.radioButton2.UseVisualStyleBackColor = true;
+            this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
             // 
             // radioButton1
             // 
             this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(23, 35);
+            this.radioButton1.Checked = true;
+            this.radioButton1.Location = new System.Drawing.Point(19, 24);
             this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(101, 21);
+            this.radioButton1.Size = new System.Drawing.Size(147, 21);
             this.radioButton1.TabIndex = 0;
             this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "radioButton1";
+            this.radioButton1.Text = "Оставить как есть";
             this.radioButton1.UseVisualStyleBackColor = true;
             // 
             // textBox7
             // 
-            this.textBox7.Location = new System.Drawing.Point(23, 129);
+            this.textBox7.Location = new System.Drawing.Point(13, 29);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(322, 25);
             this.textBox7.TabIndex = 4;
@@ -434,16 +443,16 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(20, 99);
+            this.label11.Location = new System.Drawing.Point(10, 9);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(292, 17);
+            this.label11.Size = new System.Drawing.Size(163, 17);
             this.label11.TabIndex = 2;
-            this.label11.Text = "Наименование архива после объединения";
+            this.label11.Text = "Краткое наименование";
             // 
             // button8
             // 
             this.button8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.button8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.button8.Location = new System.Drawing.Point(342, 561);
             this.button8.Name = "button8";
             this.button8.Size = new System.Drawing.Size(148, 34);
@@ -457,7 +466,7 @@
             // button5
             // 
             this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.button5.Location = new System.Drawing.Point(8, 561);
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(148, 34);
@@ -497,6 +506,7 @@
             // 
             // startMerge
             // 
+            this.startMerge.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.startMerge.Location = new System.Drawing.Point(342, 561);
             this.startMerge.Name = "startMerge";
             this.startMerge.Size = new System.Drawing.Size(148, 34);
@@ -553,9 +563,10 @@
             // mergeLog
             // 
             this.mergeLog.Enabled = false;
-            this.mergeLog.Location = new System.Drawing.Point(176, 561);
+            this.mergeLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.mergeLog.Location = new System.Drawing.Point(162, 561);
             this.mergeLog.Name = "mergeLog";
-            this.mergeLog.Size = new System.Drawing.Size(148, 34);
+            this.mergeLog.Size = new System.Drawing.Size(174, 34);
             this.mergeLog.TabIndex = 1;
             this.mergeLog.Text = "Сохранить итог слияния";
             this.mergeLog.UseVisualStyleBackColor = true;
@@ -565,6 +576,7 @@
             // 
             // button6
             // 
+            this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.button6.Location = new System.Drawing.Point(8, 561);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(148, 34);
@@ -577,6 +589,7 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.textBox8);
             this.tabPage4.Controls.Add(this.button3);
             this.tabPage4.Controls.Add(this.comboBox3);
             this.tabPage4.Controls.Add(this.button2);
@@ -624,18 +637,18 @@
             // listView1
             // 
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(229, 163);
+            this.listView1.Location = new System.Drawing.Point(316, 263);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(193, 289);
+            this.listView1.Size = new System.Drawing.Size(174, 203);
             this.listView1.TabIndex = 6;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.List;
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(302, 104);
+            this.button10.Location = new System.Drawing.Point(393, 119);
             this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(129, 42);
+            this.button10.Size = new System.Drawing.Size(97, 42);
             this.button10.TabIndex = 5;
             this.button10.Text = "button10";
             this.button10.UseVisualStyleBackColor = true;
@@ -644,7 +657,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(313, 66);
+            this.label10.Location = new System.Drawing.Point(413, 78);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(41, 13);
             this.label10.TabIndex = 4;
@@ -653,7 +666,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(313, 25);
+            this.label9.Location = new System.Drawing.Point(419, 38);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(35, 13);
             this.label9.TabIndex = 3;
@@ -690,6 +703,82 @@
             this.dirtyJobBackWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.dirtyJobBackWorker_ProgressChanged);
             this.dirtyJobBackWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.dirtyJobBackWorker_RunWorkerCompleted);
             // 
+            // textBox8
+            // 
+            this.textBox8.Location = new System.Drawing.Point(213, 25);
+            this.textBox8.Multiline = true;
+            this.textBox8.Name = "textBox8";
+            this.textBox8.ReadOnly = true;
+            this.textBox8.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox8.Size = new System.Drawing.Size(157, 232);
+            this.textBox8.TabIndex = 10;
+            // 
+            // textBox9
+            // 
+            this.textBox9.Location = new System.Drawing.Point(13, 89);
+            this.textBox9.Name = "textBox9";
+            this.textBox9.Size = new System.Drawing.Size(322, 25);
+            this.textBox9.TabIndex = 7;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(10, 69);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(159, 17);
+            this.label15.TabIndex = 6;
+            this.label15.Text = "Полное наименование";
+            // 
+            // textBox10
+            // 
+            this.textBox10.Location = new System.Drawing.Point(13, 156);
+            this.textBox10.Name = "textBox10";
+            this.textBox10.Size = new System.Drawing.Size(322, 25);
+            this.textBox10.TabIndex = 9;
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(10, 136);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(98, 17);
+            this.label16.TabIndex = 8;
+            this.label16.Text = "Адрес архива";
+            // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.panel1.Controls.Add(this.textBox11);
+            this.panel1.Controls.Add(this.label17);
+            this.panel1.Controls.Add(this.textBox9);
+            this.panel1.Controls.Add(this.textBox10);
+            this.panel1.Controls.Add(this.label11);
+            this.panel1.Controls.Add(this.label16);
+            this.panel1.Controls.Add(this.textBox7);
+            this.panel1.Controls.Add(this.label15);
+            this.panel1.Enabled = false;
+            this.panel1.Location = new System.Drawing.Point(6, 86);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(470, 267);
+            this.panel1.TabIndex = 10;
+            // 
+            // textBox11
+            // 
+            this.textBox11.Location = new System.Drawing.Point(13, 217);
+            this.textBox11.Name = "textBox11";
+            this.textBox11.Size = new System.Drawing.Size(322, 25);
+            this.textBox11.TabIndex = 11;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(10, 197);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(98, 17);
+            this.label17.TabIndex = 10;
+            this.label17.Text = "Адрес архива";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -713,6 +802,8 @@
             this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -773,6 +864,14 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button startMerge;
         private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.TextBox textBox8;
+        private System.Windows.Forms.TextBox textBox9;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.TextBox textBox10;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.TextBox textBox11;
+        private System.Windows.Forms.Label label17;
     }
 }
 

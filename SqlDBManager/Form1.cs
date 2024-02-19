@@ -18,6 +18,8 @@ using System.Transactions;
 using System.Windows.Forms.VisualStyles;
 using System.IO;
 using SqlDBManager.DBClasses;
+using System.Drawing.Configuration;
+
 
 namespace SqlDBManager
 {
@@ -50,9 +52,26 @@ namespace SqlDBManager
             checkConnectionMainCatalog.Text = "Проверить соединение";
             checkConnectionDaughterCatalog.Text = checkConnectionMainCatalog.Text;
 
-            
 
+            SetButtonsFont();
             LoadProperties();
+        }
+
+        private void SetButtonsFont()
+        {
+            button1.Font = Consts.VisualConsts.BUTTON_FONT;
+            button2.Font = Consts.VisualConsts.BUTTON_FONT;
+            button3.Font = Consts.VisualConsts.BUTTON_FONT;
+            button4.Font = Consts.VisualConsts.BUTTON_FONT;
+            button5.Font = Consts.VisualConsts.BUTTON_FONT;
+            button6.Font = Consts.VisualConsts.BUTTON_FONT;
+            button8.Font = Consts.VisualConsts.BUTTON_FONT;
+            button9.Font = Consts.VisualConsts.BUTTON_FONT;
+            button10.Font = Consts.VisualConsts.BUTTON_FONT;
+            mergeLog.Font = Consts.VisualConsts.BUTTON_FONT;
+            startMerge.Font = Consts.VisualConsts.BUTTON_FONT;
+            checkConnectionMainCatalog.Font = Consts.VisualConsts.BUTTON_FONT;
+            checkConnectionDaughterCatalog.Font = Consts.VisualConsts.BUTTON_FONT;
         }
 
         private void LoadProperties()
@@ -142,6 +161,7 @@ namespace SqlDBManager
             {
                 mainDBGroupBox.Enabled = false;
                 groupBox2.Enabled = false;
+                button4.Enabled = false;
                 dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox1.Text, textBox1.Text, textBox2.Text, textBox3.Text));               
             }
             else
@@ -160,6 +180,7 @@ namespace SqlDBManager
             {
                 mainDBGroupBox.Enabled = false;
                 groupBox2.Enabled = false;
+                button4.Enabled = false;
                 dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox2.Text, textBox4.Text, textBox5.Text, textBox6.Text));
             }
             else
@@ -178,6 +199,7 @@ namespace SqlDBManager
             {
                 mainDBGroupBox.Enabled = false;
                 groupBox2.Enabled = false;
+                button4.Enabled = false;
                 dirtyJobBackWorker.RunWorkerAsync();
             }
             else
@@ -450,8 +472,7 @@ namespace SqlDBManager
             else if (e.UserState.ToString() == Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR)
             {
                 progressBar2.Value = e.ProgressPercentage;
-            }
-            
+            }            
         }
 
         private void mergerBackWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -521,6 +542,7 @@ namespace SqlDBManager
             {
                 mainDBGroupBox.Enabled = true;
                 groupBox2.Enabled = true;
+                button4.Enabled = true;
             }));
         }
 
@@ -543,6 +565,21 @@ namespace SqlDBManager
             else
             {
                 e.Cancel = Consts.VisualConsts.TAB_ACCESS;
+            }
+        }
+
+        private void radioButton2_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButton2.Checked)
+            {
+                panel1.Enabled = true;
+                Consts.MAKE_EDITS = true;
+                Consts.PRE_SETTINGS = new Tuple<string, string, string, string>(textBox7.Text.Trim(' '), textBox9.Text.Trim(' '), textBox10.Text.Trim(' '), textBox11.Text.Trim(' '));
+            }
+            else
+            {
+                panel1.Enabled = false;
+                Consts.MAKE_EDITS = false;
             }
         }
 

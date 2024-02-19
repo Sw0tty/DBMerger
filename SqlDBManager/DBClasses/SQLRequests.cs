@@ -182,6 +182,15 @@ namespace SqlDBManager
             }
 
             /// <summary>
+            /// Update record request
+            /// </summary>
+            /// <returns>String request</returns>
+            public static string UpdateArchiveRequest(string catalog, string tableName, string fullName, string shortName, string address, string description)
+            {
+                return $"UPDATE [{catalog}].[dbo].[{tableName}] SET NAME = '{fullName}', NAME_SHORT = '{shortName}', ADDRESS = '{address}', AUTHORITY = '{description}';";
+            }
+
+            /// <summary>
             /// Request to renames same column
             /// </summary>
             /// <returns>String request</returns>

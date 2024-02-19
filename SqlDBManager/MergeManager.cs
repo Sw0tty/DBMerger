@@ -94,6 +94,7 @@ namespace SqlDBManager
                 {
                     worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Таблица с дефолтными значениями.");
                 }
+                worker.ReportProgress(100, Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
             }
         }
@@ -105,15 +106,12 @@ namespace SqlDBManager
 
             foreach (string tableName in mainCatalog.SelectDefaultProcessingTables())
             {
-                int mainCount = mainCatalog.SelectCountRowsTable(tableName);
-                int daughterCount = daughterCatalog.SelectCountRowsTable(tableName);
-
-
                 worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {tableName}:");
 
                 if (daughterCatalog.SelectCountRowsTable(tableName) == 0)
                 {
                     worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
+                    worker.ReportProgress(100, Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
                 // Вызывается функция обработчик, которая собирает данные из кортежа
                 else if (DefaultTablesParams.ContainsKey(tableName))
@@ -140,6 +138,7 @@ namespace SqlDBManager
                 else
                 {
                     worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
+                    worker.ReportProgress(100, Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
                 worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
             }
@@ -153,15 +152,12 @@ namespace SqlDBManager
 
             foreach (string tableName in ArchiveTables.OrderedCompositeTables)
             {
-                int mainCount = mainCatalog.SelectCountRowsTable(tableName);
-                int daughterCount = daughterCatalog.SelectCountRowsTable(tableName);
-
-
                 worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {tableName}:");
 
                 if (daughterCatalog.SelectCountRowsTable(tableName) == 0)
                 {
                     worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
+                    worker.ReportProgress(100, Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
                 else if (LinksTablesParams.ContainsKey(tableName))
                 {
@@ -187,6 +183,7 @@ namespace SqlDBManager
                 else
                 {
                     worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
+                    worker.ReportProgress(100, Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
                 worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
             }
@@ -605,6 +602,11 @@ namespace SqlDBManager
                 ValuesManager.AddTablesToRewriteDict(foreigns);
                 ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(allFromDaughterCatalog[0][idLikeColumnName], allFromMainCatalog[0][idLikeColumnName]));
 
+/*                if (Consts.MAKE_EDITS)
+                {
+                    
+                }*/
+                
             }
             else if (uniqueValueColumnName != null && idLikeColumnName != null && highLevelColumnName == null && parentIdColumn == null)
             {
@@ -652,6 +654,11 @@ namespace SqlDBManager
                         }
 
                         ValuesManager.SelectImportMethod(mainCatalog, new Dictionary<string, string>(row), tableName, worker);
+
+                        // new string
+                        mainCatalogValues.Add(row[uniqueValueColumnName]);
+
+
                         countOfImports++;
                     }
                     worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
@@ -735,6 +742,10 @@ namespace SqlDBManager
                                 row[ExtraIDColumn] = mainCatalog.SelectIDFrom(mainCatalog.SelectReferenceTableName(tableName, parentIdColumn), parentIdColumn, pairKeys.Item2);
 
                             ValuesManager.SelectImportMethod(mainCatalog, new Dictionary<string, string>(row), tableName, worker);
+
+                            // new string
+                            mainCatalogValues.Add(row[uniqueValueColumnName]);
+
                             countOfImports++;
                         }
                         
