@@ -424,16 +424,94 @@ namespace SqlDBManager
                 // parentIdTuple = ISN_FUND
                 foreach (Tuple<string, string> parentIdTuple in tableReservedValues[parentIdColumn])
                 {
-                    List<Dictionary<string, string>> allFromMainDataWhere = new List<Dictionary<string, string>>();
-
-                    // Получаем значения по родителю.
-                    allFromMainDataWhere = ValuesManager.FilterRecordsFrom(allFromMainCatalog, parentIdColumn, parentIdTuple.Item2);
-                    if (allFromMainDataWhere.Count > 0)
+                    // если фонд был новый, то и записей не будет. 
+                    List<Dictionary<string, string>> documentsOnFundInMain = ValuesManager.FilterRecordsFrom(allFromMainCatalog, parentIdColumn, parentIdTuple.Item2);
+                    if (documentsOnFundInMain.Count > 0)
                     {
-                        // Возникает, когда добавились только описи.
+                        // ----new block----
+
+                        // documentsOnFundInMain содержит записи для фонда и для описей. Можно убрать записи, у которых 'null'
+                        // Возникает, когда фонд не присутствовал в главной. Если данный фонд уже есть, то получаем значения. Для поиска новых нужно придумать фильтрацию
+
                         // доп проверку на вхождения всех записей. Что-то типа чекнуть по второму родителю. Если таких записей нет, то тот же цикл когда нету, но с доп поиском.
 
-                        //allFromMainDataWhere = ValuesManager.FilterRecordsFrom(allFromMainDataWhere, secondParent, parentIdTuple.Item2);
+
+
+                        // поулчение записей по тому же фонду, но который в дочерней
+                        List<Dictionary<string, string>> documentsOnFundInDaughter = ValuesManager.FilterRecordsFrom(allFromDaughterCatalog, parentIdColumn, parentIdTuple.Item2);
+                        List<Dictionary<string, string>> filteringByOnlyInventoryInMain = new List<Dictionary<string, string>>();
+                        List<Dictionary<string, string>> filteringByOnlyInventoryInDaughter = new List<Dictionary<string, string>>();
+
+                        // отбираем записи, которые отвечают за пересчет по описям
+                        foreach (Dictionary<string, string> row in documentsOnFundInMain)
+                        {
+                            if (row[secondParent] != "'null'")
+                            {
+                                filteringByOnlyInventoryInMain.Add(new Dictionary<string, string>(row));
+                            }
+                        }
+
+                        // если записей нет, то тут все описи новые, можно передавать на перезапись и в импорт
+                        if (filteringByOnlyInventoryInMain.Count == 0)
+                        {
+                            // отбираем нужные записи на импорт
+                            foreach (Dictionary<string, string> row in documentsOnFundInDaughter)
+                            {
+                                if (row[secondParent] != "'null'")
+                                    filteringByOnlyInventoryInDaughter.Add(new Dictionary<string, string>(row));
+                            }
+
+                            foreach (Dictionary<string, string> row in filteringByOnlyInventoryInDaughter)
+                            {
+                                row[parentIdColumn] = parentIdTuple.Item2;
+                                row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+                                //row["DocID"] = mainCatalog.SelectIDFrom("tblFUND", parentIdColumn, parentIdTuple.Item2);
+
+                                // дальше ошибка. Дает не верный DocID (от фонда) также и inventory не тот
+                                foreach (Tuple<string, string> twoParents in oldTwoParents)
+                                {
+                                    if (parentIdTuple.Item1 == twoParents.Item1)
+                                    {
+                                        foreach (Tuple<string, string> secondPair in secondParentTuplesKeys)
+                                        {
+                                            if (twoParents.Item1 == secondPair.Item1)
+                                            {
+                                                row[secondParent] = secondPair.Item2;
+
+                                                row["DocID"] = mainCatalog.SelectIDFrom(mainCatalog.SelectReferenceTableName(tableName, secondParent), secondParent, parentIdTuple.Item2);
+
+                                            }
+                                        }
+                                    }
+                                }
+                                ValuesManager.SelectImportMethod(mainCatalog, new Dictionary<string, string>(row), tableName, worker);
+                                countOfImports++;
+                                
+                            }
+
+
+
+
+                            MessageBox.Show("INV " + parentIdTuple.Item1);
+                        }
+                        // в фонде есть описи, которые уже присутствуют, но так же есть и новые.
+                        else
+                        {
+
+                        }
+
+
+                        // перебор записей, которые были найдены в главной. В них могут быть записи, которые прицепляются к описе
+                        /*foreach (Dictionary<string, string> row in documentsOnFundInMain)
+                        {
+                            if (row[secondParent] == "'null'")
+                            {
+                                continue;
+                            }
+                            MessageBox.Show("INV" + row[secondParent]);
+                        }*/
+                        // ----new block----
+
 
                         continue;
                     }
