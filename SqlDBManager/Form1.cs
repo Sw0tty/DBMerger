@@ -42,7 +42,8 @@ namespace SqlDBManager
 
             //textBox2.Font = new Font(FontFamily.GenericSansSerif, 14);
 
-
+            textBox1.Text = "5307_m";
+            textBox4.Text = "5307_m2";
 
             textBox2.Text = "sa";
             textBox5.Text = textBox2.Text;
@@ -281,6 +282,8 @@ namespace SqlDBManager
                 text1 = comboBox1.Text;
                 text2 = comboBox1.Text;
                 mergeLog.Enabled = false;
+                startMerge.Enabled = false;
+                button6.Enabled = false;
                 textBoxStatus.Clear();
             }));
 
@@ -294,8 +297,8 @@ namespace SqlDBManager
             mainCatalog.StartTransaction();
             daughterCatalog.StartTransaction();
 
-/*            SqlTransaction transaction = mainCatalog.StartTransaction();
-            SqlTransaction transaction2 = daughterCatalog.StartTransaction();*/
+            /*            SqlTransaction transaction = mainCatalog.StartTransaction();
+                        SqlTransaction transaction2 = daughterCatalog.StartTransaction();*/
 
             Consts.MergeProgress.FormTasks(mainCatalog);
             Consts.WriteLastCatalogs(mainCatalog.ReturnCatalogName(), daughterCatalog.ReturnCatalogName());
@@ -306,7 +309,7 @@ namespace SqlDBManager
             if (Wrappers.WrapValidator(Validator.ValidateVersions, mainCatalog, daughterCatalog, worker))
             {
                 if (Wrappers.WrapValidator(Validator.ValidateCountTables, mainCatalog, daughterCatalog, worker))
-                {                   
+                {
                     if (Wrappers.WrapValidator(Validator.ValidateNamesTables, mainCatalog, daughterCatalog, worker))
                     {
                         if (Wrappers.WrapCustomValidator(Validator.ValidateDefaultTablesValues, mainCatalog, daughterCatalog, worker))
@@ -314,7 +317,7 @@ namespace SqlDBManager
                             worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Валидация успешно завершена!");
 
                             // после данных запросов создается резервная копия
-                           
+
                             // --------------
                             // Создаем резервную копию для транзакций
                             /*                    BackupManager backupManager = new BackupManager(mainCatalog.SelectCatalogPath()[0], mainCatalog.ReturnCatalog(), text1, textBox2.Text.Trim(' '), textBox3.Text.Trim(' '));
@@ -401,8 +404,8 @@ namespace SqlDBManager
                             }
                             else
                             {
-/*                                transaction.Rollback();
-                                transaction2.Rollback();*/
+                                /*                                transaction.Rollback();
+                                                                transaction2.Rollback();*/
                                 mainCatalog.RollbackTransaction();
                                 daughterCatalog.RollbackTransaction();
                                 ProgramMessages.ErrorMessage();
@@ -431,7 +434,12 @@ namespace SqlDBManager
                 e.Result = "Версии каталогов не сходятся!";
                 ProgramMessages.ValidationErrorMessage();
             }
-            Invoke(new Action(() => mergeLog.Enabled = true ));
+            Invoke(new Action(() => {
+                mergeLog.Enabled = true;
+                startMerge.Enabled = false;
+                button6.Enabled = false;
+            }));
+
             mainCatalog.CloseConnection();
             daughterCatalog.CloseConnection();
         }
