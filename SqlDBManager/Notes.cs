@@ -43,6 +43,22 @@ namespace NotesNamespace
         }
     }
 
+    public static class DocStats
+    {
+        public static string SearchSecondParent(string nowSecondParentID, List<Tuple<string, string>> pairOfSecondParentID)
+        {
+            foreach (Tuple<string, string> pairID in pairOfSecondParentID)
+            {
+                if (nowSecondParentID == pairID.Item1)
+                    return pairID.Item2;
+            }
+            return null;
+        }
+        public static string SearchDocID()
+        {
+            return null;
+        }
+    }
     public class S : BaseDBConnector
     {
         public S(string source, string catalog, string login, string password) : base(source, catalog, login, password){}
