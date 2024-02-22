@@ -44,12 +44,27 @@ namespace SqlDBManager
             public const string CLEAN_PROGRESS_BAR = "CLEAN_BLOCK";
         }
 
+        public static class StopMergeConsts
+        {
+            public const string STOP_ERROR_MESSAGE = "Операция слияния прервана пользователем.";
+        }
+
         public static class VisualConsts
         {
             public const int SPACE_SIZE = 4;
             public const int HEADING_SPACE = 40;
+            public static bool USER_STOP_MERGE = false;
             public static bool TAB_ACCESS = true;
             public static Font BUTTON_FONT = new Font("Microsoft Sans Serif", 9, FontStyle.Regular);
+        }
+
+        public static class TextsConsts
+        {
+            public const string START_MERGE_BUTTON = "Начать слияние";
+            public const string NEXT_BUTTON = "Далее";
+            public const string BACK_BUTTON = "Назад";
+            public const string LOG_BUTTON = "Сохранить итог слияния";
+            public const string CANCEL_BUTTON = "Отмена";
         }
 
         public static class MergeProgress

@@ -3,7 +3,7 @@ using SqlDBManager.DBClasses;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-
+using System.Security.Cryptography.X509Certificates;
 
 namespace NotesNamespace
 {
@@ -25,6 +25,12 @@ namespace NotesNamespace
                 space += " ";
             return space;
         }
+    }
+
+    public class StopMergeException : Exception
+    {
+        public StopMergeException(string message)
+            : base(message) { }
     }
 
     public class MergerPreSetting
@@ -59,6 +65,7 @@ namespace NotesNamespace
             return null;
         }
     }
+
     public class S : BaseDBConnector
     {
         public S(string source, string catalog, string login, string password) : base(source, catalog, login, password){}

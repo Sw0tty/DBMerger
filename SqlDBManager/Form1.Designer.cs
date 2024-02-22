@@ -55,10 +55,17 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.textBox11 = new System.Windows.Forms.TextBox();
+            this.label17 = new System.Windows.Forms.Label();
+            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.textBox10 = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.textBox7 = new System.Windows.Forms.TextBox();
+            this.label15 = new System.Windows.Forms.Label();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.textBox7 = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
             this.button8 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
@@ -72,6 +79,7 @@
             this.mergeLog = new System.Windows.Forms.Button();
             this.button6 = new System.Windows.Forms.Button();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.textBox8 = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
             this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.button2 = new System.Windows.Forms.Button();
@@ -83,23 +91,21 @@
             this.listBox2 = new System.Windows.Forms.ListBox();
             this.mergerBackWorker = new System.ComponentModel.BackgroundWorker();
             this.dirtyJobBackWorker = new System.ComponentModel.BackgroundWorker();
-            this.textBox8 = new System.Windows.Forms.TextBox();
-            this.textBox9 = new System.Windows.Forms.TextBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.textBox10 = new System.Windows.Forms.TextBox();
-            this.label16 = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.textBox11 = new System.Windows.Forms.TextBox();
-            this.label17 = new System.Windows.Forms.Label();
+            this.cancel = new System.Windows.Forms.Button();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.radioButton4 = new System.Windows.Forms.RadioButton();
+            this.radioButton5 = new System.Windows.Forms.RadioButton();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.mainDBGroupBox.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.panel1.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
-            this.panel1.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -150,6 +156,7 @@
             this.button9.TabIndex = 12;
             this.button9.Text = "Справка";
             this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // button4
             // 
@@ -374,6 +381,7 @@
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.SystemColors.Window;
+            this.tabPage2.Controls.Add(this.groupBox4);
             this.tabPage2.Controls.Add(this.groupBox1);
             this.tabPage2.Controls.Add(this.groupBox3);
             this.tabPage2.Controls.Add(this.button8);
@@ -388,9 +396,9 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Location = new System.Drawing.Point(8, 397);
+            this.groupBox1.Location = new System.Drawing.Point(8, 422);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(482, 146);
+            this.groupBox1.Size = new System.Drawing.Size(482, 83);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Сохранение резервной копии";
@@ -405,15 +413,99 @@
             this.groupBox3.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox3.Location = new System.Drawing.Point(8, 6);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(482, 360);
+            this.groupBox3.Size = new System.Drawing.Size(482, 355);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Объединение архивов";
+            this.groupBox3.Text = "Информация об архиве";
+            // 
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.panel1.Controls.Add(this.textBox11);
+            this.panel1.Controls.Add(this.label17);
+            this.panel1.Controls.Add(this.textBox9);
+            this.panel1.Controls.Add(this.textBox10);
+            this.panel1.Controls.Add(this.label11);
+            this.panel1.Controls.Add(this.label16);
+            this.panel1.Controls.Add(this.textBox7);
+            this.panel1.Controls.Add(this.label15);
+            this.panel1.Enabled = false;
+            this.panel1.Location = new System.Drawing.Point(6, 51);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(470, 298);
+            this.panel1.TabIndex = 10;
+            // 
+            // textBox11
+            // 
+            this.textBox11.Location = new System.Drawing.Point(13, 173);
+            this.textBox11.Multiline = true;
+            this.textBox11.Name = "textBox11";
+            this.textBox11.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox11.Size = new System.Drawing.Size(446, 116);
+            this.textBox11.TabIndex = 11;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Location = new System.Drawing.Point(10, 153);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(123, 17);
+            this.label17.TabIndex = 10;
+            this.label17.Text = "Описание архива";
+            // 
+            // textBox9
+            // 
+            this.textBox9.Location = new System.Drawing.Point(13, 77);
+            this.textBox9.Name = "textBox9";
+            this.textBox9.Size = new System.Drawing.Size(446, 25);
+            this.textBox9.TabIndex = 7;
+            // 
+            // textBox10
+            // 
+            this.textBox10.Location = new System.Drawing.Point(13, 125);
+            this.textBox10.Name = "textBox10";
+            this.textBox10.Size = new System.Drawing.Size(446, 25);
+            this.textBox10.TabIndex = 9;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(10, 9);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(163, 17);
+            this.label11.TabIndex = 2;
+            this.label11.Text = "Краткое наименование";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(10, 105);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(98, 17);
+            this.label16.TabIndex = 8;
+            this.label16.Text = "Адрес архива";
+            // 
+            // textBox7
+            // 
+            this.textBox7.Location = new System.Drawing.Point(13, 29);
+            this.textBox7.Name = "textBox7";
+            this.textBox7.Size = new System.Drawing.Size(446, 25);
+            this.textBox7.TabIndex = 4;
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(10, 57);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(159, 17);
+            this.label15.TabIndex = 6;
+            this.label15.Text = "Полное наименование";
             // 
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(19, 59);
+            this.radioButton2.Location = new System.Drawing.Point(202, 24);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(90, 21);
             this.radioButton2.TabIndex = 5;
@@ -432,22 +524,6 @@
             this.radioButton1.TabStop = true;
             this.radioButton1.Text = "Оставить как есть";
             this.radioButton1.UseVisualStyleBackColor = true;
-            // 
-            // textBox7
-            // 
-            this.textBox7.Location = new System.Drawing.Point(13, 29);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(322, 25);
-            this.textBox7.TabIndex = 4;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(10, 9);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(163, 17);
-            this.label11.TabIndex = 2;
-            this.label11.Text = "Краткое наименование";
             // 
             // button8
             // 
@@ -479,6 +555,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.cancel);
             this.tabPage3.Controls.Add(this.label14);
             this.tabPage3.Controls.Add(this.startMerge);
             this.tabPage3.Controls.Add(this.label13);
@@ -538,16 +615,16 @@
             // 
             // progressBar2
             // 
-            this.progressBar2.Location = new System.Drawing.Point(19, 525);
+            this.progressBar2.Location = new System.Drawing.Point(19, 522);
             this.progressBar2.Name = "progressBar2";
-            this.progressBar2.Size = new System.Drawing.Size(458, 23);
+            this.progressBar2.Size = new System.Drawing.Size(458, 20);
             this.progressBar2.TabIndex = 5;
             // 
             // progressBar1
             // 
             this.progressBar1.Location = new System.Drawing.Point(19, 496);
             this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(458, 23);
+            this.progressBar1.Size = new System.Drawing.Size(458, 20);
             this.progressBar1.TabIndex = 4;
             // 
             // textBoxStatus
@@ -605,6 +682,16 @@
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Tests";
             this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // textBox8
+            // 
+            this.textBox8.Location = new System.Drawing.Point(213, 25);
+            this.textBox8.Multiline = true;
+            this.textBox8.Name = "textBox8";
+            this.textBox8.ReadOnly = true;
+            this.textBox8.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBox8.Size = new System.Drawing.Size(157, 232);
+            this.textBox8.TabIndex = 10;
             // 
             // button3
             // 
@@ -703,81 +790,60 @@
             this.dirtyJobBackWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.dirtyJobBackWorker_ProgressChanged);
             this.dirtyJobBackWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.dirtyJobBackWorker_RunWorkerCompleted);
             // 
-            // textBox8
+            // cancel
             // 
-            this.textBox8.Location = new System.Drawing.Point(213, 25);
-            this.textBox8.Multiline = true;
-            this.textBox8.Name = "textBox8";
-            this.textBox8.ReadOnly = true;
-            this.textBox8.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox8.Size = new System.Drawing.Size(157, 232);
-            this.textBox8.TabIndex = 10;
+            this.cancel.Location = new System.Drawing.Point(162, 541);
+            this.cancel.Name = "cancel";
+            this.cancel.Size = new System.Drawing.Size(174, 25);
+            this.cancel.TabIndex = 10;
+            this.cancel.Text = "Отмена";
+            this.cancel.UseVisualStyleBackColor = true;
+            this.cancel.Visible = false;
+            this.cancel.Click += new System.EventHandler(this.cancel_Click);
             // 
-            // textBox9
+            // groupBox4
             // 
-            this.textBox9.Location = new System.Drawing.Point(13, 89);
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(322, 25);
-            this.textBox9.TabIndex = 7;
+            this.groupBox4.Controls.Add(this.radioButton5);
+            this.groupBox4.Controls.Add(this.radioButton4);
+            this.groupBox4.Controls.Add(this.radioButton3);
+            this.groupBox4.Location = new System.Drawing.Point(8, 367);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(482, 49);
+            this.groupBox4.TabIndex = 8;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Способ пересчета";
             // 
-            // label15
+            // radioButton3
             // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(10, 69);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(159, 17);
-            this.label15.TabIndex = 6;
-            this.label15.Text = "Полное наименование";
+            this.radioButton3.AutoSize = true;
+            this.radioButton3.Checked = true;
+            this.radioButton3.Location = new System.Drawing.Point(19, 20);
+            this.radioButton3.Name = "radioButton3";
+            this.radioButton3.Size = new System.Drawing.Size(119, 17);
+            this.radioButton3.TabIndex = 0;
+            this.radioButton3.TabStop = true;
+            this.radioButton3.Text = "Не пересчитывать";
+            this.radioButton3.UseVisualStyleBackColor = true;
             // 
-            // textBox10
+            // radioButton4
             // 
-            this.textBox10.Location = new System.Drawing.Point(13, 156);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(322, 25);
-            this.textBox10.TabIndex = 9;
+            this.radioButton4.AutoSize = true;
+            this.radioButton4.Location = new System.Drawing.Point(144, 20);
+            this.radioButton4.Name = "radioButton4";
+            this.radioButton4.Size = new System.Drawing.Size(150, 17);
+            this.radioButton4.TabIndex = 1;
+            this.radioButton4.Text = "Пересчет без паспортов";
+            this.radioButton4.UseVisualStyleBackColor = true;
             // 
-            // label16
+            // radioButton5
             // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(10, 136);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(98, 17);
-            this.label16.TabIndex = 8;
-            this.label16.Text = "Адрес архива";
-            // 
-            // panel1
-            // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.panel1.Controls.Add(this.textBox11);
-            this.panel1.Controls.Add(this.label17);
-            this.panel1.Controls.Add(this.textBox9);
-            this.panel1.Controls.Add(this.textBox10);
-            this.panel1.Controls.Add(this.label11);
-            this.panel1.Controls.Add(this.label16);
-            this.panel1.Controls.Add(this.textBox7);
-            this.panel1.Controls.Add(this.label15);
-            this.panel1.Enabled = false;
-            this.panel1.Location = new System.Drawing.Point(6, 86);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(470, 267);
-            this.panel1.TabIndex = 10;
-            // 
-            // textBox11
-            // 
-            this.textBox11.Location = new System.Drawing.Point(13, 217);
-            this.textBox11.Name = "textBox11";
-            this.textBox11.Size = new System.Drawing.Size(322, 25);
-            this.textBox11.TabIndex = 11;
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(10, 197);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(98, 17);
-            this.label17.TabIndex = 10;
-            this.label17.Text = "Адрес архива";
+            this.radioButton5.AutoSize = true;
+            this.radioButton5.Location = new System.Drawing.Point(300, 20);
+            this.radioButton5.Name = "radioButton5";
+            this.radioButton5.Size = new System.Drawing.Size(114, 17);
+            this.radioButton5.TabIndex = 2;
+            this.radioButton5.Text = "Полный пересчет";
+            this.radioButton5.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
@@ -798,12 +864,14 @@
             this.tabPage2.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -872,6 +940,11 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox textBox11;
         private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Button cancel;
+        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.RadioButton radioButton5;
+        private System.Windows.Forms.RadioButton radioButton4;
+        private System.Windows.Forms.RadioButton radioButton3;
     }
 }
 

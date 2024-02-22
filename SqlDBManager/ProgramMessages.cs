@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
+
 
 namespace SqlDBManager
 {
@@ -32,6 +28,35 @@ namespace SqlDBManager
         public static void CheckConnectingSettings(string catalog)
         {
             MessageBox.Show($"Проверьте настройки соединения с {catalog} БД", "Ошибка соединения", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        public static void UserCanceledMessage()
+        {
+            MessageBox.Show("Процесс был остановлен пользователем", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        public static void ConnectionToCatalogMessage()
+        {
+            MessageBox.Show("", "Справка", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        public static void InfoAboutArchiveMessage()
+        {
+            MessageBox.Show("", "Справка", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        public static void RecalculationMessage()
+        {
+            MessageBox.Show("", "Справка", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        public static void BackUpSaveMessage()
+        {
+            MessageBox.Show("", "Справка", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        public static void SaveLogMessage()
+        {
+            MessageBox.Show("", "Справка", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

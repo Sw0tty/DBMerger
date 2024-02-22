@@ -29,6 +29,11 @@ namespace SqlDBManager
                 {
                     RepairTables(mainCatalog);
                 }
+                catch (StopMergeException error)
+                {
+                    worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                    return false;
+                }
                 catch (Exception error)
                 {
                     worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
@@ -128,6 +133,11 @@ namespace SqlDBManager
                         {
                             worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, excludeColumns: paramsForProcessing.Item4, allowsNull: paramsForProcessing.Item5)}");
                         }
+                        catch (StopMergeException error)
+                        {
+                            worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                            return false;
+                        }
                         catch (Exception error)
                         {
                             worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
@@ -172,6 +182,11 @@ namespace SqlDBManager
                         try
                         {
                             worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, parentIdColumn: paramsForProcessing.Item4, numerateColumn: paramsForProcessing.Item5, extraFilterColumns: paramsForProcessing.Item6, excludeColumns: paramsForProcessing.Item7, allowsNull: paramsForProcessing.Rest.Item1)}");
+                        }
+                        catch (StopMergeException error)
+                        {
+                            worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                            return false;
                         }
                         catch (Exception error)
                         {
@@ -380,7 +395,6 @@ namespace SqlDBManager
             {
                 ValuesManager.AddNewTableToReserve(foreigns);
             }
-            // ----------------
 
             List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, mainCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
             List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, daughterCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
@@ -400,11 +414,6 @@ namespace SqlDBManager
 
             if (tableName == "tblDOCUMENT_STATS")
             {
-                //List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, mainCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
-                //List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, daughterCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
-                
-                //Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
-
                 string secondParent = "ISN_INVENTORY";
                 
 
@@ -412,13 +421,6 @@ namespace SqlDBManager
                 List<Tuple<string, string>> secondParentTuplesKeys = ValuesManager.ReturnTuplesValuesSpecialDict(tableName, secondParent);
 
                 List<Tuple<string, string>> oldTwoParents = ValuesManager.ReturnFilteredTuples(allFromDaughterCatalog, parentIdColumn, secondParent);
-
-
-
-
-
-
-                //Consts.MergeProgress.AddTaskInBlock(allFromDaughterCatalog.Count);
                 
 
                 // parentIdTuple = ISN_FUND
@@ -485,8 +487,7 @@ namespace SqlDBManager
 
 
 
-                                // ------------------------!!!!-----------
-                                // дальше ошибка. Дает не верный DocID (от фонда) также и inventory не тот
+                                // --------------!!----------was been deleted after pass tests-----!!------
 /*                                foreach (Tuple<string, string> twoParents in oldTwoParents)
                                 {
                                     
@@ -521,11 +522,6 @@ namespace SqlDBManager
                                 }*/
                                 // ------------------------!!!!-----------
 
-
-
-
-
-                                //MessageBox.Show(onImportRow["DocID"] + "    import     " + onImportRow[secondParent]);
                                 ValuesManager.SelectImportMethod(mainCatalog, new Dictionary<string, string>(onImportRow), tableName, worker);
                                 countOfImports++;                               
                             }
@@ -533,34 +529,59 @@ namespace SqlDBManager
                         // в фонде есть описи, которые уже присутствуют, но так же есть и новые.
                         else
                         {
-                            // ! -- 22.02.2024 -- !
-                        }
-                        
-
-                        // перебор записей, которые были найдены в главной. В них могут быть записи, которые прицепляются к описе
-                        /*foreach (Dictionary<string, string> row in documentsOnFundInMain)
-                        {
-                            if (row[secondParent] == "'null'")
+                            List<string> existingID = new List<string>();
+                            foreach (Dictionary<string, string> row in filteringByOnlyInventoryInMain)
                             {
-                                continue;
+                                if (row[secondParent] != "'null'" && !existingID.Contains(row[secondParent]))
+                                    existingID.Add(row[secondParent]);
                             }
-                            MessageBox.Show("INV" + row[secondParent]);
-                        }*/
+
+                            foreach (Dictionary<string, string> row in documentsOnFundInDaughter)
+                            {
+                                if (row[secondParent] != "'null'")
+                                    filteringByOnlyInventoryInDaughter.Add(new Dictionary<string, string>(row));
+                            }
+
+                            List<Dictionary<string, string>> byOnlyNewInventory = new List<Dictionary<string, string>>();
+                            foreach (Dictionary<string, string> row in filteringByOnlyInventoryInDaughter)
+                            {
+                                if (!existingID.Contains(row[secondParent]))
+                                    byOnlyNewInventory.Add(new Dictionary<string, string>(row));
+                            }
+
+                            //List<Dictionary<string, string>> documentsOnFundInDaughter = ValuesManager.FilterRecordsFrom(allFromDaughterCatalog, parentIdColumn, parentIdTuple.Item2);
+                            foreach (Dictionary<string, string> row in byOnlyNewInventory)
+                            {
+                                ValuesManager.UpdateCheck(worker);
+                                Dictionary<string, string> onImportRow = new Dictionary<string, string>(row);
+
+                                onImportRow[parentIdColumn] = parentIdTuple.Item2;
+                                onImportRow[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
+
+                                if (onImportRow[secondParent] == "'null'")
+                                {
+                                    onImportRow[ExtraIDColumn] = mainCatalog.SelectIDFrom(mainCatalog.SelectReferenceTableName(tableName, parentIdColumn), parentIdColumn, parentIdTuple.Item2);
+                                }
+                                else
+                                {
+                                    onImportRow[secondParent] = DocStats.SearchSecondParent(onImportRow[secondParent], secondParentTuplesKeys);
+                                    onImportRow[ExtraIDColumn] = mainCatalog.SelectIDFrom(mainCatalog.SelectReferenceTableName(tableName, secondParent), secondParent, onImportRow[secondParent]);
+                                }
+
+                                ValuesManager.SelectImportMethod(mainCatalog, new Dictionary<string, string>(onImportRow), tableName, worker);
+                                countOfImports++;
+                            }
+                        }                      
                         // ----new block----
                     }
                     else
                     {
-
+                        List<Dictionary<string, string>> documentsOnFundInDaughter = ValuesManager.FilterRecordsFrom(allFromDaughterCatalog, parentIdColumn, parentIdTuple.Item2);
                         // Если есть новые фонды или фонды и описи в них
-                        foreach (Dictionary<string, string> row in allFromDaughterCatalog)
+                        foreach (Dictionary<string, string> row in documentsOnFundInDaughter)
                         {
                             ValuesManager.UpdateCheck(worker);
                             Dictionary<string, string> onImportRow = new Dictionary<string, string>(row);
-
-/*                            if (row[parentIdColumn] == parentIdTuple.Item1)
-                            {
-                                
-                            }*/
 
                             onImportRow[parentIdColumn] = parentIdTuple.Item2;
                             onImportRow[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
@@ -620,7 +641,6 @@ namespace SqlDBManager
             }
             else if (uniqueValueColumnName != null && idLikeColumnName != null && highLevelColumnName == null && parentIdColumn == null)
             {
-
                 // 2. Берем список значений по уникальному полю из главного каталога
                 List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainCatalog, uniqueValueColumnName);
 

@@ -225,6 +225,17 @@ namespace SqlDBManager
             WrapTabControl(tabControl1, false);
         }
 
+        private void button9_Click(object sender, EventArgs e)
+        {
+            InfoForm inforamtion = new InfoForm();
+            inforamtion.ShowDialog();
+        }
+
+        private void cancel_Click(object sender, EventArgs e)
+        {
+            throw new StopMergeException(Consts.StopMergeConsts.STOP_ERROR_MESSAGE);
+        }
+
         private void mergeLog_Click(object sender, EventArgs e)
         {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
@@ -281,7 +292,8 @@ namespace SqlDBManager
             Invoke(new Action(() => {
                 text1 = comboBox1.Text;
                 text2 = comboBox1.Text;
-                mergeLog.Enabled = false;
+                mergeLog.Visible = false;
+                cancel.Visible = true;
                 startMerge.Enabled = false;
                 button6.Enabled = false;
                 textBoxStatus.Clear();
@@ -408,7 +420,14 @@ namespace SqlDBManager
                                                                 transaction2.Rollback();*/
                                 mainCatalog.RollbackTransaction();
                                 daughterCatalog.RollbackTransaction();
-                                ProgramMessages.ErrorMessage();
+                                if (Consts.VisualConsts.USER_STOP_MERGE)
+                                {
+                                    ProgramMessages.UserCanceledMessage();
+                                }
+                                else
+                                {
+                                    ProgramMessages.ErrorMessage();
+                                }                               
                             }
                         }
                         else
@@ -436,8 +455,10 @@ namespace SqlDBManager
             }
             Invoke(new Action(() => {
                 mergeLog.Enabled = true;
-                startMerge.Enabled = false;
-                button6.Enabled = false;
+                startMerge.Text = Consts.TextsConsts.LOG_BUTTON;
+                startMerge.Visible = true;
+                cancel.Visible = false;
+                button6.Enabled = true;
             }));
 
             mainCatalog.CloseConnection();
@@ -523,8 +544,10 @@ namespace SqlDBManager
                 string text1 = "";
                 string text2 = "";
 
-                Invoke(new Action(() => text1 = comboBox1.Text ));
-                Invoke(new Action(() => text2 = comboBox1.Text ));
+                Invoke(new Action(() => {
+                    text1 = comboBox1.Text;
+                    text2 = comboBox2.Text;
+                }));
 
                 if (!ConnectionChecker.CheckConnection(text1,
                                                        textBox1.Text,
@@ -541,8 +564,10 @@ namespace SqlDBManager
                 }
                 else
                 {
-                    Invoke(new Action(() => SaveProperties() ));
-                    Invoke(new Action(() => WrapTabControl(tabControl1, true) ));
+                    Invoke(new Action(() => {
+                        SaveProperties();
+                        WrapTabControl(tabControl1, true);
+                    }));
                 }
             }
 
@@ -696,6 +721,15 @@ namespace SqlDBManager
 
         private void button3_Click(object sender, EventArgs e)
         {
+            try
+            {
+                throw new StopMergeException(Consts.StopMergeConsts.STOP_ERROR_MESSAGE);
+            }
+            catch (StopMergeException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
             TestCatalog testCatalog = new TestCatalog(@"(local)\SQLEXPRESS2022", "TestDB", "sa", "123");
 
 
