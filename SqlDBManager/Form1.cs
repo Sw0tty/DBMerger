@@ -19,7 +19,7 @@ using System.Windows.Forms.VisualStyles;
 using System.IO;
 using SqlDBManager.DBClasses;
 using System.Drawing.Configuration;
-
+using System.Net.Mail;
 
 namespace SqlDBManager
 {
@@ -233,40 +233,24 @@ namespace SqlDBManager
 
         private void cancel_Click(object sender, EventArgs e)
         {
-            throw new StopMergeException(Consts.StopMergeConsts.STOP_ERROR_MESSAGE);
+            //throw new StopMergeException(Consts.StopMergeConsts.STOP_ERROR_MESSAGE);
+
+            if (mergerBackWorker.WorkerSupportsCancellation == true)
+            {
+                mergerBackWorker.CancelAsync();
+            }
         }
 
         private void mergeLog_Click(object sender, EventArgs e)
         {
-            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-            {
-                saveFileDialog.InitialDirectory = "c:\\";
-                saveFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-                saveFileDialog.FilterIndex = 1;
-                saveFileDialog.FileName = "MergeLog";
-                saveFileDialog.RestoreDirectory = true;
-
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    using (StreamWriter writer = new StreamWriter(saveFileDialog.FileName))
-                    {
-                        writer.WriteLine($"Merge log of '{Consts.LAST_MAIN_CATALOG}' and '{Consts.LAST_DAUGHTER_CATALOG}' catalogs. \n");
-
-                        foreach (char s in textBoxStatus.Text)
-                        {
-                            writer.Write(s);
-                        }
-                    }
-                    Consts.LOG_SAVED = true;
-                }
-            }
+            HelpFunction.SaveMergeLog(textBoxStatus.Text);
         }
 
         private void startMerge_Click(object sender, EventArgs e)
         {
             if (Consts.MERGE_WAS_SUCCESS && !Consts.LOG_SAVED)
             {
-                if (MessageBox.Show("Результаты слияния не были сохранены в файл. Продолжить без сохранения?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (ProgramMessages.LogNotSavedMessage() == DialogResult.Yes)
                 {
                     if (!mergerBackWorker.IsBusy)
                     {
@@ -299,18 +283,13 @@ namespace SqlDBManager
                 textBoxStatus.Clear();
             }));
 
-
-            // 1. Создаем объекты соединения
             DBCatalog mainCatalog = new DBCatalog(text1, textBox1.Text, textBox2.Text, textBox3.Text);
             DBCatalog daughterCatalog = new DBCatalog(text2, textBox4.Text, textBox5.Text, textBox6.Text);
-            // 2. Открываем соединения с БД
+
             mainCatalog.OpenConnection();
             daughterCatalog.OpenConnection();
             mainCatalog.StartTransaction();
             daughterCatalog.StartTransaction();
-
-            /*            SqlTransaction transaction = mainCatalog.StartTransaction();
-                        SqlTransaction transaction2 = daughterCatalog.StartTransaction();*/
 
             Consts.MergeProgress.FormTasks(mainCatalog);
             Consts.WriteLastCatalogs(mainCatalog.ReturnCatalogName(), daughterCatalog.ReturnCatalogName());
@@ -407,7 +386,6 @@ namespace SqlDBManager
                             if (successOperation)
                             {
                                 MessageBox.Show("NEXT STEP COMMIT!");
-                                //transaction.Commit();
                                 mainCatalog.CommitTransaction();
                                 Consts.MERGE_WAS_SUCCESS = true;
 
@@ -416,8 +394,6 @@ namespace SqlDBManager
                             }
                             else
                             {
-                                /*                                transaction.Rollback();
-                                                                transaction2.Rollback();*/
                                 mainCatalog.RollbackTransaction();
                                 daughterCatalog.RollbackTransaction();
                                 if (Consts.VisualConsts.USER_STOP_MERGE)
@@ -510,20 +486,12 @@ namespace SqlDBManager
             {
                 MessageBox.Show(e.Error.Message);
             }
-/*            else if (e.Cancelled)
+            else if (e.Cancelled)
             {
-                // Next, handle the case where the user canceled 
-                // the operation.
-                // Note that due to a race condition in 
-                // the DoWork event handler, the Cancelled
-                // flag may not have been set, even though
-                // CancelAsync was called.
-                resultLabel.Text = "Canceled";
-            }*/
+                ProgramMessages.UserCanceledMessage();
+            }
             else if (e.Result != null)
             {
-                // Finally, handle the case where the operation 
-                // succeeded.
                 textBoxStatus.AppendText(e.Result.ToString() + "\r\n");
             }
         }
@@ -603,16 +571,24 @@ namespace SqlDBManager
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
+            TrimAllOnForm();
+
             if (radioButton2.Checked)
             {
                 panel1.Enabled = true;
-                Consts.MAKE_EDITS = true;
+                Consts.SettingsChecked.UPDATE_ARCHIVE = true;
                 Consts.PRE_SETTINGS = new Tuple<string, string, string, string>(textBox7.Text.Trim(' '), textBox9.Text.Trim(' '), textBox10.Text.Trim(' '), textBox11.Text.Trim(' '));
+
+                MergerPreSettings.ArchiveUpdate.Item1 = false;
+                MergerPreSettings.ArchiveUpdate.Item2 = true;
             }
             else
             {
                 panel1.Enabled = false;
-                Consts.MAKE_EDITS = false;
+                Consts.SettingsChecked.UPDATE_ARCHIVE = false;
+
+                MergerPreSettings.ArchiveUpdate.Item1 = true;
+                MergerPreSettings.ArchiveUpdate.Item2 = false;
             }
         }
 
@@ -721,6 +697,19 @@ namespace SqlDBManager
 
         private void button3_Click(object sender, EventArgs e)
         {
+            /*string itemTiple1 = "123";
+
+            Tuple<string, string> testTuple = new Tuple<string, string>(itemTiple1, "456");
+
+            itemTiple1 = "4325324";
+            testTuple = new Tuple<string, string>(itemTiple1, "456");*/
+/*            MessageBox.Show(MergeSettings.UpdateTables["tblARCHIVE"].Item2.ToString());
+
+            Consts.SettingsChecked.UPDATE_ARCHIVE = true;
+
+            MessageBox.Show(Consts.SettingsChecked.UPDATE_ARCHIVE.ToString());
+            MessageBox.Show(MergeSettings.UpdateTables["tblARCHIVE"].Item2.ToString());*/
+
             try
             {
                 throw new StopMergeException(Consts.StopMergeConsts.STOP_ERROR_MESSAGE);

@@ -67,6 +67,19 @@ namespace SqlDBManager
             public const string CANCEL_BUTTON = "Отмена";
         }
 
+        public static class MergeWorks
+        {
+            public const string SKIP = "SKIP";
+            public const string CLEARING = "CLEAR";
+            public const string DEFAULT_TABLE = "DEFAULT";
+            public const string COMPOSITE_TABLE = "COMPOSITE";
+        }
+
+        public static class SettingsChecked
+        {
+            public static bool UPDATE_ARCHIVE = false;
+        }
+
         public static class MergeProgress
         {
             public static int COUNT_OF_ALL_TASKS = 0;

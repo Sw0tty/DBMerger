@@ -62,23 +62,37 @@ namespace SqlDBManager
             {
                 worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, $"Очистка {logTable}:");
 
-                try
+                if (mainCatalog.SelectCountRowsTable(logTable) == 0)
                 {
-                    int recordsCount = mainCatalog.ClearTable(logTable);
-
-                    if (mainCatalog.SelectCountRowsTable(logTable) == 0)
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
+                    worker.ReportProgress(100, Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
+                }
+                else
+                {
+                    if (Consts.DEBUG_MOD)
                     {
-                        worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
+                        worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Записей удалено {mainCatalog.ClearTable(logTable)}");
                     }
                     else
                     {
-                        worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Записей удалено {recordsCount}");
-                    }
-                    worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
+                        try
+                        {
+                            worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Записей удалено {mainCatalog.ClearTable(logTable)}");
+                        }
+                        catch (StopMergeException error)
+                        {
+                            worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                            return false;
+                        }
+                        catch (Exception error)
+                        {
+                            worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                            return false;
+                        }
+                    }                   
                 }
-                catch {
-                    return false;
-                }
+                worker.ReportProgress(100, Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
+                worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);              
             }
             return true;
         }
@@ -205,35 +219,82 @@ namespace SqlDBManager
             return true;
         }
 
-        static void ReturnProcessStatus(BackgroundWorker worker, DBCatalog mainCatalog, Dictionary<string, Func<DBCatalog, DBCatalog, string, int>> functionsDict = null, DBCatalog daughterCatalog = null)
+        static bool ReturnProcessStatus(DBCatalog mainCatalog, List<string> processTables, string mergeWork, string workNameMessage, string workDoneMessage, string tableEmptyMessage, string funcUndefinedMessage, BackgroundWorker worker, DBCatalog daughterCatalog = null)
         {
-            foreach (string tableName in ArchiveTables.OrderedCompositeTables)
+            foreach (string tableName in processTables)
             {
-                int checkEmpty;
-                if (daughterCatalog != null)
-                {
-                    checkEmpty = daughterCatalog.SelectCountRowsTable(tableName);
-                }
-                else
-                {
-                    checkEmpty = mainCatalog.SelectCountRowsTable(tableName);
-                }
-
-                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, $"Обработка {tableName}:");
+                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, $"{workNameMessage} {tableName}:");
+                int checkEmpty = (daughterCatalog == null) ? mainCatalog.SelectCountRowsTable(tableName) : daughterCatalog.SelectCountRowsTable(tableName);
 
                 if (checkEmpty == 0)
                 {
-                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Пустая таблица.");
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + tableEmptyMessage);
+                    worker.ReportProgress(100, Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
-                else if (functionsDict.ContainsKey(tableName))
+                else if (mergeWork == Consts.MergeWorks.DEFAULT_TABLE && DefaultTablesParams.ContainsKey(tableName))
                 {
-                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {functionsDict[tableName](mainCatalog, daughterCatalog, tableName)}");
+
+                }
+                else if (mergeWork == Consts.MergeWorks.COMPOSITE_TABLE && LinksTablesParams.ContainsKey(tableName))
+                {
+
+                }
+                else if (LinksTablesParams.ContainsKey(tableName))
+                {
+                    /*if (Consts.DEBUG_MOD)
+                    {
+                        worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"{workDoneMessage} + {SelectMergeWork(mergeWork)}");
+                    }
+                    else
+                    {
+                        try
+                        {
+                            worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"{workDoneMessage} + {SelectMergeWork(mergeWork)}");
+                        }
+                        catch (StopMergeException error)
+                        {
+                            worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                            return false;
+                        }
+                        catch (Exception error)
+                        {
+                            worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
+                            return false;
+                        }
+                    }*/
                 }
                 else
                 {
-                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + "Обработчик отсутствует.");
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + funcUndefinedMessage);
+                    worker.ReportProgress(100, Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
             }
+            return true;
+        }
+
+        static int SelectMergeWork(string mergeWork, DBCatalog catalog, string tableName)
+        {
+            switch (mergeWork)
+            {
+                case Consts.MergeWorks.SKIP:
+                    return 1;
+                case Consts.MergeWorks.CLEARING:
+                    return catalog.ClearTable(tableName);
+                case Consts.MergeWorks.DEFAULT_TABLE:
+                    return 1;
+                case Consts.MergeWorks.COMPOSITE_TABLE:
+                    return 1;
+                default: return 0;
+            }
+        }
+
+        static int UpdateTable(DBCatalog catalog, BackgroundWorker worker)
+        {
+            foreach (string tableName in UpdateTables.Keys)
+            {
+                
+            }
+            return 1;
         }
 
         // --- Master merge process table ---
@@ -482,7 +543,7 @@ namespace SqlDBManager
                                 Dictionary<string, string> onImportRow = new Dictionary<string, string>(row);
                                 onImportRow[parentIdColumn] = parentIdTuple.Item2;
                                 onImportRow[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
-                                onImportRow[secondParent] = DocStats.SearchSecondParent(onImportRow[secondParent], secondParentTuplesKeys);
+                                onImportRow[secondParent] = HelpFunction.SearchSecondParent(onImportRow[secondParent], secondParentTuplesKeys);
                                 onImportRow[ExtraIDColumn] = mainCatalog.SelectIDFrom(mainCatalog.SelectReferenceTableName(tableName, secondParent), secondParent, onImportRow[secondParent]);
 
 
@@ -564,7 +625,7 @@ namespace SqlDBManager
                                 }
                                 else
                                 {
-                                    onImportRow[secondParent] = DocStats.SearchSecondParent(onImportRow[secondParent], secondParentTuplesKeys);
+                                    onImportRow[secondParent] = HelpFunction.SearchSecondParent(onImportRow[secondParent], secondParentTuplesKeys);
                                     onImportRow[ExtraIDColumn] = mainCatalog.SelectIDFrom(mainCatalog.SelectReferenceTableName(tableName, secondParent), secondParent, onImportRow[secondParent]);
                                 }
 
@@ -592,7 +653,7 @@ namespace SqlDBManager
                             }
                             else
                             {
-                                onImportRow[secondParent] = DocStats.SearchSecondParent(onImportRow[secondParent], secondParentTuplesKeys);
+                                onImportRow[secondParent] = HelpFunction.SearchSecondParent(onImportRow[secondParent], secondParentTuplesKeys);
                                 onImportRow[ExtraIDColumn] = mainCatalog.SelectIDFrom(mainCatalog.SelectReferenceTableName(tableName, secondParent), secondParent, onImportRow[secondParent]);
 
                                 /*foreach (Tuple<string, string> twoParents in oldTwoParents)

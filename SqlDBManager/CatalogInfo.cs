@@ -25,58 +25,6 @@ namespace SqlDBManager
         private SqlTransaction transaction;*/
 
         public DBCatalog(string source, string catalog, string login, string password) : base(source, catalog, login, password) { }
-        /*        {
-                    Source = source;
-                    Catalog = catalog;
-                    Login = login;
-                    Password = password;
-                    connectionString = $@"Data Source={Source};Initial Catalog={Catalog};User ID={Login};Password={Password};Connect Timeout=30";
-                    connection = new SqlConnection(connectionString);
-                    transaction = null;
-                }*/
-
-/*        public System.Data.SqlClient.SqlTransaction StartTransaction()
-        {
-            transaction = connection.BeginTransaction();
-            return transaction;
-        }*/
-        /*        public void OpenConnection()
-                {
-                    connection.Open();
-                }
-
-                public void CloseConnection()
-                {
-                    connection.Close();
-                }
-
-                public System.Data.SqlClient.SqlTransaction StartTransaction()
-                {
-                    transaction = connection.BeginTransaction();
-                    return transaction;
-                }
-
-                /// <summary>
-                /// Return catalog name
-                /// </summary>
-                public string ReturnCatalog()
-                {
-                    return Catalog;
-                }
-
-                public System.Data.SqlClient.SqlTransaction ReturnTransaction()
-                {
-                    return transaction;
-                }
-
-                public SqlConnection ReturnConnection()
-                {
-                    return connection;
-                }*/
-
-
-
-
 
         /// <summary>
         /// Возвращает путь расположения каталога

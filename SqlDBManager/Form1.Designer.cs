@@ -31,6 +31,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.button9 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -53,7 +54,16 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.button8 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.radioButton5 = new System.Windows.Forms.RadioButton();
+            this.radioButton4 = new System.Windows.Forms.RadioButton();
+            this.radioButton3 = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioButton7 = new System.Windows.Forms.RadioButton();
+            this.radioButton6 = new System.Windows.Forms.RadioButton();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.textBox11 = new System.Windows.Forms.TextBox();
@@ -66,9 +76,8 @@
             this.label15 = new System.Windows.Forms.Label();
             this.radioButton2 = new System.Windows.Forms.RadioButton();
             this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.button8 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.cancel = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
             this.startMerge = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
@@ -91,21 +100,19 @@
             this.listBox2 = new System.Windows.Forms.ListBox();
             this.mergerBackWorker = new System.ComponentModel.BackgroundWorker();
             this.dirtyJobBackWorker = new System.ComponentModel.BackgroundWorker();
-            this.cancel = new System.Windows.Forms.Button();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
-            this.radioButton4 = new System.Windows.Forms.RadioButton();
-            this.radioButton5 = new System.Windows.Forms.RadioButton();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.tableLayoutPanel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.mainDBGroupBox.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -135,8 +142,7 @@
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.button9);
-            this.tabPage1.Controls.Add(this.button4);
+            this.tabPage1.Controls.Add(this.tableLayoutPanel1);
             this.tabPage1.Controls.Add(this.groupBox2);
             this.tabPage1.Controls.Add(this.mainDBGroupBox);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
@@ -147,10 +153,24 @@
             this.tabPage1.Text = "Подключение";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
+            // tableLayoutPanel1
+            // 
+            this.tableLayoutPanel1.ColumnCount = 2;
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Controls.Add(this.button9, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.button4, 1, 0);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 552);
+            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(480, 45);
+            this.tableLayoutPanel1.TabIndex = 14;
+            // 
             // button9
             // 
-            this.button9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button9.Location = new System.Drawing.Point(8, 561);
+            this.button9.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.button9.Location = new System.Drawing.Point(3, 5);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(148, 34);
             this.button9.TabIndex = 12;
@@ -160,9 +180,9 @@
             // 
             // button4
             // 
-            this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button4.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button4.Location = new System.Drawing.Point(342, 561);
+            this.button4.Location = new System.Drawing.Point(329, 5);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(148, 34);
             this.button4.TabIndex = 13;
@@ -187,9 +207,9 @@
             this.groupBox2.Controls.Add(this.textBox5);
             this.groupBox2.Controls.Add(this.textBox6);
             this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.groupBox2.Location = new System.Drawing.Point(6, 236);
+            this.groupBox2.Location = new System.Drawing.Point(9, 236);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(486, 230);
+            this.groupBox2.Size = new System.Drawing.Size(480, 230);
             this.groupBox2.TabIndex = 12;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Дочерняя база данных";
@@ -216,7 +236,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.checkConnectionDaughterCatalog.Location = new System.Drawing.Point(297, 186);
             this.checkConnectionDaughterCatalog.Name = "checkConnectionDaughterCatalog";
-            this.checkConnectionDaughterCatalog.Size = new System.Drawing.Size(181, 34);
+            this.checkConnectionDaughterCatalog.Size = new System.Drawing.Size(175, 34);
             this.checkConnectionDaughterCatalog.TabIndex = 6;
             this.checkConnectionDaughterCatalog.Text = "button3";
             this.checkConnectionDaughterCatalog.UseVisualStyleBackColor = true;
@@ -240,7 +260,7 @@
             this.comboBox2.FormattingEnabled = true;
             this.comboBox2.Location = new System.Drawing.Point(20, 42);
             this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(443, 24);
+            this.comboBox2.Size = new System.Drawing.Size(437, 24);
             this.comboBox2.TabIndex = 5;
             this.comboBox2.Text = "(local)\\SQLEXPRESS";
             // 
@@ -291,9 +311,9 @@
             this.mainDBGroupBox.Controls.Add(this.textBox1);
             this.mainDBGroupBox.Controls.Add(this.textBox2);
             this.mainDBGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.mainDBGroupBox.Location = new System.Drawing.Point(6, 6);
+            this.mainDBGroupBox.Location = new System.Drawing.Point(9, 6);
             this.mainDBGroupBox.Name = "mainDBGroupBox";
-            this.mainDBGroupBox.Size = new System.Drawing.Size(486, 224);
+            this.mainDBGroupBox.Size = new System.Drawing.Size(480, 224);
             this.mainDBGroupBox.TabIndex = 10;
             this.mainDBGroupBox.TabStop = false;
             this.mainDBGroupBox.Text = "Основная база данных";
@@ -320,7 +340,7 @@
             // checkConnectionMainCatalog
             // 
             this.checkConnectionMainCatalog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.checkConnectionMainCatalog.Location = new System.Drawing.Point(297, 179);
+            this.checkConnectionMainCatalog.Location = new System.Drawing.Point(291, 179);
             this.checkConnectionMainCatalog.Name = "checkConnectionMainCatalog";
             this.checkConnectionMainCatalog.Size = new System.Drawing.Size(181, 34);
             this.checkConnectionMainCatalog.TabIndex = 6;
@@ -337,7 +357,7 @@
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(20, 40);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(443, 24);
+            this.comboBox1.Size = new System.Drawing.Size(437, 24);
             this.comboBox1.TabIndex = 5;
             this.comboBox1.Text = "(local)\\SQLEXPRESS";
             // 
@@ -366,7 +386,7 @@
             this.textBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.textBox1.Location = new System.Drawing.Point(20, 91);
             this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(443, 22);
+            this.textBox1.Size = new System.Drawing.Size(437, 22);
             this.textBox1.TabIndex = 7;
             // 
             // textBox2
@@ -381,11 +401,10 @@
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.SystemColors.Window;
+            this.tabPage2.Controls.Add(this.tableLayoutPanel2);
             this.tabPage2.Controls.Add(this.groupBox4);
             this.tabPage2.Controls.Add(this.groupBox1);
             this.tabPage2.Controls.Add(this.groupBox3);
-            this.tabPage2.Controls.Add(this.button8);
-            this.tabPage2.Controls.Add(this.button5);
             this.tabPage2.ForeColor = System.Drawing.SystemColors.ControlText;
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
@@ -394,14 +413,124 @@
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Предварительные настройки";
             // 
+            // tableLayoutPanel2
+            // 
+            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.Controls.Add(this.button8, 1, 0);
+            this.tableLayoutPanel2.Controls.Add(this.button5, 0, 0);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(9, 552);
+            this.tableLayoutPanel2.Name = "tableLayoutPanel2";
+            this.tableLayoutPanel2.RowCount = 1;
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(480, 45);
+            this.tableLayoutPanel2.TabIndex = 15;
+            // 
+            // button8
+            // 
+            this.button8.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.button8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.button8.Location = new System.Drawing.Point(329, 5);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(148, 34);
+            this.button8.TabIndex = 1;
+            this.button8.Text = "Далее";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            this.button8.MouseEnter += new System.EventHandler(this.button8_MouseEnter);
+            this.button8.MouseLeave += new System.EventHandler(this.button8_MouseLeave);
+            // 
+            // button5
+            // 
+            this.button5.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.button5.Location = new System.Drawing.Point(3, 5);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(148, 34);
+            this.button5.TabIndex = 0;
+            this.button5.Text = "Назад";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.button5_Click);
+            this.button5.MouseEnter += new System.EventHandler(this.button5_MouseEnter);
+            this.button5.MouseLeave += new System.EventHandler(this.button5_MouseLeave);
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.radioButton5);
+            this.groupBox4.Controls.Add(this.radioButton4);
+            this.groupBox4.Controls.Add(this.radioButton3);
+            this.groupBox4.Location = new System.Drawing.Point(9, 367);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(480, 49);
+            this.groupBox4.TabIndex = 8;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Способ пересчета";
+            // 
+            // radioButton5
+            // 
+            this.radioButton5.AutoSize = true;
+            this.radioButton5.Location = new System.Drawing.Point(300, 20);
+            this.radioButton5.Name = "radioButton5";
+            this.radioButton5.Size = new System.Drawing.Size(114, 17);
+            this.radioButton5.TabIndex = 2;
+            this.radioButton5.Text = "Полный пересчет";
+            this.radioButton5.UseVisualStyleBackColor = true;
+            // 
+            // radioButton4
+            // 
+            this.radioButton4.AutoSize = true;
+            this.radioButton4.Location = new System.Drawing.Point(144, 20);
+            this.radioButton4.Name = "radioButton4";
+            this.radioButton4.Size = new System.Drawing.Size(150, 17);
+            this.radioButton4.TabIndex = 1;
+            this.radioButton4.Text = "Пересчет без паспортов";
+            this.radioButton4.UseVisualStyleBackColor = true;
+            // 
+            // radioButton3
+            // 
+            this.radioButton3.AutoSize = true;
+            this.radioButton3.Checked = true;
+            this.radioButton3.Location = new System.Drawing.Point(19, 20);
+            this.radioButton3.Name = "radioButton3";
+            this.radioButton3.Size = new System.Drawing.Size(119, 17);
+            this.radioButton3.TabIndex = 0;
+            this.radioButton3.TabStop = true;
+            this.radioButton3.Text = "Не пересчитывать";
+            this.radioButton3.UseVisualStyleBackColor = true;
+            // 
             // groupBox1
             // 
-            this.groupBox1.Location = new System.Drawing.Point(8, 422);
+            this.groupBox1.Controls.Add(this.radioButton7);
+            this.groupBox1.Controls.Add(this.radioButton6);
+            this.groupBox1.Location = new System.Drawing.Point(9, 422);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(482, 83);
+            this.groupBox1.Size = new System.Drawing.Size(480, 49);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Сохранение резервной копии";
+            // 
+            // radioButton7
+            // 
+            this.radioButton7.AutoSize = true;
+            this.radioButton7.Location = new System.Drawing.Point(187, 20);
+            this.radioButton7.Name = "radioButton7";
+            this.radioButton7.Size = new System.Drawing.Size(264, 17);
+            this.radioButton7.TabIndex = 1;
+            this.radioButton7.Text = "Создать новую БД с объедененными данными";
+            this.radioButton7.UseVisualStyleBackColor = true;
+            // 
+            // radioButton6
+            // 
+            this.radioButton6.AutoSize = true;
+            this.radioButton6.Checked = true;
+            this.radioButton6.Location = new System.Drawing.Point(19, 20);
+            this.radioButton6.Name = "radioButton6";
+            this.radioButton6.Size = new System.Drawing.Size(162, 17);
+            this.radioButton6.TabIndex = 0;
+            this.radioButton6.TabStop = true;
+            this.radioButton6.Text = "Сделать копию до слияния";
+            this.radioButton6.UseVisualStyleBackColor = true;
             // 
             // groupBox3
             // 
@@ -411,9 +540,9 @@
             this.groupBox3.Controls.Add(this.radioButton2);
             this.groupBox3.Controls.Add(this.radioButton1);
             this.groupBox3.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox3.Location = new System.Drawing.Point(8, 6);
+            this.groupBox3.Location = new System.Drawing.Point(9, 6);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(482, 355);
+            this.groupBox3.Size = new System.Drawing.Size(480, 355);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Информация об архиве";
@@ -505,7 +634,7 @@
             // radioButton2
             // 
             this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(202, 24);
+            this.radioButton2.Location = new System.Drawing.Point(218, 24);
             this.radioButton2.Name = "radioButton2";
             this.radioButton2.Size = new System.Drawing.Size(90, 21);
             this.radioButton2.TabIndex = 5;
@@ -519,39 +648,11 @@
             this.radioButton1.Checked = true;
             this.radioButton1.Location = new System.Drawing.Point(19, 24);
             this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(147, 21);
+            this.radioButton1.Size = new System.Drawing.Size(193, 21);
             this.radioButton1.TabIndex = 0;
             this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Оставить как есть";
+            this.radioButton1.Text = "Оставить без изменений";
             this.radioButton1.UseVisualStyleBackColor = true;
-            // 
-            // button8
-            // 
-            this.button8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button8.Location = new System.Drawing.Point(342, 561);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(148, 34);
-            this.button8.TabIndex = 1;
-            this.button8.Text = "Далее";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
-            this.button8.MouseEnter += new System.EventHandler(this.button8_MouseEnter);
-            this.button8.MouseLeave += new System.EventHandler(this.button8_MouseLeave);
-            // 
-            // button5
-            // 
-            this.button5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button5.Location = new System.Drawing.Point(8, 561);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(148, 34);
-            this.button5.TabIndex = 0;
-            this.button5.Text = "Назад";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
-            this.button5.MouseEnter += new System.EventHandler(this.button5_MouseEnter);
-            this.button5.MouseLeave += new System.EventHandler(this.button5_MouseLeave);
             // 
             // tabPage3
             // 
@@ -572,13 +673,24 @@
             this.tabPage3.Text = "Процесс слияния";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // cancel
+            // 
+            this.cancel.Location = new System.Drawing.Point(162, 541);
+            this.cancel.Name = "cancel";
+            this.cancel.Size = new System.Drawing.Size(174, 25);
+            this.cancel.TabIndex = 10;
+            this.cancel.Text = "Отмена";
+            this.cancel.UseVisualStyleBackColor = true;
+            this.cancel.Visible = false;
+            this.cancel.Click += new System.EventHandler(this.cancel_Click);
+            // 
             // label14
             // 
             this.label14.Location = new System.Drawing.Point(19, 473);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(455, 15);
+            this.label14.Size = new System.Drawing.Size(458, 20);
             this.label14.TabIndex = 9;
-            this.label14.Text = "Записей обработано:";
+            this.label14.Text = "Записей обработано: 0";
             this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // startMerge
@@ -610,7 +722,7 @@
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(458, 15);
             this.label12.TabIndex = 6;
-            this.label12.Text = "Записей импортировано: ";
+            this.label12.Text = "Записей импортировано: 0";
             this.label12.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // progressBar2
@@ -790,61 +902,6 @@
             this.dirtyJobBackWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.dirtyJobBackWorker_ProgressChanged);
             this.dirtyJobBackWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.dirtyJobBackWorker_RunWorkerCompleted);
             // 
-            // cancel
-            // 
-            this.cancel.Location = new System.Drawing.Point(162, 541);
-            this.cancel.Name = "cancel";
-            this.cancel.Size = new System.Drawing.Size(174, 25);
-            this.cancel.TabIndex = 10;
-            this.cancel.Text = "Отмена";
-            this.cancel.UseVisualStyleBackColor = true;
-            this.cancel.Visible = false;
-            this.cancel.Click += new System.EventHandler(this.cancel_Click);
-            // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.radioButton5);
-            this.groupBox4.Controls.Add(this.radioButton4);
-            this.groupBox4.Controls.Add(this.radioButton3);
-            this.groupBox4.Location = new System.Drawing.Point(8, 367);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(482, 49);
-            this.groupBox4.TabIndex = 8;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Способ пересчета";
-            // 
-            // radioButton3
-            // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Checked = true;
-            this.radioButton3.Location = new System.Drawing.Point(19, 20);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(119, 17);
-            this.radioButton3.TabIndex = 0;
-            this.radioButton3.TabStop = true;
-            this.radioButton3.Text = "Не пересчитывать";
-            this.radioButton3.UseVisualStyleBackColor = true;
-            // 
-            // radioButton4
-            // 
-            this.radioButton4.AutoSize = true;
-            this.radioButton4.Location = new System.Drawing.Point(144, 20);
-            this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(150, 17);
-            this.radioButton4.TabIndex = 1;
-            this.radioButton4.Text = "Пересчет без паспортов";
-            this.radioButton4.UseVisualStyleBackColor = true;
-            // 
-            // radioButton5
-            // 
-            this.radioButton5.AutoSize = true;
-            this.radioButton5.Location = new System.Drawing.Point(300, 20);
-            this.radioButton5.Name = "radioButton5";
-            this.radioButton5.Size = new System.Drawing.Size(114, 17);
-            this.radioButton5.TabIndex = 2;
-            this.radioButton5.Text = "Полный пересчет";
-            this.radioButton5.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -857,11 +914,17 @@
             this.Text = "Утилита слияния баз данных";
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.tableLayoutPanel1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.mainDBGroupBox.ResumeLayout(false);
             this.mainDBGroupBox.PerformLayout();
             this.tabPage2.ResumeLayout(false);
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.panel1.ResumeLayout(false);
@@ -870,8 +933,6 @@
             this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -945,6 +1006,10 @@
         private System.Windows.Forms.RadioButton radioButton5;
         private System.Windows.Forms.RadioButton radioButton4;
         private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.RadioButton radioButton7;
+        private System.Windows.Forms.RadioButton radioButton6;
     }
 }
 

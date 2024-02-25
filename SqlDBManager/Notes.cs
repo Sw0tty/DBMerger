@@ -3,7 +3,10 @@ using SqlDBManager.DBClasses;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Security.Cryptography.X509Certificates;
+using System.Windows.Forms.VisualStyles;
+using System.Windows.Forms;
 
 namespace NotesNamespace
 {
@@ -25,32 +28,7 @@ namespace NotesNamespace
                 space += " ";
             return space;
         }
-    }
 
-    public class StopMergeException : Exception
-    {
-        public StopMergeException(string message)
-            : base(message) { }
-    }
-
-    public class MergerPreSetting
-    {
-        private string ShortArchiveName { get; }
-        private string FullArchiveName { get; }
-        private string ArchiveAddress { get; }
-        private string Description { get; }
-
-        public MergerPreSetting(string shortArchiveName, string fullArchiveName, string archiveAddress, string description)
-        {
-            ShortArchiveName = shortArchiveName;
-            FullArchiveName = fullArchiveName;
-            ArchiveAddress = archiveAddress;
-            Description = description;
-        }
-    }
-
-    public static class DocStats
-    {
         public static string SearchSecondParent(string nowSecondParentID, List<Tuple<string, string>> pairOfSecondParentID)
         {
             foreach (Tuple<string, string> pairID in pairOfSecondParentID)
@@ -60,15 +38,74 @@ namespace NotesNamespace
             }
             return null;
         }
-        public static string SearchDocID()
+
+        public static void SaveMergeLog(string textBlock)
         {
-            return null;
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.InitialDirectory = "c:\\";
+                saveFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+                saveFileDialog.FilterIndex = 1;
+                saveFileDialog.FileName = "MergeLog";
+                saveFileDialog.RestoreDirectory = true;
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    using (StreamWriter writer = new StreamWriter(saveFileDialog.FileName))
+                    {
+                        writer.WriteLine($"Merge log of '{Consts.LAST_MAIN_CATALOG}' and '{Consts.LAST_DAUGHTER_CATALOG}' catalogs. \n");
+
+                        foreach (char s in textBlock)
+                            writer.Write(s);
+                    }
+                    Consts.LOG_SAVED = true;
+                }
+            }
         }
     }
 
-    public class S : BaseDBConnector
+    public class StopMergeException : Exception
     {
-        public S(string source, string catalog, string login, string password) : base(source, catalog, login, password){}
+        public StopMergeException(string message)
+            : base(message) { }
+    }
+
+    public static class MergerPreSettings
+    {      
+        public static class ArchiveUpdate
+        {
+            public static bool Item1 = true;
+            public static bool Item2 = false;
+
+            public static class UpdateValues
+            {
+                public static string mainCatalogName = null;
+
+                public static string shortArchiveName = null;
+                public static string fullArchiveName = null;
+                public static string archiveAddress = null;
+                public static string description = null;
+            }
+
+            public static void RememberValues()
+            {
+
+            }
+        }
+
+        public static class ArchiveRecalc
+        {
+            public static bool Item1 = true;
+            public static bool Item2 = false;
+            public static bool Item3 = false;
+        }
+
+        public static class CatalogBackUp
+        {
+            public static bool Item1 = true;
+            public static bool Item2 = false;
+            public static bool Item3 = false;
+        }
     }
     
     public static class RecalculationConsts

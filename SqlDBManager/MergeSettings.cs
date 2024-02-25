@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace SqlDBManager
 {
@@ -11,7 +9,17 @@ namespace SqlDBManager
         public static string ExtraIDColumn = "DocID";
 
         /// <summary>
-        /// Params (columns name in DB) for processing simple tables <para/>
+        /// Tables columns to update on second tab. <para/>
+        /// 1. List(string) update columns <br/>
+        /// </summary>
+        public static Dictionary<string, List<string>> UpdateTables { get; } = new Dictionary<string, List<string>>
+        {
+            { "tblARCHIVE",
+                new List<string>() { "NAME_SHORT", "NAME", "ADDRESS", "AUTHORITY" } },
+        };
+
+        /// <summary>
+        /// Params for processing simple tables <para/>
         /// 1. (string) uniqueValueColumnName <br/>
         /// 2. (string) idLikeColumnName <br/>
         /// 3. (string) highLevelColumnName <br/>
@@ -22,7 +30,7 @@ namespace SqlDBManager
         {
             // 1. string uniqueValueColumnName         2. string idLikeColumnName    3. string highLevelColumnName     4. List<string> excludeColumns         
             { "eqUsers",
-                new Tuple<string, string, string, List<string>, bool>("Login", null, null, new List<string>(){ "DisplayName" }, false) },
+                new Tuple<string, string, string, List<string>, bool>("Login", null, null, new List<string>() { "DisplayName" }, false) },
 
             { "tblACT_TYPE_CL",
                 new Tuple<string, string, string, List<string>, bool>("NAME", "ISN_ACT_TYPE", null, null, true) },

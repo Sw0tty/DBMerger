@@ -9,12 +9,12 @@ namespace SqlDBManager
 {
     public class BackupManager
     {
-        protected string backupPath;
+        protected string BackupPath {  get; set; }
         SqlConnection masterСonnection;
 
         public BackupManager(string catalogPath, string catalogName, string source, string login, string password)
         {
-            backupPath = CreateBackupPath(catalogPath, catalogName);
+            BackupPath = CreateBackupPath(catalogPath, catalogName);
             masterСonnection = new SqlConnection($@"Data Source={source};Initial Catalog=master;User ID={login};Password={password};Connect Timeout=30");
         }
 
@@ -30,7 +30,7 @@ namespace SqlDBManager
 
         public void CreateReserveBackup(string catalog)
         {
-            string request = SQLRequests.BackUpRequests.CreateBackupRequest(catalog, backupPath);
+            string request = SQLRequests.BackUpRequests.CreateBackupRequest(catalog, BackupPath);
             SqlCommand command = new SqlCommand(request, masterСonnection);
 
             command.ExecuteNonQuery();
@@ -39,7 +39,7 @@ namespace SqlDBManager
 
         public void DeleteReserveBackup()
         {
-            string request = SQLRequests.BackUpRequests.DeleteBackupRequest(backupPath);
+            string request = SQLRequests.BackUpRequests.DeleteBackupRequest(BackupPath);
             SqlCommand command = new SqlCommand(request, masterСonnection);
 
             command.ExecuteNonQuery();
@@ -48,7 +48,7 @@ namespace SqlDBManager
 
         public void RestoreFromBackup(string catalog)
         {
-            string request = SQLRequests.BackUpRequests.RestoreBackupRequest(catalog, backupPath);
+            string request = SQLRequests.BackUpRequests.RestoreBackupRequest(catalog, BackupPath);
             SqlCommand command = new SqlCommand(request, masterСonnection);
 
             command.ExecuteNonQuery();
