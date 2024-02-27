@@ -58,12 +58,12 @@
             this.button8 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.radioButton5 = new System.Windows.Forms.RadioButton();
-            this.radioButton4 = new System.Windows.Forms.RadioButton();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.recalc_v3 = new System.Windows.Forms.RadioButton();
+            this.recalc_v2 = new System.Windows.Forms.RadioButton();
+            this.recalc_v1 = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.radioButton7 = new System.Windows.Forms.RadioButton();
-            this.radioButton6 = new System.Windows.Forms.RadioButton();
+            this.backUp_v2 = new System.Windows.Forms.RadioButton();
+            this.backUp_v1 = new System.Windows.Forms.RadioButton();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.textBox11 = new System.Windows.Forms.TextBox();
@@ -100,6 +100,12 @@
             this.listBox2 = new System.Windows.Forms.ListBox();
             this.mergerBackWorker = new System.ComponentModel.BackgroundWorker();
             this.dirtyJobBackWorker = new System.ComponentModel.BackgroundWorker();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.radioButton8 = new System.Windows.Forms.RadioButton();
+            this.radioButton9 = new System.Windows.Forms.RadioButton();
+            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
@@ -113,6 +119,9 @@
             this.panel1.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
+            this.groupBox5.SuspendLayout();
+            this.flowLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -401,9 +410,9 @@
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.SystemColors.Window;
+            this.tabPage2.Controls.Add(this.groupBox1);
             this.tabPage2.Controls.Add(this.tableLayoutPanel2);
             this.tabPage2.Controls.Add(this.groupBox4);
-            this.tabPage2.Controls.Add(this.groupBox1);
             this.tabPage2.Controls.Add(this.groupBox3);
             this.tabPage2.ForeColor = System.Drawing.SystemColors.ControlText;
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
@@ -457,9 +466,9 @@
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.radioButton5);
-            this.groupBox4.Controls.Add(this.radioButton4);
-            this.groupBox4.Controls.Add(this.radioButton3);
+            this.groupBox4.Controls.Add(this.recalc_v3);
+            this.groupBox4.Controls.Add(this.recalc_v2);
+            this.groupBox4.Controls.Add(this.recalc_v1);
             this.groupBox4.Location = new System.Drawing.Point(9, 367);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(480, 49);
@@ -467,70 +476,73 @@
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Способ пересчета";
             // 
-            // radioButton5
+            // recalc_v3
             // 
-            this.radioButton5.AutoSize = true;
-            this.radioButton5.Location = new System.Drawing.Point(300, 20);
-            this.radioButton5.Name = "radioButton5";
-            this.radioButton5.Size = new System.Drawing.Size(114, 17);
-            this.radioButton5.TabIndex = 2;
-            this.radioButton5.Text = "Полный пересчет";
-            this.radioButton5.UseVisualStyleBackColor = true;
+            this.recalc_v3.AutoSize = true;
+            this.recalc_v3.Location = new System.Drawing.Point(300, 20);
+            this.recalc_v3.Name = "recalc_v3";
+            this.recalc_v3.Size = new System.Drawing.Size(114, 17);
+            this.recalc_v3.TabIndex = 2;
+            this.recalc_v3.Text = "Полный пересчет";
+            this.recalc_v3.UseVisualStyleBackColor = true;
+            this.recalc_v3.CheckedChanged += new System.EventHandler(this.recalc_v3_CheckedChanged);
             // 
-            // radioButton4
+            // recalc_v2
             // 
-            this.radioButton4.AutoSize = true;
-            this.radioButton4.Location = new System.Drawing.Point(144, 20);
-            this.radioButton4.Name = "radioButton4";
-            this.radioButton4.Size = new System.Drawing.Size(150, 17);
-            this.radioButton4.TabIndex = 1;
-            this.radioButton4.Text = "Пересчет без паспортов";
-            this.radioButton4.UseVisualStyleBackColor = true;
+            this.recalc_v2.AutoSize = true;
+            this.recalc_v2.Location = new System.Drawing.Point(144, 20);
+            this.recalc_v2.Name = "recalc_v2";
+            this.recalc_v2.Size = new System.Drawing.Size(150, 17);
+            this.recalc_v2.TabIndex = 1;
+            this.recalc_v2.Text = "Пересчет без паспортов";
+            this.recalc_v2.UseVisualStyleBackColor = true;
+            this.recalc_v2.CheckedChanged += new System.EventHandler(this.recalc_v2_CheckedChanged);
             // 
-            // radioButton3
+            // recalc_v1
             // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Checked = true;
-            this.radioButton3.Location = new System.Drawing.Point(19, 20);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(119, 17);
-            this.radioButton3.TabIndex = 0;
-            this.radioButton3.TabStop = true;
-            this.radioButton3.Text = "Не пересчитывать";
-            this.radioButton3.UseVisualStyleBackColor = true;
+            this.recalc_v1.AutoSize = true;
+            this.recalc_v1.Checked = true;
+            this.recalc_v1.Location = new System.Drawing.Point(19, 20);
+            this.recalc_v1.Name = "recalc_v1";
+            this.recalc_v1.Size = new System.Drawing.Size(119, 17);
+            this.recalc_v1.TabIndex = 0;
+            this.recalc_v1.TabStop = true;
+            this.recalc_v1.Text = "Не пересчитывать";
+            this.recalc_v1.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.radioButton7);
-            this.groupBox1.Controls.Add(this.radioButton6);
+            this.groupBox1.Controls.Add(this.backUp_v2);
+            this.groupBox1.Controls.Add(this.backUp_v1);
             this.groupBox1.Location = new System.Drawing.Point(9, 422);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(480, 49);
+            this.groupBox1.Size = new System.Drawing.Size(480, 57);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Сохранение резервной копии";
             // 
-            // radioButton7
+            // backUp_v2
             // 
-            this.radioButton7.AutoSize = true;
-            this.radioButton7.Location = new System.Drawing.Point(187, 20);
-            this.radioButton7.Name = "radioButton7";
-            this.radioButton7.Size = new System.Drawing.Size(264, 17);
-            this.radioButton7.TabIndex = 1;
-            this.radioButton7.Text = "Создать новую БД с объедененными данными";
-            this.radioButton7.UseVisualStyleBackColor = true;
+            this.backUp_v2.AutoSize = true;
+            this.backUp_v2.Location = new System.Drawing.Point(187, 20);
+            this.backUp_v2.Name = "backUp_v2";
+            this.backUp_v2.Size = new System.Drawing.Size(264, 17);
+            this.backUp_v2.TabIndex = 1;
+            this.backUp_v2.Text = "Создать новую БД с объединенными данными";
+            this.backUp_v2.UseVisualStyleBackColor = true;
+            this.backUp_v2.CheckedChanged += new System.EventHandler(this.radioButton7_CheckedChanged);
             // 
-            // radioButton6
+            // backUp_v1
             // 
-            this.radioButton6.AutoSize = true;
-            this.radioButton6.Checked = true;
-            this.radioButton6.Location = new System.Drawing.Point(19, 20);
-            this.radioButton6.Name = "radioButton6";
-            this.radioButton6.Size = new System.Drawing.Size(162, 17);
-            this.radioButton6.TabIndex = 0;
-            this.radioButton6.TabStop = true;
-            this.radioButton6.Text = "Сделать копию до слияния";
-            this.radioButton6.UseVisualStyleBackColor = true;
+            this.backUp_v1.AutoSize = true;
+            this.backUp_v1.Checked = true;
+            this.backUp_v1.Location = new System.Drawing.Point(19, 20);
+            this.backUp_v1.Name = "backUp_v1";
+            this.backUp_v1.Size = new System.Drawing.Size(162, 17);
+            this.backUp_v1.TabIndex = 0;
+            this.backUp_v1.TabStop = true;
+            this.backUp_v1.Text = "Сделать копию до слияния";
+            this.backUp_v1.UseVisualStyleBackColor = true;
             // 
             // groupBox3
             // 
@@ -567,6 +579,8 @@
             // 
             // textBox11
             // 
+            this.textBox11.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox11.Location = new System.Drawing.Point(13, 173);
             this.textBox11.Multiline = true;
             this.textBox11.Name = "textBox11";
@@ -585,6 +599,8 @@
             // 
             // textBox9
             // 
+            this.textBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox9.Location = new System.Drawing.Point(13, 77);
             this.textBox9.Name = "textBox9";
             this.textBox9.Size = new System.Drawing.Size(446, 25);
@@ -592,6 +608,8 @@
             // 
             // textBox10
             // 
+            this.textBox10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox10.Location = new System.Drawing.Point(13, 125);
             this.textBox10.Name = "textBox10";
             this.textBox10.Size = new System.Drawing.Size(446, 25);
@@ -617,6 +635,8 @@
             // 
             // textBox7
             // 
+            this.textBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.textBox7.Location = new System.Drawing.Point(13, 29);
             this.textBox7.Name = "textBox7";
             this.textBox7.Size = new System.Drawing.Size(446, 25);
@@ -778,8 +798,9 @@
             // 
             // tabPage4
             // 
-            this.tabPage4.Controls.Add(this.textBox8);
+            this.tabPage4.Controls.Add(this.flowLayoutPanel2);
             this.tabPage4.Controls.Add(this.button3);
+            this.tabPage4.Controls.Add(this.textBox8);
             this.tabPage4.Controls.Add(this.comboBox3);
             this.tabPage4.Controls.Add(this.button2);
             this.tabPage4.Controls.Add(this.listView1);
@@ -807,9 +828,9 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(366, 472);
+            this.button3.Location = new System.Drawing.Point(427, 423);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(124, 94);
+            this.button3.Size = new System.Drawing.Size(68, 79);
             this.button3.TabIndex = 9;
             this.button3.Text = "button3";
             this.button3.UseVisualStyleBackColor = true;
@@ -818,14 +839,14 @@
             // comboBox3
             // 
             this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Location = new System.Drawing.Point(36, 495);
+            this.comboBox3.Location = new System.Drawing.Point(219, 396);
             this.comboBox3.Name = "comboBox3";
             this.comboBox3.Size = new System.Drawing.Size(121, 21);
             this.comboBox3.TabIndex = 8;
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(166, 517);
+            this.button2.Location = new System.Drawing.Point(222, 423);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(167, 49);
             this.button2.TabIndex = 7;
@@ -838,7 +859,7 @@
             this.listView1.HideSelection = false;
             this.listView1.Location = new System.Drawing.Point(316, 263);
             this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(174, 203);
+            this.listView1.Size = new System.Drawing.Size(174, 127);
             this.listView1.TabIndex = 6;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.List;
@@ -902,6 +923,70 @@
             this.dirtyJobBackWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.dirtyJobBackWorker_ProgressChanged);
             this.dirtyJobBackWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.dirtyJobBackWorker_RunWorkerCompleted);
             // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.AutoSize = true;
+            this.flowLayoutPanel1.Controls.Add(this.radioButton8);
+            this.flowLayoutPanel1.Controls.Add(this.radioButton9);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 16);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(183, 23);
+            this.flowLayoutPanel1.TabIndex = 11;
+            this.flowLayoutPanel1.Resize += new System.EventHandler(this.flowLayoutPanel1_Resize);
+            // 
+            // radioButton8
+            // 
+            this.radioButton8.AutoSize = true;
+            this.radioButton8.Location = new System.Drawing.Point(3, 3);
+            this.radioButton8.Name = "radioButton8";
+            this.radioButton8.Size = new System.Drawing.Size(85, 17);
+            this.radioButton8.TabIndex = 0;
+            this.radioButton8.TabStop = true;
+            this.radioButton8.Text = "radioButton8";
+            this.radioButton8.UseVisualStyleBackColor = true;
+            // 
+            // radioButton9
+            // 
+            this.radioButton9.AutoSize = true;
+            this.radioButton9.Location = new System.Drawing.Point(94, 3);
+            this.radioButton9.Name = "radioButton9";
+            this.radioButton9.Size = new System.Drawing.Size(85, 17);
+            this.radioButton9.TabIndex = 1;
+            this.radioButton9.TabStop = true;
+            this.radioButton9.Text = "radioButton9";
+            this.radioButton9.UseVisualStyleBackColor = true;
+            // 
+            // groupBox5
+            // 
+            this.groupBox5.Controls.Add(this.flowLayoutPanel1);
+            this.groupBox5.Location = new System.Drawing.Point(18, 3);
+            this.groupBox5.Name = "groupBox5";
+            this.groupBox5.Size = new System.Drawing.Size(189, 46);
+            this.groupBox5.TabIndex = 12;
+            this.groupBox5.TabStop = false;
+            this.groupBox5.Text = "groupBox5";
+            // 
+            // groupBox6
+            // 
+            this.groupBox6.Location = new System.Drawing.Point(18, 55);
+            this.groupBox6.Name = "groupBox6";
+            this.groupBox6.Size = new System.Drawing.Size(189, 48);
+            this.groupBox6.TabIndex = 13;
+            this.groupBox6.TabStop = false;
+            this.groupBox6.Text = "groupBox6";
+            // 
+            // flowLayoutPanel2
+            // 
+            this.flowLayoutPanel2.AutoScroll = true;
+            this.flowLayoutPanel2.Controls.Add(this.groupBox5);
+            this.flowLayoutPanel2.Controls.Add(this.groupBox6);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(8, 478);
+            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+            this.flowLayoutPanel2.Padding = new System.Windows.Forms.Padding(15, 0, 10, 0);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(217, 117);
+            this.flowLayoutPanel2.TabIndex = 14;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -933,6 +1018,11 @@
             this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
+            this.groupBox5.ResumeLayout(false);
+            this.groupBox5.PerformLayout();
+            this.flowLayoutPanel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1003,13 +1093,19 @@
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Button cancel;
         private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.RadioButton radioButton5;
-        private System.Windows.Forms.RadioButton radioButton4;
-        private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.RadioButton recalc_v3;
+        private System.Windows.Forms.RadioButton recalc_v2;
+        private System.Windows.Forms.RadioButton recalc_v1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.RadioButton radioButton7;
-        private System.Windows.Forms.RadioButton radioButton6;
+        private System.Windows.Forms.RadioButton backUp_v2;
+        private System.Windows.Forms.RadioButton backUp_v1;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.RadioButton radioButton8;
+        private System.Windows.Forms.RadioButton radioButton9;
+        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
     }
 }
 

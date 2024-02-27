@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Windows.Forms;
 
 
 namespace SqlDBManager
@@ -7,6 +8,31 @@ namespace SqlDBManager
     {
         public static class SelectRequests
         {
+            public static string AllAllowedDataBasesRequest()
+            {
+                return "SELECT name FROM sys.databases WHERE name NOT IN ('master', 'tempdb', 'model', 'msdb');";
+            }
+
+            public static string ValuesOnUpdate(string catalogName, List<string> columns, string tableName)
+            {
+                return $"SELECT {string.Join(", ", columns)} FROM [{catalogName}].[dbo].[{tableName}]";
+            }
+
+            public static string CatalogPathRequest(string catalog)
+            {
+                return $"SELECT TOP 1 physical_name FROM [{catalog}].sys.database_files;";
+            }
+
+            public static string LogicalNameRequest(string catalogName)
+            {
+                return $"SELECT name FROM [{catalogName}].sys.database_files WHERE type_desc = 'ROWS'";
+            }
+
+            public static string LogicalNameLogRequest(string catalogName)
+            {
+                return $"SELECT name FROM [{catalogName}].sys.database_files WHERE type_desc = 'LOG'";
+            }
+
             public static string IDFromRequest(string catalog, string tableName, string filterColumn, string filterValue)
             {
                 return $"SELECT ID FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
@@ -82,30 +108,26 @@ namespace SqlDBManager
             /// Column of last record
             /// </summary>
             /// <returns>String request</returns>
-            public static string LastInsertRecordRequest(string catalog, string column, string tableName, string orderByColumn)
+            public static string LastInsertRecordRequest(string catalogName, string column, string tableName, string orderByColumn)
             {
-                return $"SELECT TOP 1 {column} FROM [{catalog}].[dbo].[{tableName}] ORDER BY {orderByColumn} * 1 DESC;";
+                return $"SELECT TOP 1 {column} FROM [{catalogName}].[dbo].[{tableName}] ORDER BY {orderByColumn} * 1 DESC;";
             }
 
             /// <summary>
             /// Count of records in table request
             /// </summary>
             /// <returns>String request</returns>
-            public static string CountRowsRequest(string catalog, string table)
+            public static string CountRowsRequest(string catalogName, string tableName, string column = "*", string filterValue = null)
             {
-                return $"SELECT COUNT(*) FROM [{catalog}].[dbo].[{table}];";
+                if (filterValue == null)
+                    return $"SELECT COUNT({column}) FROM [{catalogName}].[dbo].[{tableName}];";
+                return $"SELECT COUNT({column}) FROM [{catalogName}].[dbo].[{tableName}] WHERE {column} = {filterValue};";
             }
 
-/*            public static string SelectWhereRequest(List<string> columns, string catalog, string tableName, string filterColumn, string filterValue)
+            public static string CountSysRowsRequest(string column, string catalogName)
             {
-                if (columns.Count > 0 && !columns.Contains("Deleted"))
-                    return $"SELECT {string.Join(", ", columns).Replace('\"', ' ')} FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
-                if (columns.Count > 0 && columns.Contains("Deleted"))
-                    return $"SELECT {string.Join(", ", columns).Replace('\"', ' ')} FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue} and Deleted = '0';";
-                if (columns.Count == 0 && columns.Contains("Deleted"))
-                    return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue} and Deleted = '0';";
-                return $"SELECT * FROM [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
-            }*/
+                return $"SELECT COUNT({column}) FROM sys.databases WHERE {column} like '{catalogName}%';";
+            }
 
             public static string SelectVersionRequest(string catalog)
             {
@@ -151,22 +173,22 @@ namespace SqlDBManager
             /// Request on insert row
             /// </summary>
             /// <returns>String request</returns>
-            public static string InsertDictValueRequst(string catalog, string tableName, Dictionary<string, string> data, bool withoutID = false)
+            public static string InsertDictValueRequst(string catalogName, string tableName, Dictionary<string, string> data, bool withoutID = false)
             {
                 if (withoutID)
                 {
-                    return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES ({string.Join(", ", data.Values).Replace("'null'", "null")});";
+                    return $"INSERT INTO [{catalogName}].[dbo].[{tableName}]({string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES ({string.Join(", ", data.Values).Replace("'null'", "null")});";
                 }
-                return $"INSERT INTO [{catalog}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("'null'", "null")});";
+                return $"INSERT INTO [{catalogName}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("'null'", "null")});";
             }
 
             /// <summary>
             /// Form big request to table
             /// </summary>
             /// <returns>String request</returns>
-            public static string FastFormerInsertValueRequst(List<string> columns, string catalog, string tableName, string values)
+            public static string FastFormerInsertValueRequst(List<string> columns, string catalogName, string tableName, string values)
             {
-                return $"INSERT INTO [{catalog}].[dbo].[{tableName}]({string.Join(", ", columns).Replace('\"', '\'')}) VALUES {values};";
+                return $"INSERT INTO [{catalogName}].[dbo].[{tableName}]({string.Join(", ", columns).Replace('\"', '\'')}) VALUES {values};";
             }
         }
 
@@ -176,41 +198,43 @@ namespace SqlDBManager
             /// Update filtered records request
             /// </summary>
             /// <returns>String request</returns>
-            public static string UpdateRowRequest(string catalog, string tableName, string updateColumn, string updateValue, string filterColumn, string filterValue)
+            public static string UpdateRowRequest(string catalogName, string tableName, string updateColumn, string updateValue, string filterColumn, string filterValue)
             {
-                return $"UPDATE [{catalog}].[dbo].[{tableName}] SET {updateColumn} = {updateValue} WHERE {filterColumn} = {filterValue};";
+                return $"UPDATE [{catalogName}].[dbo].[{tableName}] SET {updateColumn} = {updateValue} WHERE {filterColumn} = {filterValue};";
             }
 
             /// <summary>
-            /// Update record request
+            /// Update full table request
             /// </summary>
             /// <returns>String request</returns>
-            public static string UpdateArchiveRequest(string catalog, string tableName, string fullName, string shortName, string address, string description)
+            public static string UpdateTableRequest(string catalogName, string tableName, List<string> updateSet)
             {
-                return $"UPDATE [{catalog}].[dbo].[{tableName}] SET NAME = '{fullName}', NAME_SHORT = '{shortName}', ADDRESS = '{address}', AUTHORITY = '{description}';";
+                //, string fullName, string shortName, string address, string description
+                //return $"UPDATE [{catalogName}].[dbo].[{tableName}] SET NAME = '{fullName}', NAME_SHORT = '{shortName}', ADDRESS = '{address}', AUTHORITY = '{description}';";
+                return $"UPDATE [{catalogName}].[dbo].[{tableName}] SET {string.Join(", ", updateSet)};";
             }
 
             /// <summary>
             /// Request to renames same column
             /// </summary>
             /// <returns>String request</returns>
-            public static string RenameTableColumnRequest(string catalog, string tableName, string oldColumnName, string newColumnName)
+            public static string RenameTableColumnRequest(string catalogName, string tableName, string oldColumnName, string newColumnName)
             {
-                return $"EXEC [{catalog}].[dbo].sp_rename '{tableName}.{oldColumnName}', '{newColumnName}', 'COLUMN';";
+                return $"EXEC [{catalogName}].[dbo].sp_rename '{tableName}.{oldColumnName}', '{newColumnName}', 'COLUMN';";
             }
 
             /// <summary>
             /// Request to add missing foreign keys
             /// </summary>
             /// <returns>String request</returns>
-            public static string AddForeignKeyOnTable(string catalog, string repairTableName, string referenceTableName, string linkColumn)
+            public static string AddForeignKeyOnTable(string catalogName, string repairTableName, string referenceTableName, string linkColumn)
             {
                 return $"IF NOT EXISTS (SELECT t.name AS TableWithForeignKey " +
-                       $"FROM [{catalog}].sys.foreign_key_columns AS fk " +
-                       $"JOIN [{catalog}].sys.tables AS t ON fk.parent_object_id = t.object_id " +
-                       $"JOIN [{catalog}].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id " +
-                       $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalog}].sys.tables WHERE name = '{referenceTableName}') and c.name != 'ID' and t.name = '{repairTableName}') " +
-                       $"ALTER TABLE[{catalog}].[dbo].[{repairTableName}] ADD FOREIGN KEY({linkColumn}) REFERENCES[{catalog}].[dbo].[{referenceTableName}]({linkColumn});";
+                       $"FROM [{catalogName}].sys.foreign_key_columns AS fk " +
+                       $"JOIN [{catalogName}].sys.tables AS t ON fk.parent_object_id = t.object_id " +
+                       $"JOIN [{catalogName}].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id " +
+                       $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalogName}].sys.tables WHERE name = '{referenceTableName}') and c.name != 'ID' and t.name = '{repairTableName}') " +
+                       $"ALTER TABLE[{catalogName}].[dbo].[{repairTableName}] ADD FOREIGN KEY({linkColumn}) REFERENCES[{catalogName}].[dbo].[{referenceTableName}]({linkColumn});";
             }
         }
 
@@ -220,98 +244,68 @@ namespace SqlDBManager
             /// Clear table request
             /// </summary>
             /// <returns>String request</returns>
-            public static string ClearTableRequest(string catalog, string table)
+            public static string ClearTableRequest(string catalogName, string table)
             {
-                return $"DELETE [{catalog}].[dbo].[{table}];";
+                return $"DELETE [{catalogName}].[dbo].[{table}];";
             }
 
             /// <summary>
             /// Delete records request
             /// </summary>
             /// <returns>String request</returns>
-            public static string DeleteRowRequest(string catalog, string tableName, string filterColumn, string filterValue)
+            public static string DeleteRowRequest(string catalogName, string tableName, string filterColumn, string filterValue)
             {
-                return $"DELETE [{catalog}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
+                return $"DELETE [{catalogName}].[dbo].[{tableName}] WHERE {filterColumn} = {filterValue};";
             }
         }
   
         public static class BackUpRequests
         {
-            /// <summary>
-            /// Запрос расположения каталога
-            /// </summary>
-            public static string CatalogPathRequest(string catalog)
+            public static string DropCatalogRequest(string catalogName)
             {
-                return $"SELECT TOP 1 physical_name FROM [{catalog}].sys.database_files;";
+                return $"ALTER DATABASE [{catalogName}] SET single_user WITH rollback immediate; DROP DATABASE [{catalogName}]";
             }
 
-            public static string RestoreBackupRequest(string catalog, string path)
+            public static string RestoreBackupRequest(string catalogName, string bakupPath, string logicalName, string logicalNameLog, string logicalPath, string logicalLogPath)
             {
-                return $"ALTER DATABASE [{catalog}] SET single_user WITH rollback immediate; DROP DATABASE [{catalog}] RESTORE DATABASE [{catalog}] FROM DISK = '{path}';";
+                return "USE master; " +
+                       $"RESTORE DATABASE [{catalogName}{Consts.VisualConsts.TAIL_OF_MERGED_FILES}] FROM DISK = {bakupPath} " +
+                       $"WITH MOVE {logicalName} TO {logicalPath}, " +
+                       $"MOVE {logicalNameLog} TO {logicalLogPath}";
             }
 
-            public static string CreateBackupRequest(string catalog, string path)
+            public static string CreateBackupRequest(string catalogName, string path)
             {
-                return $"BACKUP DATABASE [{catalog}] TO DISK = '{path}';";
+                return $"BACKUP DATABASE [{catalogName}] TO DISK = {path};";
             }
 
             public static string DeleteBackupRequest(string path)
             {
-                return $"EXECUTE master.dbo.xp_delete_file 0, N'{path}';";
+                return $"EXECUTE master.dbo.xp_delete_file 0, N{path};";
             }
         }
 
         public static class RecalculationRequests
         {
-            public static string CountAllFunds(string catalog, int passportYear)
+            public static string CountAllFunds(string catalogName, int passportYear)
             {
-                return $"SELECT COUNT(ISN_FUND) FROM [{catalog}].[dbo].[tblFUND] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and Deleted = '0';";
+                return $"SELECT COUNT(ISN_FUND) FROM [{catalogName}].[dbo].[tblFUND] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and Deleted = '0';";
             }
 
-            public static string CountTypeFunds(string catalog, int passportYear, string fundType)
+            public static string CountTypeFunds(string catalogName, int passportYear, string fundType)
             {
-                return $"SELECT COUNT(ISN_FUND) FROM [{catalog}].[dbo].[tblFUND] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and ISN_DOC_TYPE = '{fundType}' and Deleted = '0';";
+                return $"SELECT COUNT(ISN_FUND) FROM [{catalogName}].[dbo].[tblFUND] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and ISN_DOC_TYPE = '{fundType}' and Deleted = '0';";
             }
 
-            public static string CountAllInCategoryFunds(string catalog, int passportYear, List<string> docsFundTypes, char fundType)
+            public static string CountAllInCategoryFunds(string catalogName, int passportYear, List<string> docsFundTypes, char fundType)
             {
-                return $"SELECT COUNT(ISN_FUND) FROM [{catalog}].[dbo].[tblFUND] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and ISN_DOC_TYPE in ({string.Join(", ", docsFundTypes)}) and CARRIER_TYPE = '{fundType}' and Deleted = '0';";
+                return $"SELECT COUNT(ISN_FUND) FROM [{catalogName}].[dbo].[tblFUND] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and ISN_DOC_TYPE in ({string.Join(", ", docsFundTypes)}) and CARRIER_TYPE = '{fundType}' and Deleted = '0';";
             }
 
-            public static string CountAllInCategoryInventory(string catalog, int passportYear, List<string> docsFundTypes, char fundType)
+            public static string CountAllInCategoryInventory(string catalogName, int passportYear, List<string> docsFundTypes, char fundType)
             {
-                return $"SELECT COUNT(ISN_INVENTORY) FROM [{catalog}].[dbo].[tblINVENTORY] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and ISN_DOC_TYPE in ({string.Join(", ", docsFundTypes)}) and CARRIER_TYPE = '{fundType}' and Deleted = '0';";
+                return $"SELECT COUNT(ISN_INVENTORY) FROM [{catalogName}].[dbo].[tblINVENTORY] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and ISN_DOC_TYPE in ({string.Join(", ", docsFundTypes)}) and CARRIER_TYPE = '{fundType}' and Deleted = '0';";
             }
         }
-
-        /// <summary>
-        /// Insert from request
-        /// </summary>
-        /// <returns>String request</returns>
-        /*        public static string InsertFromRequest(string inCatalog, string inTable, List<string> columns, string fromCatalog, string fromTable, string filterColumn, string filterValue)
-                {
-                    return $"INSERT INTO [{inCatalog}].[dbo].[{inTable}] SELECT {string.Join(", ", columns)} FROM [{fromCatalog}].[dbo].[{fromTable}] WHERE {filterColumn} = '{filterValue}';";
-                }*/
-
-
-
-
-
-        /// <summary>
-        /// Запрос получения списока значений по одной колонке
-        /// </summary>
-        /*        public static string OneColumnRequest(string column, string catalog, string tableName)
-                {
-                    return $"SELECT {column} FROM [{catalog}].[dbo].[{tableName}];";
-                }*/
-
-
-
-
-
-        /*        public static string NewIDRequest(string catalog)
-                {
-                    return $"USE [{catalog}] SELECT NEWID();";
-                }*/
     }
 }

@@ -13,7 +13,7 @@ namespace SqlDBManager.DBClasses
 
         public List<Dictionary<string, string>> TestSelectAdapter(string request)
         {
-            return SelectAdapter(request, allowsNull: false, ReturnConnection(), ReturnTransaction());
+            return SelectAdapter(request, allowsNull: false, ReturnConnection());
         }
 
         public int TestSelectCountAdapter(string request)

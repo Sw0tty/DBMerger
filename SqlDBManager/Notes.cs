@@ -74,8 +74,10 @@ namespace NotesNamespace
     {      
         public static class ArchiveUpdate
         {
-            public static bool Item1 = true;
-            public static bool Item2 = false;
+            public static bool MakeEdits = false;
+
+            public static string UpdateTableName = "tblARCHIVE";
+            public static List<TextBox> Fields = null;
 
             public static class UpdateValues
             {
@@ -91,6 +93,11 @@ namespace NotesNamespace
             {
 
             }
+
+            public static string ReturnUpdateSet()
+            {
+                return "";
+            }
         }
 
         public static class ArchiveRecalc
@@ -102,9 +109,7 @@ namespace NotesNamespace
 
         public static class CatalogBackUp
         {
-            public static bool Item1 = true;
-            public static bool Item2 = false;
-            public static bool Item3 = false;
+            public static bool OnlyBackUp = true;
         }
     }
     

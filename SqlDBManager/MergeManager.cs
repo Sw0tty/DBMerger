@@ -688,17 +688,22 @@ namespace SqlDBManager
             }
             else if (tableName == "tblARCHIVE")
             {
-                //List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, mainCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
-                //List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, daughterCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
-
                 ValuesManager.AddTablesToRewriteDict(foreigns);
                 ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(allFromDaughterCatalog[0][idLikeColumnName], allFromMainCatalog[0][idLikeColumnName]));
 
-/*                if (Consts.MAKE_EDITS)
+                if (MergerPreSettings.ArchiveUpdate.MakeEdits)
                 {
-                    
-                }*/
-                
+                    int nowIndex = 0;
+                    List<string> updateSet = new List<string>();
+                    foreach (string columnName in UpdateTables[MergerPreSettings.ArchiveUpdate.UpdateTableName])
+                    {
+                        updateSet.Add($"{columnName} = '{MergerPreSettings.ArchiveUpdate.Fields[nowIndex].Text}'");
+                        nowIndex++;
+                    }
+                    countOfImports++;
+                    mainCatalog.UpdateArchive(tableName, updateSet);
+                }
+                worker.ReportProgress(100, Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
             }
             else if (uniqueValueColumnName != null && idLikeColumnName != null && highLevelColumnName == null && parentIdColumn == null)
             {

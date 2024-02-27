@@ -20,6 +20,9 @@ using System.IO;
 using SqlDBManager.DBClasses;
 using System.Drawing.Configuration;
 using System.Net.Mail;
+using System.Text.RegularExpressions;
+using System.Collections.ObjectModel;
+
 
 namespace SqlDBManager
 {
@@ -53,9 +56,14 @@ namespace SqlDBManager
             checkConnectionMainCatalog.Text = "Проверить соединение";
             checkConnectionDaughterCatalog.Text = checkConnectionMainCatalog.Text;
 
-
+            SetPreSettingsFields();
             SetButtonsFont();
             LoadProperties();
+        }
+
+        private void SetPreSettingsFields()
+        {
+            MergerPreSettings.ArchiveUpdate.Fields = new List<TextBox>() { textBox7, textBox9, textBox10, textBox11 };
         }
 
         private void SetButtonsFont()
@@ -217,6 +225,10 @@ namespace SqlDBManager
 
         public void button8_Click(object sender, EventArgs e)
         {
+            MergerPreSettings.ArchiveRecalc.Item1 = recalc_v1.Checked;
+            MergerPreSettings.ArchiveRecalc.Item2 = recalc_v2.Checked;
+            MergerPreSettings.ArchiveRecalc.Item3 = recalc_v3.Checked;
+
             WrapTabControl(tabControl1, true);
         }
 
@@ -234,7 +246,7 @@ namespace SqlDBManager
         private void cancel_Click(object sender, EventArgs e)
         {
             //throw new StopMergeException(Consts.StopMergeConsts.STOP_ERROR_MESSAGE);
-
+            
             if (mergerBackWorker.WorkerSupportsCancellation == true)
             {
                 mergerBackWorker.CancelAsync();
@@ -307,33 +319,34 @@ namespace SqlDBManager
                         {
                             worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Валидация успешно завершена!");
 
-                            // после данных запросов создается резервная копия
-
+                            worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Снимаем копию главной БД...");
                             // --------------
                             // Создаем резервную копию для транзакций
-                            /*                    BackupManager backupManager = new BackupManager(mainCatalog.SelectCatalogPath()[0], mainCatalog.ReturnCatalog(), text1, textBox2.Text.Trim(' '), textBox3.Text.Trim(' '));
+                            BackupManager backupManager = new BackupManager(mainCatalog.SelectCatalogPath(), mainCatalog.ReturnCatalogName(), "master", text1, textBox2.Text, textBox3.Text);
+                            backupManager.OpenConnection();
 
-                                                backupManager.OpenConnection();
-                                                backupManager.CreateReserveBackup(mainCatalog.ReturnCatalog());
+                            backupManager.SetParams();
 
-                                                MessageBox.Show("Created");
-
-                                                mainCatalog.CloseConnection();
-
-                                                backupManager.RestoreFromBackup(mainCatalog.ReturnCatalog());
-
-                                                MessageBox.Show("restored");
-
-
-                                                backupManager.DeleteReserveBackup();
-
-                                                MessageBox.Show("Deleted");
-
-                                                MessageBox.Show("Break");*/
-                            // --------------
-
-                            //MessageBox.Show(mainCatalog.SelectNewID());
-
+                            backupManager.CreateReserveBackup();
+                            if (!MergerPreSettings.CatalogBackUp.OnlyBackUp)
+                            {
+                                
+                                backupManager.RestoreFromBackup();
+                                backupManager.DeleteReserveBackup();
+                                backupManager.CloseConnection();
+                                mainCatalog.CommitTransaction();
+                                mainCatalog.CloseConnection();
+                                mainCatalog = new DBCatalog(text1, textBox1.Text + Consts.VisualConsts.TAIL_OF_MERGED_FILES, textBox2.Text, textBox3.Text);
+                                mainCatalog.OpenConnection();
+                                mainCatalog.StartTransaction();
+                                MessageBox.Show(mainCatalog.ReturnCatalogName());
+                                backupManager = new BackupManager(mainCatalog.SelectCatalogPath(), mainCatalog.ReturnCatalogName(), "master", text1, textBox2.Text, textBox3.Text);
+                            }
+                            else
+                            {
+                                backupManager.CloseConnection();
+                            }
+                            worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Копия успешно создана!");
 
                             worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Вносим правки ключей таблиц...");
 
@@ -370,7 +383,6 @@ namespace SqlDBManager
 
                             if (successOperation)
                             {
-                                // Проходим по таблицам с ключами (провряем на уникальность)
                                 worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Обработка таблиц с внешними ключами ---");
                                 successOperation = MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, worker);
                             }
@@ -379,7 +391,6 @@ namespace SqlDBManager
                             {
                                 worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Заключение слияния ---");
                                 worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Возвращаем временные изменения...");
-                                //transaction2.Rollback();
                                 successOperation = Wrappers.WrapSimpleMergeFunc(MergeManager.RenameAfterMergeTableColumn, mainCatalog, worker);
                             }
 
@@ -396,6 +407,19 @@ namespace SqlDBManager
                             {
                                 mainCatalog.RollbackTransaction();
                                 daughterCatalog.RollbackTransaction();
+
+                                backupManager.OpenConnection();
+                                if (MergerPreSettings.CatalogBackUp.OnlyBackUp)
+                                    backupManager.DeleteReserveBackup();
+                                else
+                                {
+                                    mainCatalog.RollbackTransaction();
+                                    mainCatalog.CloseConnection();
+                                    backupManager.OpenConnection();
+                                    backupManager.DropCatalog();
+                                }                                                           
+                                backupManager.CloseConnection();
+
                                 if (Consts.VisualConsts.USER_STOP_MERGE)
                                 {
                                     ProgramMessages.UserCanceledMessage();
@@ -430,10 +454,11 @@ namespace SqlDBManager
                 ProgramMessages.ValidationErrorMessage();
             }
             Invoke(new Action(() => {
-                mergeLog.Enabled = true;
-                startMerge.Text = Consts.TextsConsts.LOG_BUTTON;
-                startMerge.Visible = true;
                 cancel.Visible = false;
+                mergeLog.Visible = true;
+                mergeLog.Enabled = true;
+                //startMerge.Text = Consts.TextsConsts.LOG_BUTTON;
+                startMerge.Enabled = true;              
                 button6.Enabled = true;
             }));
 
@@ -458,7 +483,6 @@ namespace SqlDBManager
             else if (e.ProgressPercentage == Consts.WorkerConsts.UPDATE_COUNT_OF_IMPORT)
             {
                 Invoke(new Action(() => label12.Text = $"Записей импортировано: {Consts.ALL_OF_IMPORT}"));
-                //label12.Text = $"Записей импортировано: {Consts.ALL_OF_IMPORT}";
             }
             else if (e.ProgressPercentage == Consts.WorkerConsts.UPDATE_COUNT_OF_CHECK)
             {
@@ -534,6 +558,33 @@ namespace SqlDBManager
                 {
                     Invoke(new Action(() => {
                         SaveProperties();
+
+
+
+
+                        if (MergerPreSettings.ArchiveUpdate.UpdateValues.mainCatalogName == null || MergerPreSettings.ArchiveUpdate.UpdateValues.mainCatalogName != textBox1.Text)
+                        {
+                            DBCatalog mainCatalog = new DBCatalog(comboBox1.SelectedItem.ToString(), textBox1.Text, textBox2.Text, textBox3.Text);
+
+                            mainCatalog.OpenConnection();
+                            List<Dictionary<string, string>> data = mainCatalog.SelectAllFrom(MergerPreSettings.ArchiveUpdate.UpdateTableName, MergeSettings.UpdateTables[MergerPreSettings.ArchiveUpdate.UpdateTableName], false, filterIN: false);
+                            foreach (Dictionary<string, string> row in data)
+                            {
+                                int keyIndex = 0;
+                                foreach (string key in row.Keys)
+                                {
+                                    MergerPreSettings.ArchiveUpdate.Fields[keyIndex].Text = row[key].Replace("\'", "");
+                                    keyIndex++;
+                                }
+                            }
+                            mainCatalog.CloseConnection();
+
+                            MergerPreSettings.ArchiveUpdate.UpdateValues.mainCatalogName = textBox1.Text;
+                        }
+                        
+
+
+
                         WrapTabControl(tabControl1, true);
                     }));
                 }
@@ -572,24 +623,27 @@ namespace SqlDBManager
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
             TrimAllOnForm();
-
+            MessageBox.Show("");
             if (radioButton2.Checked)
             {
                 panel1.Enabled = true;
-                Consts.SettingsChecked.UPDATE_ARCHIVE = true;
                 Consts.PRE_SETTINGS = new Tuple<string, string, string, string>(textBox7.Text.Trim(' '), textBox9.Text.Trim(' '), textBox10.Text.Trim(' '), textBox11.Text.Trim(' '));
 
-                MergerPreSettings.ArchiveUpdate.Item1 = false;
-                MergerPreSettings.ArchiveUpdate.Item2 = true;
+                MergerPreSettings.ArchiveUpdate.MakeEdits = true;
             }
             else
             {
                 panel1.Enabled = false;
-                Consts.SettingsChecked.UPDATE_ARCHIVE = false;
-
-                MergerPreSettings.ArchiveUpdate.Item1 = true;
-                MergerPreSettings.ArchiveUpdate.Item2 = false;
+                MergerPreSettings.ArchiveUpdate.MakeEdits = false;
             }
+        }
+
+        private void radioButton7_CheckedChanged(object sender, EventArgs e)
+        {
+            if (backUp_v2.Checked)
+                MergerPreSettings.CatalogBackUp.OnlyBackUp = false;
+            else
+                MergerPreSettings.CatalogBackUp.OnlyBackUp = true;
         }
 
         private void checkConnectionMainCatalog_MouseEnter(object sender, EventArgs e)
@@ -697,6 +751,9 @@ namespace SqlDBManager
 
         private void button3_Click(object sender, EventArgs e)
         {
+            radioButton9.Text = "radioButton9dfgdfg";
+
+            MessageBox.Show(DateTime.Now.ToString().Replace(' ', '_'));
             /*string itemTiple1 = "123";
 
             Tuple<string, string> testTuple = new Tuple<string, string>(itemTiple1, "456");
@@ -823,14 +880,14 @@ namespace SqlDBManager
 
             
 
-            BackupManager backUp = new BackupManager("C:\\Program Files\\Microsoft SQL Server\\MSSQL16.SQL2022\\MSSQL\\DATA\\5558.mdf", "5558", "(local)\\SQL2022", "sa", "123");
+            //BackupManager backUp = new BackupManager("C:\\Program Files\\Microsoft SQL Server\\MSSQL16.SQL2022\\MSSQL\\DATA\\5558.mdf", "5558", "(local)\\SQL2022", "sa", "123");
 
-            backUp.OpenConnection();
+            //backUp.OpenConnection();
 
-            backUp.CreateReserveBackup("5558");
+            //backUp.CreateReserveBackup("5558");
 
             MessageBox.Show("sdfsd");
-            backUp.DeleteReserveBackup();
+            //backUp.DeleteReserveBackup();
 
             MessageBox.Show("sdfsd");
             string myServer = Environment.MachineName;
@@ -983,6 +1040,21 @@ namespace SqlDBManager
             //Visualizator.VisualizateReserv();
 
             Tuple<string, string, string> tr = new Tuple<string, string, string>("1", "2", "3");
+
+        }
+
+        private void flowLayoutPanel1_Resize(object sender, EventArgs e)
+        {
+            groupBox5.Height = groupBox5.Height / 2 + flowLayoutPanel1.Height;
+        }
+
+        private void recalc_v2_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void recalc_v3_CheckedChanged(object sender, EventArgs e)
+        {
 
         }
     }

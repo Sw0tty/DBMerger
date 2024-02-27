@@ -1,29 +1,14 @@
-﻿using NotesNamespace;
+﻿using System.Collections.Generic;
 using SqlDBManager.DBClasses;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Transactions;
-using System.Windows.Forms;
+using NotesNamespace;
+using System;
 
 
 namespace SqlDBManager
 {
     public class DBCatalog : BaseDBConnector
     {
-/*        protected string Source;
-        protected string Catalog;
-        protected string Login;
-        protected string Password;
-        protected string connectionString;
-        protected SqlConnection connection;
-        private SqlTransaction transaction;*/
-
         public DBCatalog(string source, string catalog, string login, string password) : base(source, catalog, login, password) { }
 
         /// <summary>
@@ -31,7 +16,7 @@ namespace SqlDBManager
         /// </summary>
         public string SelectCatalogPath()
         {
-            string request = SQLRequests.BackUpRequests.CatalogPathRequest(ReturnCatalogName());
+            string request = SQLRequests.SelectRequests.CatalogPathRequest(ReturnCatalogName());
             return SelectSingleValueAdapter(request, likeValue: true, ReturnConnection(), ReturnTransaction());
             //return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: true);
         }
@@ -83,6 +68,12 @@ namespace SqlDBManager
             return count;*/
         }
 
+        public int UpdateArchive(string tableName, List<string> updateSet)
+        {
+            string request = SQLRequests.UpdateRequests.UpdateTableRequest(ReturnCatalogName(), tableName, updateSet);
+            return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
+        }
+
         /// <summary>
         /// Возвращает список найденых записей в виде словаря (колонка - значение)
         /// </summary>
@@ -91,12 +82,6 @@ namespace SqlDBManager
             string request = SQLRequests.SelectRequests.AllRecordsRequest(ReturnCatalogName(), tableName, filter, filterIN, columns);
             return ReturnListDictsFromDB(request, columns, allowsNull, ReturnConnection(), ReturnTransaction());
         }
-
-/*        public string SelectNewID()
-        {
-            string request = SQLRequests.NewIDRequest(Catalog);
-            return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: true);
-        }*/
 
         public string SelectIDFrom(string tableName, string idLikeColumn, string filterValue)
         {
@@ -109,7 +94,6 @@ namespace SqlDBManager
         {
             string request = SQLRequests.SelectRequests.ReferenceTableNameRequest(ReturnCatalogName(), currentTableName, foreignColumnName);
             return SelectSingleValueAdapter(request, likeValue: false, ReturnConnection(), ReturnTransaction());
-            //return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: false);
         }
 
         public List<string> SelectTablesNames()
@@ -184,43 +168,43 @@ namespace SqlDBManager
             return DeleteAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
-        public void AddReference(string repairTableName, string referenceTableName, string linkColumn)
+        public int AddReference(string repairTableName, string referenceTableName, string linkColumn)
         {
             string request = SQLRequests.UpdateRequests.AddForeignKeyOnTable(ReturnCatalogName(), repairTableName, referenceTableName, linkColumn);
-            AlterAdapter(request, ReturnConnection(), ReturnTransaction());
+            return AlterAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
-        public void RenameColumn(string tableName, string oldColumnName, string newColumnName)
+        public int RenameColumn(string tableName, string oldColumnName, string newColumnName)
         {
             string request = SQLRequests.UpdateRequests.RenameTableColumnRequest(ReturnCatalogName(), tableName, oldColumnName, newColumnName);
-            AlterAdapter(request, ReturnConnection(), ReturnTransaction());
+            return AlterAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
         /// <summary>
         /// Вставляет переданные данные в указанную таблицу (ID формируется средствами SQL)
         /// </summary>
-        public void InsertValue(string tableName, Dictionary<string, string> data, bool withoutID = false)
+        public int InsertValue(string tableName, Dictionary<string, string> data, bool withoutID = false)
         {
             string request = SQLRequests.InsertRequests.InsertDictValueRequst(ReturnCatalogName(), tableName, data, withoutID);
-            InsertAdapter(request, ReturnConnection(), ReturnTransaction());
+            return InsertAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
-        public void SpecialInsertListOfValues(string tableName, string values, List<string> excludeColumns)
+        public int SpecialInsertListOfValues(string tableName, string values, List<string> excludeColumns)
         {
             string request = SQLRequests.InsertRequests.FastFormerInsertValueRequst(SelectColumnsNames(tableName, excludeColumns), ReturnCatalogName(), tableName, values);
-            InsertAdapter(request, ReturnConnection(), ReturnTransaction());
+            return InsertAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
-        public void UpdateValue(string tableName, string updateColumn, string updateValue, string filterColumn, string filterValue)
+        public int UpdateValue(string tableName, string updateColumn, string updateValue, string filterColumn, string filterValue)
         {
             string request = SQLRequests.UpdateRequests.UpdateRowRequest(ReturnCatalogName(), tableName, updateColumn, updateValue, filterColumn, filterValue);
-            UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
+            return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
-        public void DeleteValue(string tableName, string filterColumn, string filterValue)
+        public int DeleteValue(string tableName, string filterColumn, string filterValue)
         {
             string request = SQLRequests.DeleteRequests.DeleteRowRequest(ReturnCatalogName(), tableName, filterColumn, filterValue);
-            DeleteAdapter(request, ReturnConnection(), ReturnTransaction());
+            return DeleteAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
         /// <summary>

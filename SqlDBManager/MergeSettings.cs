@@ -140,8 +140,10 @@ namespace SqlDBManager
             { "tblARCHIVE_STORAGE",
                 new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>(null, null, null, null, null, null, null, new Tuple<bool>(true)) },
 
+            // ---In recalc---
             //{ "tblARCHIVE_PASSPORT",
             //    new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>("PASS_YEAR", "ISN_PASSPORT", null, null, null, null, null, new Tuple<bool>(true)) },
+            // -------
 
             // ---In recalc---
             //{ "tblARCHIVE_STATS",

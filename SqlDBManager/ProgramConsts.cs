@@ -23,7 +23,6 @@ namespace SqlDBManager
         public static bool LOG_SAVED = false;
         public static string LAST_MAIN_CATALOG = null;
         public static string LAST_DAUGHTER_CATALOG = null;
-        public static bool MAKE_EDITS = false;
         public static Tuple<string, string, string, string> PRE_SETTINGS = null;
 
         public static void WriteLastCatalogs(string mainCatalog, string daughterCatalog)
@@ -49,6 +48,12 @@ namespace SqlDBManager
             public const string STOP_ERROR_MESSAGE = "Операция слияния прервана пользователем.";
         }
 
+        public static class ObjectsOfRequests
+        {
+            public const string DB_TABLE = "dbo";
+            public const string SYS_TABLE = "sys";
+        }
+
         public static class VisualConsts
         {
             public const int SPACE_SIZE = 4;
@@ -56,6 +61,7 @@ namespace SqlDBManager
             public static bool USER_STOP_MERGE = false;
             public static bool TAB_ACCESS = true;
             public static Font BUTTON_FONT = new Font("Microsoft Sans Serif", 9, FontStyle.Regular);
+            public const string TAIL_OF_MERGED_FILES = "_merged";
         }
 
         public static class TextsConsts
@@ -65,6 +71,11 @@ namespace SqlDBManager
             public const string BACK_BUTTON = "Назад";
             public const string LOG_BUTTON = "Сохранить итог слияния";
             public const string CANCEL_BUTTON = "Отмена";
+            public const string RECULC_V1 = "Без пересчета";
+            public const string RECULC_V2 = "Пересчет без паспортов";
+            public const string RECULC_V3 = "Полный пересчет";
+            public const string RESERVE_COPY_V1 = "Выгрузить копию до слияния";
+            public const string RESERVE_COPY_V2 = "Создать новую БД с объединенными данными";
         }
 
         public static class MergeWorks
@@ -73,11 +84,6 @@ namespace SqlDBManager
             public const string CLEARING = "CLEAR";
             public const string DEFAULT_TABLE = "DEFAULT";
             public const string COMPOSITE_TABLE = "COMPOSITE";
-        }
-
-        public static class SettingsChecked
-        {
-            public static bool UPDATE_ARCHIVE = false;
         }
 
         public static class MergeProgress

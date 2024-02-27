@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
+using System.Threading;
+using System;
 
 
 namespace SqlDBManager
@@ -41,9 +38,8 @@ namespace SqlDBManager
         {
             SqlCommand command;
             SqlDataReader reader;
-            string request, connectionString, response = "";
-
-            connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password};Connect Timeout=15";
+            List<string> response = new List<string>();
+            string connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password};Connect Timeout=15";
 
             SqlConnection cnn = new SqlConnection(connectionString);
 
@@ -54,30 +50,24 @@ namespace SqlDBManager
 
                 if (catalog == "")
                 {
-                    request = "SELECT name FROM sys.databases WHERE name NOT IN ('master', 'tempdb', 'model', 'msdb');";
-
+                    string request = SQLRequests.SelectRequests.AllAllowedDataBasesRequest();
                     command = new SqlCommand(request, cnn);
                     reader = command.ExecuteReader();
 
                     while (reader.Read())
-                    {
-                        response += Convert.ToString(reader.GetValue(0)) + " ";
-                    }
+                        response.Add(reader.GetValue(0).ToString());
 
                     reader.Close();
                     command.Dispose();
                     cnn.Close();
-                    return MessageBox.Show($"Соединение установлено, но не выбран каталог!\nДоступные каталоги: {response}",
-                                            "Предупреждение",
-                                            MessageBoxButtons.OK,
-                                            MessageBoxIcon.Warning);
+                    return ProgramMessages.ConnectionWarningMessage(response);
                 }
                 cnn.Close();
-                return MessageBox.Show("Соединение установлено!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return ProgramMessages.ConnectionSuccessMessage();
             }
             catch
             {
-                return MessageBox.Show("Соединение не удалось!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return ProgramMessages.ConnectionErrorMessage();
             }
         }
     }

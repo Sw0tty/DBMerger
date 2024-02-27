@@ -1,64 +1,94 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SqlDBManager.DBClasses;
+using System;
+
 
 namespace SqlDBManager
 {
-    public class BackupManager
+    public class BackupManager : BaseDBConnector
     {
-        protected string BackupPath {  get; set; }
-        SqlConnection masterСonnection;
+        protected string EditsOnDB { get; }
+        protected string BackupPath { get; set; }
+        protected string RestoreDBPath { get; set; }
+        protected string RestoreLOGPath { get; set; }
+        protected string LogicalName { get; set; }
+        protected string LogicalLogName { get; set; }
+        protected string CountOfCopys { get; set; }
 
-        public BackupManager(string catalogPath, string catalogName, string source, string login, string password)
+        public BackupManager(string catalogPath, string editsOnDB, string catalogName, string source, string login, string password) : base(source, catalogName, login, password)
         {
-            BackupPath = CreateBackupPath(catalogPath, catalogName);
-            masterСonnection = new SqlConnection($@"Data Source={source};Initial Catalog=master;User ID={login};Password={password};Connect Timeout=30");
+            EditsOnDB = editsOnDB;
+            BackupPath = CreateBackupPath(catalogPath, editsOnDB);
+            RestoreDBPath = CreateDBPath(catalogPath, editsOnDB);
+            RestoreLOGPath = CreateLOGPath(catalogPath, editsOnDB);
+            LogicalName = null;
+            LogicalLogName = null;
+            CountOfCopys = null;
         }
 
-        public void OpenConnection()
+        public void SetParams()
         {
-            masterСonnection.Open();
+            LogicalName = SelectLogicalName();
+            LogicalLogName = SelectLogicalLogName();
+
+            int copyCount = SelectCountOfCopys();
+            CountOfCopys = (copyCount == 0) ? "" : $"{copyCount + 1}";
         }
 
-        public void CloseConnection()
+        public int SelectCountOfCopys()
         {
-            masterСonnection.Close();
+            string request = SQLRequests.SelectRequests.CountSysRowsRequest("name", EditsOnDB);
+            return SelectCountAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
-        public void CreateReserveBackup(string catalog)
+        public string SelectLogicalName()
         {
-            string request = SQLRequests.BackUpRequests.CreateBackupRequest(catalog, BackupPath);
-            SqlCommand command = new SqlCommand(request, masterСonnection);
-
-            command.ExecuteNonQuery();
-            command.Dispose();
+            string request = SQLRequests.SelectRequests.LogicalNameRequest(EditsOnDB);
+            return SelectSingleValueAdapter(request, likeValue: true, ReturnConnection(), ReturnTransaction());
         }
 
-        public void DeleteReserveBackup()
+        public string SelectLogicalLogName()
+        {
+            string request = SQLRequests.SelectRequests.LogicalNameLogRequest(EditsOnDB);
+            return SelectSingleValueAdapter(request, likeValue: true, ReturnConnection(), ReturnTransaction());
+        }
+
+        public int CreateReserveBackup()
+        {
+            string request = SQLRequests.BackUpRequests.CreateBackupRequest(EditsOnDB, BackupPath);
+            return BackUpAdapter(request, ReturnConnection());
+        }
+
+        public int DeleteReserveBackup()
         {
             string request = SQLRequests.BackUpRequests.DeleteBackupRequest(BackupPath);
-            SqlCommand command = new SqlCommand(request, masterСonnection);
-
-            command.ExecuteNonQuery();
-            command.Dispose();
+            return BackUpAdapter(request, ReturnConnection());
         }
 
-        public void RestoreFromBackup(string catalog)
+        public int DropCatalog()
         {
-            string request = SQLRequests.BackUpRequests.RestoreBackupRequest(catalog, BackupPath);
-            SqlCommand command = new SqlCommand(request, masterСonnection);
+            string request = SQLRequests.BackUpRequests.DropCatalogRequest(EditsOnDB);
+            return BackUpAdapter(request, ReturnConnection());
+        }
 
-            command.ExecuteNonQuery();
-            command.Dispose();
+        public int RestoreFromBackup()
+        {
+            string request = SQLRequests.BackUpRequests.RestoreBackupRequest(EditsOnDB, BackupPath, LogicalName, LogicalLogName, RestoreDBPath, RestoreLOGPath);
+            return BackUpAdapter(request, ReturnConnection());
+        }
+
+        static string CreateDBPath(string catalogPath, string catalogName)
+        {
+            return catalogPath.Replace($"{catalogName}.mdf", $"{catalogName}{Consts.VisualConsts.TAIL_OF_MERGED_FILES}.mdf");
+        }
+
+        static string CreateLOGPath(string catalogPath, string catalogName)
+        {
+            return catalogPath.Replace($"{catalogName}.mdf", $"{catalogName}{Consts.VisualConsts.TAIL_OF_MERGED_FILES}.ldf");
         }
 
         static string CreateBackupPath(string catalogPath, string catalogName)
         {
-            //catalogPath = catalogPath.Replace($"DATA\\{catalogName}.mdf", $"Backup\\{catalogName}_reserve.bak");
-            return catalogPath.Replace($"DATA\\{catalogName}.mdf", $"Backup\\{catalogName}_reserve.bak"); ;
+            return catalogPath.Replace($"DATA\\{catalogName}.mdf", $"Backup\\{catalogName}_{DateTime.Now.ToString().Replace(':', '-')}_backup.bak");
         }
     }
 }
