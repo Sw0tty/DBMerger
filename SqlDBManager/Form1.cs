@@ -751,36 +751,55 @@ namespace SqlDBManager
 
         private void button3_Click(object sender, EventArgs e)
         {
-            radioButton9.Text = "radioButton9dfgdfg";
+            /*            radioButton9.Text = "radioButton9dfgdfg";
 
-            MessageBox.Show(DateTime.Now.ToString().Replace(' ', '_'));
-            /*string itemTiple1 = "123";
+                        MessageBox.Show(DateTime.Now.ToString().Replace(' ', '_'));
+                        *//*string itemTiple1 = "123";
 
-            Tuple<string, string> testTuple = new Tuple<string, string>(itemTiple1, "456");
+                        Tuple<string, string> testTuple = new Tuple<string, string>(itemTiple1, "456");
 
-            itemTiple1 = "4325324";
-            testTuple = new Tuple<string, string>(itemTiple1, "456");*/
-/*            MessageBox.Show(MergeSettings.UpdateTables["tblARCHIVE"].Item2.ToString());
+                        itemTiple1 = "4325324";
+                        testTuple = new Tuple<string, string>(itemTiple1, "456");*/
+            /*            MessageBox.Show(MergeSettings.UpdateTables["tblARCHIVE"].Item2.ToString());
 
-            Consts.SettingsChecked.UPDATE_ARCHIVE = true;
+                        Consts.SettingsChecked.UPDATE_ARCHIVE = true;
 
-            MessageBox.Show(Consts.SettingsChecked.UPDATE_ARCHIVE.ToString());
-            MessageBox.Show(MergeSettings.UpdateTables["tblARCHIVE"].Item2.ToString());*/
+                        MessageBox.Show(Consts.SettingsChecked.UPDATE_ARCHIVE.ToString());
+                        MessageBox.Show(MergeSettings.UpdateTables["tblARCHIVE"].Item2.ToString());*//*
 
-            try
-            {
-                throw new StopMergeException(Consts.StopMergeConsts.STOP_ERROR_MESSAGE);
-            }
-            catch (StopMergeException ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+                        try
+                        {
+                            throw new StopMergeException(Consts.StopMergeConsts.STOP_ERROR_MESSAGE);
+                        }
+                        catch (StopMergeException ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }*/
 
-            TestCatalog testCatalog = new TestCatalog(@"(local)\SQLEXPRESS2022", "TestDB", "sa", "123");
+            DBCatalog testDBCatalog = new DBCatalog(@"(local)\SQL2022", "5585", "sa", "123");
+
+            testDBCatalog.OpenConnection();
+            testDBCatalog.StartTransaction();
+
+            TestCatalog testCatalog = new TestCatalog(@"(local)\SQLEXPRESS2022", "5585", "sa", "123");
 
 
-            testCatalog.OpenConnection();
-            testCatalog.StartTransaction();
+            /*testCatalog.OpenConnection();
+            testCatalog.StartTransaction();*/
+
+
+            RecalcManager recalcManager = new RecalcManager(testDBCatalog);
+
+            recalcManager.RecalcInventory();
+            //recalcManager.RecalcFund();
+
+
+
+            testDBCatalog.CommitTransaction();
+            testDBCatalog.CloseConnection();
+
+            MessageBox.Show("End of recalc tests...");
+
             string request = $"SELECT * FROM [TestDB].[dbo].[eqUsers];";
             string request2 = $"SELECT COUNT(*) FROM [TestDB].[dbo].[eqUsers];";
 

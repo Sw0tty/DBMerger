@@ -16,12 +16,12 @@ namespace SqlDBManager
         /// Makes SELECT requests
         /// </summary>
         /// <returns>List of Dictionarys Selected data</returns>
-        protected List<Dictionary<string, string>> SelectAdapter(string request, bool allowsNull, SqlConnection connection)
+        protected List<Dictionary<string, string>> SelectAdapter(string request, bool allowsNull, SqlConnection connection, SqlTransaction transaction)
         {
             SqlDataAdapter adapter = new SqlDataAdapter();
             DataSet dataSet = new DataSet();
             adapter.SelectCommand = new SqlCommand(request, connection);
-            //adapter.SelectCommand.Transaction = transaction;
+            adapter.SelectCommand.Transaction = transaction;
             List<Dictionary<string, string>> selectedData = new List<Dictionary<string, string>>();
             adapter.Fill(dataSet);
 

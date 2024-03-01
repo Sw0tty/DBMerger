@@ -125,15 +125,6 @@ namespace SqlDBManager
         }
 
         /// <summary>
-        /// Возвращает список полученных значений по фильтру
-        /// </summary>
-/*        public List<Dictionary<string, string>> SelectRecordsWhere(List<string> columns, string tableName, string filterColumn, string filterData)
-        {
-            string request = SQLRequests.SelectRequests.SelectWhereRequest(columns, Catalog, tableName, filterColumn, filterData);
-            return ReturnListDictsFromDB(request, SelectColumnsNames(tableName), ReturnConnection(), ReturnTransaction());
-        }*/
-
-        /// <summary>
         /// Возвращает словарь значений где ключ - таблица в которой используются значения из переданной таблицы.
         /// Значение - наименование столбца через который осуществляется связь
         /// </summary>
@@ -205,6 +196,96 @@ namespace SqlDBManager
         {
             string request = SQLRequests.DeleteRequests.DeleteRowRequest(ReturnCatalogName(), tableName, filterColumn, filterValue);
             return DeleteAdapter(request, ReturnConnection(), ReturnTransaction());
+        }
+
+        public int SelectInventoryUnitCount(string unitKind, string inventoryID, string docType)
+        {
+            string request = SQLRequests.RecalculationRequests.InventoryUnitCountRequest(ReturnCatalogName(), unitKind, inventoryID, docType);
+            return SelectCountAdapter(request, ReturnConnection(), ReturnTransaction());
+        }
+
+        public int Ultra_SelectInventoryUnitCount(string unitKind, string inventoryID, string docType, string signColumn, string sign, string signValue)
+        {
+            string request = SQLRequests.RecalculationRequests.Ultra_InventoryUnitCountRequest(ReturnCatalogName(), unitKind, inventoryID, docType, signColumn, sign, signValue);
+            return SelectCountAdapter(request, ReturnConnection(), ReturnTransaction());
+        }
+
+        public int UpdateInventoryCount(string inventoryID, string docType, string carrierType, int unitCount)
+        {
+            string request = SQLRequests.RecalculationRequests.UpdateInventoryUnitCountRequest(ReturnCatalogName(), inventoryID, docType, carrierType, unitCount);
+            return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
+        }
+
+        public int UpdateInventoryDocStats(string inventoryID, string docType, string carrierType, bool withAccountingUnits,
+                                           int registered, int ocUnits, int unique, int hasSF, int hasFP, int notFound, int secret, int catalogued,
+                                           int regRegistered = 0, int regOC = 0, int regUnique = 0, int regHasSF = 0, int regHasFP = 0, int regNotFound = 0, int regSecret = 0, int regCatalogued = 0)
+        {
+            string request = SQLRequests.RecalculationRequests.UpdateInventoryDocStatsRequest(ReturnCatalogName(), inventoryID, docType, carrierType, withAccountingUnits,
+                                                                                              registered, ocUnits, unique, hasSF, hasFP, notFound, secret, catalogued,
+                                                                                              regRegistered, regOC, regUnique, regHasSF, regHasFP, regNotFound, regSecret, regCatalogued);
+            return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
+        }
+
+        public int UpdateCheck(string tableCheck, string idLikeColumn, string filteredID, int unitCount)
+        {
+            string request = SQLRequests.RecalculationRequests.UpdateCheckRequest(ReturnCatalogName(), tableCheck, idLikeColumn, filteredID, unitCount);
+            return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
+        }
+
+        public int UpdateInventoryCheck(string tableCheck, string inventoryID)
+        {
+            string request = SQLRequests.RecalculationRequests.UpdateInventoryCheckRequest(ReturnCatalogName(),
+                                                                                           inventoryID,
+                                                                                           SelectCarboarderedUnit("ISN_INVENTORY", inventoryID),
+                                                                                           SelectCountWorksUnits(inventoryID, Consts.RecalcConsts.UnitWork.NEED_CARDBOARDED),
+                                                                                           SelectCountFeaturesUnits(inventoryID, Consts.RecalcConsts.UnitFeature.DAMAGED),
+                                                                                           SelectCountWorksUnits(inventoryID, Consts.RecalcConsts.UnitWork.NEED_RESTORATION),
+                                                                                           SelectCountWorksUnits(inventoryID, Consts.RecalcConsts.UnitWork.NEED_BINDING),
+                                                                                           SelectCountWorksUnits(inventoryID, Consts.RecalcConsts.UnitWork.NEED_DISINFECTION),
+                                                                                           SelectCountWorksUnits(inventoryID, Consts.RecalcConsts.UnitWork.NEED_DISINSECTION),
+                                                                                           SelectCountFeaturesUnits(inventoryID, Consts.RecalcConsts.UnitFeature.FADED),
+                                                                                           SelectCountWorksUnits(inventoryID, Consts.RecalcConsts.UnitWork.NEED_ENCIPHERING),
+                                                                                           SelectCountWorksUnits(inventoryID, Consts.RecalcConsts.UnitWork.NEED_COVER_CHANGE),
+                                                                                           SelectCountFeaturesUnits(inventoryID, Consts.RecalcConsts.UnitFeature.FLAMED),
+                                                                                           SelectCountWorksUnits(inventoryID, Consts.RecalcConsts.UnitWork.NEED_KPO)
+                                                                                           );
+            return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
+        }
+
+        public int UpdateFundCheck(string tableName, string idLikeColumn, string objectID, int cardboarded, int needCardboarded, int damaged, int needRestoration, int needBinding, int needDisinfection, int needDisinsection, int fading, int needEnciphering, int needCoverChange, int flamed, int needKPO)
+        {
+            string request = SQLRequests.RecalculationRequests.UpdateObjectCheckRequest(ReturnCatalogName(), tableName, idLikeColumn, objectID, cardboarded, needCardboarded, damaged, needRestoration, needBinding, needDisinfection, needDisinsection, fading, needEnciphering, needCoverChange, flamed, needKPO);
+            return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
+        }
+
+        public int SelectCountFeaturesUnits(string inventoryID, string featureID)
+        {
+            string request = SQLRequests.RecalculationRequests.FeaturesUnitsRequest(ReturnCatalogName(), inventoryID, featureID);
+            return SelectCountAdapter(request, ReturnConnection(), ReturnTransaction());
+        }
+
+        public int SelectCountWorksUnits(string inventoryID, string workID)
+        {
+            string request = SQLRequests.RecalculationRequests.WorksUnitsRequest(ReturnCatalogName(), inventoryID, workID);
+            return SelectCountAdapter(request, ReturnConnection(), ReturnTransaction());
+        }
+
+        public int SelectCarboarderedUnit(string idLikeColumn, string filteredID)
+        {
+            string request = SQLRequests.RecalculationRequests.CardboardedUnitRequest(ReturnCatalogName(), idLikeColumn, filteredID);
+            return SelectCountAdapter(request, ReturnConnection(), ReturnTransaction());
+        }
+
+        public List<Dictionary<string, string>> SelectFundAttachedInventoryCheck(string fundID)
+        {
+            string request = SQLRequests.RecalculationRequests.FundAttachedInventoryCheckRequest(ReturnCatalogName(), fundID);
+            return SelectAdapter(request, allowsNull: true, ReturnConnection(), ReturnTransaction());
+        }
+
+        public int UpdateFundInventoryCount(string fundID, int inventoryCount)
+        {
+            string request = SQLRequests.RecalculationRequests.UpdateFundInventoryCountRequest(ReturnCatalogName(), fundID, inventoryCount);
+            return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
         /// <summary>

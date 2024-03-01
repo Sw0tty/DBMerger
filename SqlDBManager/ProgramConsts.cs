@@ -48,6 +48,47 @@ namespace SqlDBManager
             public const string STOP_ERROR_MESSAGE = "Операция слияния прервана пользователем.";
         }
 
+        public static class RecalcConsts
+        {
+            public static class UnitCategory
+            {
+                public const string OCD = "c";
+                public const string UNIQUE = "a";
+            }
+
+            public static class UnitKind
+            {
+                /// <summary>
+                /// Единица хранения
+                /// </summary>
+                public const string KEEPING = "703";
+
+                /// <summary>
+                /// Единица учета
+                /// </summary>
+                public const string ACCOUNTING = "704";
+            }
+
+            public static class UnitFeature
+            {
+                public const string DAMAGED = "16354";
+                public const string FLAMED = "10055";
+                public const string FADED = "16356";
+            }
+
+            public static class UnitWork
+            {
+                public const string NEED_CARDBOARDED = "9";
+                public const string NEED_RESTORATION = "1";
+                public const string NEED_BINDING = "2";
+                public const string NEED_DISINFECTION = "3";
+                public const string NEED_DISINSECTION = "4";
+                public const string NEED_ENCIPHERING = "7";
+                public const string NEED_COVER_CHANGE = "8";
+                public const string NEED_KPO = "5";
+            }
+        }
+
         public static class ObjectsOfRequests
         {
             public const string DB_TABLE = "dbo";

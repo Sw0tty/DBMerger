@@ -103,6 +103,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DBClasses\SQLAdapters.cs" />
     <Compile Include="DBClasses\SQLRequests.cs" />
+    <Compile Include="RecalcManager.cs" />
     <Compile Include="Validator.cs" />
     <Compile Include="ValuesManager.cs" />
     <Compile Include="Wrappers.cs" />

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
+using static SqlDBManager.Consts.RecalcConsts;
 
 
 namespace SqlDBManager
@@ -287,6 +288,98 @@ namespace SqlDBManager
 
         public static class RecalculationRequests
         {
+            public static string UpdateInventoryUnitCountRequest(string catalogName, string inventoryID, string docType, string carrierType, int unitCount)
+            {
+                string docEqual = (docType == null) ? "is null" : $"= '{docType}'";
+                string carrierEqual = (carrierType == null) ? "is null" : $"= '{carrierType}'";
+
+                return $"USE [{catalogName}]; " +
+                       $"UPDATE [tblDOCUMENT_STATS] SET UNIT_COUNT = {unitCount}, UNIT_REGISTERED = '{unitCount}' WHERE ISN_INVENTORY = {inventoryID} and ISN_DOC_TYPE {docEqual} and CARRIER_TYPE {carrierEqual};";
+            }
+
+/*            public static string SelectInventoryUnitCountRequest()
+            {
+                return "";
+            }*/
+
+            public static string UpdateInventoryDocStatsRequest(string catalogName, string inventoryID, string docType, string carrierType, bool withAccountingUnits,
+                                                                int registered, int ocUnits, int unique, int hasSF, int hasFP, int notFound, int secret, int catalogued,
+                                                                int regRegistered = 0, int regOC = 0, int regUnique = 0, int regHasSF = 0, int regHasFP = 0, int regNotFound = 0, int regSecret = 0, int regCatalogued = 0)
+            {
+                string docEqual = (docType == null) ? "is null" : $"= '{docType}'";
+                string carrierEqual = (carrierType == null) ? "is null" : $"= '{carrierType}'";
+
+                return $"USE [{catalogName}]; " +
+                       "UPDATE [tblDOCUMENT_STATS] " +
+                       $"SET UNIT_COUNT = '{registered}', UNIT_REGISTERED = '{registered}', UNIT_OC_COUNT = '{ocUnits}', UNITS_UNIQUE = '{unique}', UNIT_HAS_SF = '{hasSF}', UNIT_HAS_FP = '{hasFP}', UNITS_NOT_FOUND = '{notFound}', SECRET_UNITS = '{secret}', UNITS_CATALOGUED = '{catalogued}' " +
+                       (withAccountingUnits ? $", REG_UNIT = '{regRegistered}', REG_UNIT_REGISTERED = '{regRegistered}', REG_UNIT_OC = '{regOC}', REG_UNITS_UNIQUE = '{regUnique}', REG_UNIT_HAS_SF = '{regHasSF}', REG_UNIT_HAS_FP = '{regHasFP}', REG_UNITS_NOT_FOUND = '{regNotFound}', SECRET_REG_UNITS = '{regSecret}', REG_UNITS_CTALOGUE = '{regCatalogued}' " : "") +
+                       $"WHERE ISN_INVENTORY = {inventoryID} and ISN_DOC_TYPE {docEqual} and CARRIER_TYPE {carrierEqual};";
+            }
+
+            public static string UpdateCheckRequest(string catalogName, string tableCheck, string idLikeColumn, string filteredID, int unitCount)
+            {
+                return $"USE [{catalogName}]; " +
+                       $"UPDATE [{tableCheck}] SET CARDBOARDED = '{unitCount}' WHERE {idLikeColumn} = {filteredID};";
+            }
+
+            public static string UpdateInventoryCheckRequest(string catalogName, string inventoryID, int cardboarded, int needCardboarded, int damaged, int needRestoration, int needBinding, int needDisinfection, int needDisinsection, int fading, int needEnciphering, int needCoverChange, int flamed, int needKPO)
+            {
+/*                return $"USE [{catalogName}]; " +
+                       $"UPDATE [{tableCheck}] SET CARDBOARDED = '{unitCount}' WHERE {idLikeColumn} = {filteredID};" +*/
+
+                return $"USE [{catalogName}]; " +
+                       $"UPDATE [tblINVENTORY_CHECK] SET CARDBOARDED = '{cardboarded}', UNITS_NEED_CARDBOARDED = '{needCardboarded}', UNITS_DBR = '{damaged}', UNITS_NEED_RESTORATION = '{needRestoration}', UNITS_NEED_BINDING = '{needBinding}', UNITS_NEED_DISINFECTION = '{needDisinfection}', UNITS_NEED_DISINSECTION = '{needDisinsection}', FADING_PAGES = '{fading}', UNITS_NEED_ENCIPHERING = '{needEnciphering}', UNITS_NEED_COVER_CHANGE = '{needCoverChange}', UNITS_INFLAMMABLE = '{flamed}', UNITS_NEED_KPO = '{needKPO}' " +
+                       $"WHERE ISN_INVENTORY = {inventoryID};";
+            }
+
+            public static string UpdateObjectCheckRequest(string catalogName, string tableName, string idLikeColumn, string objectID, int cardboarded, int needCardboarded, int damaged, int needRestoration, int needBinding, int needDisinfection, int needDisinsection, int fading, int needEnciphering, int needCoverChange, int flamed, int needKPO)
+            {
+                return $"USE [{catalogName}]; " +
+                       $"UPDATE [{tableName}] SET CARDBOARDED = '{cardboarded}', UNITS_NEED_CARDBOARDED = '{needCardboarded}', UNITS_DBR = '{damaged}', UNITS_NEED_RESTORATION = '{needRestoration}', UNITS_NEED_BINDING = '{needBinding}', UNITS_NEED_DISINFECTION = '{needDisinfection}', UNITS_NEED_DISINSECTION = '{needDisinsection}', FADING_PAGES = '{fading}', UNITS_NEED_ENCIPHERING = '{needEnciphering}', UNITS_NEED_COVER_CHANGE = '{needCoverChange}', UNITS_INFLAMMABLE = '{flamed}', UNITS_NEED_KPO = '{needKPO}' " +
+                       $"WHERE {idLikeColumn} = {objectID};";
+            }
+
+            public static string InventoryUnitCountRequest(string catalogName, string unitKind, string inventoryID, string docType)
+            {
+                return $"USE [{catalogName}]; " +
+                       $"SELECT COUNT(*) FROM [tblUNIT] WHERE Deleted = '0' and UNIT_KIND = '{unitKind}' and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = {inventoryID}) and ISN_INVENTORY = {inventoryID} and ISN_DOC_TYPE = '{docType}';";
+            }
+
+            public static string Ultra_InventoryUnitCountRequest(string catalogName, string unitKind, string inventoryID, string docType, string signColumn, string sign, string signValue)
+            {
+                return $"USE [{catalogName}]; " +
+                       $"SELECT COUNT(*) FROM [tblUNIT] WHERE Deleted = '0' and UNIT_KIND = '{unitKind}' and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = {inventoryID}) and ISN_INVENTORY = {inventoryID} and ISN_DOC_TYPE = '{docType}' and {signColumn} {sign} '{signValue}';";
+            }
+
+            public static string FeaturesUnitsRequest(string catalogName, string inventoryID, string featureID)
+            {
+                return $"USE [{catalogName}]; " +
+                       "SELECT COUNT(*) FROM [tblREF_FEATURE] AS ref_feature " +
+                       $"JOIN [tblUNIT] AS unit ON ISN_OBJ = unit.ISN_UNIT WHERE unit.Deleted = '0' and unit.ISN_INVENTORY = {inventoryID} and ref_feature.KIND = '703' and ref_feature.ISN_FEATURE = '{featureID}';";
+            }
+
+            public static string WorksUnitsRequest(string catalogName, string inventoryID, string workID)
+            {
+                return $"USE [{catalogName}]; " +
+                       $"SElECT COUNT(*) FROM [tblUNIT_REQUIRED_WORK] AS req_work JOIN [tblUNIT] AS unit ON unit.ISN_UNIT = req_work.ISN_UNIT WHERE unit.Deleted = '0' and unit.ISN_INVENTORY = {inventoryID} and req_work.IS_ACTUAL = 'Y' and req_work.ISN_WORK = '{workID}'";
+            }
+
+            public static string CardboardedUnitRequest(string catalogName, string idLikeColumn, string filteredID)
+            {
+                return $"SELECT COUNT(*) FROM [{catalogName}].[dbo].[tblUNIT] WHERE {idLikeColumn} = {filteredID} and CARDBOARDED = 'Y' and Deleted = '0';";
+            }
+
+            public static string UpdateFundInventoryCountRequest(string catalogName, string fundID, int inventoryCount)
+            {
+                return $"UPDATE [{catalogName}].[dbo].[tblFUND] SET INVENTORY_COUNT = '{inventoryCount}', AUTO_INVENTORY_COUNT = '{inventoryCount}' WHERE ISN_FUND = {fundID};";
+            }
+
+            public static string FundAttachedInventoryCheckRequest(string catalogName, string fundID)
+            {
+                return $"USE [{catalogName}]; " +
+                       $"SELECT inv_check.* FROM [tblINVENTORY_CHECK] AS inv_check JOIN [tblINVENTORY] AS inv ON inv_check.ISN_INVENTORY = inv.ISN_INVENTORY WHERE inv.Deleted = '0' and inv.ISN_FUND = {fundID}";
+            }
+
             public static string CountAllFunds(string catalogName, int passportYear)
             {
                 return $"SELECT COUNT(ISN_FUND) FROM [{catalogName}].[dbo].[tblFUND] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and Deleted = '0';";
