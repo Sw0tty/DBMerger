@@ -250,6 +250,16 @@ namespace SqlDBManager
             return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
+        public int UpdateFundDocStats(string fundID, string docType, string carrierType, bool withAccountingUnits,
+                                      int registered, int ocUnits, int unique, int hasSF, int hasFP, int notFound, int secret, int catalogued,
+                                      int regRegistered = 0, int regOC = 0, int regUnique = 0, int regHasSF = 0, int regHasFP = 0, int regNotFound = 0, int regSecret = 0, int regCatalogued = 0)
+        {
+            string request = SQLRequests.RecalculationRequests.UpdateFundDocStatsRequest(ReturnCatalogName(), fundID, docType, carrierType, withAccountingUnits,
+                                                                                         registered, ocUnits, unique, hasSF, hasFP, notFound, secret, catalogued,
+                                                                                         regRegistered, regOC, regUnique, regHasSF, regHasFP, regNotFound, regSecret, regCatalogued);
+            return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
+        }
+
         public int UpdateCheck(string tableCheck, string idLikeColumn, string filteredID, int unitCount)
         {
             string request = SQLRequests.RecalculationRequests.UpdateCheckRequest(ReturnCatalogName(), tableCheck, idLikeColumn, filteredID, unitCount);

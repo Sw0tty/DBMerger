@@ -297,11 +297,6 @@ namespace SqlDBManager
                        $"UPDATE [tblDOCUMENT_STATS] SET UNIT_COUNT = {unitCount}, UNIT_REGISTERED = '{unitCount}' WHERE ISN_INVENTORY = {inventoryID} and ISN_DOC_TYPE {docEqual} and CARRIER_TYPE {carrierEqual};";
             }
 
-/*            public static string SelectInventoryUnitCountRequest()
-            {
-                return "";
-            }*/
-
             public static string UpdateInventoryDocStatsRequest(string catalogName, string inventoryID, string docType, string carrierType, bool withAccountingUnits,
                                                                 int registered, int ocUnits, int unique, int hasSF, int hasFP, int notFound, int secret, int catalogued,
                                                                 int regRegistered = 0, int regOC = 0, int regUnique = 0, int regHasSF = 0, int regHasFP = 0, int regNotFound = 0, int regSecret = 0, int regCatalogued = 0)
@@ -314,6 +309,20 @@ namespace SqlDBManager
                        $"SET UNIT_COUNT = '{registered}', UNIT_REGISTERED = '{registered}', UNIT_OC_COUNT = '{ocUnits}', UNITS_UNIQUE = '{unique}', UNIT_HAS_SF = '{hasSF}', UNIT_HAS_FP = '{hasFP}', UNITS_NOT_FOUND = '{notFound}', SECRET_UNITS = '{secret}', UNITS_CATALOGUED = '{catalogued}' " +
                        (withAccountingUnits ? $", REG_UNIT = '{regRegistered}', REG_UNIT_REGISTERED = '{regRegistered}', REG_UNIT_OC = '{regOC}', REG_UNITS_UNIQUE = '{regUnique}', REG_UNIT_HAS_SF = '{regHasSF}', REG_UNIT_HAS_FP = '{regHasFP}', REG_UNITS_NOT_FOUND = '{regNotFound}', SECRET_REG_UNITS = '{regSecret}', REG_UNITS_CTALOGUE = '{regCatalogued}' " : "") +
                        $"WHERE ISN_INVENTORY = {inventoryID} and ISN_DOC_TYPE {docEqual} and CARRIER_TYPE {carrierEqual};";
+            }
+
+            public static string UpdateFundDocStatsRequest(string catalogName, string fundID, string docType, string carrierType, bool withAccountingUnits,
+                                                                int registered, int ocUnits, int unique, int hasSF, int hasFP, int notFound, int secret, int catalogued,
+                                                                int regRegistered = 0, int regOC = 0, int regUnique = 0, int regHasSF = 0, int regHasFP = 0, int regNotFound = 0, int regSecret = 0, int regCatalogued = 0)
+            {
+                string docEqual = (docType == null) ? "is null" : $"= '{docType}'";
+                string carrierEqual = (carrierType == null) ? "is null" : $"= '{carrierType}'";
+
+                return $"USE [{catalogName}]; " +
+                       "UPDATE [tblDOCUMENT_STATS] " +
+                       $"SET UNIT_COUNT = '{registered}', UNIT_INVENTORY = '{registered}', UNIT_REGISTERED = '{registered}', UNIT_OC_COUNT = '{ocUnits}', UNITS_UNIQUE = '{unique}', UNIT_HAS_SF = '{hasSF}', UNIT_HAS_FP = '{hasFP}', UNITS_NOT_FOUND = '{notFound}', SECRET_UNITS = '{secret}', UNITS_CATALOGUED = '{catalogued}' " +
+                       (withAccountingUnits ? $", REG_UNIT = '{regRegistered}', REG_UNIT_INVENTORY = '{registered}', REG_UNIT_REGISTERED = '{regRegistered}', REG_UNIT_OC = '{regOC}', REG_UNITS_UNIQUE = '{regUnique}', REG_UNIT_HAS_SF = '{regHasSF}', REG_UNIT_HAS_FP = '{regHasFP}', REG_UNITS_NOT_FOUND = '{regNotFound}', SECRET_REG_UNITS = '{regSecret}', REG_UNITS_CTALOGUE = '{regCatalogued}' " : "") +
+                       $"WHERE ISN_INVENTORY is NULL and ISN_FUND = {fundID} and ISN_DOC_TYPE {docEqual} and CARRIER_TYPE {carrierEqual};";
             }
 
             public static string UpdateCheckRequest(string catalogName, string tableCheck, string idLikeColumn, string filteredID, int unitCount)
@@ -412,17 +421,17 @@ namespace SqlDBManager
 
             public static string CountAllFunds(string catalogName, int passportYear)
             {
-                return $"SELECT COUNT(ISN_FUND) FROM [{catalogName}].[dbo].[tblFUND] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and Deleted = '0';";
+                return $"SELECT COUNT(*) FROM [{catalogName}].[dbo].[tblFUND] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and Deleted = '0';";
             }
 
             public static string CountTypeFunds(string catalogName, int passportYear, string fundType)
             {
-                return $"SELECT COUNT(ISN_FUND) FROM [{catalogName}].[dbo].[tblFUND] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and ISN_DOC_TYPE = '{fundType}' and Deleted = '0';";
+                return $"SELECT COUNT(*) FROM [{catalogName}].[dbo].[tblFUND] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and ISN_DOC_TYPE = '{fundType}' and Deleted = '0';";
             }
 
             public static string CountAllInCategoryFunds(string catalogName, int passportYear, List<string> docsFundTypes, char fundType)
             {
-                return $"SELECT COUNT(ISN_FUND) FROM [{catalogName}].[dbo].[tblFUND] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and ISN_DOC_TYPE in ({string.Join(", ", docsFundTypes)}) and CARRIER_TYPE = '{fundType}' and Deleted = '0';";
+                return $"SELECT COUNT(*) FROM [{catalogName}].[dbo].[tblFUND] where CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and ISN_DOC_TYPE in ({string.Join(", ", docsFundTypes)}) and CARRIER_TYPE = '{fundType}' and Deleted = '0';";
             }
 
             public static string CountAllInCategoryInventory(string catalogName, int passportYear, List<string> docsFundTypes, char fundType)

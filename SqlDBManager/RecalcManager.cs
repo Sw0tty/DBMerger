@@ -1,9 +1,5 @@
-﻿using NotesNamespace;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Collections.Generic;
+using NotesNamespace;
 using System;
 
 
@@ -25,18 +21,13 @@ namespace SqlDBManager
             string idLikeColumn = "ISN_INVENTORY";
 
             List<Dictionary<string, string>> tableData = MainCatalog.SelectAllFrom(tableName, MainCatalog.SelectColumnsNames(tableName, null), true);
-
-            // Trad
             List<Tuple<string, string>> pairOfTrad = new List<Tuple<string, string>>() { new Tuple<string, string>("P", "1"), new Tuple<string, string>("P", "2"), new Tuple<string, string>("P", "3"), new Tuple<string, string>("P", "4"), new Tuple<string, string>("A", "5"), new Tuple<string, string>("A", "6"), new Tuple<string, string>("A", "7"), new Tuple<string, string>("A", "8"), new Tuple<string, string>("M", "9") };
-
-            // Elect
             List<Tuple<string, string>> pairOfElect = new List<Tuple<string, string>>() { new Tuple<string, string>("E", "4"), new Tuple<string, string>("E", "5"), new Tuple<string, string>("E", "6"), new Tuple<string, string>("E", "7"), new Tuple<string, string>("E", "8") };
 
             foreach (Dictionary<string, string> row in tableData)
             {
                 int catRegistered = 0, catOcUnits = 0, catUnique = 0, catHasSF = 0, catHasFP = 0, catNotFound = 0, catSecret = 0, catCatalogued = 0;
                 int catRegRegistered = 0, catRegOcUnits = 0, catRegUnique = 0, catRegHasSF = 0, catRegHasFP = 0, catRegNotFound = 0, catRegSecret = 0, catRegCatalogued = 0;
-
                 int allRegistered = 0, allOcUnits = 0, allUnique = 0, allHasSF = 0, allHasFP = 0, allNotFound = 0, allSecret = 0, allCatalogued = 0;
                 int allRegRegistered = 0, allRegOcUnits = 0, allRegUnique = 0, allRegHasSF = 0, allRegHasFP = 0, allRegNotFound = 0, allRegSecret = 0, allRegCatalogued = 0;
 
@@ -60,7 +51,6 @@ namespace SqlDBManager
 
                             if (withAccountingUnits)
                             {
-                                // тогда нужно 703 и 704
                                 regRegistered = MainCatalog.SelectInventoryUnitCount(Consts.RecalcConsts.UnitKind.ACCOUNTING, row[idLikeColumn], pair.Item2);
                                 regOcUnits = MainCatalog.Ultra_SelectInventoryUnitCount(Consts.RecalcConsts.UnitKind.ACCOUNTING, row[idLikeColumn], pair.Item2, "UNIT_CATEGORY", "=", Consts.RecalcConsts.UnitCategory.OCD);
                                 regUnique = MainCatalog.Ultra_SelectInventoryUnitCount(Consts.RecalcConsts.UnitKind.ACCOUNTING, row[idLikeColumn], pair.Item2, "UNIT_CATEGORY", "=", Consts.RecalcConsts.UnitCategory.UNIQUE);
@@ -105,12 +95,10 @@ namespace SqlDBManager
                             allRegSecret += regSecret;
                             allRegCatalogued += regCatalogued;
 
-                            // обновление строк не считая строки Всего и блока Всего
                             MainCatalog.UpdateInventoryDocStats(row[idLikeColumn], pair.Item2, pair.Item1, withAccountingUnits,
                                                                 registered, ocUnits, unique, hasSF, hasFP, notFound, secret, catalogued,
                                                                 regRegistered, regOcUnits, regUnique, regHasSF, regHasFP, regNotFound, regSecret, regCatalogued);
 
-                            // Обновление строки всего в блоке
                             if (pair.Item2 == "4" || pair.Item2 == "8")
                             {
                                 MainCatalog.UpdateInventoryDocStats(row[idLikeColumn], null, pair.Item1, withAccountingUnits,
@@ -167,13 +155,10 @@ namespace SqlDBManager
                             catRegSecret += regSecret;
                             catRegCatalogued += regCatalogued;
 
-                            // обновление строк не считая строки Всего и блока Всего
                             MainCatalog.UpdateInventoryDocStats(row[idLikeColumn], pair.Item2, pair.Item1, withAccountingUnits,
                                                                 registered, ocUnits, unique, hasSF, hasFP, notFound, secret, catalogued,
                                                                 regRegistered, regOcUnits, regUnique, regHasSF, regHasFP, regNotFound, regSecret, regCatalogued);
 
-
-                            // Обновление строки всего в блоке
                             if (pair.Item2 == "8")
                             {
                                 MainCatalog.UpdateInventoryDocStats(row[idLikeColumn], null, pair.Item1, withAccountingUnits,
@@ -227,34 +212,11 @@ namespace SqlDBManager
                 }
                 // -- FundCheck recalc --
 
-
-
-
-
                 // -- FundDocStats recalc --
                 List<Tuple<string, string>> pairOfTypes = new List<Tuple<string, string>>() { new Tuple<string, string>("P", "1"), new Tuple<string, string>("P", "2"), new Tuple<string, string>("P", "3"), new Tuple<string, string>("P", "4"), new Tuple<string, string>("A", "5"), new Tuple<string, string>("A", "6"), new Tuple<string, string>("A", "7"), new Tuple<string, string>("A", "8"), new Tuple<string, string>("M", "9"), new Tuple<string, string>("E", "4"), new Tuple<string, string>("E", "5"), new Tuple<string, string>("E", "6"), new Tuple<string, string>("E", "7"), new Tuple<string, string>("E", "8"), new Tuple<string, string>("null", "null"), new Tuple<string, string>("E", "null"), new Tuple<string, string>("P", "null"), new Tuple<string, string>("A", "null") };
-
                 List<Dictionary<string, string>> fundAttachecInventoryDocStats = MainCatalog.SelectFundAttachedInventoryDocStats(row[idLikeColumn]);
-                int unitsCount = 0;
-                int regUnitsCount = 0;
-                int unitsOCCount = 0;
-                int regUnitsOCCount = 0;
-                int unitsHasSF = 0;
-                int regUnitsHasSF = 0;
-                int unitsHasFP = 0;
-                int regUnitHasFP = 0;
-                int unitsNotFoundCount = 0;
-                int regUnitNotFoundCount = 0;
-                int unitsSecretCount = 0;
-                int regUnitSecretCount = 0;
-                int unitsInSearchCount = 0;
-                int regUnitInSearchCount = 0;
-                int unintsUniqueCount = 0;
-                int reqUnintsUniqueCount = 0;
-                int unitsCatalaguedCount = 0;
-                int regUnitsCatalaguedCount = 0;
-
-
+                int unitsCount = 0, unitsOCCount = 0, unitsHasSF = 0, unitsHasFP = 0, unitsNotFoundCount = 0, unitsSecretCount = 0, unitsInSearchCount = 0, unintsUniqueCount = 0, unitsCatalaguedCount = 0;
+                int regUnitsCount = 0, regUnitsOCCount = 0, regUnitsHasSF = 0, regUnitHasFP = 0, regUnitNotFoundCount = 0, regUnitSecretCount = 0, regUnitInSearchCount = 0, reqUnintsUniqueCount = 0, regUnitsCatalaguedCount = 0;
 
                 foreach (Tuple<string, string> pairOfType in pairOfTypes)
                 {
@@ -282,15 +244,11 @@ namespace SqlDBManager
                             regUnitsCatalaguedCount += HelpFunction.ConventToInt(invDocStat["REG_UNITS_CTALOGUE"]);
                         }
                     }
+                    MainCatalog.UpdateFundDocStats(row[idLikeColumn], pairOfType.Item2, pairOfType.Item1, true, unitsCount, unitsOCCount, unintsUniqueCount, unitsHasSF, unitsHasFP, unitsNotFoundCount, unitsSecretCount, unitsCatalaguedCount,
+                                                   regUnitsCount, regUnitsOCCount, reqUnintsUniqueCount, regUnitsHasSF, regUnitHasFP, regUnitNotFoundCount, regUnitSecretCount, regUnitsCatalaguedCount);
 
-
-
-
-                    unitsCount = regUnitsCount = 0;
+                    unitsCount = regUnitsCount = unitsOCCount = regUnitsOCCount = unitsHasSF = regUnitsHasSF = unitsHasFP = regUnitHasFP = unitsNotFoundCount = regUnitNotFoundCount = unitsSecretCount = regUnitSecretCount = unitsInSearchCount = regUnitInSearchCount = unintsUniqueCount = reqUnintsUniqueCount = unitsCatalaguedCount = regUnitsCatalaguedCount = 0;
                 }
-
-
-                
                 // -- FundDocStats recalc --
             }
         }
@@ -311,6 +269,7 @@ namespace SqlDBManager
 
                 foreach (Tuple<string, string> pair in pairOfTypes)
                 {
+                    // при создании сразу пересчитанные значения.
                     MainCatalog.CreatePassportStat($"{passportID}", $"{statID}", pair.Item2, pair.Item1);
 
 
