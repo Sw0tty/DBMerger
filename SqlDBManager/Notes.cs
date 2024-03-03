@@ -173,6 +173,61 @@ namespace NotesNamespace
     // -------------------- recalc notes --------------------------
 
 
+
+
+
+    /*
+     
+     
+     create new passport
+
+    
+  USE [5009_main];
+  INSERT INTO [tblARCHIVE_PASSPORT]([ID]
+      ,[OwnerID]
+      ,[CreationDateTime]
+      ,[DocID]
+      ,[RowID]
+      ,[StatusID]
+      ,[Deleted]
+	  ,[ISN_PASSPORT]
+      ,[ISN_ARCHIVE]
+      ,[PASS_YEAR]
+      ,[MICROFORM_FRAME_COUNT]
+      ,[LP_DOC_COUNT]
+      ,[ALL_SII_COUNT]
+      ,[GUIDE_COUNT]
+      ,[GUIDE_LS]
+      ,[INVENTORY_COUNT]
+      ,[CATALOUGUE_COUNT]
+      ,[INDEX_COUNT]
+      ,[REVIEW_COUNT]
+      ,[HISTORY_COUNT]
+      ,[ATD_COUNT]
+      ,[BOOK_COUNT]
+      ,[NEWSPAPER_COUNT]
+      ,[MAGAZINE_COUNT]
+      ,[OTHER_PRINT_COUNT]
+      ,[ARH_BUILDING_COUNT]
+      ,[SPEC_BUILDING_COUNT]
+      ,[PRISP_BUILDING_COUNT]
+      ,[TOTAL_SPACE]
+      ,[STORAGE_SPACE]
+      ,[SPACE_WITHOUT_SECUR]
+      ,[SPACE_WITHOU_SECURITY_PROC]
+      ,[SPACE_WITHOUT_ALARM]
+      ,[SPACE_WITHOUT_ALARM_PROC]
+      ,[SHELF_LENGTH]
+      ,[METAL_SHELF_LENGTH]
+      ,[FREE_SHELF_LENGTH]
+      ,[LOAD_LEVEL]
+      ,[UNITS_CARDBOARDED]) VALUES(NEWID(), '12345678-9012-3456-7890-123456789012', SYSDATETIMEOFFSET(), (SELECT ID FROM [tblARCHIVE]), '0', '4FF026A0-6EEB-4500-90F8-15EBE74B66C9', '0', '33131313', (SELECT ISN_ARCHIVE FROM [tblARCHIVE]), '2333', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0');
+     
+     
+     
+     
+     */
+
     /*
     
     catalogName = 5585

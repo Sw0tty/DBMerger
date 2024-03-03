@@ -776,7 +776,7 @@ namespace SqlDBManager
                             MessageBox.Show(ex.Message);
                         }*/
 
-            DBCatalog testDBCatalog = new DBCatalog(@"(local)\SQL2022", "5585", "sa", "123");
+            DBCatalog testDBCatalog = new DBCatalog(@"(local)\SQLexpress2022", "5009_d", "sa", "123");
 
             testDBCatalog.OpenConnection();
             testDBCatalog.StartTransaction();
@@ -790,7 +790,8 @@ namespace SqlDBManager
 
             RecalcManager recalcManager = new RecalcManager(testDBCatalog);
 
-            recalcManager.RecalcInventory();
+            recalcManager.RecalcPassports();
+            //recalcManager.RecalcInventory();
             //recalcManager.RecalcFund();
 
 

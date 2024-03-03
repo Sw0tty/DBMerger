@@ -377,7 +377,37 @@ namespace SqlDBManager
             public static string FundAttachedInventoryCheckRequest(string catalogName, string fundID)
             {
                 return $"USE [{catalogName}]; " +
-                       $"SELECT inv_check.* FROM [tblINVENTORY_CHECK] AS inv_check JOIN [tblINVENTORY] AS inv ON inv_check.ISN_INVENTORY = inv.ISN_INVENTORY WHERE inv.Deleted = '0' and inv.ISN_FUND = {fundID}";
+                       $"SELECT inv_check.* FROM [tblINVENTORY_CHECK] AS inv_check JOIN [tblINVENTORY] AS inv ON inv_check.ISN_INVENTORY = inv.ISN_INVENTORY WHERE inv.Deleted = '0' and inv.ISN_FUND = {fundID};";
+            }
+
+            public static string FundAttachedInventoryDocStatsRequest(string catalogName, string fundID)
+            {
+                return $"USE [{catalogName}]; " +
+                       $"SELECT doc_stats.* FROM [tblDOCUMENT_STATS] AS doc_stats JOIN [tblINVENTORY] AS inv ON inv.ISN_INVENTORY = doc_stats.ISN_INVENTORY WHERE inv.Deleted = '0' and inv.ISN_FUND = {fundID};";
+            }
+
+            public static string YearOfFirstRecordRequest(string catalogName)
+            {
+                return $"SELECT TOP 1 YEAR(CreationDateTime) FROM [{catalogName}].[dbo].[tblFUND] order by CreationDateTime";
+            }
+
+            public static string CreatePassportRequest(string catalogName, string IDLastRecord, string year)
+            {
+                return $"USE [{catalogName}]; " +
+                       $"INSERT INTO [tblARCHIVE_PASSPORT] VALUES(NEWID(), '12345678-9012-3456-7890-123456789012', SYSDATETIMEOFFSET(), (SELECT ID FROM [tblARCHIVE]), '0', '4FF026A0-6EEB-4500-90F8-15EBE74B66C9', '0', '{IDLastRecord}', (SELECT ISN_ARCHIVE FROM [tblARCHIVE]), '{year}', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0');";
+            }
+
+            public static string CreatePassportStatRequest(string catalogName, string passportID, string recordID, string docType, string carrierType)
+            {
+                return $"USE [{catalogName}]; " +
+                       $"INSERT INTO [tblARCHIVE_STATS] VALUES(NEWID(), '12345678-9012-3456-7890-123456789012', SYSDATETIMEOFFSET(), (SELECT ID FROM [tblARCHIVE_PASSPORT] WHERE ISN_PASSPORT = ''), '0', '{recordID}', '{docType}', '{carrierType}', {passportID}, '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0');";
+            }
+
+            public static string DeleteArchivePassportsRequest(string catalogName)
+            {
+                return $"USE [{catalogName}]; " +
+                       "DELETE [tblARCHIVE_STATS]; " +
+                       "DELETE [tblARCHIVE_PASSPORT];";
             }
 
             public static string CountAllFunds(string catalogName, int passportYear)

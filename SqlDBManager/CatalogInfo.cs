@@ -210,6 +210,30 @@ namespace SqlDBManager
             return SelectCountAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
+        public string SelectFirstYear()
+        {
+            string request = SQLRequests.RecalculationRequests.YearOfFirstRecordRequest(ReturnCatalogName());
+            return SelectSingleValueAdapter(request, likeValue: false, ReturnConnection(), ReturnTransaction());
+        }
+
+        public int DeleteArchivePassports()
+        {
+            string request = SQLRequests.RecalculationRequests.DeleteArchivePassportsRequest(ReturnCatalogName());
+            return DeleteAdapter(request, ReturnConnection(), ReturnTransaction());
+        }
+
+        public int CreatePassport(string IDLastRecord, string passportYear)
+        {
+            string request = SQLRequests.RecalculationRequests.CreatePassportRequest(ReturnCatalogName(), IDLastRecord, passportYear);
+            return InsertAdapter(request, ReturnConnection(), ReturnTransaction());
+        }
+
+        public int CreatePassportStat(string passportID, string statID, string docType, string carrierType)
+        {
+            string request = SQLRequests.RecalculationRequests.CreatePassportStatRequest(ReturnCatalogName(), passportID, statID, docType, carrierType);
+            return InsertAdapter(request, ReturnConnection(), ReturnTransaction());
+        }
+
         public int UpdateInventoryCount(string inventoryID, string docType, string carrierType, int unitCount)
         {
             string request = SQLRequests.RecalculationRequests.UpdateInventoryUnitCountRequest(ReturnCatalogName(), inventoryID, docType, carrierType, unitCount);
@@ -279,6 +303,12 @@ namespace SqlDBManager
         public List<Dictionary<string, string>> SelectFundAttachedInventoryCheck(string fundID)
         {
             string request = SQLRequests.RecalculationRequests.FundAttachedInventoryCheckRequest(ReturnCatalogName(), fundID);
+            return SelectAdapter(request, allowsNull: true, ReturnConnection(), ReturnTransaction());
+        }
+
+        public List<Dictionary<string, string>> SelectFundAttachedInventoryDocStats(string fundID)
+        {
+            string request = SQLRequests.RecalculationRequests.FundAttachedInventoryDocStatsRequest(ReturnCatalogName(), fundID);
             return SelectAdapter(request, allowsNull: true, ReturnConnection(), ReturnTransaction());
         }
 
