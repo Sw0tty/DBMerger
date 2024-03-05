@@ -789,7 +789,7 @@ namespace SqlDBManager
                             MessageBox.Show(ex.Message);
                         }*/
 
-            DBCatalog testDBCatalog = new DBCatalog(@"(local)\SQL2022", "5585_2", "sa", "123");
+            DBCatalog testDBCatalog = new DBCatalog(@"(local)\SQLEXPRESS2022", "5585_2", "sa", "123");
 
             testDBCatalog.OpenConnection();
             testDBCatalog.StartTransaction();
