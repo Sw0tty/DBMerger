@@ -402,6 +402,19 @@ namespace SqlDBManager
 
                                 e.Result = "Слияние успешно завершено!";
                                 ProgramMessages.MergeCompletedMessage();
+
+                                if (!recalc_v1.Checked)
+                                {
+                                    RecalcManager recalcManager = new RecalcManager(mainCatalog);
+                                    recalcManager.RecalcInventory();
+                                    recalcManager.RecalcFund();
+
+                                    if (recalc_v3.Checked)
+                                        recalcManager.RecalcAndCreatePassport();
+
+                                    mainCatalog.CommitTransaction();
+                                }
+
                             }
                             else
                             {
@@ -776,7 +789,7 @@ namespace SqlDBManager
                             MessageBox.Show(ex.Message);
                         }*/
 
-            DBCatalog testDBCatalog = new DBCatalog(@"(local)\SQLexpress2022", "5009_d", "sa", "123");
+            DBCatalog testDBCatalog = new DBCatalog(@"(local)\SQL2022", "5585_2", "sa", "123");
 
             testDBCatalog.OpenConnection();
             testDBCatalog.StartTransaction();
@@ -790,7 +803,8 @@ namespace SqlDBManager
 
             RecalcManager recalcManager = new RecalcManager(testDBCatalog);
 
-            recalcManager.RecalcPassports();
+            recalcManager.RecalcAndCreatePassport();
+            //recalcManager.RecalcPassports();
             //recalcManager.RecalcInventory();
             //recalcManager.RecalcFund();
 
@@ -801,7 +815,7 @@ namespace SqlDBManager
 
             MessageBox.Show("End of recalc tests...");
 
-            string request = $"SELECT * FROM [TestDB].[dbo].[eqUsers];";
+            /*string request = $"SELECT * FROM [TestDB].[dbo].[eqUsers];";
             string request2 = $"SELECT COUNT(*) FROM [TestDB].[dbo].[eqUsers];";
 
             int count = testCatalog.TestSelectCountAdapter(request2);
@@ -847,7 +861,7 @@ namespace SqlDBManager
                         }
                     }
                 }
-            }
+            }*/
         }
 
         public void Mess()
@@ -1066,16 +1080,6 @@ namespace SqlDBManager
         private void flowLayoutPanel1_Resize(object sender, EventArgs e)
         {
             groupBox5.Height = groupBox5.Height / 2 + flowLayoutPanel1.Height;
-        }
-
-        private void recalc_v2_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void recalc_v3_CheckedChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }

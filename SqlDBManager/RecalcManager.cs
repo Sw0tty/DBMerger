@@ -256,11 +256,15 @@ namespace SqlDBManager
         public void RecalcPassports()
         {
             List<Tuple<string, string>> pairOfTypes = new List<Tuple<string, string>>() { new Tuple<string, string>("P", "1"), new Tuple<string, string>("P", "2"), new Tuple<string, string>("P", "3"), new Tuple<string, string>("P", "4"), new Tuple<string, string>("A", "5"), new Tuple<string, string>("A", "6"), new Tuple<string, string>("A", "7"), new Tuple<string, string>("A", "8"), new Tuple<string, string>("M", "9"), new Tuple<string, string>("E", "4"), new Tuple<string, string>("E", "5"), new Tuple<string, string>("E", "6"), new Tuple<string, string>("E", "7"), new Tuple<string, string>("E", "8"), new Tuple<string, string>("null", "null"), new Tuple<string, string>("E", "null"), new Tuple<string, string>("P", "null"), new Tuple<string, string>("A", "null") };
+            int catFundCount = 0, catUnitCount = 0, catInvUnitCount = 0, catSecretUnitCount = 0, catUniqueUnitCount = 0, catOCUnitCount = 0, catSomething = 0, catAccountingUnitCount = 0, catInvAccountingUnitCount = 0;
 
+            // rowID, docType, carrierType, recordCarrierType, selectingColumn
+            List<Tuple<string, string, string, string, string>> paramsForRequest = new List<Tuple<string, string, string, string, string>>() { new Tuple<string, string, string, string, string>("1", "1", "P", "T", "") };
             MainCatalog.DeleteArchivePassports();
 
             string startYear = MainCatalog.SelectFirstYear();
             int passportID = 1;
+            int passportRowID = 0;
             int statID = 1;
 
             for (int year = Convert.ToInt32(startYear); year <= DateTime.Now.Year; year++)
@@ -276,6 +280,53 @@ namespace SqlDBManager
                     statID++;
                 }
                 passportID++;
+            }
+        }
+
+        public void RecalcAndCreatePassport()
+        {
+            MainCatalog.DeleteArchivePassports();
+
+            string startYear = MainCatalog.SelectFirstYear();
+
+            List<Tuple<string, string, string, string>> paramsForRequest = new List<Tuple<string, string, string, string>>() {
+                new Tuple<string, string, string, string>("1", "P", "1", "T"),
+                new Tuple<string, string, string, string>("2", "P", "2", "T"),
+                new Tuple<string, string, string, string>("3", "P", "3", "T"),
+                new Tuple<string, string, string, string>("4", "P", "4", "T"),
+                new Tuple<string, string, string, string>("0", "P", null, null),
+                new Tuple<string, string, string, string>("1", "A", "5", "T"),
+                new Tuple<string, string, string, string>("2", "A", "6", "T"),
+                new Tuple<string, string, string, string>("3", "A", "7", "T"),
+                new Tuple<string, string, string, string>("4", "A", "8", "T"),
+                new Tuple<string, string, string, string>("0", "A", null, null),
+                new Tuple<string, string, string, string>("0", "M", "9", "T"),
+                new Tuple<string, string, string, string>("1", "E", "4", "E"),
+                new Tuple<string, string, string, string>("2", "E", "5", "E"),
+                new Tuple<string, string, string, string>("3", "E", "6", "E"),
+                new Tuple<string, string, string, string>("4", "E", "7", "E"),
+                new Tuple<string, string, string, string>("5", "E", "8", "E"),
+                new Tuple<string, string, string, string>("0", "E", null, null),
+                new Tuple<string, string, string, string>("0", null, null, null),
+            };
+
+            for (int passportYear = Convert.ToInt32(startYear); passportYear <= DateTime.Now.Year; passportYear++)
+            {
+                string createPassportRequest = $"USE [{MainCatalog.ReturnCatalogName()}]; " +
+                                               $"INSERT INTO [tblARCHIVE_PASSPORT] VALUES(NEWID(), '12345678-9012-3456-7890-123456789012', SYSDATETIMEOFFSET(), (SELECT ID FROM [tblARCHIVE]), (SELECT COUNT(*) FROM [tblARCHIVE_PASSPORT]), '0253E5AE-57EE-4D21-AAD9-15EBECA3E854', '0', (SELECT COUNT(*) + 1 FROM [tblARCHIVE_PASSPORT]), (SELECT ISN_ARCHIVE FROM [tblARCHIVE]), '{passportYear}', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', (SELECT COUNT(*) FROM [tblUNIT] WHERE Deleted = '0' and CARDBOARDED = 'Y')); \n";
+
+                foreach (Tuple<string, string, string, string> paramsTuple in paramsForRequest)
+                {
+                    if (paramsTuple.Item3 == null)
+                    {
+                        createPassportRequest += SQLRequests.RecalculationRequests.SumOfRecalcRequest(paramsTuple.Item1, paramsTuple.Item2, paramsTuple.Item3) + "\n";
+                    }
+                    else
+                    {
+                        createPassportRequest += SQLRequests.RecalculationRequests.RecalcRowRequest(passportYear, paramsTuple.Item1, paramsTuple.Item2, paramsTuple.Item3, paramsTuple.Item4) + "\n";
+                    }                 
+                }
+                MainCatalog.CreateAndRecalcPassport(createPassportRequest);
             }
         }
     }

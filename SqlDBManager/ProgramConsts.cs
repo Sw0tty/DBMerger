@@ -50,6 +50,12 @@ namespace SqlDBManager
 
         public static class RecalcConsts
         {
+            public static class DelteStatus
+            {
+                public const string PASSPORT_ACTIVE_STATUS = "0253E5AE-57EE-4D21-AAD9-15EBECA3E854";
+                public const string PASSPORT_DELETE_STATUS = "4FF026A0-6EEB-4500-90F8-15EBE74B66C9";
+            }
+
             public static class UnitCategory
             {
                 public const string OCD = "c";

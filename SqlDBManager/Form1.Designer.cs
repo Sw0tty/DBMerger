@@ -519,7 +519,6 @@
             this.recalc_v3.TabIndex = 2;
             this.recalc_v3.Text = "Полный пересчет";
             this.recalc_v3.UseVisualStyleBackColor = true;
-            this.recalc_v3.CheckedChanged += new System.EventHandler(this.recalc_v3_CheckedChanged);
             // 
             // recalc_v2
             // 
@@ -530,7 +529,6 @@
             this.recalc_v2.TabIndex = 1;
             this.recalc_v2.Text = "Пересчет без паспортов";
             this.recalc_v2.UseVisualStyleBackColor = true;
-            this.recalc_v2.CheckedChanged += new System.EventHandler(this.recalc_v2_CheckedChanged);
             // 
             // recalc_v1
             // 

@@ -216,6 +216,11 @@ namespace SqlDBManager
             return SelectSingleValueAdapter(request, likeValue: false, ReturnConnection(), ReturnTransaction());
         }
 
+        public int CreateAndRecalcPassport(string request)
+        {
+            return InsertAdapter(request, ReturnConnection(), ReturnTransaction());
+        }
+
         public int DeleteArchivePassports()
         {
             string request = SQLRequests.RecalculationRequests.DeleteArchivePassportsRequest(ReturnCatalogName());

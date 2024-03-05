@@ -178,6 +178,47 @@ namespace NotesNamespace
 
     /*
      
+
+
+    (SELECT COUNT(*) FROM [tblFUND] WHERE Deleted = '0' and CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and CARRIER_TYPE = 'T' and ISN_DOC_TYPE = '1')
+
+    (SELECT COUNT(*) FROM [tblINVENTORY] WHERE Deleted = '0' and CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and CARRIER_TYPE = 'T' and ISN_INVENTORY_TYPE = '1')
+    (SELECT COUNT(*) FROM [tblINVENTORY] WHERE Deleted = '0' and CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and CARRIER_TYPE = 'T' and ISN_INVENTORY_TYPE = '1' and COPY_COUNT > '1')
+
+
+
+
+
+
+
+
+    (SELECT SUM(UNIT_COUNT) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P'),
+    (SELECT SUM(UNIT_INVENTORY) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P'),
+    (SELECT SUM(SECRET_UNITS) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P'),
+    (SELECT SUM(UNITS_UNIQUE) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P'),
+    (SELECT SUM(UNIT_OC_COUNT) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P')
+    (SELECT SUM(REG_UNIT) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P')
+    (SELECT SUM(REG_UNIT_INVENTORY) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P')
+    (SELECT SUM(UNIT_HAS_SF) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P')
+    (SELECT SUM(UNIT_HAS_FP) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P')
+    (SELECT SUM(UNITS_CATALOGUED) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P')
+    (SELECT SUM(REG_UNITS_CTALOGUE) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
      
      create new passport
 
