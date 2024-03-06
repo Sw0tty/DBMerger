@@ -225,10 +225,6 @@ namespace SqlDBManager
 
         public void button8_Click(object sender, EventArgs e)
         {
-            MergerPreSettings.ArchiveRecalc.Item1 = recalc_v1.Checked;
-            MergerPreSettings.ArchiveRecalc.Item2 = recalc_v2.Checked;
-            MergerPreSettings.ArchiveRecalc.Item3 = recalc_v3.Checked;
-
             WrapTabControl(tabControl1, true);
         }
 
@@ -359,8 +355,6 @@ namespace SqlDBManager
 
                             bool successOperation = Wrappers.WrapSimpleMergeFunc(MergeManager.RepeirDBKeys, mainCatalog, worker);
 
-                            //  ALTER TABLE[5307_main].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[5307_main].[dbo].[tblFUND](ISN_FUND);
-
                             if (successOperation)
                             {
                                 worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Вносим временные изменения в таблицы...");
@@ -371,16 +365,12 @@ namespace SqlDBManager
                             if (successOperation)
                             {
                                 worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Необходимые правки успешно применены!");
-
-
-                                // Очищаем логи
                                 worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Очистка логов ---");
                                 successOperation = MergeManager.ClearLogs(mainCatalog, worker);
                             }
 
                             if (successOperation)
                             {
-                                // Проходим по дефолтным таблицам
                                 worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Обработка дефолтных таблиц ---");
                                 MergeManager.ProcessSkipTables(mainCatalog, daughterCatalog, worker);
                                 successOperation = MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, worker);
@@ -407,8 +397,6 @@ namespace SqlDBManager
                                 MessageBox.Show("NEXT STEP COMMIT!");
                                 mainCatalog.CommitTransaction();
                                 Consts.MERGE_WAS_SUCCESS = true;
-
-                                
 
                                 if (!recalc_v1.Checked)
                                 {
@@ -760,7 +748,15 @@ namespace SqlDBManager
             Cursor = Cursors.Default;
         }
 
+        private void button9_MouseEnter(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
 
+        private void button9_MouseLeave(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Default;
+        }
 
 
 

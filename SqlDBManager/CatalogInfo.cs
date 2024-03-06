@@ -227,11 +227,11 @@ namespace SqlDBManager
             return DeleteAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
-        public int CreatePassport(string IDLastRecord, string passportYear)
+/*        public int CreatePassport(string IDLastRecord, string passportYear)
         {
             string request = SQLRequests.RecalculationRequests.CreatePassportRequest(ReturnCatalogName(), IDLastRecord, passportYear);
             return InsertAdapter(request, ReturnConnection(), ReturnTransaction());
-        }
+        }*/
 
         public int CreatePassportStat(string passportID, string statID, string docType, string carrierType)
         {
@@ -273,6 +273,7 @@ namespace SqlDBManager
 
         public int UpdateInventoryCheck(string tableCheck, string inventoryID)
         {
+            // перевести в один запрос
             string request = SQLRequests.RecalculationRequests.UpdateInventoryCheckRequest(ReturnCatalogName(),
                                                                                            inventoryID,
                                                                                            SelectCarboarderedUnit("ISN_INVENTORY", inventoryID),
@@ -408,15 +409,6 @@ namespace SqlDBManager
                     listTablesNames.Add("'" + reader.GetValue(0).ToString() + "'");
                 }
             }
-/*            else if (itsRow)
-            {
-                MessageBox.Show("row");
-                while (reader.Read())
-                {
-                    for (int i = 0; i < reader.FieldCount; i++)
-                        listTablesNames.Add("'" + reader.GetValue(i).ToString() + "'");
-                }
-            }*/
             else
             {
                 while (reader.Read())

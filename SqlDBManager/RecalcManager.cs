@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using NotesNamespace;
 using System;
-using System.ComponentModel;
+
 
 namespace SqlDBManager
 {
@@ -262,7 +263,7 @@ namespace SqlDBManager
             }
         }
 
-        public void RecalcPassports()
+        /*public void RecalcPassports()
         {
             List<Tuple<string, string>> pairOfTypes = new List<Tuple<string, string>>() { new Tuple<string, string>("P", "1"), new Tuple<string, string>("P", "2"), new Tuple<string, string>("P", "3"), new Tuple<string, string>("P", "4"), new Tuple<string, string>("A", "5"), new Tuple<string, string>("A", "6"), new Tuple<string, string>("A", "7"), new Tuple<string, string>("A", "8"), new Tuple<string, string>("M", "9"), new Tuple<string, string>("E", "4"), new Tuple<string, string>("E", "5"), new Tuple<string, string>("E", "6"), new Tuple<string, string>("E", "7"), new Tuple<string, string>("E", "8"), new Tuple<string, string>("null", "null"), new Tuple<string, string>("E", "null"), new Tuple<string, string>("P", "null"), new Tuple<string, string>("A", "null") };
             int catFundCount = 0, catUnitCount = 0, catInvUnitCount = 0, catSecretUnitCount = 0, catUniqueUnitCount = 0, catOCUnitCount = 0, catSomething = 0, catAccountingUnitCount = 0, catInvAccountingUnitCount = 0;
@@ -290,7 +291,7 @@ namespace SqlDBManager
                 }
                 passportID++;
             }
-        }
+        }*/
 
         public void RecalcAndCreatePassport(BackgroundWorker worker)
         {

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System;
 
 
 namespace SqlDBManager
@@ -27,8 +27,7 @@ namespace SqlDBManager
         /// 5. (bool) allowsNull <br/>
         /// </summary>
         public static Dictionary<string, Tuple<string, string, string, List<string>, bool>> DefaultTablesParams { get; } = new Dictionary<string, Tuple<string, string, string, List<string>, bool>>
-        {
-            // 1. string uniqueValueColumnName         2. string idLikeColumnName    3. string highLevelColumnName     4. List<string> excludeColumns         
+        {         
             { "eqUsers",
                 new Tuple<string, string, string, List<string>, bool>("Login", null, null, new List<string>() { "DisplayName" }, false) },
 
@@ -139,16 +138,6 @@ namespace SqlDBManager
 
             { "tblARCHIVE_STORAGE",
                 new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>(null, null, null, null, null, null, null, new Tuple<bool>(true)) },
-
-            // ---In recalc---
-            //{ "tblARCHIVE_PASSPORT",
-            //    new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>("PASS_YEAR", "ISN_PASSPORT", null, null, null, null, null, new Tuple<bool>(true)) },
-            // -------
-
-            // ---In recalc---
-            //{ "tblARCHIVE_STATS",
-            //    new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>(null, "ISN_ARCHIVE_STATS", null, "ISN_PASSPORT", null, null, null, new Tuple<bool>(true)) },
-            // -------
 
             { "tblFUND",
                 new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>("FUND_NAME_SHORT", "ISN_FUND", null, null, "FUND_NUM_2", null, null, new Tuple<bool>(true)) },
@@ -296,12 +285,6 @@ namespace SqlDBManager
 
             { "tblDOCUMENT",
                 new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>("NAME", "ISN_DOCUM", null, "ISN_UNIT", null, null, null, new Tuple<bool>(true)) },
-        };
-
-        public static Dictionary<string, Tuple<string, string, string, string, string, List<string>>> RecalcTablesParams { get; } = new Dictionary<string, Tuple<string, string, string, string, string, List<string>>>
-        {
-            { "tblARCHIVE_STATS",
-                new Tuple<string, string, string, string, string, List<string>>(null, "ISN_ARCHIVE_STATS", null, "ISN_PASSPORT", null, null) },
         };
     }
 }

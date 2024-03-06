@@ -105,13 +105,6 @@ namespace NotesNamespace
             }
         }
 
-        public static class ArchiveRecalc
-        {
-            public static bool Item1 = true;
-            public static bool Item2 = false;
-            public static bool Item3 = false;
-        }
-
         public static class CatalogBackUp
         {
             public static bool OnlyBackUp = true;
@@ -173,7 +166,15 @@ namespace NotesNamespace
     // -------------------- recalc notes --------------------------
 
 
+    // ---In recalc---
+    //{ "tblARCHIVE_PASSPORT",
+    //    new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>("PASS_YEAR", "ISN_PASSPORT", null, null, null, null, null, new Tuple<bool>(true)) },
+    // -------
 
+    // ---In recalc---
+    //{ "tblARCHIVE_STATS",
+    //    new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>(null, "ISN_ARCHIVE_STATS", null, "ISN_PASSPORT", null, null, null, new Tuple<bool>(true)) },
+    // -------
 
 
     /*
