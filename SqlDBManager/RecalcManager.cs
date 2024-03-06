@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using NotesNamespace;
 using System;
-
+using System.ComponentModel;
 
 namespace SqlDBManager
 {
@@ -14,7 +14,7 @@ namespace SqlDBManager
             MainCatalog = catalog;
         }
 
-        public void RecalcInventory()
+        public void RecalcInventory(BackgroundWorker worker)
         {
             string tableName = "tblINVENTORY";
             string checkTableName = "tblINVENTORY_CHECK";
@@ -23,6 +23,9 @@ namespace SqlDBManager
             List<Dictionary<string, string>> tableData = MainCatalog.SelectAllFrom(tableName, MainCatalog.SelectColumnsNames(tableName, null), true);
             List<Tuple<string, string>> pairOfTrad = new List<Tuple<string, string>>() { new Tuple<string, string>("P", "1"), new Tuple<string, string>("P", "2"), new Tuple<string, string>("P", "3"), new Tuple<string, string>("P", "4"), new Tuple<string, string>("A", "5"), new Tuple<string, string>("A", "6"), new Tuple<string, string>("A", "7"), new Tuple<string, string>("A", "8"), new Tuple<string, string>("M", "9") };
             List<Tuple<string, string>> pairOfElect = new List<Tuple<string, string>>() { new Tuple<string, string>("E", "4"), new Tuple<string, string>("E", "5"), new Tuple<string, string>("E", "6"), new Tuple<string, string>("E", "7"), new Tuple<string, string>("E", "8") };
+
+            Consts.MergeProgress.ClearTasksBlock();
+            Consts.MergeProgress.AddTaskInBlock(tableData.Count);
 
             foreach (Dictionary<string, string> row in tableData)
             {
@@ -171,17 +174,23 @@ namespace SqlDBManager
                         }
                         MainCatalog.UpdateInventoryCheck(checkTableName, row[idLikeColumn]);
                         break;
-                }              
+                }
+                worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
             }
         }
 
-        public void RecalcFund()
+        public void RecalcFund(BackgroundWorker worker)
         {
             string tableName = "tblFUND";
             string checkTableName = "tblFUND_CHECK";
             string idLikeColumn = "ISN_FUND";
 
+            
+
             List<Dictionary<string, string>> tableData = MainCatalog.SelectAllFrom(tableName, MainCatalog.SelectColumnsNames(tableName, null), true);
+
+            Consts.MergeProgress.ClearTasksBlock();
+            Consts.MergeProgress.AddTaskInBlock(tableData.Count);
 
             foreach (Dictionary<string, string> row in tableData)
             {
@@ -205,15 +214,14 @@ namespace SqlDBManager
                     flamed += HelpFunction.ConventToInt(checkRow["UNITS_INFLAMMABLE"]);
                     needKPO += HelpFunction.ConventToInt(checkRow["UNITS_NEED_KPO"]);
                 }
-                if (row[idLikeColumn] == "'39700'")
-                {
-                    MainCatalog.UpdateFundInventoryCount(row[idLikeColumn], fundAttachedInventoryCheck.Count);
-                    MainCatalog.UpdateFundCheck(checkTableName, idLikeColumn, row[idLikeColumn], cardboarded, needCardboarded, damaged, needRestoration, needBinding, needDisinfection, needDisinsection, fading, needEnciphering, needCoverChange, flamed, needKPO);
-                }
+
+                MainCatalog.UpdateFundInventoryCount(row[idLikeColumn], fundAttachedInventoryCheck.Count);
+                MainCatalog.UpdateFundCheck(checkTableName, idLikeColumn, row[idLikeColumn], cardboarded, needCardboarded, damaged, needRestoration, needBinding, needDisinfection, needDisinsection, fading, needEnciphering, needCoverChange, flamed, needKPO);
+                
                 // -- FundCheck recalc --
 
                 // -- FundDocStats recalc --
-                List<Tuple<string, string>> pairOfTypes = new List<Tuple<string, string>>() { new Tuple<string, string>("P", "1"), new Tuple<string, string>("P", "2"), new Tuple<string, string>("P", "3"), new Tuple<string, string>("P", "4"), new Tuple<string, string>("A", "5"), new Tuple<string, string>("A", "6"), new Tuple<string, string>("A", "7"), new Tuple<string, string>("A", "8"), new Tuple<string, string>("M", "9"), new Tuple<string, string>("E", "4"), new Tuple<string, string>("E", "5"), new Tuple<string, string>("E", "6"), new Tuple<string, string>("E", "7"), new Tuple<string, string>("E", "8"), new Tuple<string, string>("null", "null"), new Tuple<string, string>("E", "null"), new Tuple<string, string>("P", "null"), new Tuple<string, string>("A", "null") };
+                List<Tuple<string, string>> pairOfTypes = new List<Tuple<string, string>>() { new Tuple<string, string>("P", "1"), new Tuple<string, string>("P", "2"), new Tuple<string, string>("P", "3"), new Tuple<string, string>("P", "4"), new Tuple<string, string>("A", "5"), new Tuple<string, string>("A", "6"), new Tuple<string, string>("A", "7"), new Tuple<string, string>("A", "8"), new Tuple<string, string>("M", "9"), new Tuple<string, string>("E", "4"), new Tuple<string, string>("E", "5"), new Tuple<string, string>("E", "6"), new Tuple<string, string>("E", "7"), new Tuple<string, string>("E", "8"), new Tuple<string, string>(null, null), new Tuple<string, string>("E", null), new Tuple<string, string>("P", null), new Tuple<string, string>("A", null) };
                 List<Dictionary<string, string>> fundAttachecInventoryDocStats = MainCatalog.SelectFundAttachedInventoryDocStats(row[idLikeColumn]);
                 int unitsCount = 0, unitsOCCount = 0, unitsHasSF = 0, unitsHasFP = 0, unitsNotFoundCount = 0, unitsSecretCount = 0, unitsInSearchCount = 0, unintsUniqueCount = 0, unitsCatalaguedCount = 0;
                 int regUnitsCount = 0, regUnitsOCCount = 0, regUnitsHasSF = 0, regUnitHasFP = 0, regUnitNotFoundCount = 0, regUnitSecretCount = 0, regUnitInSearchCount = 0, reqUnintsUniqueCount = 0, regUnitsCatalaguedCount = 0;
@@ -250,6 +258,7 @@ namespace SqlDBManager
                     unitsCount = regUnitsCount = unitsOCCount = regUnitsOCCount = unitsHasSF = regUnitsHasSF = unitsHasFP = regUnitHasFP = unitsNotFoundCount = regUnitNotFoundCount = unitsSecretCount = regUnitSecretCount = unitsInSearchCount = regUnitInSearchCount = unintsUniqueCount = reqUnintsUniqueCount = unitsCatalaguedCount = regUnitsCatalaguedCount = 0;
                 }
                 // -- FundDocStats recalc --
+                worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
             }
         }
 
@@ -283,7 +292,7 @@ namespace SqlDBManager
             }
         }
 
-        public void RecalcAndCreatePassport()
+        public void RecalcAndCreatePassport(BackgroundWorker worker)
         {
             MainCatalog.DeleteArchivePassports();
 

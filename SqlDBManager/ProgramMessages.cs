@@ -70,7 +70,7 @@ namespace SqlDBManager
         }
         public static void RecalculationMessage()
         {
-            MessageBox.Show($"{Consts.TextsConsts.RECULC_V1} - простое объединение без учета внесения новых данных.\n\n" +
+            MessageBox.Show($"{Consts.TextsConsts.RECULC_V1} - простое объединение без пересчета на основе новых данных. Пересчеты останутся в прежнем состоянии.\n\n" +
                             $"{Consts.TextsConsts.RECULC_V2} - пересчет будет выполнен по БД, без затрагивания паспортов. Паспорта будут содержать данные главной БД до слияния.\n\n" +
                             $"{Consts.TextsConsts.RECULC_V3} - пересчет по всем данным включая пересчет паспортов. Паспорта будут пересчитаны за каждый год с учетом всех новых данных.",
                             "Справка", MessageBoxButtons.OK, MessageBoxIcon.Information);

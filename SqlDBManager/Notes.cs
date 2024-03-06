@@ -23,7 +23,7 @@ namespace NotesNamespace
 
         public static int ConventToInt(string digitalFromDB)
         {
-            return Convert.ToInt32(digitalFromDB.Replace("\'", ""));
+            return digitalFromDB.Contains("null") ? 0 : Convert.ToInt32(digitalFromDB.Replace("\'", ""));
         }
 
         public static string CreateSpace(int spaceSize)

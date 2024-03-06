@@ -304,6 +304,13 @@ namespace SqlDBManager
             daughterCatalog.StartTransaction();
 
             Consts.MergeProgress.FormTasks(mainCatalog);
+
+            if (recalc_v2.Checked)
+                Consts.MergeProgress.AddToAllTasks(2);
+
+            if (recalc_v3.Checked)
+                Consts.MergeProgress.AddToAllTasks(3);
+
             Consts.WriteLastCatalogs(mainCatalog.ReturnCatalogName(), daughterCatalog.ReturnCatalogName());
 
             worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Предварительные проверки ---");
@@ -392,6 +399,7 @@ namespace SqlDBManager
                                 worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Заключение слияния ---");
                                 worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Возвращаем временные изменения...");
                                 successOperation = Wrappers.WrapSimpleMergeFunc(MergeManager.RenameAfterMergeTableColumn, mainCatalog, worker);
+                                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Изменения применены!");
                             }
 
                             if (successOperation)
@@ -400,20 +408,33 @@ namespace SqlDBManager
                                 mainCatalog.CommitTransaction();
                                 Consts.MERGE_WAS_SUCCESS = true;
 
-                                e.Result = "Слияние успешно завершено!";
-                                ProgramMessages.MergeCompletedMessage();
+                                
 
                                 if (!recalc_v1.Checked)
                                 {
+                                    mainCatalog.StartTransaction();
+                                    worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Приступаем к пересчету ---");
                                     RecalcManager recalcManager = new RecalcManager(mainCatalog);
-                                    recalcManager.RecalcInventory();
-                                    recalcManager.RecalcFund();
+                                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Пересчитываем описи...");
+                                    recalcManager.RecalcInventory(worker);
+                                    worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
+                                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Пересчитываем фонды...");
+                                    recalcManager.RecalcFund(worker);
+                                    worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
 
                                     if (recalc_v3.Checked)
-                                        recalcManager.RecalcAndCreatePassport();
-
+                                    {
+                                        worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Пересчитываем паспорта...");
+                                        recalcManager.RecalcAndCreatePassport(worker);
+                                        worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
+                                    }
+                                    
                                     mainCatalog.CommitTransaction();
+                                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Пересчет завершен!");
                                 }
+
+                                e.Result = "Слияние успешно завершено!";
+                                ProgramMessages.MergeCompletedMessage();
 
                             }
                             else
@@ -789,7 +810,8 @@ namespace SqlDBManager
                             MessageBox.Show(ex.Message);
                         }*/
 
-            DBCatalog testDBCatalog = new DBCatalog(@"(local)\SQLEXPRESS2022", "5585_2", "sa", "123");
+            DBCatalog testDBCatalog = new DBCatalog(@"(local)\SQL2022", "5585_2", "sa", "123");
+            BackgroundWorker plugWorker = new BackgroundWorker();
 
             testDBCatalog.OpenConnection();
             testDBCatalog.StartTransaction();
@@ -803,10 +825,10 @@ namespace SqlDBManager
 
             RecalcManager recalcManager = new RecalcManager(testDBCatalog);
 
-            recalcManager.RecalcAndCreatePassport();
+            //recalcManager.RecalcAndCreatePassport(plugWorker);
             //recalcManager.RecalcPassports();
-            //recalcManager.RecalcInventory();
-            //recalcManager.RecalcFund();
+            //recalcManager.RecalcInventory(plugWorker);
+            //recalcManager.RecalcFund(plugWorker);
 
 
 
