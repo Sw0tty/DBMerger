@@ -1,10 +1,6 @@
-﻿using NotesNamespace;
+﻿using System.Drawing;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace SqlDBManager
 {
@@ -50,6 +46,12 @@ namespace SqlDBManager
 
         public static class RecalcConsts
         {
+            public static class CarrierType
+            {
+                public const string Electronic = "'E'";
+                public const string Traditional = "'T'";
+            }
+
             public static class DelteStatus
             {
                 public const string PASSPORT_ACTIVE_STATUS = "0253E5AE-57EE-4D21-AAD9-15EBECA3E854";

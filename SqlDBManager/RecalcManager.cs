@@ -37,7 +37,7 @@ namespace SqlDBManager
 
                 switch (row["CARRIER_TYPE"])
                 {
-                    case "'T'":                       
+                    case Consts.RecalcConsts.CarrierType.Traditional:                       
                         foreach (Tuple<string, string> pair in pairOfTrad)
                         {
                             int regRegistered = 0, regOcUnits = 0, regUnique = 0, regHasSF = 0, regHasFP = 0, regNotFound = 0, regSecret = 0, regCatalogued = 0;
@@ -116,9 +116,9 @@ namespace SqlDBManager
                         MainCatalog.UpdateInventoryDocStats(row[idLikeColumn], null, null, true,
                                                             allRegistered, allOcUnits, allUnique, allHasSF, allHasFP, allNotFound, allSecret, allCatalogued,
                                                             allRegRegistered, allRegOcUnits, allRegUnique, allRegHasSF, catRegHasFP, allRegNotFound, allRegSecret, allRegCatalogued);
-                        MainCatalog.UpdateInventoryCheck(checkTableName, row[idLikeColumn]);
+                        MainCatalog.UpdateInventoryCheck(row[idLikeColumn]);
                         break;
-                    case "'E'":
+                    case Consts.RecalcConsts.CarrierType.Electronic:
                         foreach (Tuple<string, string> pair in pairOfElect)
                         {
                             int regRegistered = 0, regOcUnits = 0, regUnique = 0, regHasSF = 0, regHasFP = 0, regNotFound = 0, regSecret = 0, regCatalogued = 0;
@@ -173,7 +173,7 @@ namespace SqlDBManager
                                 catRegRegistered = catRegOcUnits = catRegUnique = catRegHasSF = catRegHasFP = catRegNotFound = catRegSecret = catRegCatalogued = 0;
                             }
                         }
-                        MainCatalog.UpdateInventoryCheck(checkTableName, row[idLikeColumn]);
+                        MainCatalog.UpdateInventoryCheck(row[idLikeColumn]);
                         break;
                 }
                 worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
@@ -341,12 +341,15 @@ namespace SqlDBManager
                 new Tuple<string, string, string, string>("0", null, "1-9", null),
             };
 
-
+            Consts.MergeProgress.ClearTasksBlock();
+            Consts.MergeProgress.AddTaskInBlock(DateTime.Now.Year - Convert.ToInt32(startYear) + 1);
 
             for (int passportYear = Convert.ToInt32(startYear); passportYear <= DateTime.Now.Year; passportYear++)
             {
-                string createPassportRequest = $"USE [{MainCatalog.ReturnCatalogName()}]; " +
-                                               $"INSERT INTO [tblARCHIVE_PASSPORT] VALUES(NEWID(), '12345678-9012-3456-7890-123456789012', SYSDATETIMEOFFSET(), (SELECT ID FROM [tblARCHIVE]), (SELECT COUNT(*) FROM [tblARCHIVE_PASSPORT]), '0253E5AE-57EE-4D21-AAD9-15EBECA3E854', '0', (SELECT COUNT(*) + 1 FROM [tblARCHIVE_PASSPORT]), (SELECT ISN_ARCHIVE FROM [tblARCHIVE]), '{passportYear}', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', (SELECT COUNT(*) FROM [tblUNIT] WHERE Deleted = '0' and CARDBOARDED = 'Y')); \n";
+                //string createPassportRequest = $"USE [{MainCatalog.ReturnCatalogName()}]; " +
+                //                               $"INSERT INTO [tblARCHIVE_PASSPORT] VALUES(NEWID(), '12345678-9012-3456-7890-123456789012', SYSDATETIMEOFFSET(), (SELECT ID FROM [tblARCHIVE]), (SELECT COUNT(*) FROM [tblARCHIVE_PASSPORT]), '0253E5AE-57EE-4D21-AAD9-15EBECA3E854', '0', (SELECT COUNT(*) + 1 FROM [tblARCHIVE_PASSPORT]), (SELECT ISN_ARCHIVE FROM [tblARCHIVE]), '{passportYear}', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', (SELECT COUNT(*) FROM [tblUNIT] WHERE Deleted = '0' and CARDBOARDED = 'Y')); \n";
+
+                string createPassportRequest = SQLRequests.RecalculationRequests.CreatePassportRequest(MainCatalog.ReturnCatalogName(), passportYear);
 
                 foreach (Tuple<string, string, string, string> paramsTuple in paramsForRequest_new)
                 {
@@ -360,6 +363,7 @@ namespace SqlDBManager
                     }                 
                 }
                 MainCatalog.CreateAndRecalcPassport(createPassportRequest);
+                worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
             }
         }
     }

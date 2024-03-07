@@ -421,7 +421,6 @@ namespace SqlDBManager
                     mainCatalog.SpecialInsertListOfValues(tableName, ValuesManager.ReturnRequestsToTable(Consts.MAX_COUNT_OF_IMPORTS), excludeColumns);
                 }
             }
-
             return countOfImports;
         }
 
@@ -470,17 +469,11 @@ namespace SqlDBManager
             }
 
             Consts.MergeProgress.AddTaskInBlock(allFromDaughterCatalog.Count);
-            
-
 
             if (tableName == "tblDOCUMENT_STATS")
             {
                 string secondParent = "ISN_INVENTORY";
-                
-
-
                 List<Tuple<string, string>> secondParentTuplesKeys = ValuesManager.ReturnTuplesValuesSpecialDict(tableName, secondParent);
-
                 List<Tuple<string, string>> oldTwoParents = ValuesManager.ReturnFilteredTuples(allFromDaughterCatalog, parentIdColumn, secondParent);
                 
 
@@ -525,19 +518,6 @@ namespace SqlDBManager
                                     filteringByOnlyInventoryInDaughter.Add(new Dictionary<string, string>(row));
                             }
 
-                            /*foreach (Dictionary<string, string> row in filteringByOnlyInventoryInDaughter)
-                            {
-                                MessageBox.Show(row[secondParent]);
-                            }*/
-
-                            // -------
-                            /*
-                                                        foreach (Dictionary<string, string> row in filteringByOnlyInventoryInDaughter)
-                                                        {
-                                                            MessageBox.Show(row[parentIdColumn] + "   " + row[secondParent]);
-                                                        }*/
-
-
                             foreach (Dictionary<string, string> row in filteringByOnlyInventoryInDaughter)
                             {
                                 Dictionary<string, string> onImportRow = new Dictionary<string, string>(row);
@@ -545,44 +525,6 @@ namespace SqlDBManager
                                 onImportRow[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
                                 onImportRow[secondParent] = HelpFunction.SearchSecondParent(onImportRow[secondParent], secondParentTuplesKeys);
                                 onImportRow[ExtraIDColumn] = mainCatalog.SelectIDFrom(mainCatalog.SelectReferenceTableName(tableName, secondParent), secondParent, onImportRow[secondParent]);
-
-
-
-                                // --------------!!----------was been deleted after pass tests-----!!------
-/*                                foreach (Tuple<string, string> twoParents in oldTwoParents)
-                                {
-                                    
-                                    if (parentIdTuple.Item1 == twoParents.Item1 && twoParents.Item2 != "'null'")
-                                    {
-                                        // 133 + 133 + 250 или 133 + 133 + 249
-                                        //MessageBox.Show(parentIdTuple.Item1 + "    " + twoParents.Item1 + "   " + twoParents.Item2);
-                                        // тут определили первого родителя parentIdTuple.Item1
-
-                                        foreach (Tuple<string, string> secondPair in secondParentTuplesKeys)
-                                        {
-                                            if (twoParents.Item2 == secondPair.Item1)
-                                            {
-                                                // 250 + 250 + 249 или 249 + 249 + 250
-                                                //MessageBox.Show(twoParents.Item2 + "    " + secondPair.Item1 + "   " + secondPair.Item2);
-                                                onImportRow[secondParent] = secondPair.Item2;
-
-
-                                                //MessageBox.Show(onImportRow["DocID"] + "    " + onImportRow[secondParent] + "   sec1  "  + secondPair.Item2);
-
-
-
-                                                onImportRow["DocID"] = mainCatalog.SelectIDFrom(mainCatalog.SelectReferenceTableName(tableName, secondParent), secondParent, secondPair.Item2);
-
-                                                MessageBox.Show(onImportRow[idLikeColumnName] + "    " + onImportRow["DocID"] + "    " + onImportRow[secondParent] + "   sec2  " + secondPair.Item2);
-                                                //MessageBox.Show(row[secondParent] + "   " + row[secondParent] + "    " + secondPair.Item1);
-                                                //MessageBox.Show(onImportRow["DocID"] + "    " + onImportRow[secondParent]);
-                                                asd.Add(new Dictionary<string, string>(onImportRow));
-                                            }
-                                        }
-                                    }
-                                }*/
-                                // ------------------------!!!!-----------
-
                                 ValuesManager.SelectImportMethod(mainCatalog, new Dictionary<string, string>(onImportRow), tableName, worker);
                                 countOfImports++;                               
                             }
@@ -677,27 +619,27 @@ namespace SqlDBManager
                                     }
                                 }*/
                             }
-
                             ValuesManager.SelectImportMethod(mainCatalog, new Dictionary<string, string>(onImportRow), tableName, worker);
                             countOfImports++;
                         }
                     }
-
-                    //worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
+                    worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
             }
             else if (tableName == "tblARCHIVE")
             {
+                Form1 mainForm = new Form1();
                 ValuesManager.AddTablesToRewriteDict(foreigns);
                 ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(allFromDaughterCatalog[0][idLikeColumnName], allFromMainCatalog[0][idLikeColumnName]));
 
-                if (MergerPreSettings.ArchiveUpdate.MakeEdits)
+                if (mainForm.UpdateArchive())
                 {
                     int nowIndex = 0;
                     List<string> updateSet = new List<string>();
+                    List<string> updatingValues = mainForm.ArchiveUpdateValues();
                     foreach (string columnName in UpdateTables[MergerPreSettings.ArchiveUpdate.UpdateTableName])
                     {
-                        updateSet.Add($"{columnName} = '{MergerPreSettings.ArchiveUpdate.Fields[nowIndex].Text}'");
+                        updateSet.Add($"{columnName} = '{updatingValues[nowIndex]}'");
                         nowIndex++;
                     }
                     countOfImports++;
@@ -753,8 +695,6 @@ namespace SqlDBManager
 
                         // new string
                         mainCatalogValues.Add(row[uniqueValueColumnName]);
-
-
                         countOfImports++;
                     }
                     worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
@@ -848,12 +788,9 @@ namespace SqlDBManager
                             //mainCatalogValues.Add(row[uniqueValueColumnName]);
 
                             countOfImports++;
-                        }
-                        
+                        }                      
                     }
                     worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
-/*                    if (tableName == "tblUNIT")
-                        MessageBox.Show(Consts.MergeProgress.COUNT_OF_ALL_BLOCK_TASKS.ToString() + "   " + Consts.MergeProgress.BLOCK_PROGRESS_NOW.ToString());*/
                 }
             }
             else if (uniqueValueColumnName == null && idLikeColumnName == null && highLevelColumnName == null && parentIdColumn != null)
@@ -894,9 +831,7 @@ namespace SqlDBManager
                                 if (onImportRow.ContainsKey(MergeSettings.ExtraIDColumn))
                                     onImportRow[ExtraIDColumn] = mainCatalog.SelectIDFrom(mainCatalog.SelectReferenceTableName(tableName, parentIdColumn), parentIdColumn, tuple.Item2);
 
-                                //MessageBox.Show(row[parentIdColumn]);
                                 ValuesManager.SelectImportMethod(mainCatalog, new Dictionary<string, string>(onImportRow), tableName, worker);
-
                                 countOfImports++;
                             }
                         }
@@ -906,8 +841,7 @@ namespace SqlDBManager
             }
             else if (uniqueValueColumnName != null && idLikeColumnName != null && highLevelColumnName != null && parentIdColumn == null)
             {
-                List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainCatalog, uniqueValueColumnName);
-               
+                List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainCatalog, uniqueValueColumnName);              
 
                 if (foreigns.Count > 0)
                 {
@@ -922,7 +856,7 @@ namespace SqlDBManager
                     copyOfAll.Add(new Dictionary<string, string>(row));
 
                 List<Dictionary<string, string>> copyOfcopyOfAll = new List<Dictionary<string, string>>(copyOfAll);
-                //Consts.MergeProgress.ClearTasksBlock();
+                //
                 //Consts.MergeProgress.AddTaskInBlock(allFromDaughterCatalog.Count);
                 //MessageBox.Show(Consts.MergeProgress.COUNT_OF_ALL_BLOCK_TASKS.ToString());
                 while (copyOfAll.Count != 0)
@@ -977,25 +911,8 @@ namespace SqlDBManager
             }
             else if (uniqueValueColumnName == null && idLikeColumnName != null && highLevelColumnName == null && parentIdColumn != null)
             {
-                //List<Dictionary<string, string>> allFromMainCatalog = mainCatalog.SelectAllFrom(tableName, mainCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
-                //List<Dictionary<string, string>> allFromDaughterCatalog = daughterCatalog.SelectAllFrom(tableName, daughterCatalog.SelectColumnsNames(tableName, excludeColumns), allowsNull);
-                //Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
-
-
-                //Consts.MergeProgress.ClearTasksBlock();
-                //Consts.MergeProgress.AddTaskInBlock(tableReservedValues[parentIdColumn].Count);
-
-                //Consts.MergeProgress.AddTaskInBlock(allFromDaughterCatalog.Count);
-
-                //MessageBox.Show(tableName);
-
                 foreach (Tuple<string, string> tuple in tableReservedValues[parentIdColumn])
                 {
-                    
-                    /*if (tableName == "tblUNIT_STATE")
-                    {
-                        MessageBox.Show(tuple.Item1 + "   " + tuple.Item2);
-                    }*/
                     List<Dictionary<string, string>> allFromMainDataWhere = ValuesManager.FilterRecordsFrom(allFromMainCatalog, parentIdColumn, tuple.Item2);
 
                     if (allFromMainDataWhere.Count > 0)
@@ -1017,20 +934,16 @@ namespace SqlDBManager
                                     row[ExtraIDColumn] = mainCatalog.SelectIDFrom(mainCatalog.SelectReferenceTableName(tableName, parentIdColumn), parentIdColumn, tuple.Item2);
 
                                 ValuesManager.SelectImportMethod(mainCatalog, new Dictionary<string, string>(row), tableName, worker);
-
                                 countOfImports++;
                             }
                         }
                     }
                     worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
-
             }
             else if (uniqueValueColumnName == null && idLikeColumnName != null && highLevelColumnName != null && parentIdColumn != null)
             {
                 List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainCatalog, highLevelColumnName);
-
-                // List<Dictionary<string, string>> allFromDaughterDataWhere = daughterCatalog.SelectRecordsWhere(new List<string>, tableName, parentIdColumn, );
 
                 //Consts.MergeProgress.ClearTasksBlock();
                 //Consts.MergeProgress.AddTaskInBlock(tableReservedValues[parentIdColumn].Count);
@@ -1040,11 +953,8 @@ namespace SqlDBManager
                     ValuesManager.AddTablesToRewriteDict(foreigns);
                 }
 
-
                 foreach (Tuple<string, string> tuple in tableReservedValues[parentIdColumn])
                 {
-                    //List<Dictionary<string, string>> allFromMainDataWhere = mainCatalog.SelectRecordsWhere(new List<string>(), tableName, parentIdColumn, tuple.Item2);
-
                     List<Dictionary<string, string>> allFromMainDataWhere = ValuesManager.FilterRecordsFrom(allFromMainCatalog, parentIdColumn, tuple.Item2);
 
                     if (allFromMainDataWhere.Count > 0)
@@ -1083,128 +993,34 @@ namespace SqlDBManager
                                     //}
                                 }
 
-
-                                /*if (ValuesManager.ContainsInRewrite(tableName))
-                                {
-                                    mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
-                                }
-                                else
-                                {
-                                    mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
-                                }*/
-
-                                //ValuesManager.InsertNewValue(mainCatalog, row, tableName, excludeColumns);
-
                                 if (row.ContainsKey(MergeSettings.ExtraIDColumn))
                                     row[ExtraIDColumn] = mainCatalog.SelectIDFrom(mainCatalog.SelectReferenceTableName(tableName, parentIdColumn), parentIdColumn, tuple.Item2);
 
                                 ValuesManager.SelectImportMethod(mainCatalog, new Dictionary<string, string>(row), tableName, worker);
 
-
                                 ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(oldKey, row[idLikeColumnName]));
                                 countOfImports++;
                             }
                         }
-
                     }
                     worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
-
-
-
             }
-
-
-
-
-
-
-
-
-
-
-
-
-            //else if (uniqueValueColumnName != null && idLikeColumnName == null && parentIdColumn != null && highLevelColumnName != null)
-            //{
-            //    ValuesManager.AddTablesToRewriteDict(foreigns);
-
-
-
-
-            //    List<Dictionary<string, string>> allFromMainData = mainCatalog.SelectAllFrom(tableName);
-            //    List<string> mainCatalogValues = ValuesManager.SelectDataFromColumn(allFromMainData, uniqueValueColumnName);
-            //    List<Dictionary<string, string>> allFromDaughterData = daughterCatalog.SelectAllFrom(tableName);
-            //    Dictionary<string, List<Tuple<string, string>>> tableReservedValues = ValuesManager.ReturnTableValuesReserveDict(tableName);
-
-            //    Consts.AddTaskInBlock(allFromDaughterData.Count);
-
-
-
-
-
-            //    foreach (Dictionary<string, string> row in allFromDaughterData)
-            //    {
-
-            //        foreach (Tuple<string, string> tuple in tableReservedValues[parentIdColumn])
-            //        {
-            //            if (row[parentIdColumn] == tuple.Item1)
-            //            {
-            //                row[parentIdColumn] = tuple.Item2;
-
-
-            //                if (mainCatalogValues.Contains(row[uniqueValueColumnName]))
-            //                {
-            //                    ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(row[idLikeColumnName], ValuesManager.ReturnValue(allFromMainData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName)));
-            //                }
-            //                else if (!mainCatalogValues.Contains(row[uniqueValueColumnName]))
-            //                {
-            //                    row[idLikeColumnName] = $"'{lastId + countOfImports + 1}'";
-
-            //                    ValuesManager.AddPairKeysToRewriteDict(foreigns, idLikeColumnName, new Tuple<string, string>(ValuesManager.ReturnValue(allFromDaughterData, uniqueValueColumnName, row[uniqueValueColumnName], idLikeColumnName), row[idLikeColumnName]));
-
-            //                    if (ValuesManager.ContainsInRewrite(tableName))
-            //                    {
-            //                        mainCatalog.InsertValue(tableName, ValuesManager.RepareColumnsValues(ValuesManager.RemoveUnnecessary(row, excludeColumns), tableName));
-            //                    }
-            //                    else
-            //                    {
-            //                        mainCatalog.InsertValue(tableName, ValuesManager.RemoveUnnecessary(row, excludeColumns));
-            //                    }
-
-            //                    mainCatalogValues.Add(row[uniqueValueColumnName]);
-            //                    countOfImports++;
-            //                }
-            //                break;
-            //            }
-            //        }
-            //        worker.ReportProgress(Consts.UpdateBlockBar(), WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
-            //    }
-            //    // ValuesManager.DeleteTableFromReserve(tableName);
-            //}
-
-            //MessageBox.Show(tableName + "   " + mainCatalog.SelectCountRowsTable(tableName));
-
-            //MessageBox.Show(countOfImports + "      " + countOfRequests);
 
             if (Consts.FAST_REQUEST_MOD && countOfImports > 0)
             {
                 if (ValuesManager.CountOfInsertValues() > Consts.MAX_COUNT_OF_IMPORTS)
                 {
-                    //string requests = "";
                     while (ValuesManager.CountOfInsertValues() != 0)
                     {
                         mainCatalog.SpecialInsertListOfValues(tableName, ValuesManager.ReturnRequestsToTable(Consts.MAX_COUNT_OF_IMPORTS), excludeColumns);
-                        //requests += mainCatalog.ListOfValues(tableName, ValuesManager.ReturnRequestsToTable(Consts.MAX_COUNT_OF_IMPORTS));
                     }
-                    //mainCatalog.InsertListOfValues(requests);
                 }
                 else
                 {
                     mainCatalog.SpecialInsertListOfValues(tableName, ValuesManager.ReturnRequestsToTable(Consts.MAX_COUNT_OF_IMPORTS), excludeColumns);
                 }
             }
-            //MessageBox.Show(tableName + " "  + ValuesManager.CountOfInsertValues().ToString());
             return countOfImports;
         }
 

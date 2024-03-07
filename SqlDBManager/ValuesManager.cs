@@ -404,7 +404,6 @@ namespace SqlDBManager
                 {
                     catalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName), withoutID: true);
                 }
-                //worker.ReportProgress(Consts.WorkerConsts.UPDATE_COUNT_OF_IMPORT);
             }
             Consts.ALL_OF_IMPORT++;
             worker.ReportProgress(Consts.WorkerConsts.UPDATE_COUNT_OF_IMPORT);

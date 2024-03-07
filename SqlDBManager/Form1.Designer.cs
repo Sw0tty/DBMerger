@@ -95,15 +95,8 @@
             this.radioButton9 = new System.Windows.Forms.RadioButton();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.button3 = new System.Windows.Forms.Button();
-            this.textBox8 = new System.Windows.Forms.TextBox();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
             this.button2 = new System.Windows.Forms.Button();
             this.listView1 = new System.Windows.Forms.ListView();
-            this.button10 = new System.Windows.Forms.Button();
-            this.label10 = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
-            this.listBox2 = new System.Windows.Forms.ListBox();
             this.mergerBackWorker = new System.ComponentModel.BackgroundWorker();
             this.dirtyJobBackWorker = new System.ComponentModel.BackgroundWorker();
             this.tabControl1.SuspendLayout();
@@ -220,7 +213,7 @@
             this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.groupBox2.Location = new System.Drawing.Point(9, 236);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(480, 230);
+            this.groupBox2.Size = new System.Drawing.Size(480, 310);
             this.groupBox2.TabIndex = 12;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Дочерняя база данных";
@@ -229,7 +222,7 @@
             // 
             this.textBox4.Location = new System.Drawing.Point(20, 97);
             this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(443, 22);
+            this.textBox4.Size = new System.Drawing.Size(437, 22);
             this.textBox4.TabIndex = 11;
             // 
             // label5
@@ -305,7 +298,7 @@
             this.textBox6.Location = new System.Drawing.Point(258, 144);
             this.textBox6.Name = "textBox6";
             this.textBox6.PasswordChar = '•';
-            this.textBox6.Size = new System.Drawing.Size(205, 22);
+            this.textBox6.Size = new System.Drawing.Size(199, 22);
             this.textBox6.TabIndex = 8;
             // 
             // mainDBGroupBox
@@ -336,7 +329,7 @@
             this.textBox3.Location = new System.Drawing.Point(258, 144);
             this.textBox3.Name = "textBox3";
             this.textBox3.PasswordChar = '•';
-            this.textBox3.Size = new System.Drawing.Size(205, 22);
+            this.textBox3.Size = new System.Drawing.Size(199, 22);
             this.textBox3.TabIndex = 11;
             // 
             // label4
@@ -712,6 +705,7 @@
             this.label14.TabIndex = 9;
             this.label14.Text = "Записей обработано: 0";
             this.label14.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.label14.Visible = false;
             // 
             // startMerge
             // 
@@ -800,15 +794,8 @@
             // 
             this.tabPage4.Controls.Add(this.flowLayoutPanel2);
             this.tabPage4.Controls.Add(this.button3);
-            this.tabPage4.Controls.Add(this.textBox8);
-            this.tabPage4.Controls.Add(this.comboBox3);
             this.tabPage4.Controls.Add(this.button2);
             this.tabPage4.Controls.Add(this.listView1);
-            this.tabPage4.Controls.Add(this.button10);
-            this.tabPage4.Controls.Add(this.label10);
-            this.tabPage4.Controls.Add(this.label9);
-            this.tabPage4.Controls.Add(this.button1);
-            this.tabPage4.Controls.Add(this.listBox2);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Size = new System.Drawing.Size(498, 603);
@@ -821,7 +808,7 @@
             this.flowLayoutPanel2.AutoScroll = true;
             this.flowLayoutPanel2.Controls.Add(this.groupBox5);
             this.flowLayoutPanel2.Controls.Add(this.groupBox6);
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(8, 478);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(46, 57);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.Padding = new System.Windows.Forms.Padding(15, 0, 10, 0);
             this.flowLayoutPanel2.Size = new System.Drawing.Size(217, 117);
@@ -882,7 +869,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(427, 423);
+            this.button3.Location = new System.Drawing.Point(354, 373);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(68, 79);
             this.button3.TabIndex = 9;
@@ -890,27 +877,9 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
-            // textBox8
-            // 
-            this.textBox8.Location = new System.Drawing.Point(213, 25);
-            this.textBox8.Multiline = true;
-            this.textBox8.Name = "textBox8";
-            this.textBox8.ReadOnly = true;
-            this.textBox8.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox8.Size = new System.Drawing.Size(157, 232);
-            this.textBox8.TabIndex = 10;
-            // 
-            // comboBox3
-            // 
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Location = new System.Drawing.Point(219, 396);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(121, 21);
-            this.comboBox3.TabIndex = 8;
-            // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(222, 423);
+            this.button2.Location = new System.Drawing.Point(83, 341);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(167, 49);
             this.button2.TabIndex = 7;
@@ -921,58 +890,12 @@
             // listView1
             // 
             this.listView1.HideSelection = false;
-            this.listView1.Location = new System.Drawing.Point(316, 263);
+            this.listView1.Location = new System.Drawing.Point(284, 162);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(174, 127);
             this.listView1.TabIndex = 6;
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.List;
-            // 
-            // button10
-            // 
-            this.button10.Location = new System.Drawing.Point(393, 119);
-            this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(97, 42);
-            this.button10.TabIndex = 5;
-            this.button10.Text = "button10";
-            this.button10.UseVisualStyleBackColor = true;
-            this.button10.Click += new System.EventHandler(this.button10_Click);
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(413, 78);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(41, 13);
-            this.label10.TabIndex = 4;
-            this.label10.Text = "label10";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(419, 38);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(35, 13);
-            this.label9.TabIndex = 3;
-            this.label9.Text = "label9";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(8, 386);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(199, 66);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // listBox2
-            // 
-            this.listBox2.FormattingEnabled = true;
-            this.listBox2.Location = new System.Drawing.Point(8, 25);
-            this.listBox2.Name = "listBox2";
-            this.listBox2.Size = new System.Drawing.Size(199, 355);
-            this.listBox2.TabIndex = 2;
             // 
             // mergerBackWorker
             // 
@@ -1017,7 +940,6 @@
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
-            this.tabPage4.PerformLayout();
             this.flowLayoutPanel2.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
@@ -1052,8 +974,6 @@
         private System.Windows.Forms.TextBox textBox5;
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.ListBox listBox2;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button8;
@@ -1061,9 +981,6 @@
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.Button button9;
-        private System.Windows.Forms.Button button10;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Label label9;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.TextBox textBoxStatus;
         private System.ComponentModel.BackgroundWorker mergerBackWorker;
@@ -1074,7 +991,6 @@
         private System.Windows.Forms.RadioButton radioButton2;
         private System.Windows.Forms.RadioButton radioButton1;
         private System.ComponentModel.BackgroundWorker dirtyJobBackWorker;
-        private System.Windows.Forms.ComboBox comboBox3;
         private System.Windows.Forms.ProgressBar progressBar2;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label label12;
@@ -1083,7 +999,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button startMerge;
         private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.TextBox textBox8;
         private System.Windows.Forms.TextBox textBox9;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TextBox textBox10;

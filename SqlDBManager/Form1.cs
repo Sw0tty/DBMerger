@@ -68,7 +68,6 @@ namespace SqlDBManager
 
         private void SetButtonsFont()
         {
-            button1.Font = Consts.VisualConsts.BUTTON_FONT;
             button2.Font = Consts.VisualConsts.BUTTON_FONT;
             button3.Font = Consts.VisualConsts.BUTTON_FONT;
             button4.Font = Consts.VisualConsts.BUTTON_FONT;
@@ -76,7 +75,6 @@ namespace SqlDBManager
             button6.Font = Consts.VisualConsts.BUTTON_FONT;
             button8.Font = Consts.VisualConsts.BUTTON_FONT;
             button9.Font = Consts.VisualConsts.BUTTON_FONT;
-            button10.Font = Consts.VisualConsts.BUTTON_FONT;
             mergeLog.Font = Consts.VisualConsts.BUTTON_FONT;
             startMerge.Font = Consts.VisualConsts.BUTTON_FONT;
             checkConnectionMainCatalog.Font = Consts.VisualConsts.BUTTON_FONT;
@@ -137,6 +135,10 @@ namespace SqlDBManager
             textBox4.Text = textBox4.Text.Trim(' ');
             textBox5.Text = textBox5.Text.Trim(' ');
             textBox6.Text = textBox6.Text.Trim(' ');
+            textBox7.Text = textBox7.Text.Trim(' ');
+            textBox9.Text = textBox9.Text.Trim(' ');
+            textBox10.Text = textBox10.Text.Trim(' ');
+            textBox11.Text = textBox11.Text.Trim(' ');
         }
 
         public void WrapTabControl(TabControl tabControl, bool nextPage)
@@ -225,6 +227,7 @@ namespace SqlDBManager
 
         public void button8_Click(object sender, EventArgs e)
         {
+            TrimAllOnForm();
             WrapTabControl(tabControl1, true);
         }
 
@@ -274,6 +277,11 @@ namespace SqlDBManager
             }
         }
 
+        public bool UpdateArchive()
+        {
+            return radioButton2.Checked;
+        }
+
         private void mergerBackWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
@@ -289,6 +297,7 @@ namespace SqlDBManager
                 startMerge.Enabled = false;
                 button6.Enabled = false;
                 textBoxStatus.Clear();
+                label12.Text = "Записей импортировано: 0";
             }));
 
             DBCatalog mainCatalog = new DBCatalog(text1, textBox1.Text, textBox2.Text, textBox3.Text);
@@ -644,20 +653,15 @@ namespace SqlDBManager
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
-            TrimAllOnForm();
-            MessageBox.Show("");
             if (radioButton2.Checked)
-            {
                 panel1.Enabled = true;
-                Consts.PRE_SETTINGS = new Tuple<string, string, string, string>(textBox7.Text.Trim(' '), textBox9.Text.Trim(' '), textBox10.Text.Trim(' '), textBox11.Text.Trim(' '));
-
-                MergerPreSettings.ArchiveUpdate.MakeEdits = true;
-            }
             else
-            {
                 panel1.Enabled = false;
-                MergerPreSettings.ArchiveUpdate.MakeEdits = false;
-            }
+        }
+
+        public List<string> ArchiveUpdateValues()
+        {
+            return new List<string>() { textBox7.Text, textBox9.Text, textBox10.Text, textBox11.Text };
         }
 
         private void radioButton7_CheckedChanged(object sender, EventArgs e)
@@ -781,31 +785,6 @@ namespace SqlDBManager
 
         private void button3_Click(object sender, EventArgs e)
         {
-            /*            radioButton9.Text = "radioButton9dfgdfg";
-
-                        MessageBox.Show(DateTime.Now.ToString().Replace(' ', '_'));
-                        *//*string itemTiple1 = "123";
-
-                        Tuple<string, string> testTuple = new Tuple<string, string>(itemTiple1, "456");
-
-                        itemTiple1 = "4325324";
-                        testTuple = new Tuple<string, string>(itemTiple1, "456");*/
-            /*            MessageBox.Show(MergeSettings.UpdateTables["tblARCHIVE"].Item2.ToString());
-
-                        Consts.SettingsChecked.UPDATE_ARCHIVE = true;
-
-                        MessageBox.Show(Consts.SettingsChecked.UPDATE_ARCHIVE.ToString());
-                        MessageBox.Show(MergeSettings.UpdateTables["tblARCHIVE"].Item2.ToString());*//*
-
-                        try
-                        {
-                            throw new StopMergeException(Consts.StopMergeConsts.STOP_ERROR_MESSAGE);
-                        }
-                        catch (StopMergeException ex)
-                        {
-                            MessageBox.Show(ex.Message);
-                        }*/
-
             DBCatalog testDBCatalog = new DBCatalog(@"(local)\SQL2022", "5585_2", "sa", "123");
             BackgroundWorker plugWorker = new BackgroundWorker();
 
@@ -823,7 +802,7 @@ namespace SqlDBManager
 
             //recalcManager.RecalcAndCreatePassport(plugWorker);
             //recalcManager.RecalcPassports();
-            //recalcManager.RecalcInventory(plugWorker);
+            recalcManager.RecalcInventory(plugWorker);
             //recalcManager.RecalcFund(plugWorker);
 
 
@@ -832,68 +811,6 @@ namespace SqlDBManager
             testDBCatalog.CloseConnection();
 
             MessageBox.Show("End of recalc tests...");
-
-            /*string request = $"SELECT * FROM [TestDB].[dbo].[eqUsers];";
-            string request2 = $"SELECT COUNT(*) FROM [TestDB].[dbo].[eqUsers];";
-
-            int count = testCatalog.TestSelectCountAdapter(request2);
-            //MessageBox.Show(count.ToString());
-
-            List<Dictionary<string, string>> dataFrom = testCatalog.TestSelectAdapter(request);
-            //MessageBox.Show(dataFrom.Item1.ToString());
-
-            foreach (Dictionary<string, string> row in dataFrom)
-            {
-                foreach (string key in row.Keys)
-                {
-                    MessageBox.Show(key + ": " + row[key]);
-                }
-            }
-
-            textBoxStatus.AppendText("dfgfdg" + "\r\n");
-            textBoxStatus.AppendText("dfgfdg" + "\r\n");
-            textBoxStatus.AppendText("dfgfdg" + "\r\n");
-            textBoxStatus.AppendText("dfgfdg" + "\r\n");
-            textBoxStatus.AppendText("dfgfdg" + "\r\n");
-            textBoxStatus.AppendText("" + "\r\n");
-            textBoxStatus.AppendText("dfgfdg" + "\r\n");
-            textBoxStatus.AppendText("dfgfdg" + "\r\n");
-
-            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-            {
-                saveFileDialog.InitialDirectory = "c:\\";
-                saveFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-                saveFileDialog.FilterIndex = 1;
-                saveFileDialog.FileName = "MergeLog";
-                saveFileDialog.RestoreDirectory = true;
-
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    using (StreamWriter writer = new StreamWriter(saveFileDialog.FileName))
-                    {
-                        writer.WriteLine($"Merge log of '' and '' \n");
-
-                        foreach (char s in textBoxStatus.Text)
-                        {
-                            writer.Write(s);
-                        }
-                    }
-                }
-            }*/
-        }
-
-        public void Mess()
-        {
-            List<string> list = new List<string>() { "1", "2" };
-            string s = "";
-            Invoke(new Action(() => { MessageBox.Show("df"); }));
-            for (int i = 0; i < 10; i++)
-            {
-                listBox2.Items.Add(i.ToString());
-            }
-
-
-            MessageBox.Show("df2");
         }
 
         public static int MuliplierRecurtion(int multiplierNumber)
@@ -901,190 +818,6 @@ namespace SqlDBManager
             if (multiplierNumber == 1)
                 return 1;
             return multiplierNumber * MuliplierRecurtion(multiplierNumber - 1);
-        }
-
-        private void button10_Click(object sender, EventArgs e)
-        {
-            string sss = "'1111'";
-
-            MessageBox.Show(MuliplierRecurtion(4).ToString());
-
-
-
-
-            bool foo = true;
-
-            if (foo)
-            {
-                try
-                {
-                    Mess();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error: {ex.Message}");
-                }
-            }
-            else
-            {
-                Mess();
-            }
-
-            
-
-            //BackupManager backUp = new BackupManager("C:\\Program Files\\Microsoft SQL Server\\MSSQL16.SQL2022\\MSSQL\\DATA\\5558.mdf", "5558", "(local)\\SQL2022", "sa", "123");
-
-            //backUp.OpenConnection();
-
-            //backUp.CreateReserveBackup("5558");
-
-            MessageBox.Show("sdfsd");
-            //backUp.DeleteReserveBackup();
-
-            MessageBox.Show("sdfsd");
-            string myServer = Environment.MachineName;
-
-
-
-            DataTable servers = SqlDataSourceEnumerator.Instance.GetDataSources();
-            for (int i = 0; i < servers.Rows.Count; i++)
-            {
-                if (myServer == servers.Rows[i]["ServerName"].ToString()) ///// used to get the servers in the local machine////
-                {
-                    if ((servers.Rows[i]["InstanceName"] as string) != null)
-                        listBox2.Items.Add(servers.Rows[i]["ServerName"] + "\\" + servers.Rows[i]["InstanceName"]);
-                    else
-                        listBox2.Items.Add(servers.Rows[i]["ServerName"].ToString());
-                }
-            }
-
-
-
-            SqlDataSourceEnumerator instance = SqlDataSourceEnumerator.Instance;
-            DataTable table = instance.GetDataSources();
-
-            MessageBox.Show(table.Rows.Count.ToString());
-
-            foreach (DataRow row in table.Rows)
-            {
-                if (row["InstanceName"].ToString() == "")
-                    listBox2.Items.Add(row["ServerName"]);
-                else
-                    listBox2.Items.Add(row["ServerName"] + "\\" + row["InstanceName"]);
-            }
-        }
-
-        public string Some(List<string> columns)
-        {
-            List<string> strings = new List<string>() { "[ID]", "[Login]", "[Department]", "[Deleted]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Email]", "[patronymic]", "[Position]", "[Phone]", "[Room_Number]", "[Description]", "[surname]", "[AccessGranted]", "[Supervisor]", "[FirstName]", "[BUILD_IN_ACCOUNT]", "[Pass]", "[Cookie]", "[UserTheme]" };
-
-            string so = "Testtstst";
-            return $"SELECT {string.Join(", ", strings).Replace('\"', '\'')} FROM ";
-        }
-
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-            SqlConnection cnn, cnn2;
-            SqlCommand command;
-            SqlDataReader reader;
-            String source,
-                   catalog = "test_db",
-                   login,
-                   password,
-                   request,
-                   value,
-                   connectionString,
-                   connectionString2,
-                   request2,
-                   output = "";
-            List<string> db_tables = new List<string>();
-
-
-
-
-            Dictionary<string, string> inDict = new Dictionary<string, string>() { { "h", "fd" } };
-
-            List<Dictionary<string, string>> lst = new List<Dictionary<string, string>>();
-
-            lst.Add(inDict);
-
-            Dictionary<string, List<Dictionary<string, string>>> testReserveDict = new Dictionary<string, List<Dictionary<string, string>>>();
-
-            string someTestkey = "testTable";
-            Dictionary<string, string> newDict = new Dictionary<string, string>() { { "oldKey", "newKey()" } };
-
-            if (!testReserveDict.ContainsKey(someTestkey))
-            {
-                testReserveDict[someTestkey] = new List<Dictionary<string, string>>();
-            }
-            // Добавление нового значения
-            testReserveDict[someTestkey].Add(new Dictionary<string, string>() { { "oldKey", "newKey()" } });
-
-            // Получение нового значения
-            MessageBox.Show(testReserveDict[someTestkey][0]["oldKey"]);
-            DBCatalog testCatalog = new DBCatalog(comboBox1.Text.Trim(' '), "test_db", "sa", "123");
-            testCatalog.OpenConnection();
-
-
-            // ----------------------
-            Dictionary<string, string> reserveRocords = new Dictionary<string, string>();
-
-            reserveRocords["ISN_CITIZEN"] = "'3'";
-            reserveRocords.Remove("ID"); // Обязательно удаляем ID. Он формируется новый в запросе
-
-            testCatalog.InsertValue("tblCITIZEN_CL", reserveRocords);
-
-
-            MessageBox.Show("BreakPoint test!");
-            // ----------------------
-
-            //connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password}";
-
-            connectionString = @"Data Source=(local)\SQLEXPRESS;Initial Catalog=test_db;User ID=sa;Password=123";
-
-            //connectionString2 = @"Data Source=(local)\SQLEXPRESS;Initial Catalog=test;User ID=sa;Password=123";
-
-            request = $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' order by TABLE_NAME";
-
-
-            cnn = new SqlConnection(connectionString);
-            //cnn2 = new SqlConnection(connectionString2);
-            cnn.Open();
-
-            //cnn2.Open();
-
-            command = new SqlCommand(request, cnn);
-            reader = command.ExecuteReader();
-
-            while (reader.Read())
-            {
-                //output += reader.GetValue(0) + " - " + reader.GetValue(1) + "\n";
-
-                db_tables.Add(reader.GetString(0));
-            }
-
-            reader.Close();
-            command.Dispose();
-
-            for (int i = 0; i < db_tables.Count; i++)
-            {
-                request = $"SELECT COUNT(*) FROM {db_tables[i]}";
-                command = new SqlCommand(request, cnn);
-                reader = command.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    //listView1.Items.Add("In " + db_tables[i] + " table: " + Convert.ToString(reader.GetValue(0)) + " values.");
-                    listBox2.Items.Add("In " + db_tables[i] + " table: " + Convert.ToString(reader.GetValue(0)) + " values.");
-                }
-
-                reader.Close();
-                command.Dispose();
-            }
-            //MessageBox.Show(output);
-            cnn.Close();
         }
 
         private void button2_Click(object sender, EventArgs e)

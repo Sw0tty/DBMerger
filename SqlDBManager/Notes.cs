@@ -113,8 +113,6 @@ namespace NotesNamespace
 
     public static class RecalculationConsts
     {
-        public static char Electronic = 'E';
-        public static char Traditional = 'T';
 
         public static List<string> PaperFunds = new List<string>()
         {

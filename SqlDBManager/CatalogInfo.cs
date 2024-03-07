@@ -223,7 +223,7 @@ namespace SqlDBManager
 
         public int DeleteArchivePassports()
         {
-            string request = SQLRequests.RecalculationRequests.DeleteArchivePassportsRequest(ReturnCatalogName());
+            string request = SQLRequests.DeleteRequests.DeleteArchivePassportsRequest(ReturnCatalogName());
             return DeleteAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
@@ -233,7 +233,7 @@ namespace SqlDBManager
             return InsertAdapter(request, ReturnConnection(), ReturnTransaction());
         }*/
 
-        public int CreatePassportStat(string passportID, string statID, string docType, string carrierType)
+/*        public int CreatePassportStat(string passportID, string statID, string docType, string carrierType)
         {
             string request = SQLRequests.RecalculationRequests.CreatePassportStatRequest(ReturnCatalogName(), passportID, statID, docType, carrierType);
             return InsertAdapter(request, ReturnConnection(), ReturnTransaction());
@@ -243,7 +243,7 @@ namespace SqlDBManager
         {
             string request = SQLRequests.RecalculationRequests.UpdateInventoryUnitCountRequest(ReturnCatalogName(), inventoryID, docType, carrierType, unitCount);
             return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
-        }
+        }*/
 
         public int UpdateInventoryDocStats(string inventoryID, string docType, string carrierType, bool withAccountingUnits,
                                            int registered, int ocUnits, int unique, int hasSF, int hasFP, int notFound, int secret, int catalogued,
@@ -265,30 +265,9 @@ namespace SqlDBManager
             return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
-        public int UpdateCheck(string tableCheck, string idLikeColumn, string filteredID, int unitCount)
+        public int UpdateInventoryCheck(string inventoryID)
         {
-            string request = SQLRequests.RecalculationRequests.UpdateCheckRequest(ReturnCatalogName(), tableCheck, idLikeColumn, filteredID, unitCount);
-            return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
-        }
-
-        public int UpdateInventoryCheck(string tableCheck, string inventoryID)
-        {
-            // перевести в один запрос
-            string request = SQLRequests.RecalculationRequests.UpdateInventoryCheckRequest(ReturnCatalogName(),
-                                                                                           inventoryID,
-                                                                                           SelectCarboarderedUnit("ISN_INVENTORY", inventoryID),
-                                                                                           SelectCountWorksUnits(inventoryID, Consts.RecalcConsts.UnitWork.NEED_CARDBOARDED),
-                                                                                           SelectCountFeaturesUnits(inventoryID, Consts.RecalcConsts.UnitFeature.DAMAGED),
-                                                                                           SelectCountWorksUnits(inventoryID, Consts.RecalcConsts.UnitWork.NEED_RESTORATION),
-                                                                                           SelectCountWorksUnits(inventoryID, Consts.RecalcConsts.UnitWork.NEED_BINDING),
-                                                                                           SelectCountWorksUnits(inventoryID, Consts.RecalcConsts.UnitWork.NEED_DISINFECTION),
-                                                                                           SelectCountWorksUnits(inventoryID, Consts.RecalcConsts.UnitWork.NEED_DISINSECTION),
-                                                                                           SelectCountFeaturesUnits(inventoryID, Consts.RecalcConsts.UnitFeature.FADED),
-                                                                                           SelectCountWorksUnits(inventoryID, Consts.RecalcConsts.UnitWork.NEED_ENCIPHERING),
-                                                                                           SelectCountWorksUnits(inventoryID, Consts.RecalcConsts.UnitWork.NEED_COVER_CHANGE),
-                                                                                           SelectCountFeaturesUnits(inventoryID, Consts.RecalcConsts.UnitFeature.FLAMED),
-                                                                                           SelectCountWorksUnits(inventoryID, Consts.RecalcConsts.UnitWork.NEED_KPO)
-                                                                                           );
+            string request = SQLRequests.RecalculationRequests.UpdateInventoryCheckRequest(ReturnCatalogName(), inventoryID);
             return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
@@ -297,7 +276,7 @@ namespace SqlDBManager
             string request = SQLRequests.RecalculationRequests.UpdateObjectCheckRequest(ReturnCatalogName(), tableName, idLikeColumn, objectID, cardboarded, needCardboarded, damaged, needRestoration, needBinding, needDisinfection, needDisinsection, fading, needEnciphering, needCoverChange, flamed, needKPO);
             return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
         }
-
+/*
         public int SelectCountFeaturesUnits(string inventoryID, string featureID)
         {
             string request = SQLRequests.RecalculationRequests.FeaturesUnitsRequest(ReturnCatalogName(), inventoryID, featureID);
@@ -314,7 +293,7 @@ namespace SqlDBManager
         {
             string request = SQLRequests.RecalculationRequests.CardboardedUnitRequest(ReturnCatalogName(), idLikeColumn, filteredID);
             return SelectCountAdapter(request, ReturnConnection(), ReturnTransaction());
-        }
+        }*/
 
         public List<Dictionary<string, string>> SelectFundAttachedInventoryCheck(string fundID)
         {
