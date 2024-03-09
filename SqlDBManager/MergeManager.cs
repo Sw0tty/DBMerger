@@ -1,17 +1,9 @@
-﻿using NotesNamespace;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data.Common;
-using System.Data.SqlTypes;
-using System.Diagnostics.SymbolStore;
-using System.Linq;
-using System.Runtime.Serialization.Formatters;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
+using NotesNamespace;
+using System;
+using System.Threading;
 using System.Windows.Forms;
-
 
 namespace SqlDBManager
 {

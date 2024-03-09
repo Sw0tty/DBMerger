@@ -41,7 +41,7 @@ namespace SqlDBManager
 
         public static void SameCatalogMessage()
         {
-            MessageBox.Show("Вабрана одна и тажа база данных", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Вабрана одна и тажа база данных", "Ошибка соединения", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         public static void CheckConnectingSettings(string catalog)
@@ -56,7 +56,7 @@ namespace SqlDBManager
 
         public static DialogResult LogNotSavedMessage()
         {
-            return MessageBox.Show("Результаты слияния не были сохранены в файл. Продолжить без сохранения?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            return MessageBox.Show("Результаты слияния не были сохранены в файл. Продолжить без выгрузки?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
         }
 
         public static void ConnectionToCatalogMessage()
@@ -66,26 +66,26 @@ namespace SqlDBManager
 
         public static void InfoAboutArchiveMessage()
         {
-            MessageBox.Show("Надстройка предлагает сразу внести изменения в данные об архиве, если в главной БД содержатся не актуальные данные.", "Справка", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Надстройка предлагает сразу внести изменения в данные об архиве, если в главной БД содержатся неактуальные данные.", "Справка", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         public static void RecalculationMessage()
         {
             MessageBox.Show($"{Consts.TextsConsts.RECULC_V1} - простое объединение без пересчета на основе новых данных. Пересчеты останутся в прежнем состоянии.\n\n" +
-                            $"{Consts.TextsConsts.RECULC_V2} - пересчет будет выполнен по БД, без затрагивания паспортов. Паспорта будут содержать данные главной БД до слияния.\n\n" +
-                            $"{Consts.TextsConsts.RECULC_V3} - пересчет по всем данным включая пересчет паспортов. Паспорта будут пересчитаны за каждый год с учетом всех новых данных.",
+                            $"{Consts.TextsConsts.RECULC_V2} - пересчет будет выполнен по БД на основе содержащихся данных, без затрагивания паспортов. Паспорта будут содержать данные главной БД до слияния.\n\n" +
+                            $"{Consts.TextsConsts.RECULC_V3} - пересчет по всем данным, включая пересчет паспортов. Паспорта будут пересчитаны за каждый год с учетом всех новых данных.",
                             "Справка", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         public static void BackUpSaveMessage()
         {
-            MessageBox.Show($"{Consts.TextsConsts.RESERVE_COPY_V1} - будет оставлена копию главной БД до слияния в папке с резервными копиями.\n\n" +
-                            $"{Consts.TextsConsts.RESERVE_COPY_V2} - будет создана объедененная БД рядом с главной. В слиянии будет участвовать копия главной БД.",
+            MessageBox.Show($"{Consts.TextsConsts.RESERVE_COPY_V1} - будет оставлена копия главной БД до слияния в папке с резервными копиями.\n\n" +
+                            $"{Consts.TextsConsts.RESERVE_COPY_V2} - в SQL Server будет создана объедененная БД рядом с главной. В слиянии будет участвовать копия главной БД.",
                             "Справка", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         public static void SaveLogMessage()
         {
-            MessageBox.Show("Кнопка сохранения лога слияния баз данных становится доступной после попытки слияния. Данные о последнем слиянии хранится в памяти до следующего нажатия или закрытия программы.", "Справка", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Кнопка сохранения лога слияния баз данных становится доступной после попытки слияния. Данные о последнем слиянии хранятся в памяти до следующего нажатия или закрытия программы.", "Справка", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

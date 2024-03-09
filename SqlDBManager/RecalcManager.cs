@@ -18,7 +18,6 @@ namespace SqlDBManager
         public void RecalcInventory(BackgroundWorker worker)
         {
             string tableName = "tblINVENTORY";
-            string checkTableName = "tblINVENTORY_CHECK";
             string idLikeColumn = "ISN_INVENTORY";
 
             List<Dictionary<string, string>> tableData = MainCatalog.SelectAllFrom(tableName, MainCatalog.SelectColumnsNames(tableName, null), true);
@@ -304,27 +303,6 @@ namespace SqlDBManager
                 new Tuple<string, string, string, string>("2", "P", "2", "T"),
                 new Tuple<string, string, string, string>("3", "P", "3", "T"),
                 new Tuple<string, string, string, string>("4", "P", "4", "T"),
-                new Tuple<string, string, string, string>("0", "P", null, null),
-                new Tuple<string, string, string, string>("1", "A", "5", "T"),
-                new Tuple<string, string, string, string>("2", "A", "6", "T"),
-                new Tuple<string, string, string, string>("3", "A", "7", "T"),
-                new Tuple<string, string, string, string>("4", "A", "8", "T"),
-                new Tuple<string, string, string, string>("0", "A", null, null),
-                new Tuple<string, string, string, string>("0", "M", "9", "T"),
-                new Tuple<string, string, string, string>("1", "E", "4", "E"),
-                new Tuple<string, string, string, string>("2", "E", "5", "E"),
-                new Tuple<string, string, string, string>("3", "E", "6", "E"),
-                new Tuple<string, string, string, string>("4", "E", "7", "E"),
-                new Tuple<string, string, string, string>("5", "E", "8", "E"),
-                new Tuple<string, string, string, string>("0", "E", null, null),
-                new Tuple<string, string, string, string>("0", null, null, null),
-            };
-
-            List<Tuple<string, string, string, string>> paramsForRequest_new = new List<Tuple<string, string, string, string>>() {
-                new Tuple<string, string, string, string>("1", "P", "1", "T"),
-                new Tuple<string, string, string, string>("2", "P", "2", "T"),
-                new Tuple<string, string, string, string>("3", "P", "3", "T"),
-                new Tuple<string, string, string, string>("4", "P", "4", "T"),
                 new Tuple<string, string, string, string>("0", "P", "1-4", "T"),
                 new Tuple<string, string, string, string>("1", "A", "5", "T"),
                 new Tuple<string, string, string, string>("2", "A", "6", "T"),
@@ -351,7 +329,7 @@ namespace SqlDBManager
 
                 string createPassportRequest = SQLRequests.RecalculationRequests.CreatePassportRequest(MainCatalog.ReturnCatalogName(), passportYear);
 
-                foreach (Tuple<string, string, string, string> paramsTuple in paramsForRequest_new)
+                foreach (Tuple<string, string, string, string> paramsTuple in paramsForRequest)
                 {
                     if (paramsTuple.Item3.Length > 1)
                     {

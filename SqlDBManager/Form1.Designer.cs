@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.label1 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -35,6 +36,7 @@
             this.button9 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.textBox4 = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.checkConnectionDaughterCatalog = new System.Windows.Forms.Button();
@@ -201,6 +203,7 @@
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.panel2);
             this.groupBox2.Controls.Add(this.textBox4);
             this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.checkConnectionDaughterCatalog);
@@ -217,6 +220,13 @@
             this.groupBox2.TabIndex = 12;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Дочерняя база данных";
+            // 
+            // panel2
+            // 
+            this.panel2.Location = new System.Drawing.Point(6, 226);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(468, 78);
+            this.panel2.TabIndex = 12;
             // 
             // textBox4
             // 
@@ -423,7 +433,7 @@
             this.groupBox1.Controls.Add(this.backUp_v1);
             this.groupBox1.Location = new System.Drawing.Point(9, 422);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(480, 57);
+            this.groupBox1.Size = new System.Drawing.Size(480, 48);
             this.groupBox1.TabIndex = 7;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Сохранение резервной копии";
@@ -437,7 +447,6 @@
             this.backUp_v2.TabIndex = 1;
             this.backUp_v2.Text = "Создать новую БД с объединенными данными";
             this.backUp_v2.UseVisualStyleBackColor = true;
-            this.backUp_v2.CheckedChanged += new System.EventHandler(this.radioButton7_CheckedChanged);
             // 
             // backUp_v1
             // 
@@ -907,8 +916,6 @@
             // dirtyJobBackWorker
             // 
             this.dirtyJobBackWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.dirtyJobBackWorker_DoWork);
-            this.dirtyJobBackWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.dirtyJobBackWorker_ProgressChanged);
-            this.dirtyJobBackWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.dirtyJobBackWorker_RunWorkerCompleted);
             // 
             // Form1
             // 
@@ -917,9 +924,11 @@
             this.ClientSize = new System.Drawing.Size(506, 629);
             this.Controls.Add(this.tabControl1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Утилита слияния баз данных";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tableLayoutPanel1.ResumeLayout(false);
@@ -1021,6 +1030,7 @@
         private System.Windows.Forms.GroupBox groupBox5;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
+        private System.Windows.Forms.Panel panel2;
     }
 }
 

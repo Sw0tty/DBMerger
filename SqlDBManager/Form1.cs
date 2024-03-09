@@ -1,28 +1,12 @@
-﻿using System;
+﻿using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Data;
-using System.Data.Sql;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.Serialization.Formatters;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using NotesNamespace;
-using System.Transactions;
-using System.Windows.Forms.VisualStyles;
-using System.IO;
-using SqlDBManager.DBClasses;
-using System.Drawing.Configuration;
-using System.Net.Mail;
-using System.Text.RegularExpressions;
-using System.Collections.ObjectModel;
-
+using System.Data;
+using System.Linq;
+using System;
+using System.Threading;
 
 namespace SqlDBManager
 {
@@ -42,19 +26,17 @@ namespace SqlDBManager
             label6.Text = label2.Text;
             label7.Text = label3.Text;
             label8.Text = label4.Text;
+            checkConnectionMainCatalog.Text = "Проверить соединение";
+            checkConnectionDaughterCatalog.Text = checkConnectionMainCatalog.Text;
 
             //textBox2.Font = new Font(FontFamily.GenericSansSerif, 14);
 
-            textBox1.Text = "5307_m";
-            textBox4.Text = "5307_m2";
-
-            textBox2.Text = "sa";
+/*            textBox1.Text = "5307_m";
+            textBox4.Text = "5307_m2";*/
+/*            textBox2.Text = "sa";
             textBox5.Text = textBox2.Text;
             textBox3.Text = "123";
-            textBox6.Text = textBox3.Text;
-
-            checkConnectionMainCatalog.Text = "Проверить соединение";
-            checkConnectionDaughterCatalog.Text = checkConnectionMainCatalog.Text;
+            textBox6.Text = textBox3.Text;*/
 
             SetPreSettingsFields();
             SetButtonsFont();
@@ -161,11 +143,8 @@ namespace SqlDBManager
             progressBar2.Value = 0;
         }
 
-        // Логика первой вкладки формы
         private void checkConnectionMainCatalog_Click(object sender, EventArgs e)
         {
-            // Проверяет соединения с главной БД
-
             TrimAllOnForm();
 
             if (textBox1.Text != textBox4.Text && !dirtyJobBackWorker.IsBusy)
@@ -183,8 +162,6 @@ namespace SqlDBManager
 
         private void checkConnectionDaughterCatalog_Click(object sender, EventArgs e)
         {
-            // Проверяет соединения с дочерней БД
-
             TrimAllOnForm();
 
             if (textBox1.Text != textBox4.Text && !dirtyJobBackWorker.IsBusy)
@@ -202,8 +179,6 @@ namespace SqlDBManager
 
         private void button4_Click(object sender, EventArgs e)
         {
-            // Переход к надстройке слияния. Проверяет соединения с основной и дочерней БД
-
             TrimAllOnForm();
 
             if (textBox1.Text != textBox4.Text && !dirtyJobBackWorker.IsBusy)
@@ -219,7 +194,6 @@ namespace SqlDBManager
             }
         }
 
-        // Логика второй вкладки формы
         private void button5_Click(object sender, EventArgs e)
         {
             WrapTabControl(tabControl1, false);
@@ -245,11 +219,11 @@ namespace SqlDBManager
         private void cancel_Click(object sender, EventArgs e)
         {
             //throw new StopMergeException(Consts.StopMergeConsts.STOP_ERROR_MESSAGE);
-            
-            if (mergerBackWorker.WorkerSupportsCancellation == true)
+            Consts.StopMergeConsts.STOP_MERGE = true;
+/*            if (mergerBackWorker.WorkerSupportsCancellation == true)
             {
                 mergerBackWorker.CancelAsync();
-            }
+            }*/
         }
 
         private void mergeLog_Click(object sender, EventArgs e)
@@ -292,8 +266,8 @@ namespace SqlDBManager
             Invoke(new Action(() => {
                 text1 = comboBox1.Text;
                 text2 = comboBox1.Text;
-                mergeLog.Visible = false;
-                cancel.Visible = true;
+                //mergeLog.Visible = false;
+                //cancel.Visible = true;
                 startMerge.Enabled = false;
                 button6.Enabled = false;
                 textBoxStatus.Clear();
@@ -340,9 +314,8 @@ namespace SqlDBManager
                             backupManager.SetParams();
 
                             backupManager.CreateReserveBackup();
-                            if (!MergerPreSettings.CatalogBackUp.OnlyBackUp)
-                            {
-                                
+                            if (backUp_v2.Checked)
+                            {                             
                                 backupManager.RestoreFromBackup();
                                 backupManager.DeleteReserveBackup();
                                 backupManager.CloseConnection();
@@ -351,7 +324,6 @@ namespace SqlDBManager
                                 mainCatalog = new DBCatalog(text1, textBox1.Text + Consts.VisualConsts.TAIL_OF_MERGED_FILES, textBox2.Text, textBox3.Text);
                                 mainCatalog.OpenConnection();
                                 mainCatalog.StartTransaction();
-                                MessageBox.Show(mainCatalog.ReturnCatalogName());
                                 backupManager = new BackupManager(mainCatalog.SelectCatalogPath(), mainCatalog.ReturnCatalogName(), "master", text1, textBox2.Text, textBox3.Text);
                             }
                             else
@@ -440,7 +412,7 @@ namespace SqlDBManager
                                 daughterCatalog.RollbackTransaction();
 
                                 backupManager.OpenConnection();
-                                if (MergerPreSettings.CatalogBackUp.OnlyBackUp)
+                                if (backUp_v1.Checked)
                                     backupManager.DeleteReserveBackup();
                                 else
                                 {
@@ -485,8 +457,8 @@ namespace SqlDBManager
                 ProgramMessages.ValidationErrorMessage();
             }
             Invoke(new Action(() => {
-                cancel.Visible = false;
-                mergeLog.Visible = true;
+                //cancel.Visible = false;
+                //mergeLog.Visible = true;
                 mergeLog.Enabled = true;
                 //startMerge.Text = Consts.TextsConsts.LOG_BUTTON;
                 startMerge.Enabled = true;              
@@ -557,31 +529,23 @@ namespace SqlDBManager
             {
                 Tuple<string, string, string, string> takingParams = e.Argument as Tuple<string, string, string, string>;
 
-                ConnectionChecker.CheckConnectionMessage(takingParams.Item1,
-                                                         takingParams.Item2,
-                                                         takingParams.Item3,
-                                                         takingParams.Item4);
+                ConnectionChecker.CheckConnectionMessage(takingParams.Item1, takingParams.Item2, takingParams.Item3, takingParams.Item4);
             }
             else
             {
-                string text1 = "";
-                string text2 = "";
+                string text1 = null;
+                string text2 = null;
 
                 Invoke(new Action(() => {
                     text1 = comboBox1.Text;
                     text2 = comboBox2.Text;
                 }));
 
-                if (!ConnectionChecker.CheckConnection(text1,
-                                                       textBox1.Text,
-                                                       textBox2.Text,
-                                                       textBox3.Text)){
+                if (!ConnectionChecker.CheckConnection(text1, textBox1.Text, textBox2.Text, textBox3.Text))
+                {
                     ProgramMessages.CheckConnectingSettings("главной");
                 }
-                else if (!ConnectionChecker.CheckConnection(text2,
-                                                            textBox4.Text,
-                                                            textBox5.Text,
-                                                            textBox6.Text))
+                else if (!ConnectionChecker.CheckConnection(text2, textBox4.Text, textBox5.Text, textBox6.Text))
                 {
                     ProgramMessages.CheckConnectingSettings("дочерней");
                 }
@@ -589,9 +553,7 @@ namespace SqlDBManager
                 {
                     Invoke(new Action(() => {
                         SaveProperties();
-
-
-
+                        comboBox1.SelectedItem = comboBox1.Text;
 
                         if (MergerPreSettings.ArchiveUpdate.UpdateValues.mainCatalogName == null || MergerPreSettings.ArchiveUpdate.UpdateValues.mainCatalogName != textBox1.Text)
                         {
@@ -613,9 +575,6 @@ namespace SqlDBManager
                             MergerPreSettings.ArchiveUpdate.UpdateValues.mainCatalogName = textBox1.Text;
                         }
                         
-
-
-
                         WrapTabControl(tabControl1, true);
                     }));
                 }
@@ -629,26 +588,12 @@ namespace SqlDBManager
             }));
         }
 
-        private void dirtyJobBackWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-
-        }
-
-        private void dirtyJobBackWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-
-        }
-
         private void tabControl1_Selecting(object sender, TabControlCancelEventArgs e)
         {
             if (Consts.DEBUG_MOD)
-            {
                 e.Cancel = false;
-            }
             else
-            {
                 e.Cancel = Consts.VisualConsts.TAB_ACCESS;
-            }
         }
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
@@ -664,12 +609,12 @@ namespace SqlDBManager
             return new List<string>() { textBox7.Text, textBox9.Text, textBox10.Text, textBox11.Text };
         }
 
-        private void radioButton7_CheckedChanged(object sender, EventArgs e)
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (backUp_v2.Checked)
-                MergerPreSettings.CatalogBackUp.OnlyBackUp = false;
-            else
-                MergerPreSettings.CatalogBackUp.OnlyBackUp = true;
+            if (mergerBackWorker.IsBusy)
+            {
+                MessageBox.Show("");
+            }           
         }
 
         private void checkConnectionMainCatalog_MouseEnter(object sender, EventArgs e)
@@ -785,17 +730,21 @@ namespace SqlDBManager
 
         private void button3_Click(object sender, EventArgs e)
         {
+
+            /*Thread myThread = new Thread(() => {
+                while (true)
+                {
+                    MessageBox.Show("");
+                }
+            });
+
+            myThread.Start();*/
+
             DBCatalog testDBCatalog = new DBCatalog(@"(local)\SQL2022", "5585_2", "sa", "123");
             BackgroundWorker plugWorker = new BackgroundWorker();
 
             testDBCatalog.OpenConnection();
             testDBCatalog.StartTransaction();
-
-            TestCatalog testCatalog = new TestCatalog(@"(local)\SQLEXPRESS2022", "5585", "sa", "123");
-
-
-            /*testCatalog.OpenConnection();
-            testCatalog.StartTransaction();*/
 
 
             RecalcManager recalcManager = new RecalcManager(testDBCatalog);

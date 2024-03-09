@@ -42,6 +42,7 @@ namespace SqlDBManager
         public static class StopMergeConsts
         {
             public const string STOP_ERROR_MESSAGE = "Операция слияния прервана пользователем.";
+            public static bool STOP_MERGE = false;
         }
 
         public static class RecalcConsts

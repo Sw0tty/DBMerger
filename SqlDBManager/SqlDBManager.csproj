@@ -80,7 +80,6 @@
     <Compile Include="CatalogInfo.cs" />
     <Compile Include="ConnectionChecker.cs" />
     <Compile Include="DBClasses\BaseConnector.cs" />
-    <Compile Include="DBClasses\TestCatalog.cs" />
     <Compile Include="DebugVisualizator.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

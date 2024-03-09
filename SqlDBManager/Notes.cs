@@ -104,14 +104,9 @@ namespace NotesNamespace
                 return "";
             }
         }
-
-        public static class CatalogBackUp
-        {
-            public static bool OnlyBackUp = true;
-        }
     }
 
-    public static class RecalculationConsts
+/*    public static class RecalculationConsts
     {
 
         public static List<string> PaperFunds = new List<string>()
@@ -128,7 +123,7 @@ namespace NotesNamespace
         {
             "'9'",
         };
-    }
+    }*/
 
 
     public static class SpecialTablesValues
