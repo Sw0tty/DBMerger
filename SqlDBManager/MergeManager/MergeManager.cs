@@ -21,7 +21,7 @@ namespace SqlDBManager
                 {
                     RepairTables(mainCatalog);
                 }
-                catch (StopMergeException error)
+                catch (MergerExceptions.StopMergeException error)
                 {
                     worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
                     return false;
@@ -71,7 +71,7 @@ namespace SqlDBManager
                         {
                             worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Записей удалено {mainCatalog.ClearTable(logTable)}");
                         }
-                        catch (StopMergeException error)
+                        catch (MergerExceptions.StopMergeException error)
                         {
                             worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
                             return false;
@@ -139,7 +139,7 @@ namespace SqlDBManager
                         {
                             worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessDefaultTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, excludeColumns: paramsForProcessing.Item4, allowsNull: paramsForProcessing.Item5)}");
                         }
-                        catch (StopMergeException error)
+                        catch (MergerExceptions.StopMergeException error)
                         {
                             worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
                             return false;
@@ -189,7 +189,7 @@ namespace SqlDBManager
                         {
                             worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, HelpFunction.CreateSpace(Consts.VisualConsts.SPACE_SIZE) + $"Импортировано значений {ProcessLinksTable(worker, mainCatalog, daughterCatalog, tableName: tableName, uniqueValueColumnName: paramsForProcessing.Item1, idLikeColumnName: paramsForProcessing.Item2, highLevelColumnName: paramsForProcessing.Item3, parentIdColumn: paramsForProcessing.Item4, numerateColumn: paramsForProcessing.Item5, extraFilterColumns: paramsForProcessing.Item6, excludeColumns: paramsForProcessing.Item7, allowsNull: paramsForProcessing.Rest.Item1)}");
                         }
-                        catch (StopMergeException error)
+                        catch (MergerExceptions.StopMergeException error)
                         {
                             worker.ReportProgress(Consts.WorkerConsts.ERROR_STATUS_CODE, error.Message);
                             return false;
@@ -289,10 +289,14 @@ namespace SqlDBManager
             return 1;
         }
 
-        // --- Master merge process table ---
-        // Для обработки дефолтных таблиц
         static int ProcessDefaultTable(BackgroundWorker worker, DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName, string uniqueValueColumnName, string idLikeColumnName, string highLevelColumnName, List<string> excludeColumns, bool allowsNull)
         {
+            if (Consts.StopMergeConsts.STOP_MERGE)
+                if (ProgramMessages.CancelMergeProcess() == DialogResult.Yes)
+                    throw new MergerExceptions.StopMergeException(Consts.StopMergeConsts.STOP_ERROR_MESSAGE);
+                else
+                    Consts.StopMergeConsts.STOP_MERGE = false;
+
             if (Consts.FAST_REQUEST_MOD)
                 ValuesManager.ClearRequestsToTable();
 
@@ -401,6 +405,12 @@ namespace SqlDBManager
                 }
             }
 
+            if (Consts.StopMergeConsts.STOP_MERGE)
+                if (ProgramMessages.CancelMergeProcess() == DialogResult.Yes)
+                    throw new MergerExceptions.StopMergeException(Consts.StopMergeConsts.STOP_ERROR_MESSAGE);
+                else
+                    Consts.StopMergeConsts.STOP_MERGE = false;
+
             if (Consts.FAST_REQUEST_MOD && countOfImports > 0)
             {
                 if (ValuesManager.CountOfInsertValues() > Consts.MAX_COUNT_OF_IMPORTS)
@@ -418,6 +428,12 @@ namespace SqlDBManager
 
         static int ProcessLinksTable(BackgroundWorker worker, DBCatalog mainCatalog, DBCatalog daughterCatalog, string tableName, string uniqueValueColumnName, string idLikeColumnName, string highLevelColumnName, string parentIdColumn, string numerateColumn, List<string> extraFilterColumns, List<string> excludeColumns, bool allowsNull)
         {
+            if (Consts.StopMergeConsts.STOP_MERGE)
+                if (ProgramMessages.CancelMergeProcess() == DialogResult.Yes)
+                    throw new MergerExceptions.StopMergeException(Consts.StopMergeConsts.STOP_ERROR_MESSAGE);
+                else
+                    Consts.StopMergeConsts.STOP_MERGE = false;
+
             int countOfImports = 0;
 
             if (Consts.FAST_REQUEST_MOD)
@@ -998,6 +1014,12 @@ namespace SqlDBManager
                     worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
                 }
             }
+
+            if (Consts.StopMergeConsts.STOP_MERGE)
+                if (ProgramMessages.CancelMergeProcess() == DialogResult.Yes)
+                    throw new MergerExceptions.StopMergeException(Consts.StopMergeConsts.STOP_ERROR_MESSAGE);
+                else
+                    Consts.StopMergeConsts.STOP_MERGE = false;
 
             if (Consts.FAST_REQUEST_MOD && countOfImports > 0)
             {

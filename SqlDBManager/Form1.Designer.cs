@@ -33,8 +33,8 @@
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.button9 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
+            this.mergerInfo = new System.Windows.Forms.Button();
+            this.toSettings = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.textBox4 = new System.Windows.Forms.TextBox();
@@ -60,8 +60,8 @@
             this.backUp_v2 = new System.Windows.Forms.RadioButton();
             this.backUp_v1 = new System.Windows.Forms.RadioButton();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this.button8 = new System.Windows.Forms.Button();
-            this.button5 = new System.Windows.Forms.Button();
+            this.toMerge = new System.Windows.Forms.Button();
+            this.backToSelectBases = new System.Windows.Forms.Button();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.recalc_v3 = new System.Windows.Forms.RadioButton();
             this.recalc_v2 = new System.Windows.Forms.RadioButton();
@@ -88,7 +88,7 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.textBoxStatus = new System.Windows.Forms.TextBox();
             this.mergeLog = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
+            this.backToSettings = new System.Windows.Forms.Button();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
@@ -97,7 +97,6 @@
             this.radioButton9 = new System.Windows.Forms.RadioButton();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
             this.listView1 = new System.Windows.Forms.ListView();
             this.mergerBackWorker = new System.ComponentModel.BackgroundWorker();
             this.dirtyJobBackWorker = new System.ComponentModel.BackgroundWorker();
@@ -162,8 +161,8 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.button9, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.button4, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.mergerInfo, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.toSettings, 1, 0);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(9, 552);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
@@ -171,32 +170,32 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(480, 45);
             this.tableLayoutPanel1.TabIndex = 14;
             // 
-            // button9
+            // mergerInfo
             // 
-            this.button9.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.button9.Location = new System.Drawing.Point(3, 5);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(148, 34);
-            this.button9.TabIndex = 12;
-            this.button9.Text = "Справка";
-            this.button9.UseVisualStyleBackColor = true;
-            this.button9.Click += new System.EventHandler(this.button9_Click);
-            this.button9.MouseEnter += new System.EventHandler(this.button9_MouseEnter);
-            this.button9.MouseLeave += new System.EventHandler(this.button9_MouseLeave);
+            this.mergerInfo.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.mergerInfo.Location = new System.Drawing.Point(3, 5);
+            this.mergerInfo.Name = "mergerInfo";
+            this.mergerInfo.Size = new System.Drawing.Size(148, 34);
+            this.mergerInfo.TabIndex = 12;
+            this.mergerInfo.Text = "Справка";
+            this.mergerInfo.UseVisualStyleBackColor = true;
+            this.mergerInfo.Click += new System.EventHandler(this.mergerInfo_Click);
+            this.mergerInfo.MouseEnter += new System.EventHandler(this.mergerInfo_MouseEnter);
+            this.mergerInfo.MouseLeave += new System.EventHandler(this.mergerInfo_MouseLeave);
             // 
-            // button4
+            // toSettings
             // 
-            this.button4.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button4.Location = new System.Drawing.Point(329, 5);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(148, 34);
-            this.button4.TabIndex = 13;
-            this.button4.Text = "Далее";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
-            this.button4.MouseEnter += new System.EventHandler(this.button4_MouseEnter);
-            this.button4.MouseLeave += new System.EventHandler(this.button4_MouseLeave);
+            this.toSettings.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.toSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.toSettings.Location = new System.Drawing.Point(329, 5);
+            this.toSettings.Name = "toSettings";
+            this.toSettings.Size = new System.Drawing.Size(148, 34);
+            this.toSettings.TabIndex = 13;
+            this.toSettings.Text = "Далее";
+            this.toSettings.UseVisualStyleBackColor = true;
+            this.toSettings.Click += new System.EventHandler(this.toSettings_Click);
+            this.toSettings.MouseEnter += new System.EventHandler(this.toSettings_MouseEnter);
+            this.toSettings.MouseLeave += new System.EventHandler(this.toSettings_MouseLeave);
             // 
             // groupBox2
             // 
@@ -465,8 +464,8 @@
             this.tableLayoutPanel2.ColumnCount = 2;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Controls.Add(this.button8, 1, 0);
-            this.tableLayoutPanel2.Controls.Add(this.button5, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.toMerge, 1, 0);
+            this.tableLayoutPanel2.Controls.Add(this.backToSelectBases, 0, 0);
             this.tableLayoutPanel2.Location = new System.Drawing.Point(9, 552);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
@@ -474,33 +473,33 @@
             this.tableLayoutPanel2.Size = new System.Drawing.Size(480, 45);
             this.tableLayoutPanel2.TabIndex = 15;
             // 
-            // button8
+            // toMerge
             // 
-            this.button8.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            this.button8.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button8.Location = new System.Drawing.Point(329, 5);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(148, 34);
-            this.button8.TabIndex = 1;
-            this.button8.Text = "Далее";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Click += new System.EventHandler(this.button8_Click);
-            this.button8.MouseEnter += new System.EventHandler(this.button8_MouseEnter);
-            this.button8.MouseLeave += new System.EventHandler(this.button8_MouseLeave);
+            this.toMerge.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.toMerge.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.toMerge.Location = new System.Drawing.Point(329, 5);
+            this.toMerge.Name = "toMerge";
+            this.toMerge.Size = new System.Drawing.Size(148, 34);
+            this.toMerge.TabIndex = 1;
+            this.toMerge.Text = "Далее";
+            this.toMerge.UseVisualStyleBackColor = true;
+            this.toMerge.Click += new System.EventHandler(this.toMerge_Click);
+            this.toMerge.MouseEnter += new System.EventHandler(this.toMerge_MouseEnter);
+            this.toMerge.MouseLeave += new System.EventHandler(this.toMerge_MouseLeave);
             // 
-            // button5
+            // backToSelectBases
             // 
-            this.button5.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button5.Location = new System.Drawing.Point(3, 5);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(148, 34);
-            this.button5.TabIndex = 0;
-            this.button5.Text = "Назад";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.button5_Click);
-            this.button5.MouseEnter += new System.EventHandler(this.button5_MouseEnter);
-            this.button5.MouseLeave += new System.EventHandler(this.button5_MouseLeave);
+            this.backToSelectBases.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.backToSelectBases.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.backToSelectBases.Location = new System.Drawing.Point(3, 5);
+            this.backToSelectBases.Name = "backToSelectBases";
+            this.backToSelectBases.Size = new System.Drawing.Size(148, 34);
+            this.backToSelectBases.TabIndex = 0;
+            this.backToSelectBases.Text = "Назад";
+            this.backToSelectBases.UseVisualStyleBackColor = true;
+            this.backToSelectBases.Click += new System.EventHandler(this.backToSelectBases_Click);
+            this.backToSelectBases.MouseEnter += new System.EventHandler(this.backToSelectBases_MouseEnter);
+            this.backToSelectBases.MouseLeave += new System.EventHandler(this.backToSelectBases_MouseLeave);
             // 
             // groupBox4
             // 
@@ -687,7 +686,7 @@
             this.tabPage3.Controls.Add(this.progressBar1);
             this.tabPage3.Controls.Add(this.textBoxStatus);
             this.tabPage3.Controls.Add(this.mergeLog);
-            this.tabPage3.Controls.Add(this.button6);
+            this.tabPage3.Controls.Add(this.backToSettings);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Size = new System.Drawing.Size(498, 603);
@@ -697,9 +696,9 @@
             // 
             // cancel
             // 
-            this.cancel.Location = new System.Drawing.Point(162, 541);
+            this.cancel.Location = new System.Drawing.Point(162, 522);
             this.cancel.Name = "cancel";
-            this.cancel.Size = new System.Drawing.Size(174, 25);
+            this.cancel.Size = new System.Drawing.Size(174, 34);
             this.cancel.TabIndex = 10;
             this.cancel.Text = "Отмена";
             this.cancel.UseVisualStyleBackColor = true;
@@ -786,24 +785,23 @@
             this.mergeLog.MouseEnter += new System.EventHandler(this.mergeLog_MouseEnter);
             this.mergeLog.MouseLeave += new System.EventHandler(this.mergeLog_MouseLeave);
             // 
-            // button6
+            // backToSettings
             // 
-            this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button6.Location = new System.Drawing.Point(8, 561);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(148, 34);
-            this.button6.TabIndex = 0;
-            this.button6.Text = "Назад";
-            this.button6.UseVisualStyleBackColor = true;
-            this.button6.Click += new System.EventHandler(this.button6_Click);
-            this.button6.MouseEnter += new System.EventHandler(this.button6_MouseEnter);
-            this.button6.MouseLeave += new System.EventHandler(this.button6_MouseLeave);
+            this.backToSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.backToSettings.Location = new System.Drawing.Point(8, 561);
+            this.backToSettings.Name = "backToSettings";
+            this.backToSettings.Size = new System.Drawing.Size(148, 34);
+            this.backToSettings.TabIndex = 0;
+            this.backToSettings.Text = "Назад";
+            this.backToSettings.UseVisualStyleBackColor = true;
+            this.backToSettings.Click += new System.EventHandler(this.backToSettings_Click);
+            this.backToSettings.MouseEnter += new System.EventHandler(this.backToSettings_MouseEnter);
+            this.backToSettings.MouseLeave += new System.EventHandler(this.backToSettings_MouseLeave);
             // 
             // tabPage4
             // 
             this.tabPage4.Controls.Add(this.flowLayoutPanel2);
             this.tabPage4.Controls.Add(this.button3);
-            this.tabPage4.Controls.Add(this.button2);
             this.tabPage4.Controls.Add(this.listView1);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
@@ -885,16 +883,6 @@
             this.button3.Text = "button3";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(83, 341);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(167, 49);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "visualizator";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // listView1
             // 
@@ -983,17 +971,16 @@
         private System.Windows.Forms.TextBox textBox5;
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.TabPage tabPage3;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button5;
-        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Button toSettings;
+        private System.Windows.Forms.Button backToSelectBases;
+        private System.Windows.Forms.Button toMerge;
         private System.Windows.Forms.Button mergeLog;
-        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.Button backToSettings;
         private System.Windows.Forms.TabPage tabPage4;
-        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button mergerInfo;
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.TextBox textBoxStatus;
         private System.ComponentModel.BackgroundWorker mergerBackWorker;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TextBox textBox7;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.GroupBox groupBox3;

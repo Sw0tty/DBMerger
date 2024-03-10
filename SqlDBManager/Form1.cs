@@ -6,7 +6,7 @@ using NotesNamespace;
 using System.Data;
 using System.Linq;
 using System;
-using System.Threading;
+
 
 namespace SqlDBManager
 {
@@ -28,6 +28,7 @@ namespace SqlDBManager
             label8.Text = label4.Text;
             checkConnectionMainCatalog.Text = "Проверить соединение";
             checkConnectionDaughterCatalog.Text = checkConnectionMainCatalog.Text;
+            cancel.Location = new System.Drawing.Point(162, 561);
 
             //textBox2.Font = new Font(FontFamily.GenericSansSerif, 14);
 
@@ -50,13 +51,12 @@ namespace SqlDBManager
 
         private void SetButtonsFont()
         {
-            button2.Font = Consts.VisualConsts.BUTTON_FONT;
             button3.Font = Consts.VisualConsts.BUTTON_FONT;
-            button4.Font = Consts.VisualConsts.BUTTON_FONT;
-            button5.Font = Consts.VisualConsts.BUTTON_FONT;
-            button6.Font = Consts.VisualConsts.BUTTON_FONT;
-            button8.Font = Consts.VisualConsts.BUTTON_FONT;
-            button9.Font = Consts.VisualConsts.BUTTON_FONT;
+            toSettings.Font = Consts.VisualConsts.BUTTON_FONT;
+            backToSelectBases.Font = Consts.VisualConsts.BUTTON_FONT;
+            backToSettings.Font = Consts.VisualConsts.BUTTON_FONT;
+            toMerge.Font = Consts.VisualConsts.BUTTON_FONT;
+            mergerInfo.Font = Consts.VisualConsts.BUTTON_FONT;
             mergeLog.Font = Consts.VisualConsts.BUTTON_FONT;
             startMerge.Font = Consts.VisualConsts.BUTTON_FONT;
             checkConnectionMainCatalog.Font = Consts.VisualConsts.BUTTON_FONT;
@@ -151,7 +151,7 @@ namespace SqlDBManager
             {
                 mainDBGroupBox.Enabled = false;
                 groupBox2.Enabled = false;
-                button4.Enabled = false;
+                toSettings.Enabled = false;
                 dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox1.Text, textBox1.Text, textBox2.Text, textBox3.Text));               
             }
             else
@@ -168,7 +168,7 @@ namespace SqlDBManager
             {
                 mainDBGroupBox.Enabled = false;
                 groupBox2.Enabled = false;
-                button4.Enabled = false;
+                toSettings.Enabled = false;
                 dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox2.Text, textBox4.Text, textBox5.Text, textBox6.Text));
             }
             else
@@ -177,7 +177,7 @@ namespace SqlDBManager
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void toSettings_Click(object sender, EventArgs e)
         {
             TrimAllOnForm();
 
@@ -185,7 +185,7 @@ namespace SqlDBManager
             {
                 mainDBGroupBox.Enabled = false;
                 groupBox2.Enabled = false;
-                button4.Enabled = false;
+                toSettings.Enabled = false;
                 dirtyJobBackWorker.RunWorkerAsync();
             }
             else
@@ -194,23 +194,23 @@ namespace SqlDBManager
             }
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void backToSelectBases_Click(object sender, EventArgs e)
         {
             WrapTabControl(tabControl1, false);
         }
 
-        public void button8_Click(object sender, EventArgs e)
+        public void toMerge_Click(object sender, EventArgs e)
         {
             TrimAllOnForm();
             WrapTabControl(tabControl1, true);
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void backToSettings_Click(object sender, EventArgs e)
         {
             WrapTabControl(tabControl1, false);
         }
 
-        private void button9_Click(object sender, EventArgs e)
+        private void mergerInfo_Click(object sender, EventArgs e)
         {
             InfoForm inforamtion = new InfoForm();
             inforamtion.ShowDialog();
@@ -218,12 +218,7 @@ namespace SqlDBManager
 
         private void cancel_Click(object sender, EventArgs e)
         {
-            //throw new StopMergeException(Consts.StopMergeConsts.STOP_ERROR_MESSAGE);
             Consts.StopMergeConsts.STOP_MERGE = true;
-/*            if (mergerBackWorker.WorkerSupportsCancellation == true)
-            {
-                mergerBackWorker.CancelAsync();
-            }*/
         }
 
         private void mergeLog_Click(object sender, EventArgs e)
@@ -260,16 +255,17 @@ namespace SqlDBManager
         {
             BackgroundWorker worker = sender as BackgroundWorker;
 
-            string text1 = "";
-            string text2 = "";
+            string text1 = null;
+            string text2 = null;
+            bool successOperation = true;
 
             Invoke(new Action(() => {
                 text1 = comboBox1.Text;
                 text2 = comboBox1.Text;
-                //mergeLog.Visible = false;
-                //cancel.Visible = true;
+                mergeLog.Visible = false;
+                cancel.Visible = true;
                 startMerge.Enabled = false;
-                button6.Enabled = false;
+                backToSettings.Enabled = false;
                 textBoxStatus.Clear();
                 label12.Text = "Записей импортировано: 0";
             }));
@@ -283,10 +279,8 @@ namespace SqlDBManager
             daughterCatalog.StartTransaction();
 
             Consts.MergeProgress.FormTasks(mainCatalog);
-
             if (recalc_v2.Checked)
                 Consts.MergeProgress.AddToAllTasks(2);
-
             if (recalc_v3.Checked)
                 Consts.MergeProgress.AddToAllTasks(3);
 
@@ -295,7 +289,172 @@ namespace SqlDBManager
             worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Предварительные проверки ---");
             worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Валидируем каталоги на возможность слияния...");
 
-            if (Wrappers.WrapValidator(Validator.ValidateVersions, mainCatalog, daughterCatalog, worker))
+            try
+            {
+                if (!Wrappers.WrapValidator(Validator.ValidateCountTables, mainCatalog, daughterCatalog, worker))
+                    throw new MergerExceptions.ValidationException($"В главном каталоге {Validator.TablesCount.Item1} таблиц, когда в дочернем {Validator.TablesCount.Item2} таблиц.");
+
+                if (!Wrappers.WrapValidator(Validator.ValidateNamesTables, mainCatalog, daughterCatalog, worker))
+                    throw new MergerExceptions.ValidationException(MergerExceptions.ErrorMessages.NOT_EQUEL_NAMES);
+
+                if (!Wrappers.WrapCustomValidator(Validator.ValidateDefaultTablesValues, mainCatalog, daughterCatalog, worker))
+                    throw new MergerExceptions.ValidationException(MergerExceptions.ErrorMessages.NOT_ALLOWED_VALUES);
+            }
+            catch (MergerExceptions.ValidationException error)
+            {
+                successOperation = false;
+                e.Result = error.Message;
+                ProgramMessages.ValidationErrorMessage();
+            }
+            catch (Exception error)
+            {
+                successOperation = false;
+                e.Result = error.Message;
+                ProgramMessages.ErrorMessage();
+            }
+
+            if (successOperation)
+            {
+                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Валидация успешно завершена!");
+                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Снимаем копию главной БД...");
+
+                BackupManager backupManager = new BackupManager(mainCatalog.SelectCatalogPath(), mainCatalog.ReturnCatalogName(), "master", text1, textBox2.Text, textBox3.Text);
+                backupManager.OpenConnection();
+
+                backupManager.SetParams();
+
+                backupManager.CreateReserveBackup();
+                if (backUp_v2.Checked)
+                {
+                    backupManager.RestoreFromBackup();
+                    backupManager.DeleteReserveBackup();
+                    backupManager.CloseConnection();
+                    mainCatalog.CommitTransaction();
+                    mainCatalog.CloseConnection();
+                    mainCatalog = new DBCatalog(text1, textBox1.Text + Consts.VisualConsts.TAIL_OF_MERGED_FILES, textBox2.Text, textBox3.Text);
+                    mainCatalog.OpenConnection();
+                    mainCatalog.StartTransaction();
+                    backupManager = new BackupManager(mainCatalog.SelectCatalogPath(), mainCatalog.ReturnCatalogName(), "master", text1, textBox2.Text, textBox3.Text);
+                }
+                else
+                {
+                    backupManager.CloseConnection();
+                }
+                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Копия успешно создана!");
+                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Вносим правки ключей таблиц...");
+
+                successOperation = Wrappers.WrapSimpleMergeFunc(MergeManager.RepeirDBKeys, mainCatalog, worker);
+
+                if (successOperation)
+                {
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Вносим временные изменения в таблицы...");
+                    successOperation = MergeManager.RenameBeforeMergeTableColumn(mainCatalog, daughterCatalog, worker);
+                }
+
+                if (successOperation)
+                {
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Необходимые правки успешно применены!");
+                    worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Очистка логов ---");
+                    successOperation = MergeManager.ClearLogs(mainCatalog, worker);
+                }
+
+                if (successOperation)
+                {
+                    worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Обработка дефолтных таблиц ---");
+                    MergeManager.ProcessSkipTables(mainCatalog, daughterCatalog, worker);
+                    successOperation = MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, worker);
+                }
+
+                //MessageBox.Show("End of default tables");
+
+                if (successOperation)
+                {
+                    worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Обработка таблиц с внешними ключами ---");
+                    successOperation = MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, worker);
+                }
+
+                if (successOperation)
+                {
+                    worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Заключение слияния ---");
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Возвращаем временные изменения...");
+                    successOperation = Wrappers.WrapSimpleMergeFunc(MergeManager.RenameAfterMergeTableColumn, mainCatalog, worker);
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Изменения применены!");
+                }
+
+                if (successOperation)
+                {
+                    MessageBox.Show("NEXT STEP COMMIT!");
+                    mainCatalog.CommitTransaction();
+                    Consts.MERGE_WAS_SUCCESS = true;
+
+                    if (!recalc_v1.Checked)
+                    {
+                        mainCatalog.StartTransaction();
+                        worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Приступаем к пересчету ---");
+                        RecalcManager recalcManager = new RecalcManager(mainCatalog);
+                        worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Пересчитываем описи...");
+                        recalcManager.RecalcInventory(worker);
+                        worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
+                        worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Пересчитываем фонды...");
+                        recalcManager.RecalcFund(worker);
+                        worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
+
+                        if (recalc_v3.Checked)
+                        {
+                            worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Пересчитываем паспорта...");
+                            recalcManager.RecalcAndCreatePassport(worker);
+                            worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
+                        }
+
+                        mainCatalog.CommitTransaction();
+                        worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Пересчет завершен!");
+                    }
+
+                    e.Result = "Слияние успешно завершено!";
+                    ProgramMessages.MergeCompletedMessage();
+
+                }
+                else
+                {
+                    mainCatalog.RollbackTransaction();
+                    daughterCatalog.RollbackTransaction();
+
+                    backupManager.OpenConnection();
+                    if (backUp_v1.Checked)
+                        backupManager.DeleteReserveBackup();
+                    else
+                    {
+                        mainCatalog.RollbackTransaction();
+                        mainCatalog.CloseConnection();
+                        backupManager.OpenConnection();
+                        backupManager.DropCatalog();
+                    }
+                    backupManager.CloseConnection();
+
+                    if (Consts.StopMergeConsts.STOP_MERGE)
+                    {
+                        Consts.StopMergeConsts.STOP_MERGE = false;
+                        ProgramMessages.UserCanceledMessage();
+                    }
+                    else
+                    {
+                        ProgramMessages.ErrorMessage();
+                    }
+                }
+            }
+
+            Invoke(new Action(() => {
+                cancel.Visible = false;
+                mergeLog.Visible = true;
+                mergeLog.Enabled = true;
+                startMerge.Enabled = true;
+                backToSettings.Enabled = true;
+            }));
+
+            mainCatalog.CloseConnection();
+            daughterCatalog.CloseConnection();
+
+            /*if (Wrappers.WrapValidator(Validator.ValidateVersions, mainCatalog, daughterCatalog, worker))
             {
                 if (Wrappers.WrapValidator(Validator.ValidateCountTables, mainCatalog, daughterCatalog, worker))
                 {
@@ -306,8 +465,7 @@ namespace SqlDBManager
                             worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Валидация успешно завершена!");
 
                             worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Снимаем копию главной БД...");
-                            // --------------
-                            // Создаем резервную копию для транзакций
+
                             BackupManager backupManager = new BackupManager(mainCatalog.SelectCatalogPath(), mainCatalog.ReturnCatalogName(), "master", text1, textBox2.Text, textBox3.Text);
                             backupManager.OpenConnection();
 
@@ -334,7 +492,7 @@ namespace SqlDBManager
 
                             worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Вносим правки ключей таблиц...");
 
-                            bool successOperation = Wrappers.WrapSimpleMergeFunc(MergeManager.RepeirDBKeys, mainCatalog, worker);
+                            successOperation = Wrappers.WrapSimpleMergeFunc(MergeManager.RepeirDBKeys, mainCatalog, worker);
 
                             if (successOperation)
                             {
@@ -455,18 +613,20 @@ namespace SqlDBManager
             {
                 e.Result = "Версии каталогов не сходятся!";
                 ProgramMessages.ValidationErrorMessage();
-            }
-            Invoke(new Action(() => {
-                //cancel.Visible = false;
-                //mergeLog.Visible = true;
-                mergeLog.Enabled = true;
-                //startMerge.Text = Consts.TextsConsts.LOG_BUTTON;
-                startMerge.Enabled = true;              
-                button6.Enabled = true;
-            }));
+            }*/
 
-            mainCatalog.CloseConnection();
-            daughterCatalog.CloseConnection();
+
+            /*            Invoke(new Action(() => {
+                            //cancel.Visible = false;
+                            //mergeLog.Visible = true;
+                            mergeLog.Enabled = true;
+                            //startMerge.Text = Consts.TextsConsts.LOG_BUTTON;
+                            startMerge.Enabled = true;              
+                            backToSettings.Enabled = true;
+                        }));
+
+                        mainCatalog.CloseConnection();
+                        daughterCatalog.CloseConnection();*/
         }
 
         private void mergerBackWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -584,7 +744,7 @@ namespace SqlDBManager
             {
                 mainDBGroupBox.Enabled = true;
                 groupBox2.Enabled = true;
-                button4.Enabled = true;
+                toSettings.Enabled = true;
             }));
         }
 
@@ -611,10 +771,8 @@ namespace SqlDBManager
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (mergerBackWorker.IsBusy)
-            {
-                MessageBox.Show("");
-            }           
+            /*if (mergerBackWorker.IsBusy)
+                Consts.StopMergeConsts.STOP_MERGE = true;*/
         }
 
         private void checkConnectionMainCatalog_MouseEnter(object sender, EventArgs e)
@@ -637,42 +795,42 @@ namespace SqlDBManager
             Cursor = Cursors.Default;
         }
 
-        private void button4_MouseEnter(object sender, EventArgs e)
+        private void toSettings_MouseEnter(object sender, EventArgs e)
         {
             Cursor = Cursors.Hand;
         }
 
-        private void button4_MouseLeave(object sender, EventArgs e)
+        private void toSettings_MouseLeave(object sender, EventArgs e)
         {
             Cursor = Cursors.Default;
         }
 
-        private void button8_MouseEnter(object sender, EventArgs e)
+        private void toMerge_MouseEnter(object sender, EventArgs e)
         {
             Cursor = Cursors.Hand;
         }
 
-        private void button8_MouseLeave(object sender, EventArgs e)
+        private void toMerge_MouseLeave(object sender, EventArgs e)
         {
             Cursor = Cursors.Default;
         }
 
-        private void button5_MouseLeave(object sender, EventArgs e)
+        private void backToSelectBases_MouseLeave(object sender, EventArgs e)
         {
             Cursor = Cursors.Default;
         }
 
-        private void button5_MouseEnter(object sender, EventArgs e)
+        private void backToSelectBases_MouseEnter(object sender, EventArgs e)
         {
             Cursor = Cursors.Hand;
         }
 
-        private void button6_MouseEnter(object sender, EventArgs e)
+        private void backToSettings_MouseEnter(object sender, EventArgs e)
         {
             Cursor = Cursors.Hand;
         }
 
-        private void button6_MouseLeave(object sender, EventArgs e)
+        private void backToSettings_MouseLeave(object sender, EventArgs e)
         {
             Cursor = Cursors.Default;
         }
@@ -697,12 +855,12 @@ namespace SqlDBManager
             Cursor = Cursors.Default;
         }
 
-        private void button9_MouseEnter(object sender, EventArgs e)
+        private void mergerInfo_MouseEnter(object sender, EventArgs e)
         {
             Cursor = Cursors.Hand;
         }
 
-        private void button9_MouseLeave(object sender, EventArgs e)
+        private void mergerInfo_MouseLeave(object sender, EventArgs e)
         {
             Cursor = Cursors.Default;
         }
@@ -731,6 +889,15 @@ namespace SqlDBManager
         private void button3_Click(object sender, EventArgs e)
         {
 
+            
+            /*try
+            {
+                throw new MergerExceptions.WrongVersionException(MergerExceptions.WrongVersionException.SELF_ERROR);
+            }
+            catch (MergerExceptions.WrongVersionException error)
+            {
+                MessageBox.Show(error.Message);
+            }*/
             /*Thread myThread = new Thread(() => {
                 while (true)
                 {
@@ -740,12 +907,12 @@ namespace SqlDBManager
 
             myThread.Start();*/
 
-            DBCatalog testDBCatalog = new DBCatalog(@"(local)\SQL2022", "5585_2", "sa", "123");
+            DBCatalog testDBCatalog = new DBCatalog(@"(local)\SQLexpress2022", "main", "sa", "123");
             BackgroundWorker plugWorker = new BackgroundWorker();
 
             testDBCatalog.OpenConnection();
             testDBCatalog.StartTransaction();
-
+            MessageBox.Show(Validator.ValidateVersion(testDBCatalog).ToString());
 
             RecalcManager recalcManager = new RecalcManager(testDBCatalog);
 
@@ -760,21 +927,6 @@ namespace SqlDBManager
             testDBCatalog.CloseConnection();
 
             MessageBox.Show("End of recalc tests...");
-        }
-
-        public static int MuliplierRecurtion(int multiplierNumber)
-        {
-            if (multiplierNumber == 1)
-                return 1;
-            return multiplierNumber * MuliplierRecurtion(multiplierNumber - 1);
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            //Visualizator.VisualizateReserv();
-
-            Tuple<string, string, string> tr = new Tuple<string, string, string>("1", "2", "3");
-
         }
 
         private void flowLayoutPanel1_Resize(object sender, EventArgs e)

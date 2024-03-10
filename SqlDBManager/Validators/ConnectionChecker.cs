@@ -12,23 +12,27 @@ namespace SqlDBManager
     {
         public static bool CheckConnection(string source, string catalog, string login, string password)
         {
-            string connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password};Connect Timeout=30";
-            SqlConnection cnn = new SqlConnection(connectionString);
+            DBCatalog catalogCheck = new DBCatalog(source, catalog, login, password);
 
             try
             {
                 //SqlExtensions.QuickOpen(cnn, 60);
-                cnn.Open();
+                catalogCheck.OpenConnection();
 
                 if (catalog == "")
                 {
-                    cnn.Close();
+                    catalogCheck.CloseConnection();
                     return false;
                 }
-                cnn.Close();
+                if (!Validator.ValidateVersion(catalogCheck))
+                {
+                    catalogCheck.CloseConnection();
+                    return false;
+                }
+                catalogCheck.CloseConnection();
                 return true;
             }
-            catch
+            catch (Exception)
             {
                 return false;
             }
@@ -36,33 +40,36 @@ namespace SqlDBManager
 
         public static DialogResult CheckConnectionMessage(string source, string catalog, string login, string password)
         {
-            SqlCommand command;
-            SqlDataReader reader;
             List<string> response = new List<string>();
             string connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password};Connect Timeout=15";
-
-            SqlConnection cnn = new SqlConnection(connectionString);
+            DBCatalog catalogCheck = new DBCatalog(source, catalog, login, password);
 
             try
             {
-                cnn.Open();
-                //SqlExtensions.QuickOpen(cnn, 60);
-
+                catalogCheck.OpenConnection();
                 if (catalog == "")
                 {
-                    string request = SQLRequests.SelectRequests.AllAllowedDataBasesRequest();
-                    command = new SqlCommand(request, cnn);
-                    reader = command.ExecuteReader();
+                    using (SqlConnection cnn = new SqlConnection(connectionString))
+                    {
+                        cnn.Open();
+                        SqlCommand command = new SqlCommand(SQLRequests.SelectRequests.AllAllowedDataBasesRequest(), cnn);
+                        SqlDataReader reader = command.ExecuteReader();
 
-                    while (reader.Read())
-                        response.Add(reader.GetValue(0).ToString());
+                        while (reader.Read())
+                            response.Add(reader.GetValue(0).ToString());
 
-                    reader.Close();
-                    command.Dispose();
-                    cnn.Close();
+                        reader.Close();
+                        command.Dispose();
+                    }                  
                     return ProgramMessages.ConnectionWarningMessage(response);
                 }
-                cnn.Close();
+
+                if (!Validator.ValidateVersion(catalogCheck))
+                {
+                    catalogCheck.CloseConnection();
+                    return ProgramMessages.UnsupportingCatalog(catalog);
+                }
+                catalogCheck.CloseConnection();
                 return ProgramMessages.ConnectionSuccessMessage();
             }
             catch

@@ -29,6 +29,11 @@ namespace SqlDBManager
                                    MessageBoxIcon.Warning);
         }
 
+        public static DialogResult UnsupportingCatalog(string catalog)
+        {
+            return MessageBox.Show($"Каталог '{catalog}' не является базой ПО Архивный фонд или содержит неподдерживаемую версию базы.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
         public static void ValidationErrorMessage()
         {
             MessageBox.Show("Ошибка валидации!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -51,12 +56,22 @@ namespace SqlDBManager
 
         public static void UserCanceledMessage()
         {
-            MessageBox.Show("Процесс был остановлен пользователем", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("Процесс был прерван пользователем", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         public static DialogResult LogNotSavedMessage()
         {
             return MessageBox.Show("Результаты слияния не были сохранены в файл. Продолжить без выгрузки?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        }
+
+        public static DialogResult CancelMergeProcess()
+        {
+            return MessageBox.Show("Вы действительно хотите оставить процесс слияния?", "Предупреждение", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+        }
+
+        public static DialogResult MakeEdits()
+        {
+            return MessageBox.Show("Внести правки для продолжения слияния?", "Системное сообщение", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
         }
 
         public static void ConnectionToCatalogMessage()

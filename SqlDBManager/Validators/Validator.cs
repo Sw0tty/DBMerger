@@ -1,24 +1,35 @@
-﻿using NotesNamespace;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Threading;
 using System.Windows.Forms;
+using System.Threading;
+using NotesNamespace;
+using System;
 
 
 namespace SqlDBManager
 {
     public static class Validator
     {
-        public static Tuple<string, string> CatalogsVersions = null;
         public static Tuple<int, int> TablesCount = null;
         public static List<string> TablesNamesUncontains = new List<string>();
 
-        public static bool ValidateVersions(DBCatalog mainCatalog, DBCatalog daughterCatalog)
+        public static bool ValidateVersion(DBCatalog сatalog)
         {
             try
             {
-                CatalogsVersions = new Tuple<string, string>(mainCatalog.SelectCatalogVersion()["Version"], daughterCatalog.SelectCatalogVersion()["Version"]);
+                return Consts.ReturnSupportingVersions().Contains(сatalog.SelectCatalogVersion());
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+/*        public static bool ValidateVersions(DBCatalog mainCatalog, DBCatalog daughterCatalog)
+        {
+            try
+            {
+                CatalogsVersions = new Tuple<string, string>(mainCatalog.SelectCatalogVersion_old()["Version"], daughterCatalog.SelectCatalogVersion_old()["Version"]);
             }
             catch (Exception)
             {
@@ -27,17 +38,12 @@ namespace SqlDBManager
             if (CatalogsVersions.Item1 == CatalogsVersions.Item2)
                 return true;
             return false;
-        }
+        }*/
 
-        /// <summary>
-        /// Проверяет схождение количества слияемых каталогов
-        /// </summary>
         public static bool ValidateCountTables(DBCatalog mainCatalog, DBCatalog daughterCatalog)
         {
             TablesCount = new Tuple<int, int>(mainCatalog.SelectCountTables(), daughterCatalog.SelectCountTables());
-            if (TablesCount.Item1 == TablesCount.Item2)
-                return true;
-            return false;
+            return TablesCount.Item1 == TablesCount.Item2;
         }
 
         public static bool ValidateNamesTables(DBCatalog mainCatalog, DBCatalog daughterCatalog)
@@ -49,9 +55,10 @@ namespace SqlDBManager
                 if (!mainCatalogNamesTables.Contains(daughterTablesName))
                     TablesNamesUncontains.Add(daughterTablesName);
             }
-            if (TablesNamesUncontains.Count > 0)
+            return TablesNamesUncontains.Count == 0;
+/*            if (TablesNamesUncontains.Count > 0)
                 return false;
-            return true;
+            return true;*/
         }
 
         public static bool ValidateDefaultTablesValues(DBCatalog mainCatalog, DBCatalog daughterCatalog, BackgroundWorker worker)
@@ -73,7 +80,7 @@ namespace SqlDBManager
             if (mainProblemTables.Count > 0 || daughterProblemTables.Count > 0)
             {
                 Thread.Sleep(2000);
-                if (MessageBox.Show("Внести правки для продолжения слияния?", "Системное сообщение", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (ProgramMessages.MakeEdits() == DialogResult.Yes)
                 {
                     worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Приступаем к корректировке данных...");
                     if (mainProblemTables.Count > 0)

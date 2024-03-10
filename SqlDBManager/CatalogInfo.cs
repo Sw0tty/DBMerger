@@ -134,10 +134,16 @@ namespace SqlDBManager
             return ReturnDictFromDB(request, ReturnConnection(), ReturnTransaction());
         }
 
-        public Dictionary<string, string> SelectCatalogVersion()
+/*        public Dictionary<string, string> SelectCatalogVersion_old()
         {
             string request = SQLRequests.SelectRequests.SelectVersionRequest(ReturnCatalogName());
             return ReturnDictFromDB(request, ReturnConnection(), ReturnTransaction());
+        }*/
+
+        public string SelectCatalogVersion()
+        {
+            string request = SQLRequests.SelectRequests.SelectVersionRequest_new(ReturnCatalogName());
+            return SelectSingleValueAdapter(request, likeValue: false, ReturnConnection(), ReturnTransaction());
         }
 
         /// <summary>
