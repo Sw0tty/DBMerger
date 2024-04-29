@@ -55,3 +55,6 @@ D:\SharpProjects\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.application
 D:\SharpProjects\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.exe
 D:\SharpProjects\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.pdb
 C:\CharpProj\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.Form1.resources
+C:\CharpProj\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.InfoForm.resources
+D:\SharpProjects\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.InfoForm.resources
+D:\SharpProjects\DBMerger\SqlDBManager\obj\Debug\SqlDBManager.csproj.SuggestedBindingRedirects.cache

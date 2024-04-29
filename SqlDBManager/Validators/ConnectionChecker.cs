@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Diagnostics;
+using System.Threading;
+using System;
 
 
 namespace SqlDBManager
@@ -15,23 +12,27 @@ namespace SqlDBManager
     {
         public static bool CheckConnection(string source, string catalog, string login, string password)
         {
-            string connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password};Connect Timeout=30";
-            SqlConnection cnn = new SqlConnection(connectionString);
+            DBCatalog catalogCheck = new DBCatalog(source, catalog, login, password);
 
             try
             {
                 //SqlExtensions.QuickOpen(cnn, 60);
-                cnn.Open();
+                catalogCheck.OpenConnection();
 
                 if (catalog == "")
                 {
-                    cnn.Close();
+                    catalogCheck.CloseConnection();
                     return false;
                 }
-                cnn.Close();
+                if (!Validator.ValidateVersion(catalogCheck))
+                {
+                    catalogCheck.CloseConnection();
+                    return false;
+                }
+                catalogCheck.CloseConnection();
                 return true;
             }
-            catch
+            catch (Exception)
             {
                 return false;
             }
@@ -39,45 +40,41 @@ namespace SqlDBManager
 
         public static DialogResult CheckConnectionMessage(string source, string catalog, string login, string password)
         {
-            SqlCommand command;
-            SqlDataReader reader;
-            string request, connectionString, response = "";
-
-            connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password};Connect Timeout=15";
-
-            SqlConnection cnn = new SqlConnection(connectionString);
+            List<string> response = new List<string>();
+            string connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password};Connect Timeout=15";
+            DBCatalog catalogCheck = new DBCatalog(source, catalog, login, password);
 
             try
             {
-                cnn.Open();
-                //SqlExtensions.QuickOpen(cnn, 60);
-
+                catalogCheck.OpenConnection();
                 if (catalog == "")
                 {
-                    request = "SELECT name FROM sys.databases WHERE name NOT IN ('master', 'tempdb', 'model', 'msdb');";
-
-                    command = new SqlCommand(request, cnn);
-                    reader = command.ExecuteReader();
-
-                    while (reader.Read())
+                    using (SqlConnection cnn = new SqlConnection(connectionString))
                     {
-                        response += Convert.ToString(reader.GetValue(0)) + " ";
-                    }
+                        cnn.Open();
+                        SqlCommand command = new SqlCommand(SQLRequests.SelectRequests.AllAllowedDataBasesRequest(), cnn);
+                        SqlDataReader reader = command.ExecuteReader();
 
-                    reader.Close();
-                    command.Dispose();
-                    cnn.Close();
-                    return MessageBox.Show($"Соединение установлено, но не выбран каталог!\nДоступные каталоги: {response}",
-                                            "Предупреждение",
-                                            MessageBoxButtons.OK,
-                                            MessageBoxIcon.Warning);
+                        while (reader.Read())
+                            response.Add(reader.GetValue(0).ToString());
+
+                        reader.Close();
+                        command.Dispose();
+                    }                  
+                    return ProgramMessages.ConnectionWarningMessage(response);
                 }
-                cnn.Close();
-                return MessageBox.Show("Соединение установлено!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                if (!Validator.ValidateVersion(catalogCheck))
+                {
+                    catalogCheck.CloseConnection();
+                    return ProgramMessages.UnsupportingCatalog(catalog);
+                }
+                catalogCheck.CloseConnection();
+                return ProgramMessages.ConnectionSuccessMessage();
             }
             catch
             {
-                return MessageBox.Show("Соединение не удалось!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return ProgramMessages.ConnectionErrorMessage();
             }
         }
     }

@@ -1,22 +1,31 @@
 ﻿using SqlDBManager;
+using SqlDBManager.DBClasses;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Runtime.Serialization.Formatters;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
-using System.Windows.Forms;
+using System.ComponentModel;
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using System.Windows.Forms.VisualStyles;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-
+using System.Windows.Forms;
 
 namespace NotesNamespace
 {
     public static class HelpFunction
     {
+        public static List<string> Exclude(List<string> columns, List<string> excludeClumns)
+        {
+            foreach (string excludeColumn in excludeClumns)
+            {
+                columns.Remove(excludeColumn);
+            }
+            return columns;
+        }
+
+        public static int ConventToInt(string digitalFromDB)
+        {
+            return digitalFromDB.Contains("null") ? 0 : Convert.ToInt32(digitalFromDB.Replace("\'", ""));
+        }
+
         public static string CreateSpace(int spaceSize)
         {
             string space = "";
@@ -24,36 +33,109 @@ namespace NotesNamespace
                 space += " ";
             return space;
         }
-    }
 
+        public static string SearchSecondParent(string nowSecondParentID, List<Tuple<string, string>> pairOfSecondParentID)
+        {
+            foreach (Tuple<string, string> pairID in pairOfSecondParentID)
+            {
+                if (nowSecondParentID == pairID.Item1)
+                    return pairID.Item2;
+            }
+            return null;
+        }
+
+        public static void SaveMergeLog(string textBlock)
+        {
+            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
+            {
+                saveFileDialog.InitialDirectory = "c:\\";
+                saveFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+                saveFileDialog.FilterIndex = 1;
+                saveFileDialog.FileName = "MergeLog";
+                saveFileDialog.RestoreDirectory = true;
+
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    using (StreamWriter writer = new StreamWriter(saveFileDialog.FileName))
+                    {
+                        writer.WriteLine($"Merge log of '{Consts.LAST_MAIN_CATALOG}' and '{Consts.LAST_DAUGHTER_CATALOG}' catalogs. \n");
+
+                        foreach (char s in textBlock)
+                            writer.Write(s);
+                    }
+                    Consts.LOG_SAVED = true;
+                }
+            }
+        }
+    }  
     
-    public static class RecalculationConsts
+    public static class MergerPreSettings
     {
-        public static char Electronic = 'E';
-        public static char Traditional = 'T';
-
-        public static List<string> PaperFunds = new List<string>()
+        public static class ArchiveUpdate
         {
-            "'1'", "'2'", "'3'", "'4'",
-        };
+            //public static bool MakeEdits = false;
 
-        public static List<string> TraditionalFunds = new List<string>()
-        {
-            "'5'", "'6'", "'7'", "'8'",
-        };
+            public static string UpdateTableName = "tblARCHIVE";
+            public static List<TextBox> Fields = null;
 
-        public static List<string> MicroformFunds = new List<string>()
-        {
-            "'9'",
-        };
+            public static class UpdateValues
+            {
+                public static string mainCatalogName = null;
+
+                public static string shortArchiveName = null;
+                public static string fullArchiveName = null;
+                public static string archiveAddress = null;
+                public static string description = null;
+            }
+        }
     }
-    
+
+/*    public class MergerExceptions
+    {
+        public class ErrorMessages
+        {
+            public const string WRONG_VERSION = "Версии каталогов не сходятся!";
+            public static string NOT_EQUEL_COUNT = $"В главном каталоге {Validator.TablesCount.Item1} таблиц, когда в дочернем {Validator.TablesCount.Item2} таблиц.";
+            public const string NOT_EQUEL_NAMES = "Наименования таблиц не совпадают!";
+            public const string NOT_ALLOWED_VALUES = "Дефолтные таблицы содержат недопустимые значения!";
+        }
+
+        public class StopMergeException : Exception
+        {
+            public StopMergeException(string message)
+                : base(message) { }
+        }
+
+        public class ValidationException : Exception
+        {
+            public ValidationException(string message)
+                : base(message) { }
+        }
+    }*/
+
+    /*    public static class RecalculationConsts
+        {
+
+            public static List<string> PaperFunds = new List<string>()
+            {
+                "'1'", "'2'", "'3'", "'4'",
+            };
+
+            public static List<string> TraditionalFunds = new List<string>()
+            {
+                "'5'", "'6'", "'7'", "'8'",
+            };
+
+            public static List<string> MicroformFunds = new List<string>()
+            {
+                "'9'",
+            };
+        }*/
+
 
     public static class SpecialTablesValues
     {
-
-        public static string SPSP = "tblDOCUMENT_STATS";
-        public static Tuple<string, string> SpecailTablePair = new Tuple<string, string>( "tblINVENTORY", "tblDOCUMENT_STATS");
+        public static Tuple<string, string> SpecialTablePair = new Tuple<string, string>("tblINVENTORY", "tblDOCUMENT_STATS");
 
         /// <summary>
         /// Наименование таблицы - (дефолтное значение для корректировки, фильтруемая колонка) - ключи дефолтных значений
@@ -74,18 +156,260 @@ namespace NotesNamespace
         public static Dictionary<string, Tuple<Tuple<string, string>, Tuple<string, string>>> RenamedColumns { get; } = new Dictionary<string, Tuple<Tuple<string, string>, Tuple<string, string>>>()
         { // Before Merge, After Merge
             { "tblINVENTORY", new Tuple<Tuple<string, string>, Tuple<string, string>>(new Tuple<string, string>("ISN_INVENTORY_STORAGE", "ISN_STORAGE_MEDIUM"), new Tuple<string, string>("ISN_STORAGE_MEDIUM", "ISN_INVENTORY_STORAGE")) },
+            //{ "tblREF_FILE", new Tuple<Tuple<string, string>, Tuple<string, string>>(new Tuple<string, string>("ISN_OBJ", "ISN_FUND"), new Tuple<string, string>("ISN_FUND", "ISN_OBJ")) },
         };
 
         public static List<string> DefaultUsers { get; } = new List<string>() { "sa", "anonymous", "admin", "reader", "arch", "tech" };
-
-/*        public static List<string> ReturnDefaultUsers()
-        {
-            return defaultUsers;
-        }*/
     }
 
 
+    // -------------------- recalc notes --------------------------
+
+
+    // ---In recalc---
+    //{ "tblARCHIVE_PASSPORT",
+    //    new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>("PASS_YEAR", "ISN_PASSPORT", null, null, null, null, null, new Tuple<bool>(true)) },
+    // -------
+
+    // ---In recalc---
+    //{ "tblARCHIVE_STATS",
+    //    new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>(null, "ISN_ARCHIVE_STATS", null, "ISN_PASSPORT", null, null, null, new Tuple<bool>(true)) },
+    // -------
+
+
+    /*
+     
+
+
+    (SELECT COUNT(*) FROM [tblFUND] WHERE Deleted = '0' and CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and CARRIER_TYPE = 'T' and ISN_DOC_TYPE = '1')
+
+    (SELECT COUNT(*) FROM [tblINVENTORY] WHERE Deleted = '0' and CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and CARRIER_TYPE = 'T' and ISN_INVENTORY_TYPE = '1')
+    (SELECT COUNT(*) FROM [tblINVENTORY] WHERE Deleted = '0' and CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and CARRIER_TYPE = 'T' and ISN_INVENTORY_TYPE = '1' and COPY_COUNT > '1')
+
+
+
+
+
+
+
+
+    (SELECT SUM(UNIT_COUNT) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P'),
+    (SELECT SUM(UNIT_INVENTORY) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P'),
+    (SELECT SUM(SECRET_UNITS) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P'),
+    (SELECT SUM(UNITS_UNIQUE) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P'),
+    (SELECT SUM(UNIT_OC_COUNT) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P')
+    (SELECT SUM(REG_UNIT) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P')
+    (SELECT SUM(REG_UNIT_INVENTORY) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P')
+    (SELECT SUM(UNIT_HAS_SF) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P')
+    (SELECT SUM(UNIT_HAS_FP) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P')
+    (SELECT SUM(UNITS_CATALOGUED) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P')
+    (SELECT SUM(REG_UNITS_CTALOGUE) FROM [tblDOCUMENT_STATS] AS stat JOIN [tblFUND] AS fund ON fund.ISN_FUND = stat.ISN_FUND WHERE fund.Deleted = '0' and fund.CreationDateTime <= '{passportYear + 1}0101 00:00:00.000' and stat.ISN_INVENTORY is NULL and stat.ISN_DOC_TYPE = '1' and stat.CARRIER_TYPE = 'P');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     
+     create new passport
+
+    
+  USE [5009_main];
+  INSERT INTO [tblARCHIVE_PASSPORT]([ID]
+      ,[OwnerID]
+      ,[CreationDateTime]
+      ,[DocID]
+      ,[RowID]
+      ,[StatusID]
+      ,[Deleted]
+	  ,[ISN_PASSPORT]
+      ,[ISN_ARCHIVE]
+      ,[PASS_YEAR]
+      ,[MICROFORM_FRAME_COUNT]
+      ,[LP_DOC_COUNT]
+      ,[ALL_SII_COUNT]
+      ,[GUIDE_COUNT]
+      ,[GUIDE_LS]
+      ,[INVENTORY_COUNT]
+      ,[CATALOUGUE_COUNT]
+      ,[INDEX_COUNT]
+      ,[REVIEW_COUNT]
+      ,[HISTORY_COUNT]
+      ,[ATD_COUNT]
+      ,[BOOK_COUNT]
+      ,[NEWSPAPER_COUNT]
+      ,[MAGAZINE_COUNT]
+      ,[OTHER_PRINT_COUNT]
+      ,[ARH_BUILDING_COUNT]
+      ,[SPEC_BUILDING_COUNT]
+      ,[PRISP_BUILDING_COUNT]
+      ,[TOTAL_SPACE]
+      ,[STORAGE_SPACE]
+      ,[SPACE_WITHOUT_SECUR]
+      ,[SPACE_WITHOU_SECURITY_PROC]
+      ,[SPACE_WITHOUT_ALARM]
+      ,[SPACE_WITHOUT_ALARM_PROC]
+      ,[SHELF_LENGTH]
+      ,[METAL_SHELF_LENGTH]
+      ,[FREE_SHELF_LENGTH]
+      ,[LOAD_LEVEL]
+      ,[UNITS_CARDBOARDED]) VALUES(NEWID(), '12345678-9012-3456-7890-123456789012', SYSDATETIMEOFFSET(), (SELECT ID FROM [tblARCHIVE]), '0', '4FF026A0-6EEB-4500-90F8-15EBE74B66C9', '0', '33131313', (SELECT ISN_ARCHIVE FROM [tblARCHIVE]), '2333', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0');
+     
+     
+     
+     
+     */
+
+    /*
+    
+    catalogName = 5585
+    inventoryID = '39776'
+
+    Получить закартонированные единицы для описи
+    SELECT * FROM [catalogName].[dbo].[tblUNIT] WHERE ISN_INVENTORY = inventoryID AND CARDBOARDED = 'Y' AND Deleted = '0'
+
+
+    ---- Пересчет tblDOCUMENT_STATS (для описи) ----
+
+    - Для любого типа описи, первая строка. Получить все найденные внесенные записи (UNIT_REGISTERED) CARRIER_TYPE = NULL and ISN_DOC_TYPE = NULL
+    USE catalogName;
+    SELECT COUNT(*) [tblUNIT] WHERE Deleted = 0 and ISN_INVENTORY = inventoryID
+
+    ISN_DOC_TYPE = 1-9 and NULL (all)
+
+    --Если опись традиционная (имеет CARRIER_TYPE = 'T') делается пересчет по трад носителям, электронные отбрасываются. Тогда чтобы пересчитать единицы нужно искать единицы по MEDIUM_TYPE == CARRIER_TYPE --
+
+    - Получить все по 'Управленческая документация' (UNIT_REGISTERED) CARRIER_TYPE = P and ISN_DOC_TYPE = 1
+    USE catalogName;
+    SELECT COUNT(*) [tblUNIT] WHERE Deleted = 0 and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = inventoryID) and ISN_INVENTORY = inventoryID and ISN_DOC_TYPE = '1'
+
+    - Получить все по 'Документы по личному составу' (UNIT_REGISTERED) CARRIER_TYPE = P and ISN_DOC_TYPE = 2
+    USE catalogName;
+    SELECT COUNT(*) [tblUNIT] WHERE Deleted = 0 and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = inventoryID) and ISN_INVENTORY = inventoryID and ISN_DOC_TYPE = '2'
+
+    - Получить все по 'Документы личного происхождения' (UNIT_REGISTERED) CARRIER_TYPE = P and ISN_DOC_TYPE = 3
+    USE catalogName;
+    SELECT COUNT(*) [tblUNIT] WHERE Deleted = 0 and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = inventoryID) and ISN_INVENTORY = inventoryID and ISN_DOC_TYPE = '3'
+
+    - Получить все по 'НТД (научно-техническая документация)' (UNIT_REGISTERED) CARRIER_TYPE = P and ISN_DOC_TYPE = 4
+    USE catalogName;
+    SELECT COUNT(*) [tblUNIT] WHERE Deleted = 0 and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = inventoryID) and ISN_INVENTORY = inventoryID and ISN_DOC_TYPE = '4'
+
+    - Получить все по 'Документы на бумажной основе' (UNIT_REGISTERED) CARRIER_TYPE = P and ISN_DOC_TYPE = NULL
+    Либо сложить все предыдущие либо запросом, в который входят все данные типы документов
+
+
+    - Получить все по 'НТД (научно-техническая документация)' (UNIT_REGISTERED) CARRIER_TYPE = A and ISN_DOC_TYPE = 5
+    USE catalogName;
+    SELECT COUNT(*) [tblUNIT] WHERE Deleted = 0 and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = inventoryID) and ISN_INVENTORY = inventoryID and ISN_DOC_TYPE = '5'
+
+    - Получить все по 'НТД (научно-техническая документация)' (UNIT_REGISTERED) CARRIER_TYPE = A and ISN_DOC_TYPE = 6
+    USE catalogName;
+    SELECT COUNT(*) [tblUNIT] WHERE Deleted = 0 and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = inventoryID) and ISN_INVENTORY = inventoryID and ISN_DOC_TYPE = '6'
+
+    - Получить все по 'НТД (научно-техническая документация)' (UNIT_REGISTERED) CARRIER_TYPE = A and ISN_DOC_TYPE = 7
+    USE catalogName;
+    SELECT COUNT(*) [tblUNIT] WHERE Deleted = 0 and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = inventoryID) and ISN_INVENTORY = inventoryID and ISN_DOC_TYPE = '7'
+
+    - Получить все по 'НТД (научно-техническая документация)' (UNIT_REGISTERED) CARRIER_TYPE = A and ISN_DOC_TYPE = 8
+    USE catalogName;
+    SELECT COUNT(*) [tblUNIT] WHERE Deleted = 0 and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = inventoryID) and ISN_INVENTORY = inventoryID and ISN_DOC_TYPE = '8'
+
+    - Получить все по 'Документы на бумажной основе' (UNIT_REGISTERED) CARRIER_TYPE = A and ISN_DOC_TYPE = NULL
+    Либо сложить все предыдущие либо запросом, в который входят все данные типы документов
+
+
+    - Получить все по 'НТД (научно-техническая документация)' (UNIT_REGISTERED) CARRIER_TYPE = M and ISN_DOC_TYPE = 9
+    USE catalogName;
+    SELECT COUNT(*) [tblUNIT] WHERE Deleted = 0 and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = inventoryID) and ISN_INVENTORY = inventoryID and ISN_DOC_TYPE = '5'
+
+
+    --Если опись электронная (имеет CARRIER_TYPE = 'E') делается пересчет по электр носителям, традиционные отбрасываются. MEDIUM_TYPE == CARRIER_TYPE --
+
+
+
+
+
+      -- Документы на бумажной основе --
+  -- Документы по личному составу Введено
+  USE [5585];
+  SELECT COUNT(*) FROM [tblUNIT] WHERE Deleted = '0' and UNIT_KIND = '703' and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = '39776') and ISN_INVENTORY = '39776' and ISN_DOC_TYPE = '2'
+
+  -- Документы по личному составу ОЦД
+  USE [5585];
+  SELECT COUNT(*) FROM [tblUNIT] WHERE Deleted = '0' and UNIT_KIND = '703' and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = '39776') and ISN_INVENTORY = '39776' and ISN_DOC_TYPE = '2' and HAS_TREASURES = 'Y'
+
+  -- Документы по личному составу Уникальные
+  USE [5585];
+  SELECT COUNT(*) FROM [tblUNIT] WHERE Deleted = '0' and UNIT_KIND = '703' and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = '39776') and ISN_INVENTORY = '39776' and ISN_DOC_TYPE = '2' and IS_MUSEUM_ITEM = 'Y'
+
+  -- Документы по личному составу Имеют СФ
+  USE [5585];
+  SELECT COUNT(*) FROM [tblUNIT] WHERE Deleted = '0' and UNIT_KIND = '703' and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = '39776') and ISN_INVENTORY = '39776' and ISN_DOC_TYPE = '2' and HAS_SF = 'Y'
+
+  -- Документы по личному составу Имеют ФП
+  USE [5585];
+  SELECT COUNT(*) FROM [tblUNIT] WHERE Deleted = '0' and UNIT_KIND = '703' and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = '39776') and ISN_INVENTORY = '39776' and ISN_DOC_TYPE = '2' and HAS_FP = 'Y'
+
+  -- Документы по личному составу Необнаруж.
+  USE [5585];
+  SELECT COUNT(*) FROM [tblUNIT] WHERE Deleted = '0' and UNIT_KIND = '703' and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = '39776') and ISN_INVENTORY = '39776' and ISN_DOC_TYPE = '2' and IS_IN_SEARCH = 'Y'
+
+  -- Документы по личному составу Секретные
+  USE [5585];
+  SELECT COUNT(*) FROM [tblUNIT] WHERE Deleted = '0' and UNIT_KIND = '703' and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = '39776') and ISN_INVENTORY = '39776' and ISN_DOC_TYPE = '2' and ISN_SECURLEVEL != '1'
+
+  -- Документы по личному составу Закаталог.
+  USE [5585];
+  SELECT COUNT(*) FROM [tblUNIT] WHERE Deleted = '0' and UNIT_KIND = '703' and MEDIUM_TYPE = (SELECT CARRIER_TYPE FROM [tblINVENTORY] WHERE ISN_INVENTORY = '39776') and ISN_INVENTORY = '39776' and ISN_DOC_TYPE = '2' and CATALOGUED = 'Y'
+
+
+
+
+    */
+
+
+
+
     //   FROM [TestDB].[dbo].[tblFUND] where CreationDateTime <= '{passportYear}0101 00:00:00.000'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // ----------------------------------------------
+
+
+
 
     /*public class CatalogInfo
     {

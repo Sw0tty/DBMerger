@@ -1,11 +1,8 @@
-﻿using NotesNamespace;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+using NotesNamespace;
+using System;
+
 
 namespace SqlDBManager
 {
@@ -41,11 +38,6 @@ namespace SqlDBManager
             return ReserveDict[tableName];
         }
 
-        public static void DeleteTableFromReserve(string tableName)
-        {
-            ReserveDict.Remove(tableName);
-        }
-
         public static Dictionary<string, List<Tuple<string, string>>> ReturnTableValuesSpecialRewriteDict(string tableName)
         {
             return DocStatsRewriteDict[tableName];
@@ -59,11 +51,6 @@ namespace SqlDBManager
         public static Dictionary<string, List<Tuple<string, string>>> ReturnTableValuesRewriteDict(string tableName)
         {
             return RewriteDict[tableName];
-        }
-
-        public static void DeleteTableFromRewrite(string tableName)
-        {
-            RewriteDict.Remove(tableName);
         }
 
         public static bool ContainsInRewrite(string tableName)
@@ -83,47 +70,43 @@ namespace SqlDBManager
 
         public static string ReturnRequestsToTable(int countOfValues)
         {
-
             List<string> copy = new List<string>(ListInsertRequestInTable);
-
-
             List<string> s = new List<string>();
+
             for (int i = 0; i < countOfValues; i++)
             {
                 try
                 {
                     s.Add(copy[i]);
                     ListInsertRequestInTable.Remove(copy[i]);
-
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-
                     break;
                 }
             }
-
-            //ListInsertRequestInTable = copy;
-
-
             return string.Join(", ", s);
+        }
+
+        public static void UpdateCheck(BackgroundWorker worker)
+        {
+            Consts.ALL_OF_CHECK++;
+            //worker.ReportProgress(WorkerConsts.UPDATE_COUNT_OF_CHECK);
         }
 
         public static void AddToRequest(string rowInsertRequest)
         {
-            //InsertRequestInTable += rowInsertRequest + "\n";
-
             ListInsertRequestInTable.Add(rowInsertRequest);
-
         }
 
+        // IN 1.0.1
         public static int CheckDefaultUsers(List<string> usersLogins, int countImports)
         {
             foreach (string userLogin in SpecialTablesValues.DefaultUsers)
             {
                 if (usersLogins.Contains(userLogin))
                     continue;
-                RestoreUser(userLogin); // В процессе
+                RestoreUser(userLogin); 
                 countImports++;
             }
 
@@ -132,7 +115,8 @@ namespace SqlDBManager
 
         public static Dictionary<string, string> MakeEditsInRow(Dictionary<string, string> row, string tableName, List<string> excludeColumns = null)
         {
-            row = RemoveUnnecessary(row, excludeColumns);
+            //row = RemoveUnnecessary(row, excludeColumns);
+            row.Remove("ID");
             if (ContainsInRewrite(tableName))
                 row = RepareColumnsValues(row, tableName);
 
@@ -143,15 +127,21 @@ namespace SqlDBManager
             return row;
         }
 
+        /// <summary>
+        /// -!- be removed -!-
+        /// </summary>
+        /// <returns></returns>
         public static Dictionary<string, string> RemoveUnnecessary(Dictionary<string, string> row, List<string> excludeColumns)
         {
-            if (excludeColumns != null)
+/*            if (excludeColumns != null)
             {
                 foreach (string excludeColumnName in excludeColumns)
                 {
                     row.Remove(excludeColumnName);
                 }
-            }
+            }*/
+/*            if (row.ContainsKey("ISN_FUND_RENAME")) { }
+            else {  }*/
             row.Remove("ID");
             return row;
         }
@@ -190,10 +180,14 @@ namespace SqlDBManager
             return row;
         }
 
-        public static List<string> SelectDataFromColumn(List<Dictionary<string, string>> allFromMainData, string columnName)
+        /// <summary>
+        /// Selects values by column
+        /// </summary>
+        /// <returns>List of string values</returns>
+        public static List<string> SelectDataFromColumn(List<Dictionary<string, string>> allDataSomeTable, string columnName)
         {
             List<string> listData = new List<string>();
-            foreach (Dictionary<string, string> dataDict in allFromMainData)
+            foreach (Dictionary<string, string> dataDict in allDataSomeTable)
                 listData.Add(dataDict[columnName]);
             return listData;
         }
@@ -303,35 +297,35 @@ namespace SqlDBManager
         }
 
         /// <summary>
-        /// Возвращает список разницы между двумя списками
+        /// Seraching value in all table data
         /// </summary>
-        public static List<string> CheckUniqueValue(List<string> mainList, List<string> daughterList)
+        public static string ReturnValue(List<Dictionary<string, string>> tableDataCatalog, string searchByColumn, string searchValue, string returnTheColumnValue)
         {
-            List<string> uniqueValues = new List<string>();
-
-            foreach (string value in daughterList)
-            {
-                if (!mainList.Contains(value))
-                {
-                    uniqueValues.Add(value);
-                }
-            }
-            return uniqueValues;
-        }
-
-        /// <summary>
-        /// Ищет в словаре значение и возвращает по переданным параметрам
-        /// </summary>
-        public static string ReturnValue(List<Dictionary<string, string>> mainRecordsFromTable, string searchColumn, string searchValue, string returnTheColumnValue)
-        {
-            foreach (Dictionary<string, string> rowData in mainRecordsFromTable)
-            {
-                if (rowData[searchColumn] == searchValue)
-                {
+            foreach (Dictionary<string, string> rowData in tableDataCatalog)
+            {              
+                if (rowData[searchByColumn] == searchValue)
                     return rowData[returnTheColumnValue];
-                }
             }
             return "";
+        }
+
+        public static string RecursionFilterValue(Dictionary<string, string> searchingRow, List<Dictionary<string, string>> filteringRecords, List<string> columnsFilters, string returnColumnValue)
+        {
+            if (filteringRecords.Count == 1)
+                return filteringRecords[0][returnColumnValue];
+
+            List<Dictionary<string, string>> newFilteringRecords = new List<Dictionary<string, string>>();
+
+            foreach (Dictionary<string, string> row in filteringRecords)
+            {
+                if (row[columnsFilters[0]] == searchingRow[columnsFilters[0]])
+                {
+                    newFilteringRecords.Add(row);
+                }
+            }
+            columnsFilters.Remove(columnsFilters[0]);
+
+            return RecursionFilterValue(searchingRow, newFilteringRecords, columnsFilters, returnColumnValue);
         }
 
         static Dictionary<string, string> EscapeSymbolsInRow(Dictionary<string, string> row)
@@ -341,9 +335,7 @@ namespace SqlDBManager
             foreach (string key in row.Keys)
             {
                 if (escapedRow[key].Contains("'"))
-                {
                     escapedRow[key] = $"'{row[key].Substring(1, row[key].Length - 2).Replace("'", "\''")}'";
-                }
             }
             return escapedRow;
         }
@@ -366,22 +358,35 @@ namespace SqlDBManager
                     catalog.DeleteValue(tableName, string.Join("", defaultTables[tableName].Item2.Keys), row[string.Join("", defaultTables[tableName].Item2.Keys)]);
                 }
             }
-            worker.ReportProgress(WorkerConsts.MIDDLE_STATUS_CODE, $"Каталог '{catalog.ReturnCatalog()}' скорректирован.");
+            worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, $"Каталог '{catalog.ReturnCatalogName()}' скорректирован.");
         }
 
         public static void SelectImportMethod(DBCatalog catalog, Dictionary<string, string> row, string tableName, BackgroundWorker worker)
         {
             if (Consts.FAST_REQUEST_MOD)
             {
-                ValuesManager.AddToRequest(catalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName)));           
-                //worker.ReportProgress(WorkerConsts.UPDATE_COUNT_OF_CHECK);
+                if (row.ContainsKey("ID"))
+                {
+                    ValuesManager.AddToRequest(catalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName)));
+                }
+                else
+                {
+                    ValuesManager.AddToRequest(catalog.ReturnValues(ValuesManager.MakeEditsInRow(row, tableName), withoutID: true));
+                }
             }
             else
             {
-                catalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
-                worker.ReportProgress(WorkerConsts.UPDATE_COUNT_OF_IMPORT);
+                if (row.ContainsKey("ID"))
+                {
+                    catalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName));
+                }
+                else
+                {
+                    catalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName), withoutID: true);
+                }
             }
             Consts.ALL_OF_IMPORT++;
+            worker.ReportProgress(Consts.WorkerConsts.UPDATE_COUNT_OF_IMPORT);
         }
 
         public static List<Dictionary<string, string>> FilterRecordsFrom(List<Dictionary<string, string>> allFromTable, string filterColumn, string filterValue, string filterColumn2 = null, string filterValue2 = null)
@@ -411,6 +416,7 @@ namespace SqlDBManager
             return filteredData;
         }
 
+        // IN 1.0.1
         public static void RestoreUser(string userLogin)
         {
 
