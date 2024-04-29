@@ -1,21 +1,21 @@
-﻿using NotesNamespace;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
+
 
 namespace SqlDBManager
 {
     public static class Consts
     {
+        // -- Settings Consts --
         /// <summary>
         /// При истине выбрасывает исключения и прекращает работу с указание места ошибки
         /// </summary>
         public const bool DEBUG_MOD = true;
         public const bool FAST_REQUEST_MOD = true;
 
+        // -- Program Lock Consts --
+        private static List<string> SupportingVersions { get; } = new List<string>() { "5.0.0" };
         public static int ALL_OF_IMPORT = 0;
         public static int ALL_OF_CHECK = 0;
         public const int MAX_COUNT_OF_IMPORTS = 1000;
@@ -29,6 +29,11 @@ namespace SqlDBManager
         {
             LAST_MAIN_CATALOG = mainCatalog;
             LAST_DAUGHTER_CATALOG = daughterCatalog;
+        }
+
+        public static List<string> ReturnSupportingVersions()
+        {
+            return SupportingVersions;
         }
 
         public static class WorkerConsts
@@ -46,10 +51,17 @@ namespace SqlDBManager
         public static class StopMergeConsts
         {
             public const string STOP_ERROR_MESSAGE = "Операция слияния прервана пользователем.";
+            public static bool STOP_MERGE = false;
         }
 
         public static class RecalcConsts
         {
+            public static class CarrierType
+            {
+                public const string Electronic = "'E'";
+                public const string Traditional = "'T'";
+            }
+
             public static class DelteStatus
             {
                 public const string PASSPORT_ACTIVE_STATUS = "0253E5AE-57EE-4D21-AAD9-15EBECA3E854";
@@ -95,17 +107,10 @@ namespace SqlDBManager
             }
         }
 
-        public static class ObjectsOfRequests
-        {
-            public const string DB_TABLE = "dbo";
-            public const string SYS_TABLE = "sys";
-        }
-
         public static class VisualConsts
         {
             public const int SPACE_SIZE = 4;
             public const int HEADING_SPACE = 40;
-            public static bool USER_STOP_MERGE = false;
             public static bool TAB_ACCESS = true;
             public static Font BUTTON_FONT = new Font("Microsoft Sans Serif", 9, FontStyle.Regular);
             public const string TAIL_OF_MERGED_FILES = "_merged";

@@ -1,8 +1,7 @@
-﻿using NotesNamespace;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms;
+using NotesNamespace;
+using System;
 
 
 namespace SqlDBManager
@@ -39,11 +38,6 @@ namespace SqlDBManager
             return ReserveDict[tableName];
         }
 
-        public static void DeleteTableFromReserve(string tableName)
-        {
-            ReserveDict.Remove(tableName);
-        }
-
         public static Dictionary<string, List<Tuple<string, string>>> ReturnTableValuesSpecialRewriteDict(string tableName)
         {
             return DocStatsRewriteDict[tableName];
@@ -57,11 +51,6 @@ namespace SqlDBManager
         public static Dictionary<string, List<Tuple<string, string>>> ReturnTableValuesRewriteDict(string tableName)
         {
             return RewriteDict[tableName];
-        }
-
-        public static void DeleteTableFromRewrite(string tableName)
-        {
-            RewriteDict.Remove(tableName);
         }
 
         public static bool ContainsInRewrite(string tableName)
@@ -81,29 +70,21 @@ namespace SqlDBManager
 
         public static string ReturnRequestsToTable(int countOfValues)
         {
-
             List<string> copy = new List<string>(ListInsertRequestInTable);
-
-
             List<string> s = new List<string>();
+
             for (int i = 0; i < countOfValues; i++)
             {
                 try
                 {
                     s.Add(copy[i]);
                     ListInsertRequestInTable.Remove(copy[i]);
-
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-
                     break;
                 }
             }
-
-            //ListInsertRequestInTable = copy;
-
-
             return string.Join(", ", s);
         }
 
@@ -115,19 +96,17 @@ namespace SqlDBManager
 
         public static void AddToRequest(string rowInsertRequest)
         {
-            //InsertRequestInTable += rowInsertRequest + "\n";
-
             ListInsertRequestInTable.Add(rowInsertRequest);
-
         }
 
+        // IN 1.0.1
         public static int CheckDefaultUsers(List<string> usersLogins, int countImports)
         {
             foreach (string userLogin in SpecialTablesValues.DefaultUsers)
             {
                 if (usersLogins.Contains(userLogin))
                     continue;
-                RestoreUser(userLogin); // В процессе
+                RestoreUser(userLogin); 
                 countImports++;
             }
 
@@ -136,7 +115,8 @@ namespace SqlDBManager
 
         public static Dictionary<string, string> MakeEditsInRow(Dictionary<string, string> row, string tableName, List<string> excludeColumns = null)
         {
-            row = RemoveUnnecessary(row, excludeColumns);
+            //row = RemoveUnnecessary(row, excludeColumns);
+            row.Remove("ID");
             if (ContainsInRewrite(tableName))
                 row = RepareColumnsValues(row, tableName);
 
@@ -404,7 +384,6 @@ namespace SqlDBManager
                 {
                     catalog.InsertValue(tableName, ValuesManager.MakeEditsInRow(row, tableName), withoutID: true);
                 }
-                //worker.ReportProgress(Consts.WorkerConsts.UPDATE_COUNT_OF_IMPORT);
             }
             Consts.ALL_OF_IMPORT++;
             worker.ReportProgress(Consts.WorkerConsts.UPDATE_COUNT_OF_IMPORT);
@@ -437,6 +416,7 @@ namespace SqlDBManager
             return filteredData;
         }
 
+        // IN 1.0.1
         public static void RestoreUser(string userLogin)
         {
 

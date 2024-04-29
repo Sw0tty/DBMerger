@@ -1,27 +1,11 @@
-﻿using System;
+﻿using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Data;
-using System.Data.Sql;
-using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.Serialization.Formatters;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using NotesNamespace;
-using System.Transactions;
-using System.Windows.Forms.VisualStyles;
-using System.IO;
-using SqlDBManager.DBClasses;
-using System.Drawing.Configuration;
-using System.Net.Mail;
-using System.Text.RegularExpressions;
-using System.Collections.ObjectModel;
+using System.Data;
+using System.Linq;
+using System;
 
 
 namespace SqlDBManager
@@ -42,19 +26,18 @@ namespace SqlDBManager
             label6.Text = label2.Text;
             label7.Text = label3.Text;
             label8.Text = label4.Text;
+            checkConnectionMainCatalog.Text = "Проверить соединение";
+            checkConnectionDaughterCatalog.Text = checkConnectionMainCatalog.Text;
+            cancel.Location = new System.Drawing.Point(162, 561);
 
             //textBox2.Font = new Font(FontFamily.GenericSansSerif, 14);
 
-            textBox1.Text = "5307_m";
-            textBox4.Text = "5307_m2";
-
-            textBox2.Text = "sa";
+/*            textBox1.Text = "5307_m";
+            textBox4.Text = "5307_m2";*/
+/*            textBox2.Text = "sa";
             textBox5.Text = textBox2.Text;
             textBox3.Text = "123";
-            textBox6.Text = textBox3.Text;
-
-            checkConnectionMainCatalog.Text = "Проверить соединение";
-            checkConnectionDaughterCatalog.Text = checkConnectionMainCatalog.Text;
+            textBox6.Text = textBox3.Text;*/
 
             SetPreSettingsFields();
             SetButtonsFont();
@@ -68,15 +51,12 @@ namespace SqlDBManager
 
         private void SetButtonsFont()
         {
-            button1.Font = Consts.VisualConsts.BUTTON_FONT;
-            button2.Font = Consts.VisualConsts.BUTTON_FONT;
             button3.Font = Consts.VisualConsts.BUTTON_FONT;
-            button4.Font = Consts.VisualConsts.BUTTON_FONT;
-            button5.Font = Consts.VisualConsts.BUTTON_FONT;
-            button6.Font = Consts.VisualConsts.BUTTON_FONT;
-            button8.Font = Consts.VisualConsts.BUTTON_FONT;
-            button9.Font = Consts.VisualConsts.BUTTON_FONT;
-            button10.Font = Consts.VisualConsts.BUTTON_FONT;
+            toSettings.Font = Consts.VisualConsts.BUTTON_FONT;
+            backToSelectBases.Font = Consts.VisualConsts.BUTTON_FONT;
+            backToSettings.Font = Consts.VisualConsts.BUTTON_FONT;
+            toMerge.Font = Consts.VisualConsts.BUTTON_FONT;
+            mergerInfo.Font = Consts.VisualConsts.BUTTON_FONT;
             mergeLog.Font = Consts.VisualConsts.BUTTON_FONT;
             startMerge.Font = Consts.VisualConsts.BUTTON_FONT;
             checkConnectionMainCatalog.Font = Consts.VisualConsts.BUTTON_FONT;
@@ -137,6 +117,10 @@ namespace SqlDBManager
             textBox4.Text = textBox4.Text.Trim(' ');
             textBox5.Text = textBox5.Text.Trim(' ');
             textBox6.Text = textBox6.Text.Trim(' ');
+            textBox7.Text = textBox7.Text.Trim(' ');
+            textBox9.Text = textBox9.Text.Trim(' ');
+            textBox10.Text = textBox10.Text.Trim(' ');
+            textBox11.Text = textBox11.Text.Trim(' ');
         }
 
         public void WrapTabControl(TabControl tabControl, bool nextPage)
@@ -159,18 +143,15 @@ namespace SqlDBManager
             progressBar2.Value = 0;
         }
 
-        // Логика первой вкладки формы
         private void checkConnectionMainCatalog_Click(object sender, EventArgs e)
         {
-            // Проверяет соединения с главной БД
-
             TrimAllOnForm();
 
             if (textBox1.Text != textBox4.Text && !dirtyJobBackWorker.IsBusy)
             {
                 mainDBGroupBox.Enabled = false;
                 groupBox2.Enabled = false;
-                button4.Enabled = false;
+                toSettings.Enabled = false;
                 dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox1.Text, textBox1.Text, textBox2.Text, textBox3.Text));               
             }
             else
@@ -181,15 +162,13 @@ namespace SqlDBManager
 
         private void checkConnectionDaughterCatalog_Click(object sender, EventArgs e)
         {
-            // Проверяет соединения с дочерней БД
-
             TrimAllOnForm();
 
             if (textBox1.Text != textBox4.Text && !dirtyJobBackWorker.IsBusy)
             {
                 mainDBGroupBox.Enabled = false;
                 groupBox2.Enabled = false;
-                button4.Enabled = false;
+                toSettings.Enabled = false;
                 dirtyJobBackWorker.RunWorkerAsync(argument: new Tuple<string, string, string, string>(comboBox2.Text, textBox4.Text, textBox5.Text, textBox6.Text));
             }
             else
@@ -198,17 +177,15 @@ namespace SqlDBManager
             }
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void toSettings_Click(object sender, EventArgs e)
         {
-            // Переход к надстройке слияния. Проверяет соединения с основной и дочерней БД
-
             TrimAllOnForm();
 
             if (textBox1.Text != textBox4.Text && !dirtyJobBackWorker.IsBusy)
             {
                 mainDBGroupBox.Enabled = false;
                 groupBox2.Enabled = false;
-                button4.Enabled = false;
+                toSettings.Enabled = false;
                 dirtyJobBackWorker.RunWorkerAsync();
             }
             else
@@ -217,27 +194,23 @@ namespace SqlDBManager
             }
         }
 
-        // Логика второй вкладки формы
-        private void button5_Click(object sender, EventArgs e)
+        private void backToSelectBases_Click(object sender, EventArgs e)
         {
             WrapTabControl(tabControl1, false);
         }
 
-        public void button8_Click(object sender, EventArgs e)
+        public void toMerge_Click(object sender, EventArgs e)
         {
-            MergerPreSettings.ArchiveRecalc.Item1 = recalc_v1.Checked;
-            MergerPreSettings.ArchiveRecalc.Item2 = recalc_v2.Checked;
-            MergerPreSettings.ArchiveRecalc.Item3 = recalc_v3.Checked;
-
+            TrimAllOnForm();
             WrapTabControl(tabControl1, true);
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void backToSettings_Click(object sender, EventArgs e)
         {
             WrapTabControl(tabControl1, false);
         }
 
-        private void button9_Click(object sender, EventArgs e)
+        private void mergerInfo_Click(object sender, EventArgs e)
         {
             InfoForm inforamtion = new InfoForm();
             inforamtion.ShowDialog();
@@ -245,12 +218,7 @@ namespace SqlDBManager
 
         private void cancel_Click(object sender, EventArgs e)
         {
-            //throw new StopMergeException(Consts.StopMergeConsts.STOP_ERROR_MESSAGE);
-            
-            if (mergerBackWorker.WorkerSupportsCancellation == true)
-            {
-                mergerBackWorker.CancelAsync();
-            }
+            Consts.StopMergeConsts.STOP_MERGE = true;
         }
 
         private void mergeLog_Click(object sender, EventArgs e)
@@ -278,12 +246,18 @@ namespace SqlDBManager
             }
         }
 
+        public bool UpdateArchive()
+        {
+            return radioButton2.Checked;
+        }
+
         private void mergerBackWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
 
-            string text1 = "";
-            string text2 = "";
+            string text1 = null;
+            string text2 = null;
+            bool successOperation = true;
 
             Invoke(new Action(() => {
                 text1 = comboBox1.Text;
@@ -291,8 +265,9 @@ namespace SqlDBManager
                 mergeLog.Visible = false;
                 cancel.Visible = true;
                 startMerge.Enabled = false;
-                button6.Enabled = false;
+                backToSettings.Enabled = false;
                 textBoxStatus.Clear();
+                label12.Text = "Записей импортировано: 0";
             }));
 
             DBCatalog mainCatalog = new DBCatalog(text1, textBox1.Text, textBox2.Text, textBox3.Text);
@@ -304,12 +279,182 @@ namespace SqlDBManager
             daughterCatalog.StartTransaction();
 
             Consts.MergeProgress.FormTasks(mainCatalog);
+            if (recalc_v2.Checked)
+                Consts.MergeProgress.AddToAllTasks(2);
+            if (recalc_v3.Checked)
+                Consts.MergeProgress.AddToAllTasks(3);
+
             Consts.WriteLastCatalogs(mainCatalog.ReturnCatalogName(), daughterCatalog.ReturnCatalogName());
 
             worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Предварительные проверки ---");
             worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Валидируем каталоги на возможность слияния...");
 
-            if (Wrappers.WrapValidator(Validator.ValidateVersions, mainCatalog, daughterCatalog, worker))
+            try
+            {
+                if (!Wrappers.WrapValidator(Validator.ValidateCountTables, mainCatalog, daughterCatalog, worker))
+                    throw new MergerExceptions.ValidationException($"В главном каталоге {Validator.TablesCount.Item1} таблиц, когда в дочернем {Validator.TablesCount.Item2} таблиц.");
+
+                if (!Wrappers.WrapValidator(Validator.ValidateNamesTables, mainCatalog, daughterCatalog, worker))
+                    throw new MergerExceptions.ValidationException(MergerExceptions.ErrorMessages.NOT_EQUEL_NAMES);
+
+                if (!Wrappers.WrapCustomValidator(Validator.ValidateDefaultTablesValues, mainCatalog, daughterCatalog, worker))
+                    throw new MergerExceptions.ValidationException(MergerExceptions.ErrorMessages.NOT_ALLOWED_VALUES);
+            }
+            catch (MergerExceptions.ValidationException error)
+            {
+                successOperation = false;
+                e.Result = error.Message;
+                ProgramMessages.ValidationErrorMessage();
+            }
+            catch (Exception error)
+            {
+                successOperation = false;
+                e.Result = error.Message;
+                ProgramMessages.ErrorMessage();
+            }
+
+            if (successOperation)
+            {
+                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Валидация успешно завершена!");
+                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Снимаем копию главной БД...");
+
+                BackupManager backupManager = new BackupManager(mainCatalog.SelectCatalogPath(), mainCatalog.ReturnCatalogName(), "master", text1, textBox2.Text, textBox3.Text);
+                backupManager.OpenConnection();
+
+                backupManager.SetParams();
+
+                backupManager.CreateReserveBackup();
+                if (backUp_v2.Checked)
+                {
+                    backupManager.RestoreFromBackup();
+                    backupManager.DeleteReserveBackup();
+                    backupManager.CloseConnection();
+                    mainCatalog.CommitTransaction();
+                    mainCatalog.CloseConnection();
+                    mainCatalog = new DBCatalog(text1, textBox1.Text + Consts.VisualConsts.TAIL_OF_MERGED_FILES, textBox2.Text, textBox3.Text);
+                    mainCatalog.OpenConnection();
+                    mainCatalog.StartTransaction();
+                    backupManager = new BackupManager(mainCatalog.SelectCatalogPath(), mainCatalog.ReturnCatalogName(), "master", text1, textBox2.Text, textBox3.Text);
+                }
+                else
+                {
+                    backupManager.CloseConnection();
+                }
+                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Копия успешно создана!");
+                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Вносим правки ключей таблиц...");
+
+                successOperation = Wrappers.WrapSimpleMergeFunc(MergeManager.RepeirDBKeys, mainCatalog, worker);
+
+                if (successOperation)
+                {
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Вносим временные изменения в таблицы...");
+                    successOperation = MergeManager.RenameBeforeMergeTableColumn(mainCatalog, daughterCatalog, worker);
+                }
+
+                if (successOperation)
+                {
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Необходимые правки успешно применены!");
+                    worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Очистка логов ---");
+                    successOperation = MergeManager.ClearLogs(mainCatalog, worker);
+                }
+
+                if (successOperation)
+                {
+                    worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Обработка дефолтных таблиц ---");
+                    MergeManager.ProcessSkipTables(mainCatalog, daughterCatalog, worker);
+                    successOperation = MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, worker);
+                }
+
+                //MessageBox.Show("End of default tables");
+
+                if (successOperation)
+                {
+                    worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Обработка таблиц с внешними ключами ---");
+                    successOperation = MergeManager.ProcessLinksTables(mainCatalog, daughterCatalog, worker);
+                }
+
+                if (successOperation)
+                {
+                    worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Заключение слияния ---");
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Возвращаем временные изменения...");
+                    successOperation = Wrappers.WrapSimpleMergeFunc(MergeManager.RenameAfterMergeTableColumn, mainCatalog, worker);
+                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Изменения применены!");
+                }
+
+                if (successOperation)
+                {
+                    MessageBox.Show("NEXT STEP COMMIT!");
+                    mainCatalog.CommitTransaction();
+                    Consts.MERGE_WAS_SUCCESS = true;
+
+                    if (!recalc_v1.Checked)
+                    {
+                        mainCatalog.StartTransaction();
+                        worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Приступаем к пересчету ---");
+                        RecalcManager recalcManager = new RecalcManager(mainCatalog);
+                        worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Пересчитываем описи...");
+                        recalcManager.RecalcInventory(worker);
+                        worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
+                        worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Пересчитываем фонды...");
+                        recalcManager.RecalcFund(worker);
+                        worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
+
+                        if (recalc_v3.Checked)
+                        {
+                            worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Пересчитываем паспорта...");
+                            recalcManager.RecalcAndCreatePassport(worker);
+                            worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
+                        }
+
+                        mainCatalog.CommitTransaction();
+                        worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Пересчет завершен!");
+                    }
+
+                    e.Result = "Слияние успешно завершено!";
+                    ProgramMessages.MergeCompletedMessage();
+
+                }
+                else
+                {
+                    mainCatalog.RollbackTransaction();
+                    daughterCatalog.RollbackTransaction();
+
+                    backupManager.OpenConnection();
+                    if (backUp_v1.Checked)
+                        backupManager.DeleteReserveBackup();
+                    else
+                    {
+                        mainCatalog.RollbackTransaction();
+                        mainCatalog.CloseConnection();
+                        backupManager.OpenConnection();
+                        backupManager.DropCatalog();
+                    }
+                    backupManager.CloseConnection();
+
+                    if (Consts.StopMergeConsts.STOP_MERGE)
+                    {
+                        Consts.StopMergeConsts.STOP_MERGE = false;
+                        ProgramMessages.UserCanceledMessage();
+                    }
+                    else
+                    {
+                        ProgramMessages.ErrorMessage();
+                    }
+                }
+            }
+
+            Invoke(new Action(() => {
+                cancel.Visible = false;
+                mergeLog.Visible = true;
+                mergeLog.Enabled = true;
+                startMerge.Enabled = true;
+                backToSettings.Enabled = true;
+            }));
+
+            mainCatalog.CloseConnection();
+            daughterCatalog.CloseConnection();
+
+            /*if (Wrappers.WrapValidator(Validator.ValidateVersions, mainCatalog, daughterCatalog, worker))
             {
                 if (Wrappers.WrapValidator(Validator.ValidateCountTables, mainCatalog, daughterCatalog, worker))
                 {
@@ -320,17 +465,15 @@ namespace SqlDBManager
                             worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Валидация успешно завершена!");
 
                             worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Снимаем копию главной БД...");
-                            // --------------
-                            // Создаем резервную копию для транзакций
+
                             BackupManager backupManager = new BackupManager(mainCatalog.SelectCatalogPath(), mainCatalog.ReturnCatalogName(), "master", text1, textBox2.Text, textBox3.Text);
                             backupManager.OpenConnection();
 
                             backupManager.SetParams();
 
                             backupManager.CreateReserveBackup();
-                            if (!MergerPreSettings.CatalogBackUp.OnlyBackUp)
-                            {
-                                
+                            if (backUp_v2.Checked)
+                            {                             
                                 backupManager.RestoreFromBackup();
                                 backupManager.DeleteReserveBackup();
                                 backupManager.CloseConnection();
@@ -339,7 +482,6 @@ namespace SqlDBManager
                                 mainCatalog = new DBCatalog(text1, textBox1.Text + Consts.VisualConsts.TAIL_OF_MERGED_FILES, textBox2.Text, textBox3.Text);
                                 mainCatalog.OpenConnection();
                                 mainCatalog.StartTransaction();
-                                MessageBox.Show(mainCatalog.ReturnCatalogName());
                                 backupManager = new BackupManager(mainCatalog.SelectCatalogPath(), mainCatalog.ReturnCatalogName(), "master", text1, textBox2.Text, textBox3.Text);
                             }
                             else
@@ -350,9 +492,7 @@ namespace SqlDBManager
 
                             worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Вносим правки ключей таблиц...");
 
-                            bool successOperation = Wrappers.WrapSimpleMergeFunc(MergeManager.RepeirDBKeys, mainCatalog, worker);
-
-                            //  ALTER TABLE[5307_main].[dbo].[tblACT] ADD FOREIGN KEY(ISN_FUND) REFERENCES[5307_main].[dbo].[tblFUND](ISN_FUND);
+                            successOperation = Wrappers.WrapSimpleMergeFunc(MergeManager.RepeirDBKeys, mainCatalog, worker);
 
                             if (successOperation)
                             {
@@ -364,16 +504,12 @@ namespace SqlDBManager
                             if (successOperation)
                             {
                                 worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Необходимые правки успешно применены!");
-
-
-                                // Очищаем логи
                                 worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Очистка логов ---");
                                 successOperation = MergeManager.ClearLogs(mainCatalog, worker);
                             }
 
                             if (successOperation)
                             {
-                                // Проходим по дефолтным таблицам
                                 worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Обработка дефолтных таблиц ---");
                                 MergeManager.ProcessSkipTables(mainCatalog, daughterCatalog, worker);
                                 successOperation = MergeManager.ProcessDefaultTables(mainCatalog, daughterCatalog, worker);
@@ -392,6 +528,7 @@ namespace SqlDBManager
                                 worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Заключение слияния ---");
                                 worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Возвращаем временные изменения...");
                                 successOperation = Wrappers.WrapSimpleMergeFunc(MergeManager.RenameAfterMergeTableColumn, mainCatalog, worker);
+                                worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Изменения применены!");
                             }
 
                             if (successOperation)
@@ -400,20 +537,31 @@ namespace SqlDBManager
                                 mainCatalog.CommitTransaction();
                                 Consts.MERGE_WAS_SUCCESS = true;
 
-                                e.Result = "Слияние успешно завершено!";
-                                ProgramMessages.MergeCompletedMessage();
-
                                 if (!recalc_v1.Checked)
                                 {
+                                    mainCatalog.StartTransaction();
+                                    worker.ReportProgress(Consts.WorkerConsts.BLOCK_HEADING, "--- Приступаем к пересчету ---");
                                     RecalcManager recalcManager = new RecalcManager(mainCatalog);
-                                    recalcManager.RecalcInventory();
-                                    recalcManager.RecalcFund();
+                                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Пересчитываем описи...");
+                                    recalcManager.RecalcInventory(worker);
+                                    worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
+                                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Пересчитываем фонды...");
+                                    recalcManager.RecalcFund(worker);
+                                    worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
 
                                     if (recalc_v3.Checked)
-                                        recalcManager.RecalcAndCreatePassport();
-
+                                    {
+                                        worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Пересчитываем паспорта...");
+                                        recalcManager.RecalcAndCreatePassport(worker);
+                                        worker.ReportProgress(Consts.MergeProgress.UpdateMainBar(), Consts.WorkerConsts.ITS_MAIN_PROGRESS_BAR);
+                                    }
+                                    
                                     mainCatalog.CommitTransaction();
+                                    worker.ReportProgress(Consts.WorkerConsts.MIDDLE_STATUS_CODE, "Пересчет завершен!");
                                 }
+
+                                e.Result = "Слияние успешно завершено!";
+                                ProgramMessages.MergeCompletedMessage();
 
                             }
                             else
@@ -422,7 +570,7 @@ namespace SqlDBManager
                                 daughterCatalog.RollbackTransaction();
 
                                 backupManager.OpenConnection();
-                                if (MergerPreSettings.CatalogBackUp.OnlyBackUp)
+                                if (backUp_v1.Checked)
                                     backupManager.DeleteReserveBackup();
                                 else
                                 {
@@ -465,18 +613,20 @@ namespace SqlDBManager
             {
                 e.Result = "Версии каталогов не сходятся!";
                 ProgramMessages.ValidationErrorMessage();
-            }
-            Invoke(new Action(() => {
-                cancel.Visible = false;
-                mergeLog.Visible = true;
-                mergeLog.Enabled = true;
-                //startMerge.Text = Consts.TextsConsts.LOG_BUTTON;
-                startMerge.Enabled = true;              
-                button6.Enabled = true;
-            }));
+            }*/
 
-            mainCatalog.CloseConnection();
-            daughterCatalog.CloseConnection();
+
+            /*            Invoke(new Action(() => {
+                            //cancel.Visible = false;
+                            //mergeLog.Visible = true;
+                            mergeLog.Enabled = true;
+                            //startMerge.Text = Consts.TextsConsts.LOG_BUTTON;
+                            startMerge.Enabled = true;              
+                            backToSettings.Enabled = true;
+                        }));
+
+                        mainCatalog.CloseConnection();
+                        daughterCatalog.CloseConnection();*/
         }
 
         private void mergerBackWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -539,31 +689,23 @@ namespace SqlDBManager
             {
                 Tuple<string, string, string, string> takingParams = e.Argument as Tuple<string, string, string, string>;
 
-                ConnectionChecker.CheckConnectionMessage(takingParams.Item1,
-                                                         takingParams.Item2,
-                                                         takingParams.Item3,
-                                                         takingParams.Item4);
+                ConnectionChecker.CheckConnectionMessage(takingParams.Item1, takingParams.Item2, takingParams.Item3, takingParams.Item4);
             }
             else
             {
-                string text1 = "";
-                string text2 = "";
+                string text1 = null;
+                string text2 = null;
 
                 Invoke(new Action(() => {
                     text1 = comboBox1.Text;
                     text2 = comboBox2.Text;
                 }));
 
-                if (!ConnectionChecker.CheckConnection(text1,
-                                                       textBox1.Text,
-                                                       textBox2.Text,
-                                                       textBox3.Text)){
+                if (!ConnectionChecker.CheckConnection(text1, textBox1.Text, textBox2.Text, textBox3.Text))
+                {
                     ProgramMessages.CheckConnectingSettings("главной");
                 }
-                else if (!ConnectionChecker.CheckConnection(text2,
-                                                            textBox4.Text,
-                                                            textBox5.Text,
-                                                            textBox6.Text))
+                else if (!ConnectionChecker.CheckConnection(text2, textBox4.Text, textBox5.Text, textBox6.Text))
                 {
                     ProgramMessages.CheckConnectingSettings("дочерней");
                 }
@@ -571,9 +713,7 @@ namespace SqlDBManager
                 {
                     Invoke(new Action(() => {
                         SaveProperties();
-
-
-
+                        comboBox1.SelectedItem = comboBox1.Text;
 
                         if (MergerPreSettings.ArchiveUpdate.UpdateValues.mainCatalogName == null || MergerPreSettings.ArchiveUpdate.UpdateValues.mainCatalogName != textBox1.Text)
                         {
@@ -595,9 +735,6 @@ namespace SqlDBManager
                             MergerPreSettings.ArchiveUpdate.UpdateValues.mainCatalogName = textBox1.Text;
                         }
                         
-
-
-
                         WrapTabControl(tabControl1, true);
                     }));
                 }
@@ -607,56 +744,35 @@ namespace SqlDBManager
             {
                 mainDBGroupBox.Enabled = true;
                 groupBox2.Enabled = true;
-                button4.Enabled = true;
+                toSettings.Enabled = true;
             }));
-        }
-
-        private void dirtyJobBackWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-
-        }
-
-        private void dirtyJobBackWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-
         }
 
         private void tabControl1_Selecting(object sender, TabControlCancelEventArgs e)
         {
             if (Consts.DEBUG_MOD)
-            {
                 e.Cancel = false;
-            }
             else
-            {
                 e.Cancel = Consts.VisualConsts.TAB_ACCESS;
-            }
         }
 
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
-            TrimAllOnForm();
-            MessageBox.Show("");
             if (radioButton2.Checked)
-            {
                 panel1.Enabled = true;
-                Consts.PRE_SETTINGS = new Tuple<string, string, string, string>(textBox7.Text.Trim(' '), textBox9.Text.Trim(' '), textBox10.Text.Trim(' '), textBox11.Text.Trim(' '));
-
-                MergerPreSettings.ArchiveUpdate.MakeEdits = true;
-            }
             else
-            {
                 panel1.Enabled = false;
-                MergerPreSettings.ArchiveUpdate.MakeEdits = false;
-            }
         }
 
-        private void radioButton7_CheckedChanged(object sender, EventArgs e)
+        public List<string> ArchiveUpdateValues()
         {
-            if (backUp_v2.Checked)
-                MergerPreSettings.CatalogBackUp.OnlyBackUp = false;
-            else
-                MergerPreSettings.CatalogBackUp.OnlyBackUp = true;
+            return new List<string>() { textBox7.Text, textBox9.Text, textBox10.Text, textBox11.Text };
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            /*if (mergerBackWorker.IsBusy)
+                Consts.StopMergeConsts.STOP_MERGE = true;*/
         }
 
         private void checkConnectionMainCatalog_MouseEnter(object sender, EventArgs e)
@@ -679,42 +795,42 @@ namespace SqlDBManager
             Cursor = Cursors.Default;
         }
 
-        private void button4_MouseEnter(object sender, EventArgs e)
+        private void toSettings_MouseEnter(object sender, EventArgs e)
         {
             Cursor = Cursors.Hand;
         }
 
-        private void button4_MouseLeave(object sender, EventArgs e)
+        private void toSettings_MouseLeave(object sender, EventArgs e)
         {
             Cursor = Cursors.Default;
         }
 
-        private void button8_MouseEnter(object sender, EventArgs e)
+        private void toMerge_MouseEnter(object sender, EventArgs e)
         {
             Cursor = Cursors.Hand;
         }
 
-        private void button8_MouseLeave(object sender, EventArgs e)
+        private void toMerge_MouseLeave(object sender, EventArgs e)
         {
             Cursor = Cursors.Default;
         }
 
-        private void button5_MouseLeave(object sender, EventArgs e)
+        private void backToSelectBases_MouseLeave(object sender, EventArgs e)
         {
             Cursor = Cursors.Default;
         }
 
-        private void button5_MouseEnter(object sender, EventArgs e)
+        private void backToSelectBases_MouseEnter(object sender, EventArgs e)
         {
             Cursor = Cursors.Hand;
         }
 
-        private void button6_MouseEnter(object sender, EventArgs e)
+        private void backToSettings_MouseEnter(object sender, EventArgs e)
         {
             Cursor = Cursors.Hand;
         }
 
-        private void button6_MouseLeave(object sender, EventArgs e)
+        private void backToSettings_MouseLeave(object sender, EventArgs e)
         {
             Cursor = Cursors.Default;
         }
@@ -739,7 +855,15 @@ namespace SqlDBManager
             Cursor = Cursors.Default;
         }
 
+        private void mergerInfo_MouseEnter(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Hand;
+        }
 
+        private void mergerInfo_MouseLeave(object sender, EventArgs e)
+        {
+            Cursor = Cursors.Default;
+        }
 
 
 
@@ -764,49 +888,38 @@ namespace SqlDBManager
 
         private void button3_Click(object sender, EventArgs e)
         {
-            /*            radioButton9.Text = "radioButton9dfgdfg";
 
-                        MessageBox.Show(DateTime.Now.ToString().Replace(' ', '_'));
-                        *//*string itemTiple1 = "123";
+            
+            /*try
+            {
+                throw new MergerExceptions.WrongVersionException(MergerExceptions.WrongVersionException.SELF_ERROR);
+            }
+            catch (MergerExceptions.WrongVersionException error)
+            {
+                MessageBox.Show(error.Message);
+            }*/
+            /*Thread myThread = new Thread(() => {
+                while (true)
+                {
+                    MessageBox.Show("");
+                }
+            });
 
-                        Tuple<string, string> testTuple = new Tuple<string, string>(itemTiple1, "456");
+            myThread.Start();*/
 
-                        itemTiple1 = "4325324";
-                        testTuple = new Tuple<string, string>(itemTiple1, "456");*/
-            /*            MessageBox.Show(MergeSettings.UpdateTables["tblARCHIVE"].Item2.ToString());
-
-                        Consts.SettingsChecked.UPDATE_ARCHIVE = true;
-
-                        MessageBox.Show(Consts.SettingsChecked.UPDATE_ARCHIVE.ToString());
-                        MessageBox.Show(MergeSettings.UpdateTables["tblARCHIVE"].Item2.ToString());*//*
-
-                        try
-                        {
-                            throw new StopMergeException(Consts.StopMergeConsts.STOP_ERROR_MESSAGE);
-                        }
-                        catch (StopMergeException ex)
-                        {
-                            MessageBox.Show(ex.Message);
-                        }*/
-
-            DBCatalog testDBCatalog = new DBCatalog(@"(local)\SQL2022", "5585_2", "sa", "123");
+            DBCatalog testDBCatalog = new DBCatalog(@"(local)\SQLexpress2022", "main", "sa", "123");
+            BackgroundWorker plugWorker = new BackgroundWorker();
 
             testDBCatalog.OpenConnection();
             testDBCatalog.StartTransaction();
-
-            TestCatalog testCatalog = new TestCatalog(@"(local)\SQLEXPRESS2022", "5585", "sa", "123");
-
-
-            /*testCatalog.OpenConnection();
-            testCatalog.StartTransaction();*/
-
+            MessageBox.Show(Validator.ValidateVersion(testDBCatalog).ToString());
 
             RecalcManager recalcManager = new RecalcManager(testDBCatalog);
 
-            recalcManager.RecalcAndCreatePassport();
+            //recalcManager.RecalcAndCreatePassport(plugWorker);
             //recalcManager.RecalcPassports();
-            //recalcManager.RecalcInventory();
-            //recalcManager.RecalcFund();
+            recalcManager.RecalcInventory(plugWorker);
+            //recalcManager.RecalcFund(plugWorker);
 
 
 
@@ -814,267 +927,6 @@ namespace SqlDBManager
             testDBCatalog.CloseConnection();
 
             MessageBox.Show("End of recalc tests...");
-
-            /*string request = $"SELECT * FROM [TestDB].[dbo].[eqUsers];";
-            string request2 = $"SELECT COUNT(*) FROM [TestDB].[dbo].[eqUsers];";
-
-            int count = testCatalog.TestSelectCountAdapter(request2);
-            //MessageBox.Show(count.ToString());
-
-            List<Dictionary<string, string>> dataFrom = testCatalog.TestSelectAdapter(request);
-            //MessageBox.Show(dataFrom.Item1.ToString());
-
-            foreach (Dictionary<string, string> row in dataFrom)
-            {
-                foreach (string key in row.Keys)
-                {
-                    MessageBox.Show(key + ": " + row[key]);
-                }
-            }
-
-            textBoxStatus.AppendText("dfgfdg" + "\r\n");
-            textBoxStatus.AppendText("dfgfdg" + "\r\n");
-            textBoxStatus.AppendText("dfgfdg" + "\r\n");
-            textBoxStatus.AppendText("dfgfdg" + "\r\n");
-            textBoxStatus.AppendText("dfgfdg" + "\r\n");
-            textBoxStatus.AppendText("" + "\r\n");
-            textBoxStatus.AppendText("dfgfdg" + "\r\n");
-            textBoxStatus.AppendText("dfgfdg" + "\r\n");
-
-            using (SaveFileDialog saveFileDialog = new SaveFileDialog())
-            {
-                saveFileDialog.InitialDirectory = "c:\\";
-                saveFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
-                saveFileDialog.FilterIndex = 1;
-                saveFileDialog.FileName = "MergeLog";
-                saveFileDialog.RestoreDirectory = true;
-
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                {
-                    using (StreamWriter writer = new StreamWriter(saveFileDialog.FileName))
-                    {
-                        writer.WriteLine($"Merge log of '' and '' \n");
-
-                        foreach (char s in textBoxStatus.Text)
-                        {
-                            writer.Write(s);
-                        }
-                    }
-                }
-            }*/
-        }
-
-        public void Mess()
-        {
-            List<string> list = new List<string>() { "1", "2" };
-            string s = "";
-            Invoke(new Action(() => { MessageBox.Show("df"); }));
-            for (int i = 0; i < 10; i++)
-            {
-                listBox2.Items.Add(i.ToString());
-            }
-
-
-            MessageBox.Show("df2");
-        }
-
-        public static int MuliplierRecurtion(int multiplierNumber)
-        {
-            if (multiplierNumber == 1)
-                return 1;
-            return multiplierNumber * MuliplierRecurtion(multiplierNumber - 1);
-        }
-
-        private void button10_Click(object sender, EventArgs e)
-        {
-            string sss = "'1111'";
-
-            MessageBox.Show(MuliplierRecurtion(4).ToString());
-
-
-
-
-            bool foo = true;
-
-            if (foo)
-            {
-                try
-                {
-                    Mess();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error: {ex.Message}");
-                }
-            }
-            else
-            {
-                Mess();
-            }
-
-            
-
-            //BackupManager backUp = new BackupManager("C:\\Program Files\\Microsoft SQL Server\\MSSQL16.SQL2022\\MSSQL\\DATA\\5558.mdf", "5558", "(local)\\SQL2022", "sa", "123");
-
-            //backUp.OpenConnection();
-
-            //backUp.CreateReserveBackup("5558");
-
-            MessageBox.Show("sdfsd");
-            //backUp.DeleteReserveBackup();
-
-            MessageBox.Show("sdfsd");
-            string myServer = Environment.MachineName;
-
-
-
-            DataTable servers = SqlDataSourceEnumerator.Instance.GetDataSources();
-            for (int i = 0; i < servers.Rows.Count; i++)
-            {
-                if (myServer == servers.Rows[i]["ServerName"].ToString()) ///// used to get the servers in the local machine////
-                {
-                    if ((servers.Rows[i]["InstanceName"] as string) != null)
-                        listBox2.Items.Add(servers.Rows[i]["ServerName"] + "\\" + servers.Rows[i]["InstanceName"]);
-                    else
-                        listBox2.Items.Add(servers.Rows[i]["ServerName"].ToString());
-                }
-            }
-
-
-
-            SqlDataSourceEnumerator instance = SqlDataSourceEnumerator.Instance;
-            DataTable table = instance.GetDataSources();
-
-            MessageBox.Show(table.Rows.Count.ToString());
-
-            foreach (DataRow row in table.Rows)
-            {
-                if (row["InstanceName"].ToString() == "")
-                    listBox2.Items.Add(row["ServerName"]);
-                else
-                    listBox2.Items.Add(row["ServerName"] + "\\" + row["InstanceName"]);
-            }
-        }
-
-        public string Some(List<string> columns)
-        {
-            List<string> strings = new List<string>() { "[ID]", "[Login]", "[Department]", "[Deleted]", "[OwnerID]", "[CreationDateTime]", "[StatusID]", "[Email]", "[patronymic]", "[Position]", "[Phone]", "[Room_Number]", "[Description]", "[surname]", "[AccessGranted]", "[Supervisor]", "[FirstName]", "[BUILD_IN_ACCOUNT]", "[Pass]", "[Cookie]", "[UserTheme]" };
-
-            string so = "Testtstst";
-            return $"SELECT {string.Join(", ", strings).Replace('\"', '\'')} FROM ";
-        }
-
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-            SqlConnection cnn, cnn2;
-            SqlCommand command;
-            SqlDataReader reader;
-            String source,
-                   catalog = "test_db",
-                   login,
-                   password,
-                   request,
-                   value,
-                   connectionString,
-                   connectionString2,
-                   request2,
-                   output = "";
-            List<string> db_tables = new List<string>();
-
-
-
-
-            Dictionary<string, string> inDict = new Dictionary<string, string>() { { "h", "fd" } };
-
-            List<Dictionary<string, string>> lst = new List<Dictionary<string, string>>();
-
-            lst.Add(inDict);
-
-            Dictionary<string, List<Dictionary<string, string>>> testReserveDict = new Dictionary<string, List<Dictionary<string, string>>>();
-
-            string someTestkey = "testTable";
-            Dictionary<string, string> newDict = new Dictionary<string, string>() { { "oldKey", "newKey()" } };
-
-            if (!testReserveDict.ContainsKey(someTestkey))
-            {
-                testReserveDict[someTestkey] = new List<Dictionary<string, string>>();
-            }
-            // Добавление нового значения
-            testReserveDict[someTestkey].Add(new Dictionary<string, string>() { { "oldKey", "newKey()" } });
-
-            // Получение нового значения
-            MessageBox.Show(testReserveDict[someTestkey][0]["oldKey"]);
-            DBCatalog testCatalog = new DBCatalog(comboBox1.Text.Trim(' '), "test_db", "sa", "123");
-            testCatalog.OpenConnection();
-
-
-            // ----------------------
-            Dictionary<string, string> reserveRocords = new Dictionary<string, string>();
-
-            reserveRocords["ISN_CITIZEN"] = "'3'";
-            reserveRocords.Remove("ID"); // Обязательно удаляем ID. Он формируется новый в запросе
-
-            testCatalog.InsertValue("tblCITIZEN_CL", reserveRocords);
-
-
-            MessageBox.Show("BreakPoint test!");
-            // ----------------------
-
-            //connectionString = $@"Data Source={source};Initial Catalog={catalog};User ID={login};Password={password}";
-
-            connectionString = @"Data Source=(local)\SQLEXPRESS;Initial Catalog=test_db;User ID=sa;Password=123";
-
-            //connectionString2 = @"Data Source=(local)\SQLEXPRESS;Initial Catalog=test;User ID=sa;Password=123";
-
-            request = $"SELECT TABLE_NAME FROM [{catalog}].INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE' order by TABLE_NAME";
-
-
-            cnn = new SqlConnection(connectionString);
-            //cnn2 = new SqlConnection(connectionString2);
-            cnn.Open();
-
-            //cnn2.Open();
-
-            command = new SqlCommand(request, cnn);
-            reader = command.ExecuteReader();
-
-            while (reader.Read())
-            {
-                //output += reader.GetValue(0) + " - " + reader.GetValue(1) + "\n";
-
-                db_tables.Add(reader.GetString(0));
-            }
-
-            reader.Close();
-            command.Dispose();
-
-            for (int i = 0; i < db_tables.Count; i++)
-            {
-                request = $"SELECT COUNT(*) FROM {db_tables[i]}";
-                command = new SqlCommand(request, cnn);
-                reader = command.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    //listView1.Items.Add("In " + db_tables[i] + " table: " + Convert.ToString(reader.GetValue(0)) + " values.");
-                    listBox2.Items.Add("In " + db_tables[i] + " table: " + Convert.ToString(reader.GetValue(0)) + " values.");
-                }
-
-                reader.Close();
-                command.Dispose();
-            }
-            //MessageBox.Show(output);
-            cnn.Close();
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            //Visualizator.VisualizateReserv();
-
-            Tuple<string, string, string> tr = new Tuple<string, string, string>("1", "2", "3");
-
         }
 
         private void flowLayoutPanel1_Resize(object sender, EventArgs e)

@@ -23,7 +23,7 @@ namespace NotesNamespace
 
         public static int ConventToInt(string digitalFromDB)
         {
-            return Convert.ToInt32(digitalFromDB.Replace("\'", ""));
+            return digitalFromDB.Contains("null") ? 0 : Convert.ToInt32(digitalFromDB.Replace("\'", ""));
         }
 
         public static string CreateSpace(int spaceSize)
@@ -67,19 +67,13 @@ namespace NotesNamespace
                 }
             }
         }
-    }
-
-    public class StopMergeException : Exception
-    {
-        public StopMergeException(string message)
-            : base(message) { }
-    }
-
+    }  
+    
     public static class MergerPreSettings
     {
         public static class ArchiveUpdate
         {
-            public static bool MakeEdits = false;
+            //public static bool MakeEdits = false;
 
             public static string UpdateTableName = "tblARCHIVE";
             public static List<TextBox> Fields = null;
@@ -93,51 +87,50 @@ namespace NotesNamespace
                 public static string archiveAddress = null;
                 public static string description = null;
             }
-
-            public static void RememberValues()
-            {
-
-            }
-
-            public static string ReturnUpdateSet()
-            {
-                return "";
-            }
-        }
-
-        public static class ArchiveRecalc
-        {
-            public static bool Item1 = true;
-            public static bool Item2 = false;
-            public static bool Item3 = false;
-        }
-
-        public static class CatalogBackUp
-        {
-            public static bool OnlyBackUp = true;
         }
     }
 
-    public static class RecalculationConsts
+/*    public class MergerExceptions
     {
-        public static char Electronic = 'E';
-        public static char Traditional = 'T';
-
-        public static List<string> PaperFunds = new List<string>()
+        public class ErrorMessages
         {
-            "'1'", "'2'", "'3'", "'4'",
-        };
+            public const string WRONG_VERSION = "Версии каталогов не сходятся!";
+            public static string NOT_EQUEL_COUNT = $"В главном каталоге {Validator.TablesCount.Item1} таблиц, когда в дочернем {Validator.TablesCount.Item2} таблиц.";
+            public const string NOT_EQUEL_NAMES = "Наименования таблиц не совпадают!";
+            public const string NOT_ALLOWED_VALUES = "Дефолтные таблицы содержат недопустимые значения!";
+        }
 
-        public static List<string> TraditionalFunds = new List<string>()
+        public class StopMergeException : Exception
         {
-            "'5'", "'6'", "'7'", "'8'",
-        };
+            public StopMergeException(string message)
+                : base(message) { }
+        }
 
-        public static List<string> MicroformFunds = new List<string>()
+        public class ValidationException : Exception
         {
-            "'9'",
-        };
-    }
+            public ValidationException(string message)
+                : base(message) { }
+        }
+    }*/
+
+    /*    public static class RecalculationConsts
+        {
+
+            public static List<string> PaperFunds = new List<string>()
+            {
+                "'1'", "'2'", "'3'", "'4'",
+            };
+
+            public static List<string> TraditionalFunds = new List<string>()
+            {
+                "'5'", "'6'", "'7'", "'8'",
+            };
+
+            public static List<string> MicroformFunds = new List<string>()
+            {
+                "'9'",
+            };
+        }*/
 
 
     public static class SpecialTablesValues
@@ -173,7 +166,15 @@ namespace NotesNamespace
     // -------------------- recalc notes --------------------------
 
 
+    // ---In recalc---
+    //{ "tblARCHIVE_PASSPORT",
+    //    new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>("PASS_YEAR", "ISN_PASSPORT", null, null, null, null, null, new Tuple<bool>(true)) },
+    // -------
 
+    // ---In recalc---
+    //{ "tblARCHIVE_STATS",
+    //    new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>(null, "ISN_ARCHIVE_STATS", null, "ISN_PASSPORT", null, null, null, new Tuple<bool>(true)) },
+    // -------
 
 
     /*
