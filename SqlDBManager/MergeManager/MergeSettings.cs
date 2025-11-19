@@ -6,23 +6,6 @@ namespace SqlDBManager
 {
     abstract public class MergeSettings
     {
-        public static string ExtraIDColumn = "DocID";
-
-        /// <summary>
-        /// Tables columns to update on second tab. <para/>
-        /// 1. List(string) update columns <br/>
-        /// </summary>
-        public static Dictionary<string, List<string>> UpdateTables { get; } = new Dictionary<string, List<string>>
-        {
-            { "tblARCHIVE",
-                new List<string>() { "NAME_SHORT", "NAME", "ADDRESS", "AUTHORITY" } },
-        };
-
-        public static List<string> TablesForCleaning { get; } = new List<string>()
-        {
-            "eqActivityLog", "eqDocFieldLog", "eqDocIssueLog", "eqDocStatesLOG", "eqDocumentActivityLog", "tblServiceLog"
-        };
-
         /// <summary>
         /// Params for processing simple tables <para/>
         /// 1. (string) uniqueValueColumnName <br/>     uniqueValueColumnName

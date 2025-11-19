@@ -33,15 +33,6 @@ namespace SqlDBManager
 
             SetButtonsFont();
             LoadProperties();
-
-            // Only test init
-            textBox1.Text = "202_bd_1";
-            textBox2.Text = "sa";
-            textBox3.Text = "123";
-            textBox4.Text = "202_bd_2";
-            textBox5.Text = "sa";
-            textBox6.Text = "123";
-
         }
 
         private void SetButtonsFont()

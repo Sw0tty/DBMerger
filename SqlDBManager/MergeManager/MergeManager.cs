@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace SqlDBManager
 {
-    public class MergeManager : MergeSettings
+    public class MergeManager
     {
         public static bool FastRequestMod;
         public string MergeRulesFilePath;
