@@ -56,6 +56,8 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.defaultRequestMod_RadioButton = new System.Windows.Forms.RadioButton();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.backUp_v2 = new System.Windows.Forms.RadioButton();
             this.backUp_v1 = new System.Windows.Forms.RadioButton();
@@ -67,17 +69,9 @@
             this.recalc_v2 = new System.Windows.Forms.RadioButton();
             this.recalc_v1 = new System.Windows.Forms.RadioButton();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.textBox11 = new System.Windows.Forms.TextBox();
-            this.label17 = new System.Windows.Forms.Label();
-            this.textBox9 = new System.Windows.Forms.TextBox();
-            this.textBox10 = new System.Windows.Forms.TextBox();
-            this.label11 = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
-            this.textBox7 = new System.Windows.Forms.TextBox();
-            this.label15 = new System.Windows.Forms.Label();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.getMergeRulesTemplate = new System.Windows.Forms.Button();
+            this.selectMergeRules = new System.Windows.Forms.Button();
+            this.mergeRulesPath = new System.Windows.Forms.TextBox();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.cancel = new System.Windows.Forms.Button();
             this.label14 = new System.Windows.Forms.Label();
@@ -100,17 +94,18 @@
             this.listView1 = new System.Windows.Forms.ListView();
             this.mergerBackWorker = new System.ComponentModel.BackgroundWorker();
             this.dirtyJobBackWorker = new System.ComponentModel.BackgroundWorker();
+            this.fastRequestMod_RadioButton = new System.Windows.Forms.RadioButton();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.mainDBGroupBox.SuspendLayout();
             this.tabPage2.SuspendLayout();
+            this.groupBox7.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox3.SuspendLayout();
-            this.panel1.SuspendLayout();
             this.tabPage3.SuspendLayout();
             this.tabPage4.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
@@ -173,6 +168,7 @@
             // mergerInfo
             // 
             this.mergerInfo.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.mergerInfo.Cursor = System.Windows.Forms.Cursors.Hand;
             this.mergerInfo.Location = new System.Drawing.Point(3, 5);
             this.mergerInfo.Name = "mergerInfo";
             this.mergerInfo.Size = new System.Drawing.Size(148, 34);
@@ -180,12 +176,11 @@
             this.mergerInfo.Text = "Справка";
             this.mergerInfo.UseVisualStyleBackColor = true;
             this.mergerInfo.Click += new System.EventHandler(this.mergerInfo_Click);
-            this.mergerInfo.MouseEnter += new System.EventHandler(this.mergerInfo_MouseEnter);
-            this.mergerInfo.MouseLeave += new System.EventHandler(this.mergerInfo_MouseLeave);
             // 
             // toSettings
             // 
             this.toSettings.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.toSettings.Cursor = System.Windows.Forms.Cursors.Hand;
             this.toSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.toSettings.Location = new System.Drawing.Point(329, 5);
             this.toSettings.Name = "toSettings";
@@ -194,8 +189,6 @@
             this.toSettings.Text = "Далее";
             this.toSettings.UseVisualStyleBackColor = true;
             this.toSettings.Click += new System.EventHandler(this.toSettings_Click);
-            this.toSettings.MouseEnter += new System.EventHandler(this.toSettings_MouseEnter);
-            this.toSettings.MouseLeave += new System.EventHandler(this.toSettings_MouseLeave);
             // 
             // groupBox2
             // 
@@ -247,6 +240,7 @@
             // 
             this.checkConnectionDaughterCatalog.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkConnectionDaughterCatalog.Cursor = System.Windows.Forms.Cursors.Hand;
             this.checkConnectionDaughterCatalog.Location = new System.Drawing.Point(297, 186);
             this.checkConnectionDaughterCatalog.Name = "checkConnectionDaughterCatalog";
             this.checkConnectionDaughterCatalog.Size = new System.Drawing.Size(175, 34);
@@ -254,8 +248,6 @@
             this.checkConnectionDaughterCatalog.Text = "button3";
             this.checkConnectionDaughterCatalog.UseVisualStyleBackColor = true;
             this.checkConnectionDaughterCatalog.Click += new System.EventHandler(this.checkConnectionDaughterCatalog_Click);
-            this.checkConnectionDaughterCatalog.MouseEnter += new System.EventHandler(this.checkConnectionDaughterCatalog_MouseEnter);
-            this.checkConnectionDaughterCatalog.MouseLeave += new System.EventHandler(this.checkConnectionDaughterCatalog_MouseLeave);
             // 
             // label6
             // 
@@ -353,6 +345,7 @@
             // checkConnectionMainCatalog
             // 
             this.checkConnectionMainCatalog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkConnectionMainCatalog.Cursor = System.Windows.Forms.Cursors.Hand;
             this.checkConnectionMainCatalog.Location = new System.Drawing.Point(291, 179);
             this.checkConnectionMainCatalog.Name = "checkConnectionMainCatalog";
             this.checkConnectionMainCatalog.Size = new System.Drawing.Size(181, 34);
@@ -360,8 +353,6 @@
             this.checkConnectionMainCatalog.Text = "Проверить соединение";
             this.checkConnectionMainCatalog.UseVisualStyleBackColor = true;
             this.checkConnectionMainCatalog.Click += new System.EventHandler(this.checkConnectionMainCatalog_Click);
-            this.checkConnectionMainCatalog.MouseEnter += new System.EventHandler(this.checkConnectionMainCatalog_MouseEnter);
-            this.checkConnectionMainCatalog.MouseLeave += new System.EventHandler(this.checkConnectionMainCatalog_MouseLeave);
             // 
             // comboBox1
             // 
@@ -414,6 +405,7 @@
             // tabPage2
             // 
             this.tabPage2.BackColor = System.Drawing.SystemColors.Window;
+            this.tabPage2.Controls.Add(this.groupBox7);
             this.tabPage2.Controls.Add(this.groupBox1);
             this.tabPage2.Controls.Add(this.tableLayoutPanel2);
             this.tabPage2.Controls.Add(this.groupBox4);
@@ -424,13 +416,36 @@
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
             this.tabPage2.Size = new System.Drawing.Size(498, 603);
             this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Предварительные настройки";
+            this.tabPage2.Text = "Настройки слияния";
+            // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.fastRequestMod_RadioButton);
+            this.groupBox7.Controls.Add(this.defaultRequestMod_RadioButton);
+            this.groupBox7.Location = new System.Drawing.Point(9, 111);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(480, 49);
+            this.groupBox7.TabIndex = 16;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "Режим импорта записей";
+            // 
+            // defaultRequestMod_RadioButton
+            // 
+            this.defaultRequestMod_RadioButton.AutoSize = true;
+            this.defaultRequestMod_RadioButton.Checked = true;
+            this.defaultRequestMod_RadioButton.Location = new System.Drawing.Point(19, 21);
+            this.defaultRequestMod_RadioButton.Name = "defaultRequestMod_RadioButton";
+            this.defaultRequestMod_RadioButton.Size = new System.Drawing.Size(72, 17);
+            this.defaultRequestMod_RadioButton.TabIndex = 1;
+            this.defaultRequestMod_RadioButton.TabStop = true;
+            this.defaultRequestMod_RadioButton.Text = "Обычный";
+            this.defaultRequestMod_RadioButton.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.backUp_v2);
             this.groupBox1.Controls.Add(this.backUp_v1);
-            this.groupBox1.Location = new System.Drawing.Point(9, 422);
+            this.groupBox1.Location = new System.Drawing.Point(9, 231);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(480, 48);
             this.groupBox1.TabIndex = 7;
@@ -476,6 +491,7 @@
             // toMerge
             // 
             this.toMerge.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            this.toMerge.Cursor = System.Windows.Forms.Cursors.Hand;
             this.toMerge.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.toMerge.Location = new System.Drawing.Point(329, 5);
             this.toMerge.Name = "toMerge";
@@ -484,12 +500,11 @@
             this.toMerge.Text = "Далее";
             this.toMerge.UseVisualStyleBackColor = true;
             this.toMerge.Click += new System.EventHandler(this.toMerge_Click);
-            this.toMerge.MouseEnter += new System.EventHandler(this.toMerge_MouseEnter);
-            this.toMerge.MouseLeave += new System.EventHandler(this.toMerge_MouseLeave);
             // 
             // backToSelectBases
             // 
             this.backToSelectBases.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.backToSelectBases.Cursor = System.Windows.Forms.Cursors.Hand;
             this.backToSelectBases.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.backToSelectBases.Location = new System.Drawing.Point(3, 5);
             this.backToSelectBases.Name = "backToSelectBases";
@@ -498,15 +513,13 @@
             this.backToSelectBases.Text = "Назад";
             this.backToSelectBases.UseVisualStyleBackColor = true;
             this.backToSelectBases.Click += new System.EventHandler(this.backToSelectBases_Click);
-            this.backToSelectBases.MouseEnter += new System.EventHandler(this.backToSelectBases_MouseEnter);
-            this.backToSelectBases.MouseLeave += new System.EventHandler(this.backToSelectBases_MouseLeave);
             // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.recalc_v3);
             this.groupBox4.Controls.Add(this.recalc_v2);
             this.groupBox4.Controls.Add(this.recalc_v1);
-            this.groupBox4.Location = new System.Drawing.Point(9, 367);
+            this.groupBox4.Location = new System.Drawing.Point(9, 170);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(480, 49);
             this.groupBox4.TabIndex = 8;
@@ -549,131 +562,46 @@
             // 
             this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox3.Controls.Add(this.panel1);
-            this.groupBox3.Controls.Add(this.radioButton2);
-            this.groupBox3.Controls.Add(this.radioButton1);
-            this.groupBox3.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.groupBox3.Controls.Add(this.getMergeRulesTemplate);
+            this.groupBox3.Controls.Add(this.selectMergeRules);
+            this.groupBox3.Controls.Add(this.mergeRulesPath);
+            this.groupBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox3.Location = new System.Drawing.Point(9, 6);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(480, 355);
+            this.groupBox3.Size = new System.Drawing.Size(480, 99);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Информация об архиве";
+            this.groupBox3.Text = "Правила слияния";
             // 
-            // panel1
+            // getMergeRulesTemplate
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.panel1.Controls.Add(this.textBox11);
-            this.panel1.Controls.Add(this.label17);
-            this.panel1.Controls.Add(this.textBox9);
-            this.panel1.Controls.Add(this.textBox10);
-            this.panel1.Controls.Add(this.label11);
-            this.panel1.Controls.Add(this.label16);
-            this.panel1.Controls.Add(this.textBox7);
-            this.panel1.Controls.Add(this.label15);
-            this.panel1.Enabled = false;
-            this.panel1.Location = new System.Drawing.Point(6, 51);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(470, 298);
-            this.panel1.TabIndex = 10;
+            this.getMergeRulesTemplate.Location = new System.Drawing.Point(6, 53);
+            this.getMergeRulesTemplate.Name = "getMergeRulesTemplate";
+            this.getMergeRulesTemplate.Size = new System.Drawing.Size(88, 32);
+            this.getMergeRulesTemplate.TabIndex = 6;
+            this.getMergeRulesTemplate.Text = "Шаблон";
+            this.getMergeRulesTemplate.UseVisualStyleBackColor = true;
+            this.getMergeRulesTemplate.Click += new System.EventHandler(this.getMergeRulesTemplate_Click);
             // 
-            // textBox11
+            // selectMergeRules
             // 
-            this.textBox11.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.selectMergeRules.Location = new System.Drawing.Point(327, 52);
+            this.selectMergeRules.Name = "selectMergeRules";
+            this.selectMergeRules.Size = new System.Drawing.Size(147, 33);
+            this.selectMergeRules.TabIndex = 5;
+            this.selectMergeRules.Text = "Select merge rules";
+            this.selectMergeRules.UseVisualStyleBackColor = true;
+            this.selectMergeRules.Click += new System.EventHandler(this.selectMergeRules_Click);
+            // 
+            // mergeRulesPath
+            // 
+            this.mergeRulesPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox11.Location = new System.Drawing.Point(13, 173);
-            this.textBox11.Multiline = true;
-            this.textBox11.Name = "textBox11";
-            this.textBox11.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBox11.Size = new System.Drawing.Size(446, 116);
-            this.textBox11.TabIndex = 11;
-            // 
-            // label17
-            // 
-            this.label17.AutoSize = true;
-            this.label17.Location = new System.Drawing.Point(10, 153);
-            this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(123, 17);
-            this.label17.TabIndex = 10;
-            this.label17.Text = "Описание архива";
-            // 
-            // textBox9
-            // 
-            this.textBox9.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox9.Location = new System.Drawing.Point(13, 77);
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(446, 25);
-            this.textBox9.TabIndex = 7;
-            // 
-            // textBox10
-            // 
-            this.textBox10.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox10.Location = new System.Drawing.Point(13, 125);
-            this.textBox10.Name = "textBox10";
-            this.textBox10.Size = new System.Drawing.Size(446, 25);
-            this.textBox10.TabIndex = 9;
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(10, 9);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(163, 17);
-            this.label11.TabIndex = 2;
-            this.label11.Text = "Краткое наименование";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(10, 105);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(98, 17);
-            this.label16.TabIndex = 8;
-            this.label16.Text = "Адрес архива";
-            // 
-            // textBox7
-            // 
-            this.textBox7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox7.Location = new System.Drawing.Point(13, 29);
-            this.textBox7.Name = "textBox7";
-            this.textBox7.Size = new System.Drawing.Size(446, 25);
-            this.textBox7.TabIndex = 4;
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(10, 57);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(159, 17);
-            this.label15.TabIndex = 6;
-            this.label15.Text = "Полное наименование";
-            // 
-            // radioButton2
-            // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(218, 24);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(90, 21);
-            this.radioButton2.TabIndex = 5;
-            this.radioButton2.Text = "Поменять";
-            this.radioButton2.UseVisualStyleBackColor = true;
-            this.radioButton2.CheckedChanged += new System.EventHandler(this.radioButton2_CheckedChanged);
-            // 
-            // radioButton1
-            // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Checked = true;
-            this.radioButton1.Location = new System.Drawing.Point(19, 24);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(193, 21);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Оставить без изменений";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.mergeRulesPath.Enabled = false;
+            this.mergeRulesPath.Location = new System.Drawing.Point(6, 24);
+            this.mergeRulesPath.Name = "mergeRulesPath";
+            this.mergeRulesPath.Size = new System.Drawing.Size(468, 22);
+            this.mergeRulesPath.TabIndex = 4;
             // 
             // tabPage3
             // 
@@ -696,6 +624,7 @@
             // 
             // cancel
             // 
+            this.cancel.Cursor = System.Windows.Forms.Cursors.Hand;
             this.cancel.Location = new System.Drawing.Point(162, 522);
             this.cancel.Name = "cancel";
             this.cancel.Size = new System.Drawing.Size(174, 34);
@@ -717,6 +646,7 @@
             // 
             // startMerge
             // 
+            this.startMerge.Cursor = System.Windows.Forms.Cursors.Hand;
             this.startMerge.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.startMerge.Location = new System.Drawing.Point(342, 561);
             this.startMerge.Name = "startMerge";
@@ -725,8 +655,6 @@
             this.startMerge.Text = "Начать слияние";
             this.startMerge.UseVisualStyleBackColor = true;
             this.startMerge.Click += new System.EventHandler(this.startMerge_Click);
-            this.startMerge.MouseEnter += new System.EventHandler(this.startMerge_MouseEnter);
-            this.startMerge.MouseLeave += new System.EventHandler(this.startMerge_MouseLeave);
             // 
             // label13
             // 
@@ -773,6 +701,7 @@
             // 
             // mergeLog
             // 
+            this.mergeLog.Cursor = System.Windows.Forms.Cursors.Hand;
             this.mergeLog.Enabled = false;
             this.mergeLog.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.mergeLog.Location = new System.Drawing.Point(162, 561);
@@ -782,11 +711,10 @@
             this.mergeLog.Text = "Сохранить итог слияния";
             this.mergeLog.UseVisualStyleBackColor = true;
             this.mergeLog.Click += new System.EventHandler(this.mergeLog_Click);
-            this.mergeLog.MouseEnter += new System.EventHandler(this.mergeLog_MouseEnter);
-            this.mergeLog.MouseLeave += new System.EventHandler(this.mergeLog_MouseLeave);
             // 
             // backToSettings
             // 
+            this.backToSettings.Cursor = System.Windows.Forms.Cursors.Hand;
             this.backToSettings.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.backToSettings.Location = new System.Drawing.Point(8, 561);
             this.backToSettings.Name = "backToSettings";
@@ -795,8 +723,6 @@
             this.backToSettings.Text = "Назад";
             this.backToSettings.UseVisualStyleBackColor = true;
             this.backToSettings.Click += new System.EventHandler(this.backToSettings_Click);
-            this.backToSettings.MouseEnter += new System.EventHandler(this.backToSettings_MouseEnter);
-            this.backToSettings.MouseLeave += new System.EventHandler(this.backToSettings_MouseLeave);
             // 
             // tabPage4
             // 
@@ -905,6 +831,16 @@
             // 
             this.dirtyJobBackWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.dirtyJobBackWorker_DoWork);
             // 
+            // fastRequestMod_RadioButton
+            // 
+            this.fastRequestMod_RadioButton.AutoSize = true;
+            this.fastRequestMod_RadioButton.Location = new System.Drawing.Point(97, 21);
+            this.fastRequestMod_RadioButton.Name = "fastRequestMod_RadioButton";
+            this.fastRequestMod_RadioButton.Size = new System.Drawing.Size(71, 17);
+            this.fastRequestMod_RadioButton.TabIndex = 2;
+            this.fastRequestMod_RadioButton.Text = "Быстрый";
+            this.fastRequestMod_RadioButton.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -925,6 +861,8 @@
             this.mainDBGroupBox.ResumeLayout(false);
             this.mainDBGroupBox.PerformLayout();
             this.tabPage2.ResumeLayout(false);
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
@@ -932,8 +870,6 @@
             this.groupBox4.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
             this.tabPage4.ResumeLayout(false);
@@ -981,11 +917,8 @@
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.TextBox textBoxStatus;
         private System.ComponentModel.BackgroundWorker mergerBackWorker;
-        private System.Windows.Forms.TextBox textBox7;
-        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TextBox mergeRulesPath;
         private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.RadioButton radioButton1;
         private System.ComponentModel.BackgroundWorker dirtyJobBackWorker;
         private System.Windows.Forms.ProgressBar progressBar2;
         private System.Windows.Forms.ProgressBar progressBar1;
@@ -995,13 +928,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button startMerge;
         private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.TextBox textBox9;
-        private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.TextBox textBox10;
-        private System.Windows.Forms.Label label16;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.TextBox textBox11;
-        private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Button cancel;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.RadioButton recalc_v3;
@@ -1018,6 +944,11 @@
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Button selectMergeRules;
+        private System.Windows.Forms.Button getMergeRulesTemplate;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.RadioButton defaultRequestMod_RadioButton;
+        private System.Windows.Forms.RadioButton fastRequestMod_RadioButton;
     }
 }
 

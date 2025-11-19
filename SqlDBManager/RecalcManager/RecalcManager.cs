@@ -184,9 +184,7 @@ namespace SqlDBManager
             string tableName = "tblFUND";
             string checkTableName = "tblFUND_CHECK";
             string idLikeColumn = "ISN_FUND";
-
-            
-
+           
             List<Dictionary<string, string>> tableData = MainCatalog.SelectAllFrom(tableName, MainCatalog.SelectColumnsNames(tableName, null), true);
 
             Consts.MergeProgress.ClearTasksBlock();
@@ -261,36 +259,6 @@ namespace SqlDBManager
                 worker.ReportProgress(Consts.MergeProgress.UpdateBlockBar(), Consts.WorkerConsts.ITS_BLOCK_PROGRESS_BAR);
             }
         }
-
-        /*public void RecalcPassports()
-        {
-            List<Tuple<string, string>> pairOfTypes = new List<Tuple<string, string>>() { new Tuple<string, string>("P", "1"), new Tuple<string, string>("P", "2"), new Tuple<string, string>("P", "3"), new Tuple<string, string>("P", "4"), new Tuple<string, string>("A", "5"), new Tuple<string, string>("A", "6"), new Tuple<string, string>("A", "7"), new Tuple<string, string>("A", "8"), new Tuple<string, string>("M", "9"), new Tuple<string, string>("E", "4"), new Tuple<string, string>("E", "5"), new Tuple<string, string>("E", "6"), new Tuple<string, string>("E", "7"), new Tuple<string, string>("E", "8"), new Tuple<string, string>("null", "null"), new Tuple<string, string>("E", "null"), new Tuple<string, string>("P", "null"), new Tuple<string, string>("A", "null") };
-            int catFundCount = 0, catUnitCount = 0, catInvUnitCount = 0, catSecretUnitCount = 0, catUniqueUnitCount = 0, catOCUnitCount = 0, catSomething = 0, catAccountingUnitCount = 0, catInvAccountingUnitCount = 0;
-
-            // rowID, docType, carrierType, recordCarrierType, selectingColumn
-            List<Tuple<string, string, string, string, string>> paramsForRequest = new List<Tuple<string, string, string, string, string>>() { new Tuple<string, string, string, string, string>("1", "1", "P", "T", "") };
-            MainCatalog.DeleteArchivePassports();
-
-            string startYear = MainCatalog.SelectFirstYear();
-            int passportID = 1;
-            int passportRowID = 0;
-            int statID = 1;
-
-            for (int year = Convert.ToInt32(startYear); year <= DateTime.Now.Year; year++)
-            {
-                MainCatalog.CreatePassport($"{passportID}", $"{year}");
-
-                foreach (Tuple<string, string> pair in pairOfTypes)
-                {
-                    // при создании сразу пересчитанные значения.
-                    MainCatalog.CreatePassportStat($"{passportID}", $"{statID}", pair.Item2, pair.Item1);
-
-
-                    statID++;
-                }
-                passportID++;
-            }
-        }*/
 
         public void RecalcAndCreatePassport(BackgroundWorker worker)
         {
