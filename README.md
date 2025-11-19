@@ -1,4 +1,4 @@
-# SQLDBManager
+# SQLDBManager 
 ## MergeRulesFile
 ### tablesReferences
 Dictionary of tables with logical references, but without configured connectivity in the database. This step is necessary so that the utility can detect existing connections.
