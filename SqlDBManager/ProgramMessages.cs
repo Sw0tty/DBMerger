@@ -11,6 +11,11 @@ namespace SqlDBManager
             MessageBox.Show("В процессе возникла ошибка!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
+        public static void MergeRulesNotPassedMessage()
+        {
+            MessageBox.Show("Файл с правилами слияния не выбран!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
         public static DialogResult ConnectionSuccessMessage()
         {
             return MessageBox.Show("Соединение установлено!", "Успешно", MessageBoxButtons.OK, MessageBoxIcon.Information);

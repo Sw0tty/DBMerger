@@ -18,14 +18,6 @@ namespace SqlDBManager
         {
             string request = SQLRequests.SelectRequests.CatalogPathRequest(ReturnCatalogName());
             return SelectSingleValueAdapter(request, likeValue: true, ReturnConnection(), ReturnTransaction());
-            //return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: true);
-        }
-
-        public string ReturnValues(Dictionary<string, string> row, bool withoutID = false)
-        {
-            if (withoutID)
-                return $"({string.Join(", ", row.Values).Replace("'null'", "null")})";
-            return $"(NEWID(), {string.Join(", ", row.Values).Replace("'null'", "null")})";
         }
 
         public int SelectCountTables()
@@ -40,8 +32,6 @@ namespace SqlDBManager
             reader.Close();
             command.Dispose();
             return count;
-/*            string request = SQLRequests.CountTablesRequest(Catalog);
-            return SelectAdapter(request, connection, ReturnTransaction());*/
         }
 
         public string SelectLastRecord(string columns, string tableName, string orderByColumn)
@@ -57,21 +47,6 @@ namespace SqlDBManager
         {
             string request = SQLRequests.SelectRequests.CountRowsRequest(ReturnCatalogName(), tableName);
             return SelectCountAdapter(request, ReturnConnection(), ReturnTransaction());
-/*            SqlCommand command = new SqlCommand(request, ReturnConnection());
-            command.Transaction = ReturnTransaction();
-            SqlDataReader reader = command.ExecuteReader();
-
-            reader.Read();
-            int count = Convert.ToInt32(reader.GetValue(0));
-            reader.Close();
-            command.Dispose();
-            return count;*/
-        }
-
-        public int UpdateArchive(string tableName, List<string> updateSet)
-        {
-            string request = SQLRequests.UpdateRequests.UpdateTableRequest(ReturnCatalogName(), tableName, updateSet);
-            return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
         /// <summary>
@@ -83,11 +58,16 @@ namespace SqlDBManager
             return ReturnListDictsFromDB(request, columns, allowsNull, ReturnConnection(), ReturnTransaction());
         }
 
+        public List<Dictionary<string, string>> SelectForeignKeysInfo(string tableName)
+        {
+            string request = SQLRequests.SelectRequests.ForeignKeysInfoByTableRequest(ReturnCatalogName(), tableName);
+            return ReturnListDictsFromDB(request, new List<string>() { "TableWithForeignKey", "ForeignKeyColumnName", "ForeignOnTable", "ForeignOnColumn" }, true, ReturnConnection(), ReturnTransaction());
+        }
+
         public string SelectIDFrom(string tableName, string idLikeColumn, string filterValue)
         {
             string request = SQLRequests.SelectRequests.IDFromRequest(ReturnCatalogName(), tableName, idLikeColumn, filterValue);
             return SelectSingleValueAdapter(request, likeValue: true, ReturnConnection(), ReturnTransaction());
-            //return ReturnStringFromDB(request, ReturnConnection(), ReturnTransaction(), itsValue: true);
         }
 
         public string SelectReferenceTableName(string currentTableName, string foreignColumnName)
@@ -103,28 +83,6 @@ namespace SqlDBManager
         }
 
         /// <summary>
-        /// Returning list of tables with logs data
-        /// </summary>
-        public List<string> SelectLogTables()
-        {
-            string request = SQLRequests.SelectRequests.LogTablesRequest(ReturnCatalogName());
-            return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction());
-        }
-
-        public List<string> SelectDefaultSkipTables()
-        {
-            string request = SQLRequests.SelectRequests.SkipRequest(ReturnCatalogName());
-            return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction());
-        }
-
-        public List<string> SelectDefaultProcessingTables()
-        {
-            // Дефолтные таблицы на обработку
-            string request = SQLRequests.SelectRequests.ProcessingRequest(ReturnCatalogName());
-            return ReturnListFromDB(request, ReturnConnection(), ReturnTransaction());
-        }
-
-        /// <summary>
         /// Возвращает словарь значений где ключ - таблица в которой используются значения из переданной таблицы.
         /// Значение - наименование столбца через который осуществляется связь
         /// </summary>
@@ -134,15 +92,15 @@ namespace SqlDBManager
             return ReturnDictFromDB(request, ReturnConnection(), ReturnTransaction());
         }
 
-/*        public Dictionary<string, string> SelectCatalogVersion_old()
-        {
-            string request = SQLRequests.SelectRequests.SelectVersionRequest(ReturnCatalogName());
-            return ReturnDictFromDB(request, ReturnConnection(), ReturnTransaction());
-        }*/
-
         public string SelectCatalogVersion()
         {
-            string request = SQLRequests.SelectRequests.SelectVersionRequest_new(ReturnCatalogName());
+            string request = SQLRequests.SelectRequests.SelectVersionRequest(ReturnCatalogName());
+            return SelectSingleValueAdapter(request, likeValue: false, ReturnConnection(), ReturnTransaction());
+        }
+
+        public string SelectCatalogApplication()
+        {
+            string request = SQLRequests.SelectRequests.SelectApplicationnRequest(ReturnCatalogName());
             return SelectSingleValueAdapter(request, likeValue: false, ReturnConnection(), ReturnTransaction());
         }
 
@@ -171,24 +129,19 @@ namespace SqlDBManager
             return AlterAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
-        public int RenameColumn(string tableName, string oldColumnName, string newColumnName)
-        {
-            string request = SQLRequests.UpdateRequests.RenameTableColumnRequest(ReturnCatalogName(), tableName, oldColumnName, newColumnName);
-            return AlterAdapter(request, ReturnConnection(), ReturnTransaction());
-        }
-
         /// <summary>
         /// Вставляет переданные данные в указанную таблицу (ID формируется средствами SQL)
         /// </summary>
-        public int InsertValue(string tableName, Dictionary<string, string> data, bool withoutID = false)
+        public int InsertValue(string tableName, Dictionary<string, string> data)
         {
-            string request = SQLRequests.InsertRequests.InsertDictValueRequst(ReturnCatalogName(), tableName, data, withoutID);
+            string request = SQLRequests.InsertRequests.InsertDictValueRequest(ReturnCatalogName(), tableName, data);
             return InsertAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
-        public int SpecialInsertListOfValues(string tableName, string values, List<string> excludeColumns)
+        // old name - SpecialInsertListOfValues
+        public int InsertListOfValues(string tableName, List<Dictionary<string, string>> values, List<string> excludeColumns)
         {
-            string request = SQLRequests.InsertRequests.FastFormerInsertValueRequst(SelectColumnsNames(tableName, excludeColumns), ReturnCatalogName(), tableName, values);
+            string request = SQLRequests.InsertRequests.FastFormerInsertValueRequest(SelectColumnsNames(tableName, excludeColumns), ReturnCatalogName(), tableName, values);
             return InsertAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
@@ -233,24 +186,6 @@ namespace SqlDBManager
             return DeleteAdapter(request, ReturnConnection(), ReturnTransaction());
         }
 
-/*        public int CreatePassport(string IDLastRecord, string passportYear)
-        {
-            string request = SQLRequests.RecalculationRequests.CreatePassportRequest(ReturnCatalogName(), IDLastRecord, passportYear);
-            return InsertAdapter(request, ReturnConnection(), ReturnTransaction());
-        }*/
-
-/*        public int CreatePassportStat(string passportID, string statID, string docType, string carrierType)
-        {
-            string request = SQLRequests.RecalculationRequests.CreatePassportStatRequest(ReturnCatalogName(), passportID, statID, docType, carrierType);
-            return InsertAdapter(request, ReturnConnection(), ReturnTransaction());
-        }
-
-        public int UpdateInventoryCount(string inventoryID, string docType, string carrierType, int unitCount)
-        {
-            string request = SQLRequests.RecalculationRequests.UpdateInventoryUnitCountRequest(ReturnCatalogName(), inventoryID, docType, carrierType, unitCount);
-            return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
-        }*/
-
         public int UpdateInventoryDocStats(string inventoryID, string docType, string carrierType, bool withAccountingUnits,
                                            int registered, int ocUnits, int unique, int hasSF, int hasFP, int notFound, int secret, int catalogued,
                                            int regRegistered = 0, int regOC = 0, int regUnique = 0, int regHasSF = 0, int regHasFP = 0, int regNotFound = 0, int regSecret = 0, int regCatalogued = 0)
@@ -282,24 +217,6 @@ namespace SqlDBManager
             string request = SQLRequests.RecalculationRequests.UpdateObjectCheckRequest(ReturnCatalogName(), tableName, idLikeColumn, objectID, cardboarded, needCardboarded, damaged, needRestoration, needBinding, needDisinfection, needDisinsection, fading, needEnciphering, needCoverChange, flamed, needKPO);
             return UpdateAdapter(request, ReturnConnection(), ReturnTransaction());
         }
-/*
-        public int SelectCountFeaturesUnits(string inventoryID, string featureID)
-        {
-            string request = SQLRequests.RecalculationRequests.FeaturesUnitsRequest(ReturnCatalogName(), inventoryID, featureID);
-            return SelectCountAdapter(request, ReturnConnection(), ReturnTransaction());
-        }
-
-        public int SelectCountWorksUnits(string inventoryID, string workID)
-        {
-            string request = SQLRequests.RecalculationRequests.WorksUnitsRequest(ReturnCatalogName(), inventoryID, workID);
-            return SelectCountAdapter(request, ReturnConnection(), ReturnTransaction());
-        }
-
-        public int SelectCarboarderedUnit(string idLikeColumn, string filteredID)
-        {
-            string request = SQLRequests.RecalculationRequests.CardboardedUnitRequest(ReturnCatalogName(), idLikeColumn, filteredID);
-            return SelectCountAdapter(request, ReturnConnection(), ReturnTransaction());
-        }*/
 
         public List<Dictionary<string, string>> SelectFundAttachedInventoryCheck(string fundID)
         {

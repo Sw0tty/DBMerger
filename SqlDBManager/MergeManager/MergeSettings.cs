@@ -6,28 +6,26 @@ namespace SqlDBManager
 {
     abstract public class MergeSettings
     {
-        public static string ExtraIDColumn = "DocID";
-
-        /// <summary>
-        /// Tables columns to update on second tab. <para/>
-        /// 1. List(string) update columns <br/>
-        /// </summary>
-        public static Dictionary<string, List<string>> UpdateTables { get; } = new Dictionary<string, List<string>>
-        {
-            { "tblARCHIVE",
-                new List<string>() { "NAME_SHORT", "NAME", "ADDRESS", "AUTHORITY" } },
-        };
-
         /// <summary>
         /// Params for processing simple tables <para/>
-        /// 1. (string) uniqueValueColumnName <br/>
-        /// 2. (string) idLikeColumnName <br/>
-        /// 3. (string) highLevelColumnName <br/>
+        /// 1. (string) uniqueValueColumnName <br/>     uniqueValueColumnName
+        /// 2. (string) idLikeColumnName <br/>          secondColumnName
+        /// 3. (string) highLevelColumnName <br/>       parentIdColumnName
         /// 4. List(string) excludeColumns <br/>
-        /// 5. (bool) allowsNull <br/>
+        /// 5. (bool) allowsNull <br/>                  allowsNullValues
         /// </summary>
         public static Dictionary<string, Tuple<string, string, string, List<string>, bool>> DefaultTablesParams { get; } = new Dictionary<string, Tuple<string, string, string, List<string>, bool>>
-        {         
+        {
+            /*
+            "tableName": {
+                        "secondIdColumnName": "",
+                        "parentIdColumnName": "",
+                        "uniqueValueColumnName": "",
+                        "excludeSpecialsColumnsNames": [],
+                        "allowsNullValues": false,
+                        "saveIdsForLinks": false
+                    }
+            */
             { "eqUsers",
                 new Tuple<string, string, string, List<string>, bool>("Login", null, null, new List<string>() { "DisplayName" }, false) },
 
@@ -116,17 +114,48 @@ namespace SqlDBManager
 
         /// <summary>
         /// Params for processing composite tables <para/>
-        /// 1. (string) uniqueValueColumnName <br/>
-        /// 2. (string) idLikeColumnName <br/>
-        /// 3. (string) highLevelColumnName <br/>
-        /// 4. (string) parentIdColumn <br/>
-        /// 5. (string) numerateColumn <br/>
+        /// 1. (string) uniqueValueColumnName <br/>     uniqueValueColumnName
+        /// 2. (string) idLikeColumnName <br/>          secondIdColumnName
+        /// 3. (string) highLevelColumnName <br/>       parentIdColumnName
+        /// 4. (string) parentIdColumn <br/>            foreignKeyColumns - Без надобности, поскольку данный стек связей формируется в процессе прохода по таблицам и хранится в ReservedValuesManager.TablesForeignKeys. Возможно можно добавить, как ручное добавление, если связи нет, но нужно чтобы была для проверки
+        /// 5. (string) numerateColumn <br/>            numerateColumn
         /// 6. List(string) extraFilterColumns <br/>
-        /// 7. List(string) excludeColumns <br/>
-        /// 8. (bool) allowsNull <br/>
+        /// 7. List(string) excludeColumns <br/>        excludeSpecialsColumnsNames
+        /// 8. (bool) allowsNull <br/>                  allowsNullValues
+        ///                                             uniqueByParent
+        ///                                             existingDaughterValuesForParent: {
+        ///		                                            toTableName: "",
+        ///		                                            fromColumnName: "",
+        ///		                                            onlyNew: false
+        ///	                                            }
         /// </summary>
         public static Dictionary<string, Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>> LinksTablesParams { get; } = new Dictionary<string, Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>>
         {
+
+/*        "tblINVENTORY_STRUCTURE": {
+
+            "secondIdColumnName": "ISN_INVENTORY_CLS",
+            "parentIdColumnName": "ISN_HIGH_INVENTORY_CLS",
+            "foreignKeyColumns": ["ISN_INVENTORY"]
+
+        },*/
+
+            /*
+             * "tableName": {
+            "uniqueValueColumnName": "",
+			"secondIdColumnName": "",
+			"parentIdColumnName": "",
+			"foreignKeyColumns": [],
+			"numerateColumn": "",
+			"excludeSpecialsColumnsNames": [],
+			"allowsNullValues": true,
+            "existingDaughterValuesForParent": {
+				"toTableName": "",
+				"fromColumnName": "",
+                "onlyNew": false
+			}
+		},
+            */
             { "tblORGANIZ_RENAME",
                 new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>("NAME", "ISN_ORGANIZ_RENAME", null, "ISN_ORGANIZ", null, null, null, new Tuple<bool>(true)) },
 
@@ -136,9 +165,9 @@ namespace SqlDBManager
             { "tblLOCATION",
                 new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>("NOTE", "ISN_LOCATION", "ISN_HIGH_LOCATION", null, null, null, null, new Tuple<bool>(true)) },
 
-            { "tblARCHIVE_STORAGE",
+            /*{ "tblARCHIVE_STORAGE",
                 new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>(null, null, null, null, null, null, null, new Tuple<bool>(true)) },
-
+*/
             { "tblFUND",
                 new Tuple<string, string, string, string, string, List<string>, List<string>, Tuple<bool>>("FUND_NAME_SHORT", "ISN_FUND", null, null, "FUND_NUM_2", null, null, new Tuple<bool>(true)) },
 

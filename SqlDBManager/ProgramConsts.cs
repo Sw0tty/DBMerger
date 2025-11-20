@@ -11,10 +11,10 @@ namespace SqlDBManager
         /// <summary>
         /// При истине выбрасывает исключения и прекращает работу с указание места ошибки
         /// </summary>
-        public const bool DEBUG_MOD = true;
-        public const bool FAST_REQUEST_MOD = true;
+        public const bool DEBUG_MOD = false;
 
         // -- Program Lock Consts --
+        private static string SupportingApplication { get; } = "AF";
         private static List<string> SupportingVersions { get; } = new List<string>() { "5.0.0" };
         public static int ALL_OF_IMPORT = 0;
         public static int ALL_OF_CHECK = 0;
@@ -29,6 +29,11 @@ namespace SqlDBManager
         {
             LAST_MAIN_CATALOG = mainCatalog;
             LAST_DAUGHTER_CATALOG = daughterCatalog;
+        }
+
+        public static string ReturnSupportingApplication()
+        {
+            return SupportingApplication;
         }
 
         public static List<string> ReturnSupportingVersions()
@@ -60,12 +65,6 @@ namespace SqlDBManager
             {
                 public const string Electronic = "'E'";
                 public const string Traditional = "'T'";
-            }
-
-            public static class DelteStatus
-            {
-                public const string PASSPORT_ACTIVE_STATUS = "0253E5AE-57EE-4D21-AAD9-15EBECA3E854";
-                public const string PASSPORT_DELETE_STATUS = "4FF026A0-6EEB-4500-90F8-15EBE74B66C9";
             }
 
             public static class UnitCategory
@@ -128,6 +127,22 @@ namespace SqlDBManager
             public const string RECULC_V3 = "Полный пересчет";
             public const string RESERVE_COPY_V1 = "Выгрузить копию до слияния";
             public const string RESERVE_COPY_V2 = "Создать новую БД с объединенными данными";
+        }
+
+        public static class MergeManager
+        {
+            public const string REPEAT_TABLE_DELIMITER = "$REPEAT$";
+
+            public static class TableStackNames
+            {
+                public const string REFERENCES_STACK = "REFERENCES_STACK";
+                public const string ONLY_IDS_STACK = "ONLY_IDS_STACK";
+                public const string CLEANING_TABLES_STACK = "CLEANING_TABLES_STACK";
+                public const string SIMPLE_TABLES_STACK = "SIMPLE_TABLES_STACK";
+                public const string LINK_TABLES_STACK = "LINK_TABLES_STACK";
+            }
+
+            public static string MERGE_RULES_TEMPLATE = "{\"tablesReferences\":{},\"onlyIdsTables\":{},\"tablesForCleaning\":[],\"simpleTables\":{},\"linksTables\":{}}";
         }
 
         public static class MergeWorks

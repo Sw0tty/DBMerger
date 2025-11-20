@@ -25,20 +25,17 @@ namespace SqlDBManager
             }
         }
 
-/*        public static bool ValidateVersions(DBCatalog mainCatalog, DBCatalog daughterCatalog)
+        public static bool ValidateApplication(DBCatalog сatalog)
         {
             try
             {
-                CatalogsVersions = new Tuple<string, string>(mainCatalog.SelectCatalogVersion_old()["Version"], daughterCatalog.SelectCatalogVersion_old()["Version"]);
+                return сatalog.SelectCatalogApplication() == Consts.ReturnSupportingApplication();
             }
             catch (Exception)
             {
                 return false;
             }
-            if (CatalogsVersions.Item1 == CatalogsVersions.Item2)
-                return true;
-            return false;
-        }*/
+        }
 
         public static bool ValidateCountTables(DBCatalog mainCatalog, DBCatalog daughterCatalog)
         {
@@ -56,9 +53,6 @@ namespace SqlDBManager
                     TablesNamesUncontains.Add(daughterTablesName);
             }
             return TablesNamesUncontains.Count == 0;
-/*            if (TablesNamesUncontains.Count > 0)
-                return false;
-            return true;*/
         }
 
         public static bool ValidateDefaultTablesValues(DBCatalog mainCatalog, DBCatalog daughterCatalog, BackgroundWorker worker)

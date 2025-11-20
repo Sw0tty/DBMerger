@@ -12,11 +12,6 @@ namespace SqlDBManager
                 return "SELECT name FROM sys.databases WHERE name NOT IN ('master', 'tempdb', 'model', 'msdb');";
             }
 
-            public static string ValuesOnUpdate(string catalogName, List<string> columns, string tableName)
-            {
-                return $"SELECT {string.Join(", ", columns)} FROM [{catalogName}].[dbo].[{tableName}]";
-            }
-
             public static string CatalogPathRequest(string catalog)
             {
                 return $"SELECT TOP 1 physical_name FROM [{catalog}].sys.database_files;";
@@ -64,14 +59,18 @@ namespace SqlDBManager
                        $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalog}].sys.tables WHERE name = '{tableName}') and c.name != 'ID' and t.name != '{tableName}';";
             }
 
-            public static string ProcessingRequest(string catalog)
+            /// <summary>
+            /// Запрос таблиц в которых используется ссылна на переданную таблицу с указанием конкретных связей по столбцам
+            /// </summary>
+            public static string ForeignKeysInfoByTableRequest(string catalog, string tableName)
             {
-                return $"SELECT name FROM [{catalog}].sys.tables WHERE name in ('eqUsers', 'rptFUND_PAPER', 'rptFUND_UNIT_REG_STATS', 'tblACT_TYPE_CL', 'tblAuthorizedDep', 'tblCLS', 'tblDataExport', 'tblDECL_COMMISSION_CL', 'tblConstantsSpec', 'tblGROUPING_ATTRIBUTE_CL', 'tblINV_REQUIRED_WORK_CL', 'tblLANGUAGE_CL', 'tblFEATURE', 'tblCITIZEN_CL', 'tblORGANIZ_CL', 'tblPAPER_CLS', 'tblPAPER_CLS_INV', 'tblPUBLICATION_TYPE_CL', 'tblQUESTION', 'tblRECEIPT_REASON_CL', 'tblRECEIPT_SOURCE_CL', 'tblREF_FILE', 'tblREPRODUCTION_METHOD_CL', 'tblService', 'tblSTATE_CL', 'tblSTORAGE_MEDIUM_CL', 'tblSUBJECT_CL', 'tblTREE_SUPPORT', 'tblWORK_CL') ORDER BY name;";
-            }
-
-            public static string SkipRequest(string catalog)
-            {
-                return $"SELECT name FROM [{catalog}].sys.tables WHERE OBJECTPROPERTY(object_id, 'TableHasForeignKey') = 0 and name not like '%log' and name not in ('eqUsers', 'rptFUND_PAPER', 'rptFUND_UNIT_REG_STATS', 'tblACT_TYPE_CL', 'tblAuthorizedDep', 'tblCLS', 'tblDataExport', 'tblDECL_COMMISSION_CL', 'tblConstantsSpec', 'tblGROUPING_ATTRIBUTE_CL', 'tblINV_REQUIRED_WORK_CL', 'tblLANGUAGE_CL', 'tblFEATURE', 'tblCITIZEN_CL', 'tblORGANIZ_CL', 'tblPAPER_CLS', 'tblPAPER_CLS_INV', 'tblPUBLICATION_TYPE_CL', 'tblQUESTION', 'tblRECEIPT_REASON_CL', 'tblRECEIPT_SOURCE_CL', 'tblREF_FILE', 'tblREPRODUCTION_METHOD_CL', 'tblService', 'tblSTATE_CL', 'tblSTORAGE_MEDIUM_CL', 'tblSUBJECT_CL', 'tblTREE_SUPPORT', 'tblWORK_CL', 'tblPUBLICATION_CL', 'tblUNIT_FOTO_EX', 'tblUNIT_MOVIE_EX', 'tblUNIT_VIDEO_EX') or name in ('tblDOC_KIND_CL', 'tblABSENCE_REASON_CL') ORDER BY name;";
+                return "SELECT t.name AS TableWithForeignKey, c.name AS ForeignKeyColumnName, mt.name AS ForeignOnTable, mc.name AS ForeignOnColumn" +
+                        $"FROM [{catalog}].sys.foreign_key_columns AS fk" +
+                        $"JOIN [{catalog}].sys.tables AS t ON fk.parent_object_id = t.object_id" +
+                        $"JOIN [{catalog}].sys.columns AS c ON fk.parent_object_id = c.object_id and fk.parent_column_id = c.column_id" +
+                        $"JOIN [{catalog}].sys.tables AS mt ON fk.referenced_object_id = mt.object_id" +
+                        $"JOIN [{catalog}].sys.columns AS mc ON fk.referenced_object_id = mc.object_id and fk.referenced_column_id = mc.column_id" +
+                        $"WHERE fk.referenced_object_id = (SELECT object_id FROM [{catalog}].sys.tables WHERE name = '{tableName}') and c.name != 'ID' and t.name != '{tableName}';";
             }
 
             /// <summary>
@@ -126,12 +125,12 @@ namespace SqlDBManager
                 return $"SELECT COUNT({column}) FROM sys.databases WHERE {column} like '{catalogName}%';";
             }
 
-            public static string SelectVersionRequest(string catalog)
+            public static string SelectApplicationnRequest(string catalog)
             {
-                return $"SELECT [Value], [Text] FROM [{catalog}].[dbo].[tblConstantsSpec] WHERE Value = 'Version'";
+                return $"SELECT [Text] FROM [{catalog}].[dbo].[tblConstantsSpec] WHERE Value = 'Application'";
             }
 
-            public static string SelectVersionRequest_new(string catalog)
+            public static string SelectVersionRequest(string catalog)
             {
                 return $"SELECT [Text] FROM [{catalog}].[dbo].[tblConstantsSpec] WHERE Value = 'Version'";
             }
@@ -175,22 +174,25 @@ namespace SqlDBManager
             /// Request on insert row
             /// </summary>
             /// <returns>String request</returns>
-            public static string InsertDictValueRequst(string catalogName, string tableName, Dictionary<string, string> data, bool withoutID = false)
+            public static string InsertDictValueRequest(string catalogName, string tableName, Dictionary<string, string> data)
             {
-                if (withoutID)
-                {
-                    return $"INSERT INTO [{catalogName}].[dbo].[{tableName}]({string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES ({string.Join(", ", data.Values).Replace("'null'", "null")});";
-                }
-                return $"INSERT INTO [{catalogName}].[dbo].[{tableName}](ID, {string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES (NEWID(), {string.Join(", ", data.Values).Replace("'null'", "null")});";
+                return $"INSERT INTO [{catalogName}].[dbo].[{tableName}]({string.Join(", ", data.Keys).Replace('\"', '\'')}) VALUES ({string.Join(", ", data.Values).Replace("'null'", "null")});";
             }
 
             /// <summary>
             /// Form big request to table
             /// </summary>
             /// <returns>String request</returns>
-            public static string FastFormerInsertValueRequst(List<string> columns, string catalogName, string tableName, string values)
+            public static string FastFormerInsertValueRequest(List<string> columns, string catalogName, string tableName, List<Dictionary<string, string>> listData)
             {
-                return $"INSERT INTO [{catalogName}].[dbo].[{tableName}]({string.Join(", ", columns).Replace('\"', '\'')}) VALUES {values};";
+                List<string> values = new List<string>();
+
+                foreach (var rowData in listData)
+                {
+                    values.Add($"({string.Join(", ", rowData.Values).Replace("'null'", "null")})");
+                }
+
+                return $"INSERT INTO [{catalogName}].[dbo].[{tableName}]({string.Join(", ", columns).Replace('\"', '\'')}) VALUES {string.Join(", ", values)};";
             }
         }
 
@@ -203,24 +205,6 @@ namespace SqlDBManager
             public static string UpdateRowRequest(string catalogName, string tableName, string updateColumn, string updateValue, string filterColumn, string filterValue)
             {
                 return $"UPDATE [{catalogName}].[dbo].[{tableName}] SET {updateColumn} = {updateValue} WHERE {filterColumn} = {filterValue};";
-            }
-
-            /// <summary>
-            /// Update full table request
-            /// </summary>
-            /// <returns>String request</returns>
-            public static string UpdateTableRequest(string catalogName, string tableName, List<string> updateSet)
-            {
-                return $"UPDATE [{catalogName}].[dbo].[{tableName}] SET {string.Join(", ", updateSet)};";
-            }
-
-            /// <summary>
-            /// Request to renames same column
-            /// </summary>
-            /// <returns>String request</returns>
-            public static string RenameTableColumnRequest(string catalogName, string tableName, string oldColumnName, string newColumnName)
-            {
-                return $"EXEC [{catalogName}].[dbo].sp_rename '{tableName}.{oldColumnName}', '{newColumnName}', 'COLUMN';";
             }
 
             /// <summary>
@@ -244,9 +228,9 @@ namespace SqlDBManager
             /// Clear table request
             /// </summary>
             /// <returns>String request</returns>
-            public static string ClearTableRequest(string catalogName, string table)
+            public static string ClearTableRequest(string catalogName, string tableName)
             {
-                return $"DELETE [{catalogName}].[dbo].[{table}];";
+                return $"DELETE [{catalogName}].[dbo].[{tableName}];";
             }
 
             /// <summary>

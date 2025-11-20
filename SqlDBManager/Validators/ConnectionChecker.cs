@@ -29,6 +29,11 @@ namespace SqlDBManager
                     catalogCheck.CloseConnection();
                     return false;
                 }
+                if (!Validator.ValidateApplication(catalogCheck))
+                {
+                    catalogCheck.CloseConnection();
+                    return false;
+                }
                 catalogCheck.CloseConnection();
                 return true;
             }
@@ -68,6 +73,11 @@ namespace SqlDBManager
                 {
                     catalogCheck.CloseConnection();
                     return ProgramMessages.UnsupportingCatalog(catalog);
+                }
+                if (!Validator.ValidateApplication(catalogCheck))
+                {
+                    catalogCheck.CloseConnection();
+                    return ProgramMessages.UnsupportingCatalog(catalog); ;
                 }
                 catalogCheck.CloseConnection();
                 return ProgramMessages.ConnectionSuccessMessage();

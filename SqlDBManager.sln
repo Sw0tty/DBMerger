@@ -5,9 +5,13 @@ VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlDBManager", "SqlDBManager\SqlDBManager.csproj", "{2C624C0A-DAA9-4AFB-B683-AC6FA0F848B9}"
 EndProject
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "MergerSetup", "MergerSetup\MergerSetup.vdproj", "{5F22BF91-E621-4A83-9186-D1984F352809}"
-EndProject
 Project("{840C416C-B8F3-42BC-B0DD-F6BB14C9F8CB}") = "MergerAdvancedSetup", "MergerAdvancedSetup\MergerAdvancedSetup.aiproj", "{B22C8E16-DBB9-4303-8C8B-FBA2DBAB83EA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{470389BA-183A-4EAB-A082-70FA2CBF1D0A}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,10 +26,6 @@ Global
 		{2C624C0A-DAA9-4AFB-B683-AC6FA0F848B9}.DefaultBuild|Any CPU.Build.0 = Debug|Any CPU
 		{2C624C0A-DAA9-4AFB-B683-AC6FA0F848B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C624C0A-DAA9-4AFB-B683-AC6FA0F848B9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F22BF91-E621-4A83-9186-D1984F352809}.Debug|Any CPU.ActiveCfg = Debug
-		{5F22BF91-E621-4A83-9186-D1984F352809}.DefaultBuild|Any CPU.ActiveCfg = Debug
-		{5F22BF91-E621-4A83-9186-D1984F352809}.DefaultBuild|Any CPU.Build.0 = Debug
-		{5F22BF91-E621-4A83-9186-D1984F352809}.Release|Any CPU.ActiveCfg = Release
 		{B22C8E16-DBB9-4303-8C8B-FBA2DBAB83EA}.Debug|Any CPU.ActiveCfg = DefaultBuild
 		{B22C8E16-DBB9-4303-8C8B-FBA2DBAB83EA}.Debug|Any CPU.Build.0 = DefaultBuild
 		{B22C8E16-DBB9-4303-8C8B-FBA2DBAB83EA}.DefaultBuild|Any CPU.ActiveCfg = DefaultBuild

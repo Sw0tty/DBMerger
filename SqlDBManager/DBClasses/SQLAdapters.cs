@@ -11,7 +11,7 @@ namespace SqlDBManager
         /// <summary>
         /// Makes SELECT requests
         /// </summary>
-        /// <returns>List of Dictionarys Selected data</returns>
+        /// <returns>List of Dictionaries Selected data</returns>
         protected List<Dictionary<string, string>> SelectAdapter(string request, bool allowsNull, SqlConnection connection, SqlTransaction transaction)
         {
             SqlDataAdapter adapter = new SqlDataAdapter();
@@ -119,6 +119,10 @@ namespace SqlDBManager
             return rowsAffected;
         }
 
+        /// <summary>
+        /// Makes all requests with backup
+        /// </summary>
+        /// <returns>Count of affected rows</returns>
         protected int BackUpAdapter(string request, SqlConnection connection)
         {
             SqlCommand command = new SqlCommand(request, connection);
